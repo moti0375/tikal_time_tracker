@@ -12,7 +12,6 @@ class LoginPage extends StatefulWidget {
 class LoginPageState extends State<LoginPage> {
 
 
-
   @override
   Widget build(BuildContext context) {
 
@@ -25,7 +24,6 @@ class LoginPageState extends State<LoginPage> {
 
     final email = TextFormField(
       keyboardType: TextInputType.emailAddress,
-      autofocus: true,
       decoration: InputDecoration(
           hintText: 'Email',
           contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
@@ -36,7 +34,6 @@ class LoginPageState extends State<LoginPage> {
     );
 
     final password = TextFormField(
-      autofocus: true,
       obscureText: true,
       decoration: InputDecoration(
           hintText: 'password',

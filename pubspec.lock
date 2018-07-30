@@ -123,6 +123,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.1.2"
+  intl:
+    dependency: transitive
+    description:
+      name: intl
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.15.7"
   io:
     dependency: transitive
     description:
@@ -130,6 +137,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.3.2+1"
+  jaguar_http:
+    dependency: "direct main"
+    description:
+      name: jaguar_http
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.2+1"
+  jaguar_serializer:
+    dependency: transitive
+    description:
+      name: jaguar_serializer
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.5.1"
   js:
     dependency: transitive
     description:
@@ -235,6 +256,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.29.0+1"
+  quiver_iterables:
+    dependency: transitive
+    description:
+      name: quiver_iterables
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.1"
   shelf:
     dependency: transitive
     description:
@@ -366,5 +394,12 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.13"
+  yamlicious:
+    dependency: transitive
+    description:
+      name: yamlicious
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.5"
 sdks:
   dart: ">=2.0.0-dev.52.0 <=2.0.0-dev.58.0.flutter-f981f09760"

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'pages/login_page.dart';
+import 'pages/main_page.dart';
 
 void main() => runApp(new TimeTracker());
 
@@ -12,7 +13,7 @@ class TimeTracker extends StatelessWidget{
       theme: ThemeData(
         primarySwatch: Colors.lightBlue
       ),
-      home: new LoginPage()
+      home: new MainPage()
     );
   }
 
