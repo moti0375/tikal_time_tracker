@@ -27,11 +27,19 @@ class MainPageState extends State<MainPage> {
                 fit: BoxFit.cover,
               ),
             ),
-            child: new Text('Tikal Time Tracker',
-                style: new TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20.0,
-                )
+            child: new Stack(
+              children: <Widget>[
+                new Positioned(child: new Text("Tikal Time Tracker", style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),), left: 0.0, bottom: 0.0,),
+                new Positioned(child: new Container(
+                  width: 50.0,
+                  height: 50.0,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: new DecorationImage(fit: BoxFit.fill,
+                        image: AssetImage('assets/logo.png'))
+                  ),
+                ), left: 0.0, top: 20.0,),
+              ],
             ),
           ),
           new ListTile(
