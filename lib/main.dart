@@ -13,7 +13,7 @@ class TimeTracker extends StatelessWidget{
       theme: ThemeData(
         primarySwatch: Colors.lightBlue
       ),
-      home: new MainPage()
+      home: new LoginPage()
     );
   }
 
