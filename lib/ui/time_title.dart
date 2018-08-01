@@ -1,6 +1,18 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 
-class TimePageTitle extends StatelessWidget{
+class TimePageTitle extends StatefulWidget{
+  @override
+  State<StatefulWidget> createState() {
+    return new TimePageTitleState();
+  }
+}
+
+
+class TimePageTitleState extends State<TimePageTitle>{
+
+  DateTime selectedDate = DateTime.now();
+
   @override
   Widget build(BuildContext context) {
     return new Container(
@@ -15,13 +27,13 @@ class TimePageTitle extends StatelessWidget{
                   children: <Widget>[
                     Container(
                       padding: const EdgeInsets.only(bottom: 0.0),
-                      child: Text("Time: 31-07-2018", style: TextStyle(fontWeight: FontWeight.bold)),
+                      child: Text("Time: ${selectedDate.day}-${selectedDate.month}-${selectedDate.year}", style: TextStyle(fontWeight: FontWeight.bold)),
                     ),
                     Container(
                       padding: EdgeInsets.only(left: 200.0, bottom: 5.0),
                       child: GestureDetector(
                         onTap: () {
-                          print("Open Date picker");
+                          _showDateDialog();
                         },
                         child: Icon(Icons.date_range),
                       ),
@@ -42,5 +54,18 @@ class TimePageTitle extends StatelessWidget{
         ],
       ),
     );
+  }
+
+  Future<Null> _showDateDialog() async {
+    final DateTime picked = await showDatePicker(context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(selectedDate.year-1, 1),
+        lastDate: DateTime(selectedDate.year, 12));
+
+    if(picked != null && picked != selectedDate){
+      setState(() {
+        selectedDate = picked;
+      });
+    }
   }
 }
