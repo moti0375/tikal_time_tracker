@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tikal_time_tracker/ui/app_drawer.dart';
 import 'package:tikal_time_tracker/ui/time_title.dart';
+import 'new_record_page.dart';
+import '../data/models.dart';
 
 class MainPage extends StatefulWidget {
   @override
@@ -10,8 +12,6 @@ class MainPage extends StatefulWidget {
 }
 
 class MainPageState extends State<MainPage> implements DrawerOnClickListener {
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +28,8 @@ class MainPageState extends State<MainPage> implements DrawerOnClickListener {
         ),
         floatingActionButton:
             new FloatingActionButton(onPressed: () {
-              print("Add new Time record");
+              final projects = [Project.Leumi, Project.GM, Project.Tikal];
+              Navigator.of(context).push(new MaterialPageRoute(builder: (BuildContext context) => new NewRecordPage(projects: projects)));
             }, child: Icon(Icons.add)),
         body: ListView(
           children: <Widget>[

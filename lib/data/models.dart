@@ -40,3 +40,9 @@ enum Task{
   Vacation,
   Transport
 }
+
+enum Project{
+  Leumi,
+  GM,
+  Tikal
+}

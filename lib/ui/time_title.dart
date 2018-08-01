@@ -26,17 +26,17 @@ class TimePageTitleState extends State<TimePageTitle>{
                 Row(
                   children: <Widget>[
                     Container(
-                      padding: const EdgeInsets.only(bottom: 0.0),
-                      child: Text("Time: ${selectedDate.day}-${selectedDate.month}-${selectedDate.year}", style: TextStyle(fontWeight: FontWeight.bold)),
-                    ),
-                    Container(
-                      padding: EdgeInsets.only(left: 200.0, bottom: 5.0),
+                      alignment: Alignment.centerRight,
                       child: GestureDetector(
                         onTap: () {
                           _showDateDialog();
                         },
                         child: Icon(Icons.date_range),
                       ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.only(left: 2.0),
+                      child: Text("Time: ${selectedDate.day}-${selectedDate.month}-${selectedDate.year}", style: TextStyle(fontWeight: FontWeight.bold)),
                     )
                   ],
                 ),
