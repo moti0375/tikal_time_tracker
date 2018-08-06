@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'main_page.dart';
+import '../bottom_navigation.dart';
 
 class LoginPage extends StatefulWidget {
   static String tag = "LoginPage";
@@ -56,7 +56,7 @@ class LoginPageState extends State<LoginPage> {
           height: 42.0,
           onPressed: () {
             Navigator.of(context).
-            push(new MaterialPageRoute(builder: (BuildContext context) => new MainPage()));
+            pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => new BottomNavigation()));
             print("Button Clicked");
             },
           color: Colors.lightBlueAccent,

@@ -23,9 +23,10 @@ enum Role{
   Admin
 }
 
-enum Task{
+enum JobTask{
   Accounting,
   ArmyService,
+  Consulting,
   Development,
   General,
   HR,
@@ -41,8 +42,8 @@ enum Task{
   Transport
 }
 
-enum Project{
-  Leumi,
-  GM,
-  Tikal
+class Project{
+  String name;
+  List<JobTask> tasks;
+  Project({this.name, this.tasks});
 }
