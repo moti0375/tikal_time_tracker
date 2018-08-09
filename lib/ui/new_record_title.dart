@@ -14,7 +14,7 @@ class PageTitleState extends State<NewRecordTitle>{
   @override
   Widget build(BuildContext context) {
     return new Container(
-      padding: const EdgeInsets.only(right: 32.0, left: 32.0, top: 32.0),
+      padding: const EdgeInsets.only(right: 16.0, left: 16.0, top: 16.0),
       child: new Row(
         children: <Widget>[
            Expanded(
@@ -24,18 +24,14 @@ class PageTitleState extends State<NewRecordTitle>{
                 Row(
                   children: <Widget>[
                     Container(
-                      padding: const EdgeInsets.only(left: 2.0),
-                      child: Text("Editing Time Record", style: TextStyle(fontWeight: FontWeight.bold)),
+                      padding: EdgeInsets.only(bottom: 2.0),
+                      child: Text("Moti Bartov, User, Tikal"),
                     )
                   ],
                 ),
                 Container(
                   height: 1.5,
                   color: Colors.black26,
-                ),
-                Container(
-                  padding: EdgeInsets.only(bottom: 2.0),
-                  child: Text("Moti Bartov, User, Tikal"),
                 )
               ],
             ),

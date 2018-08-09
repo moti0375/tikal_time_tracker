@@ -43,7 +43,7 @@ enum JobTask{
 }
 
 class Project{
-  String name;
-  List<JobTask> tasks;
-  Project({this.name, this.tasks});
+  final String name;
+  final List<JobTask> tasks;
+  const Project({this.name, this.tasks});
 }

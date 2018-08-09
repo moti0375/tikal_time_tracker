@@ -18,8 +18,11 @@ class NewRecordPageState extends State<NewRecordPage> {
   Project _selectedProject;
   TimeOfDay _startTime;
   TimeOfDay _finishTime;
+  DateTime _date;
   TextEditingController startTimeController;
   TextEditingController finishTimeController;
+  TextEditingController dateInputController;
+  bool isButtonEnabled = false;
 
   List<Project> _projects = new List<Project>();
 
@@ -30,12 +33,11 @@ class NewRecordPageState extends State<NewRecordPage> {
   void initState() {
     super.initState();
     _projects.addAll(widget.projects);
-    _selectedProject = _projects.elementAt(0);
-    _tasks.addAll(_selectedProject.tasks);
-
-    _selectedTask = _tasks.elementAt(0);
-    startTimeController = new TextEditingController(text: "");
+    startTimeController = new TextEditingController(
+      text: "",
+    );
     finishTimeController = new TextEditingController(text: "");
+    dateInputController = new TextEditingController(text: "");
   }
 
   void _onProjectSelected(Project value) {
@@ -43,7 +45,7 @@ class NewRecordPageState extends State<NewRecordPage> {
       _selectedProject = value;
       _tasks.clear();
       _tasks.addAll(value.tasks);
-      _selectedTask = value.tasks.elementAt(0);
+      _selectedTask = null;
     });
   }
 
@@ -65,46 +67,47 @@ class NewRecordPageState extends State<NewRecordPage> {
     });
   }
 
+  void _setButtonState() {
+    setState(() {
+      if (_date != null && _startTime != null) {
+        print("setButtonState: Button enabled");
+        isButtonEnabled = true;
+      } else {
+        print("setButtonState: Button diabled");
+        isButtonEnabled = false;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final projectsDropDown = Container(
-      padding: EdgeInsets.symmetric(horizontal: 25.0),
-      child: Row(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Flexible(
-            flex: 1,
-            child:  new Text(
-              "Project: ",
-              style: TextStyle(fontSize: 25.0, fontWeight: FontWeight.bold),
-            ),
-          )
-         ,
-          Expanded(
-            flex: 2,
-            child: new DropdownButton(
-               isDense: false,
-                iconSize: 40.0,
-                elevation: 2,
-                value: _selectedProject,
-                items: _projects.map((Project value) {
-                  return new DropdownMenuItem<Project>(
-                    value: value,
-                    child: new Text(
-                      value.name,
-                      style: TextStyle(fontSize: 25.0),
-                    ),
-                  );
-                }).toList(),
-                onChanged: (Project value) {
-                  _onProjectSelected(value);
-                }),
-          )
-        ],
-      ),
-    );
+        padding: EdgeInsets.symmetric(horizontal: 25.0),
+        child: Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              DropdownButton(
+                  hint: new Text(
+                    "Select a Project",
+                    style: TextStyle(fontSize: 30.0),
+                  ),
+                  value: _selectedProject,
+                  isDense: false,
+                  iconSize: 50.0,
+                  items: _projects.map((Project value) {
+                    return new DropdownMenuItem<Project>(
+                      value: value,
+                      child: new Text(
+                        value.name,
+                        style: TextStyle(fontSize: 25.0),
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (Project value) {
+                    _onProjectSelected(value);
+                  })
+            ]));
 
     final tasksDropDown = Container(
       padding: EdgeInsets.symmetric(horizontal: 25.0),
@@ -113,24 +116,21 @@ class NewRecordPageState extends State<NewRecordPage> {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Expanded(
-            flex: 1,
-            child: new Text(
-              "Task: ",
-              style: TextStyle(fontSize: 25.0, fontWeight: FontWeight.bold),
-            ),
-          )
-          ,
           new Expanded(
-              flex:  2,
               child: new DropdownButton(
-                iconSize: 40.0,
+                  iconSize: 50.0,
+                  hint: Text(
+                    "Select a Task",
+                    style: TextStyle(fontSize: 30.0),
+                  ),
                   value: _selectedTask,
                   items: _tasks.map((JobTask value) {
                     return new DropdownMenuItem<JobTask>(
                       value: value,
                       child: new Text(
-                        value.toString(),
+                        value
+                            .toString()
+                            .substring(value.toString().indexOf('.') + 1),
                         style: TextStyle(fontSize: 25.0),
                       ),
                     );
@@ -146,13 +146,10 @@ class NewRecordPageState extends State<NewRecordPage> {
       padding: EdgeInsets.only(left: 32.0, right: 32.0),
       child: new Row(
         children: <Widget>[
-          Text(
-            "Start: ",
-            style: TextStyle(fontSize: 20.0),
-          ),
           Container(
             child: new Flexible(
                 child: new TextField(
+              decoration: InputDecoration(hintText: "Start"),
               maxLines: 1,
               controller: startTimeController,
             )),
@@ -171,14 +168,12 @@ class NewRecordPageState extends State<NewRecordPage> {
       padding: EdgeInsets.only(left: 32.0, right: 32.0),
       child: new Row(
         children: <Widget>[
-          Text(
-            "Finish: ",
-            style: TextStyle(fontSize: 20.0),
-          ),
           Container(
             child: new Flexible(
                 child: new TextField(
-                    maxLines: 1, controller: finishTimeController)),
+                    decoration: InputDecoration(hintText: "Finish"),
+                    maxLines: 1,
+                    controller: finishTimeController)),
           ),
           GestureDetector(
             onTap: () {
@@ -195,12 +190,11 @@ class NewRecordPageState extends State<NewRecordPage> {
       padding: EdgeInsets.only(left: 32.0, right: 32.0),
       child: new Row(
         children: <Widget>[
-          Text(
-            "Duration: ",
-            style: TextStyle(fontSize: 20.0),
-          ),
           Container(
-            child: new Flexible(child: new TextField(maxLines: 1)),
+            child: new Flexible(
+                child: new TextField(
+                    decoration: InputDecoration(hintText: "Duration"),
+                    maxLines: 1)),
           ),
         ],
       ),
@@ -210,50 +204,75 @@ class NewRecordPageState extends State<NewRecordPage> {
       padding: EdgeInsets.only(left: 32.0, right: 32.0),
       child: new Row(
         children: <Widget>[
-          Text(
-            "Date: ",
-            style: TextStyle(fontSize: 20.0),
-          ),
           Container(
-            child: new Flexible(child: new TextField(maxLines: 1)),
+            child: new Flexible(
+                child: new TextField(
+              maxLines: 1,
+              decoration: InputDecoration(hintText: "Date"),
+              controller: dateInputController,
+            )),
           ),
           GestureDetector(
-            onTap: () {},
+            onTap: () {
+              _showDatePicker();
+            },
             child: Icon(Icons.date_range),
           )
         ],
       ),
     );
 
-    return new MaterialApp(
-      title: "Tikal Time Tracker",
-      theme: new ThemeData(
-        primarySwatch: Colors.orange,
+    return Scaffold(
+      resizeToAvoidBottomPadding: false,
+      appBar: new AppBar(
+        title: new Text("Edit New Record"),
       ),
-      home: Scaffold(
-        appBar: new AppBar(
-          title: new Text("Tikal Time Tracker",
-              style: TextStyle(color: Colors.white)),
-        ),
-        body: Column(
-          children: <Widget>[
-            new NewRecordTitle(),
-            projectsDropDown,
-            tasksDropDown,
-            startTimePicker,
-            finishTimePicker,
-            durationInput,
-            dateInput,
-            Container(
-                padding: EdgeInsets.symmetric(horizontal: 32.0),
-                child: Column(
-                  children: <Widget>[
-                    Text("Note: ", style: TextStyle(fontSize: 20.0)),
-                    TextField()
-                  ],
-                ))
-          ],
-        ),
+      body: Column(
+        mainAxisSize: MainAxisSize.max,
+        children: <Widget>[
+          new NewRecordTitle(),
+          projectsDropDown,
+          tasksDropDown,
+          dateInput,
+          startTimePicker,
+          finishTimePicker,
+          durationInput,
+          Container(
+              padding: EdgeInsets.symmetric(horizontal: 32.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: <Widget>[
+                  TextField(decoration: InputDecoration(hintText: "Note:"))
+                ],
+              )),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+                child: Material(
+                  borderRadius: BorderRadius.circular(10.0),
+                  shadowColor: isButtonEnabled
+                      ? Colors.orangeAccent.shade100
+                      : Colors.grey.shade100,
+                  elevation: 2.0,
+                  child: MaterialButton(
+                    minWidth: 200.0,
+                    height: 42.0,
+                    onPressed: () {
+                      if (isButtonEnabled) {
+                        print("Button Clicked");
+                      }
+                    },
+                    color: isButtonEnabled ? Colors.orangeAccent : Colors.grey,
+                    child: Text("Save", style: TextStyle(color: Colors.white)),
+                  ),
+                ),
+              )
+            ],
+          )
+        ],
       ),
     );
   }
@@ -268,6 +287,23 @@ class NewRecordPageState extends State<NewRecordPage> {
         startTimeController =
             new TextEditingController(text: "${picked.hour}:${picked.minute}");
       });
+      _setButtonState();
+    }
+  }
+
+  Future<Null> _showDatePicker() async {
+    final DateTime picked = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(DateTime.now().year - 1, 1),
+        lastDate: DateTime(DateTime.now().year, 12));
+
+    if (picked != null) {
+      setState(() {
+        _date = picked;
+        dateInputController =
+            new TextEditingController(text: "${picked.month}:${picked.year}");
+      });
     }
   }
 
@@ -280,7 +316,24 @@ class NewRecordPageState extends State<NewRecordPage> {
         _finishTime = picked;
         finishTimeController =
             new TextEditingController(text: "${picked.hour}:${picked.minute}");
+        calculateDuration(
+            date: DateTime.now(),
+            startTime: _startTime,
+            finishTime: _finishTime);
       });
     }
   }
+}
+
+TimeOfDay calculateDuration(
+    {DateTime date, TimeOfDay startTime, TimeOfDay finishTime}) {
+  DateTime s = new DateTime(
+      date.year, date.month, date.day, startTime.hour, startTime.minute);
+  DateTime f = new DateTime(
+      date.year, date.month, date.day, finishTime.hour, finishTime.minute);
+  int milisecs = f.millisecond - s.millisecond;
+  print("$milisecs");
+
+  DateTime total = new DateTime.fromMillisecondsSinceEpoch(milisecs);
+  print("${total.hour}:${total.minute}");
 }
