@@ -92,12 +92,16 @@ class NewRecordPageState extends State<NewRecordPage> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               DropdownButton(
-                  hint: new Text(
-                    "Select a Project",
-                    style: TextStyle(fontSize: 30.0),
+                  hint: Container(
+                    width: MediaQuery.of(context).size.width * 0.7,
+                    padding: const EdgeInsets.all(8.0),
+                    child: new Text(
+                      "Select a Project",
+                      style: TextStyle(fontSize: 30.0),
+                    ),
                   ),
                   value: _selectedProject,
-                  isDense: false,
+                  isDense: true,
                   iconSize: 50.0,
                   items: _projects.map((Project value) {
                     return new DropdownMenuItem<Project>(
@@ -123,9 +127,13 @@ class NewRecordPageState extends State<NewRecordPage> {
           new Expanded(
               child: new DropdownButton(
                   iconSize: 50.0,
-                  hint: Text(
-                    "Select a Task",
-                    style: TextStyle(fontSize: 30.0),
+                  hint: Container(
+                    width: MediaQuery.of(context).size.width * 0.7,
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      "Select a Task",
+                      style: TextStyle(fontSize: 30.0),
+                    ),
                   ),
                   value: _selectedTask,
                   items: _tasks.map((JobTask value) {
