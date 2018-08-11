@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:tikal_time_tracker/ui/new_record_title.dart';
 import '../data/models.dart';
 import 'dart:async';
+import '../data/repository/time_records_repository.dart';
 
+// ignore: must_be_immutable
 class NewRecordPage extends StatefulWidget {
   List<Project> projects;
 
@@ -23,9 +25,8 @@ class NewRecordPageState extends State<NewRecordPage> {
   TextEditingController finishTimeController;
   TextEditingController dateInputController;
   bool isButtonEnabled = false;
+  TimeRecordsRepository repository = new TimeRecordsRepository();
 
-  FocusNode _startTimeFocus = FocusNode();
-  FocusNode _finishTimeFocus = FocusNode();
 
   List<Project> _projects = new List<Project>();
 
@@ -145,11 +146,6 @@ class NewRecordPageState extends State<NewRecordPage> {
       ),
     );
 
-    FocusNode startFocusNode = FocusNode();
-
-    void onStartFocusChanges(FocusNode focusNode){
-    }
-
     final srartTimePicker = Container(
       padding: EdgeInsets.only(left: 32.0, right: 32.0, top: 8.0),
       child: new Row(
@@ -168,8 +164,10 @@ class NewRecordPageState extends State<NewRecordPage> {
             child: new Flexible(
                 child: new TextField(
                     decoration: InputDecoration(hintText: "Start",
-                        contentPadding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0))),
+                        contentPadding: EdgeInsets.fromLTRB(
+                            10.0, 10.0, 10.0, 10.0),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20.0))),
                     maxLines: 1,
                     controller: startTimeController)),
           ),
@@ -195,8 +193,10 @@ class NewRecordPageState extends State<NewRecordPage> {
             child: new Flexible(
                 child: new TextField(
                     decoration: InputDecoration(hintText: "Finish",
-                        contentPadding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0))),
+                        contentPadding: EdgeInsets.fromLTRB(
+                            10.0, 10.0, 10.0, 10.0),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20.0))),
                     maxLines: 1,
                     controller: finishTimeController)),
           ),
@@ -212,8 +212,10 @@ class NewRecordPageState extends State<NewRecordPage> {
             child: new Flexible(
                 child: new TextField(
                     decoration: InputDecoration(hintText: "Duration",
-                        contentPadding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0))),
+                        contentPadding: EdgeInsets.fromLTRB(
+                            10.0, 10.0, 10.0, 10.0),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20.0))),
                     maxLines: 1)),
           ),
         ],
@@ -238,8 +240,10 @@ class NewRecordPageState extends State<NewRecordPage> {
             child: new Flexible(
                 child: new TextField(
                     decoration: InputDecoration(hintText: "Date",
-                        contentPadding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0))),
+                        contentPadding: EdgeInsets.fromLTRB(
+                            10.0, 10.0, 10.0, 10.0),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20.0))),
                     maxLines: 1,
                     controller: dateInputController)),
           ),
@@ -269,9 +273,11 @@ class NewRecordPageState extends State<NewRecordPage> {
                   children: <Widget>[
                     TextField(maxLines: 3,
                         decoration: InputDecoration(
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
-                        contentPadding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
-                        hintText: "Note:"))
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20.0)),
+                            contentPadding: EdgeInsets.fromLTRB(
+                                10.0, 10.0, 10.0, 10.0),
+                            hintText: "Note:"))
                   ],
                 )),
             Column(
@@ -279,7 +285,8 @@ class NewRecordPageState extends State<NewRecordPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
                 Padding(
-                  padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+                  padding: EdgeInsets.symmetric(
+                      vertical: 16.0, horizontal: 16.0),
                   child: Material(
                     borderRadius: BorderRadius.circular(10.0),
                     shadowColor: isButtonEnabled
@@ -291,11 +298,13 @@ class NewRecordPageState extends State<NewRecordPage> {
                       height: 42.0,
                       onPressed: () {
                         if (isButtonEnabled) {
-                          print("Button Clicked");
+                          _handleSaveButtonClicked();
                         }
                       },
-                      color: isButtonEnabled ? Colors.orangeAccent : Colors.grey,
-                      child: Text("Save", style: TextStyle(color: Colors.white)),
+                      color: isButtonEnabled ? Colors.orangeAccent : Colors
+                          .grey,
+                      child: Text(
+                          "Save", style: TextStyle(color: Colors.white)),
                     ),
                   ),
                 )
@@ -357,17 +366,28 @@ class NewRecordPageState extends State<NewRecordPage> {
       });
     }
   }
-}
 
-TimeOfDay calculateDuration(
-    {DateTime date, TimeOfDay startTime, TimeOfDay finishTime}) {
-  DateTime s = new DateTime(
-      date.year, date.month, date.day, startTime.hour, startTime.minute);
-  DateTime f = new DateTime(
-      date.year, date.month, date.day, finishTime.hour, finishTime.minute);
-  int milisecs = f.millisecond - s.millisecond;
-  print("$milisecs");
+  _handleSaveButtonClicked() {
+    print("Button Clicked");
+    TimeRecord timeRecord = TimeRecord(project: _selectedProject.name, task: _selectedTask.toString()
+        .substring(_selectedTask.toString().indexOf('.') + 1), dateTime: _date, start: _startTime, finish: _finishTime, duration: calculateDuration(date: _date, startTime: _startTime, finishTime: _finishTime), comment: "");
+    repository.addTimeForDate(timeRecord).then((value) {
+      print("Record ${value.id} was added to db");
+      Navigator.pop(context);
+    });
+    }
+  }
 
-  DateTime total = new DateTime.fromMillisecondsSinceEpoch(milisecs);
-  print("${total.hour}:${total.minute}");
-}
+  Duration calculateDuration(
+      {DateTime date, TimeOfDay startTime, TimeOfDay finishTime}) {
+    DateTime s = new DateTime(
+        date.year, date.month, date.day, startTime.hour, startTime.minute);
+    DateTime f = new DateTime(
+        date.year, date.month, date.day, finishTime.hour, finishTime.minute);
+
+    Duration d = f.difference(s);
+    print("${d.inHours}:${d.inHours % 60}");
+    return d;
+  }
+
+

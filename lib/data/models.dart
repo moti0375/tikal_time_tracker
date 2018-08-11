@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+import '../data/database/database_helper.dart';
+
 class User{
   String name;
   String login;
@@ -6,16 +9,68 @@ class User{
   User({this.name, this.login, this.role});
 }
 
-class Time{
+class TimeRecord{
+  int id;
   String project;
   String task;
-  double start;
-  double finish;
-  double duration;
+  TimeOfDay start;
+  TimeOfDay finish;
+  Duration duration;
   DateTime dateTime;
+  String comment;
 
-  Time({this.project, this.task, this.start, this.finish, this.duration,
-      this.dateTime});
+  TimeRecord({this.id, this.project, this.task, this.start, this.finish,
+      this.dateTime, this.comment, this.duration}){
+    DateTime s  = DateTime(dateTime.year, dateTime.month, dateTime.day, start.hour, start.minute);
+    DateTime f  = DateTime(dateTime.year, dateTime.month, dateTime.day, finish.hour, finish.minute);
+    Duration d = s.difference(f);
+  }
+
+
+  Map<String, dynamic> toMap(){
+    Map<String, dynamic> map = {columnProject.toString(): project,
+      columnTask.toString(): task,
+      columnDate.toString() : "${dateTime.month}/${dateTime.year}",
+      columnStart.toString() : "${start.hour}:${start.minute}",
+      columnFinish.toString() : "${finish.hour}:${finish.minute}",
+      columnDuration.toString() : "",
+      columnComment.toString() : comment
+    };
+
+    if(id != null){
+      map[columnId] = id;
+    }
+
+    return map;
+  }
+
+  TimeRecord.fromMap(Map map){
+    id = map[columnId];
+    project = map[columnProject];
+
+    List<int> container = map[columnDate].toString().split("/").map((String element) {
+      return int.parse(element);
+    }).toList();
+    
+    dateTime = new DateTime(container[0], container[1]);
+
+    container.clear();
+
+    map[columnStart].toString().split(":").map((String element) {
+      return int.parse(element);
+    }).toList();
+    start = TimeOfDay(hour: container[0], minute: container[1]);
+
+    container.clear();
+
+    map[columnFinish].toString().split(":").map((String element) {
+      return int.parse(element);
+    }).toList();
+    finish = TimeOfDay(hour: container[0], minute: container[1]);
+
+    comment = map[columnComment];
+
+  }
 }
 
 enum Role{
