@@ -24,6 +24,9 @@ class NewRecordPageState extends State<NewRecordPage> {
   TextEditingController dateInputController;
   bool isButtonEnabled = false;
 
+  FocusNode _startTimeFocus = FocusNode();
+  FocusNode _finishTimeFocus = FocusNode();
+
   List<Project> _projects = new List<Project>();
 
   JobTask _selectedTask;
@@ -142,58 +145,75 @@ class NewRecordPageState extends State<NewRecordPage> {
       ),
     );
 
-    final startTimePicker = Container(
-      padding: EdgeInsets.only(left: 32.0, right: 32.0),
+    FocusNode startFocusNode = FocusNode();
+
+    void onStartFocusChanges(FocusNode focusNode){
+    }
+
+    final srartTimePicker = Container(
+      padding: EdgeInsets.only(left: 32.0, right: 32.0, top: 8.0),
       child: new Row(
         children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: GestureDetector(
+              onTap: () {
+                print("onTap start");
+                _showStartTimeDialog();
+              },
+              child: Icon(Icons.access_time),
+            ),
+          ),
           Container(
             child: new Flexible(
                 child: new TextField(
-              decoration: InputDecoration(hintText: "Start"),
-              maxLines: 1,
-              controller: startTimeController,
-            )),
+                    decoration: InputDecoration(hintText: "Start",
+                        contentPadding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0))),
+                    maxLines: 1,
+                    controller: startTimeController)),
           ),
-          GestureDetector(
-            onTap: () {
-              _showStartTimeDialog();
-            },
-            child: Icon(Icons.access_time),
-          )
         ],
       ),
     );
 
     final finishTimePicker = Container(
-      padding: EdgeInsets.only(left: 32.0, right: 32.0),
+      padding: EdgeInsets.only(left: 32.0, right: 32.0, top: 8.0),
       child: new Row(
         children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: GestureDetector(
+              onTap: () {
+                print("onTap finish");
+                _showFinishTimeDialog();
+              },
+              child: Icon(Icons.access_time),
+            ),
+          ),
           Container(
             child: new Flexible(
                 child: new TextField(
-                    decoration: InputDecoration(hintText: "Finish"),
+                    decoration: InputDecoration(hintText: "Finish",
+                        contentPadding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0))),
                     maxLines: 1,
                     controller: finishTimeController)),
           ),
-          GestureDetector(
-            onTap: () {
-              print("onTap finish");
-              _showFinishTimeDialog();
-            },
-            child: Icon(Icons.access_time),
-          )
         ],
       ),
     );
 
     final durationInput = Container(
-      padding: EdgeInsets.only(left: 32.0, right: 32.0),
+      padding: EdgeInsets.only(left: 32.0, right: 32.0, top: 8.0),
       child: new Row(
         children: <Widget>[
           Container(
             child: new Flexible(
                 child: new TextField(
-                    decoration: InputDecoration(hintText: "Duration"),
+                    decoration: InputDecoration(hintText: "Duration",
+                        contentPadding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0))),
                     maxLines: 1)),
           ),
         ],
@@ -201,91 +221,101 @@ class NewRecordPageState extends State<NewRecordPage> {
     );
 
     final dateInput = Container(
-      padding: EdgeInsets.only(left: 32.0, right: 32.0),
+      padding: EdgeInsets.only(left: 32.0, right: 32.0, top: 8.0),
       child: new Row(
         children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: GestureDetector(
+              onTap: () {
+                print("onTap dateInput");
+                _showDatePicker();
+              },
+              child: Icon(Icons.date_range),
+            ),
+          ),
           Container(
             child: new Flexible(
                 child: new TextField(
-              maxLines: 1,
-              decoration: InputDecoration(hintText: "Date"),
-              controller: dateInputController,
-            )),
+                    decoration: InputDecoration(hintText: "Date",
+                        contentPadding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0))),
+                    maxLines: 1,
+                    controller: dateInputController)),
           ),
-          GestureDetector(
-            onTap: () {
-              _showDatePicker();
-            },
-            child: Icon(Icons.date_range),
-          )
         ],
       ),
     );
 
     return Scaffold(
-      resizeToAvoidBottomPadding: false,
       appBar: new AppBar(
         title: new Text("Edit New Record"),
       ),
-      body: Column(
-        mainAxisSize: MainAxisSize.max,
-        children: <Widget>[
-          new NewRecordTitle(),
-          projectsDropDown,
-          tasksDropDown,
-          dateInput,
-          startTimePicker,
-          finishTimePicker,
-          durationInput,
-          Container(
-              padding: EdgeInsets.symmetric(horizontal: 32.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                children: <Widget>[
-                  TextField(decoration: InputDecoration(hintText: "Note:"))
-                ],
-              )),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-                child: Material(
-                  borderRadius: BorderRadius.circular(10.0),
-                  shadowColor: isButtonEnabled
-                      ? Colors.orangeAccent.shade100
-                      : Colors.grey.shade100,
-                  elevation: 2.0,
-                  child: MaterialButton(
-                    minWidth: 200.0,
-                    height: 42.0,
-                    onPressed: () {
-                      if (isButtonEnabled) {
-                        print("Button Clicked");
-                      }
-                    },
-                    color: isButtonEnabled ? Colors.orangeAccent : Colors.grey,
-                    child: Text("Save", style: TextStyle(color: Colors.white)),
+      body: Center(
+        child: ListView(
+          shrinkWrap: true,
+          children: <Widget>[
+            new NewRecordTitle(),
+            projectsDropDown,
+            tasksDropDown,
+            dateInput,
+            srartTimePicker,
+            finishTimePicker,
+            durationInput,
+            Container(
+                padding: EdgeInsets.only(left: 32.0, right: 32.0, top: 8.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  children: <Widget>[
+                    TextField(maxLines: 3,
+                        decoration: InputDecoration(
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
+                        contentPadding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
+                        hintText: "Note:"))
+                  ],
+                )),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+                  child: Material(
+                    borderRadius: BorderRadius.circular(10.0),
+                    shadowColor: isButtonEnabled
+                        ? Colors.orangeAccent.shade100
+                        : Colors.grey.shade100,
+                    elevation: 2.0,
+                    child: MaterialButton(
+                      minWidth: 200.0,
+                      height: 42.0,
+                      onPressed: () {
+                        if (isButtonEnabled) {
+                          print("Button Clicked");
+                        }
+                      },
+                      color: isButtonEnabled ? Colors.orangeAccent : Colors.grey,
+                      child: Text("Save", style: TextStyle(color: Colors.white)),
+                    ),
                   ),
-                ),
-              )
-            ],
-          )
-        ],
+                )
+              ],
+            )
+          ],
+        ),
       ),
     );
   }
 
   Future<Null> _showStartTimeDialog() async {
     final TimeOfDay picked =
-        await showTimePicker(context: context, initialTime: TimeOfDay.now());
+    await showTimePicker(context: context, initialTime: TimeOfDay.now());
 
     if (picked != null) {
       setState(() {
         _startTime = picked;
         startTimeController =
-            new TextEditingController(text: "${picked.hour}:${picked.minute}");
+        new TextEditingController(text: "${picked.hour}:${picked.minute}");
       });
       _setButtonState();
     }
@@ -295,27 +325,31 @@ class NewRecordPageState extends State<NewRecordPage> {
     final DateTime picked = await showDatePicker(
         context: context,
         initialDate: DateTime.now(),
-        firstDate: DateTime(DateTime.now().year - 1, 1),
-        lastDate: DateTime(DateTime.now().year, 12));
+        firstDate: DateTime(DateTime
+            .now()
+            .year - 1, 1),
+        lastDate: DateTime(DateTime
+            .now()
+            .year, 12));
 
     if (picked != null) {
       setState(() {
         _date = picked;
         dateInputController =
-            new TextEditingController(text: "${picked.month}:${picked.year}");
+        new TextEditingController(text: "${picked.month}:${picked.year}");
       });
     }
   }
 
   Future<Null> _showFinishTimeDialog() async {
     final TimeOfDay picked =
-        await showTimePicker(context: context, initialTime: TimeOfDay.now());
+    await showTimePicker(context: context, initialTime: TimeOfDay.now());
 
     if (picked != null) {
       setState(() {
         _finishTime = picked;
         finishTimeController =
-            new TextEditingController(text: "${picked.hour}:${picked.minute}");
+        new TextEditingController(text: "${picked.hour}:${picked.minute}");
         calculateDuration(
             date: DateTime.now(),
             startTime: _startTime,
