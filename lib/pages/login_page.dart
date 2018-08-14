@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../bottom_navigation.dart';
+import '../data/repository/time_records_repository.dart';
 
 class LoginPage extends StatefulWidget {
   static String tag = "LoginPage";
@@ -12,6 +13,7 @@ class LoginPage extends StatefulWidget {
 
 class LoginPageState extends State<LoginPage> {
 
+  TimeRecordsRepository repository = TimeRecordsRepository();
 
   @override
   Widget build(BuildContext context) {

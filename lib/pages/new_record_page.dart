@@ -353,7 +353,7 @@ class NewRecordPageState extends State<NewRecordPage> {
       setState(() {
         _date = picked;
         dateInputController =
-        new TextEditingController(text: "${picked.month}:${picked.year}");
+        new TextEditingController(text: "${picked.day}/${picked.month}/${picked.year}");
       });
     }
   }

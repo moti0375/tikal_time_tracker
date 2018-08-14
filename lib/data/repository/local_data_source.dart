@@ -25,7 +25,7 @@ class LocalDataSource implements TimeDateSource {
     _openDataBase();
   }
 
-  void _openDataBase() async {
+  void _openDataBase()  async {
     String databasePath = await getDatabasesPath();
     databaseOpenHelper.open("$databasePath/timeRecords.db");
   }

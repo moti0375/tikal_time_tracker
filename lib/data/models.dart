@@ -30,7 +30,7 @@ class TimeRecord{
   Map<String, dynamic> toMap(){
     Map<String, dynamic> map = {columnProject.toString(): project,
       columnTask.toString(): task,
-      columnDate.toString() : "${dateTime.month}/${dateTime.year}",
+      columnDate.toString() : "${dateTime.day}/${dateTime.month}/${dateTime.year}",
       columnStart.toString() : "${start.hour}:${start.minute}",
       columnFinish.toString() : "${finish.hour}:${finish.minute}",
       columnDuration.toString() : "",
@@ -48,24 +48,26 @@ class TimeRecord{
     id = map[columnId];
     project = map[columnProject];
 
-    List<int> container = map[columnDate].toString().split("/").map((String element) {
+    List<dynamic> container = map[columnDate].toString().split("/").map((String element) {
       return int.parse(element);
     }).toList();
     
-    dateTime = new DateTime(container[0], container[1]);
+    dateTime = new DateTime(container[0], container[1], container[2]);
 
     container.clear();
 
-    map[columnStart].toString().split(":").map((String element) {
+    container.addAll(map[columnStart].split(":").map((String element) {
+      print("fromMap: $element");
       return int.parse(element);
-    }).toList();
+    }).toList());
+
     start = TimeOfDay(hour: container[0], minute: container[1]);
 
     container.clear();
 
-    map[columnFinish].toString().split(":").map((String element) {
+    container.addAll(map[columnFinish].toString().split(":").map((String element) {
       return int.parse(element);
-    }).toList();
+    }).toList());
     finish = TimeOfDay(hour: container[0], minute: container[1]);
 
     comment = map[columnComment];

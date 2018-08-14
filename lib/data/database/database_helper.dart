@@ -50,15 +50,19 @@ class TimeRecordDatabaseOpenHelper {
   }
 
   Future<List<TimeRecord>> getTimeRecordForDate(DateTime date) async {
-    String where = "${date.month}/${date.year}";
+    if(db == null){
+      print("db is null");
+    }
+    String where = "${date.day}/${date.month}/${date.year}";
     List<Map> maps  = await db.query(tableName,
     columns: [columnId, columnProject, columnTask, columnDate, columnStart, columnFinish, columnDuration, columnComment],
       where: "$columnDate = ?",
       whereArgs: [where]
     );
 
-    List<TimeRecord> records;
+    List<TimeRecord> records = List<TimeRecord>();
     if(maps.isNotEmpty){
+      print("${maps.length} rows");
       maps.forEach((element) =>
        records.add(TimeRecord.fromMap(element)));
 
@@ -72,7 +76,7 @@ class TimeRecordDatabaseOpenHelper {
   }
 
   Future<int> deleteRecordsForDate(DateTime date) async {
-    String whereArg = "${date.month}/${date.year}";
+    String whereArg = "${date.day}/${date.month}/${date.year}";
     return await db.delete(tableName, where: "$columnDate = ?", whereArgs: [whereArg]);
   }
 
