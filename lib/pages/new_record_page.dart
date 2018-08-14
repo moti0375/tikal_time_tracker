@@ -335,7 +335,7 @@ class NewRecordPageState extends State<NewRecordPage> {
 
   Future<Null> _showStartTimeDialog() async {
     final TimeOfDay picked =
-    await showTimePicker(context: context, initialTime: TimeOfDay.now());
+    await showTimePicker(context: context, initialTime: _startTime != null ? _startTime : TimeOfDay.now());
 
     if (picked != null) {
       setState(() {
@@ -369,7 +369,7 @@ class NewRecordPageState extends State<NewRecordPage> {
 
   Future<Null> _showFinishTimeDialog() async {
     final TimeOfDay picked =
-    await showTimePicker(context: context, initialTime: TimeOfDay.now());
+    await showTimePicker(context: context, initialTime: _finishTime != null ? _finishTime : TimeOfDay.now());
 
     if (picked != null) {
       setState(() {
@@ -380,7 +380,7 @@ class NewRecordPageState extends State<NewRecordPage> {
             date: DateTime.now(),
             startTime: _startTime,
             finishTime: _finishTime);
-        durationInputController = TextEditingController(text: "${_duration.inHours}:${_duration.inSeconds % 60}");
+        durationInputController = TextEditingController(text: "${_duration.inHours}:${_duration.inMinutes % 60 == 0 ? 0 : _duration.inMinutes % 60 < 10 ? "0${_duration.inMinutes % 60}" : _duration.inMinutes % 60}");
       });
     }
   }
