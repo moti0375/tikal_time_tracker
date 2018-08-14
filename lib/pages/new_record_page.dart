@@ -20,10 +20,14 @@ class NewRecordPageState extends State<NewRecordPage> {
   Project _selectedProject;
   TimeOfDay _startTime;
   TimeOfDay _finishTime;
+  Duration _duration;
   DateTime _date;
+  String _comment;
   TextEditingController startTimeController;
   TextEditingController finishTimeController;
   TextEditingController dateInputController;
+  TextEditingController durationInputController;
+  TextEditingController commentInputController;
   bool isButtonEnabled = false;
   TimeRecordsRepository repository = new TimeRecordsRepository();
 
@@ -154,7 +158,7 @@ class NewRecordPageState extends State<NewRecordPage> {
       ),
     );
 
-    final srartTimePicker = Container(
+    final startTimePicker = Container(
       padding: EdgeInsets.only(left: 32.0, right: 32.0, top: 8.0),
       child: new Row(
         children: <Widget>[
@@ -219,6 +223,7 @@ class NewRecordPageState extends State<NewRecordPage> {
           Container(
             child: new Flexible(
                 child: new TextField(
+                    controller: durationInputController,
                     decoration: InputDecoration(hintText: "Duration",
                         contentPadding: EdgeInsets.fromLTRB(
                             10.0, 10.0, 10.0, 10.0),
@@ -271,7 +276,7 @@ class NewRecordPageState extends State<NewRecordPage> {
             projectsDropDown,
             tasksDropDown,
             dateInput,
-            srartTimePicker,
+            startTimePicker,
             finishTimePicker,
             durationInput,
             Container(
@@ -280,6 +285,10 @@ class NewRecordPageState extends State<NewRecordPage> {
                   mainAxisSize: MainAxisSize.max,
                   children: <Widget>[
                     TextField(maxLines: 3,
+                        onChanged: (value){
+                          _comment = value;
+                        },
+                        controller: commentInputController,
                         decoration: InputDecoration(
                             border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(20.0)),
@@ -367,10 +376,11 @@ class NewRecordPageState extends State<NewRecordPage> {
         _finishTime = picked;
         finishTimeController =
         new TextEditingController(text: "${picked.hour}:${picked.minute}");
-        calculateDuration(
+        _duration = calculateDuration(
             date: DateTime.now(),
             startTime: _startTime,
             finishTime: _finishTime);
+        durationInputController = TextEditingController(text: "${_duration.inHours}:${_duration.inSeconds % 60}");
       });
     }
   }
@@ -378,7 +388,7 @@ class NewRecordPageState extends State<NewRecordPage> {
   _handleSaveButtonClicked() {
     print("Button Clicked");
     TimeRecord timeRecord = TimeRecord(project: _selectedProject.name, task: _selectedTask.toString()
-        .substring(_selectedTask.toString().indexOf('.') + 1), dateTime: _date, start: _startTime, finish: _finishTime, duration: calculateDuration(date: _date, startTime: _startTime, finishTime: _finishTime), comment: "");
+        .substring(_selectedTask.toString().indexOf('.') + 1), dateTime: _date, start: _startTime, finish: _finishTime, duration: calculateDuration(date: _date, startTime: _startTime, finishTime: _finishTime), comment: _comment);
     repository.addTimeForDate(timeRecord).then((value) {
       print("Record ${value.id} was added to db");
       Navigator.pop(context);
@@ -394,7 +404,7 @@ class NewRecordPageState extends State<NewRecordPage> {
         date.year, date.month, date.day, finishTime.hour, finishTime.minute);
 
     Duration d = f.difference(s);
-    print("${d.inHours}:${d.inHours % 60}");
+    print("${d.inHours}:${d.inSeconds % 60}");
     return d;
   }
 

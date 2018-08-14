@@ -23,7 +23,7 @@ class TimeRecord{
       this.dateTime, this.comment, this.duration}){
     DateTime s  = DateTime(dateTime.year, dateTime.month, dateTime.day, start.hour, start.minute);
     DateTime f  = DateTime(dateTime.year, dateTime.month, dateTime.day, finish.hour, finish.minute);
-    Duration d = s.difference(f);
+    duration = _calculateDuration(start: s, finish: f);
   }
 
 
@@ -33,7 +33,7 @@ class TimeRecord{
       columnDate.toString() : "${dateTime.day}/${dateTime.month}/${dateTime.year}",
       columnStart.toString() : "${start.hour}:${start.minute}",
       columnFinish.toString() : "${finish.hour}:${finish.minute}",
-      columnDuration.toString() : "",
+      columnDuration.toString() : "${duration.inHours}:${duration.inSeconds % 60}",
       columnComment.toString() : comment
     };
 
@@ -70,9 +70,20 @@ class TimeRecord{
     }).toList());
     finish = TimeOfDay(hour: container[0], minute: container[1]);
 
+
+    duration = _calculateDuration(start: DateTime(dateTime.year, dateTime.month, dateTime.day, start.hour, start.minute), finish: DateTime(dateTime.year, dateTime.month, dateTime.day, finish.hour, finish.minute));
     comment = map[columnComment];
 
   }
+
+  @override
+  String toString() {
+    return 'TimeRecord{id: $id, project: $project, task: $task, start: $start, finish: $finish, duration: $duration, dateTime: $dateTime, comment: $comment}';
+  }
+}
+
+Duration _calculateDuration({DateTime start, DateTime finish}){
+  return finish.difference(start);
 }
 
 enum Role{

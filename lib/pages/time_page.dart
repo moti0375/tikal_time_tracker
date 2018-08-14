@@ -174,6 +174,7 @@ class MainPageState extends State<MainPage> implements DrawerOnClickListener {
 
   void _refreshList(List<TimeRecord> records){
     setState(() {
+      print("records for ${_selectedDate} : ${records.toString()}");
       _records = records;
     });
   }
