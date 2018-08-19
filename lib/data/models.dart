@@ -47,13 +47,15 @@ class TimeRecord{
   TimeRecord.fromMap(Map map){
     id = map[columnId];
     project = map[columnProject];
+    task = map[columnTask];
 
     List<dynamic> container = map[columnDate].toString().split("/").map((String element) {
       return int.parse(element);
     }).toList();
-    
-    dateTime = new DateTime(container[0], container[1], container[2]);
 
+    print("fromMap: ${container.toString()}");
+
+    dateTime = new DateTime(container[2], container[1], container[0]);
     container.clear();
 
     container.addAll(map[columnStart].split(":").map((String element) {
@@ -79,6 +81,10 @@ class TimeRecord{
   @override
   String toString() {
     return 'TimeRecord{id: $id, project: $project, task: $task, start: $start, finish: $finish, duration: $duration, dateTime: $dateTime, comment: $comment}';
+  }
+
+  String getDurationString(){
+    return "${duration.inHours}:${duration.inMinutes % 60 == 0 ? "00" : duration.inMinutes % 60 < 10 ? "0${duration.inMinutes % 60}" : duration.inMinutes % 60}";
   }
 }
 

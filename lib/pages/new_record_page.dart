@@ -391,7 +391,7 @@ class NewRecordPageState extends State<NewRecordPage> {
         .substring(_selectedTask.toString().indexOf('.') + 1), dateTime: _date, start: _startTime, finish: _finishTime, duration: calculateDuration(date: _date, startTime: _startTime, finishTime: _finishTime), comment: _comment);
     repository.addTimeForDate(timeRecord).then((value) {
       print("Record ${value.id} was added to db");
-      Navigator.pop(context);
+      Navigator.of(context).pop(true);
     });
     }
   }
