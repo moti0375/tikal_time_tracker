@@ -23,11 +23,11 @@ class TimeRecordDatabaseOpenHelper {
             $columnId integer primary key autoincrement, 
   $columnProject text not null,
   $columnTask text not null,
-  $columnDate text not null,
+  $columnDate integer not null,
   $columnStart text not null,
   $columnFinish text,
   $columnDuration text,
-  $columnComment)''');
+  $columnComment text)''');
       print("database: onCreate");
     });
   }
@@ -53,7 +53,8 @@ class TimeRecordDatabaseOpenHelper {
     if(db == null){
       print("db is null");
     }
-    String where = "${date.day}/${date.month}/${date.year}";
+    String where = "${date.millisecondsSinceEpoch}";
+    print("getTimeRecordForDate: from $where");
     List<Map> maps  = await db.query(tableName,
     columns: [columnId, columnProject, columnTask, columnDate, columnStart, columnFinish, columnDuration, columnComment],
       where: "$columnDate = ?",

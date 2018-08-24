@@ -360,9 +360,10 @@ class NewRecordPageState extends State<NewRecordPage> {
 
     if (picked != null) {
       setState(() {
-        _date = picked;
+        _date = DateTime(picked.year, picked.month, picked.day, 0, 0, 0, 0);
+        print("picked: ${_date.millisecondsSinceEpoch}");
         dateInputController =
-        new TextEditingController(text: "${picked.day}/${picked.month}/${picked.year}");
+        new TextEditingController(text: "${_date.day}/${_date.month}/${_date.year}");
       });
     }
   }

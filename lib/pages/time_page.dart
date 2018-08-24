@@ -29,7 +29,8 @@ class MainPageState extends State<MainPage> implements DrawerOnClickListener {
   void initState() {
     super.initState();
     print("initState");
-    _selectedDate = DateTime.now();
+    var now = DateTime.now();
+    _selectedDate = DateTime(now.year, now.month, now.day, 0, 0, 0, 0, 0);
     _loadRecords(_selectedDate);
     dateInputController = new TextEditingController(text: "${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}");
   }
@@ -235,7 +236,7 @@ class MainPageState extends State<MainPage> implements DrawerOnClickListener {
 
     if(picked != null){
       setState(() {
-        _selectedDate = picked;
+        _selectedDate = DateTime(picked.year, picked.month, picked.day, 0, 0, 0, 0, 0);
         dateInputController = new TextEditingController(text: "${picked.day}/${picked.month}/${picked.year}");
         _loadRecords(picked);
       });

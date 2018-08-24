@@ -24,13 +24,14 @@ class TimeRecord{
     DateTime s  = DateTime(dateTime.year, dateTime.month, dateTime.day, start.hour, start.minute);
     DateTime f  = DateTime(dateTime.year, dateTime.month, dateTime.day, finish.hour, finish.minute);
     duration = _calculateDuration(start: s, finish: f);
+    print("TimeRecord: ${dateTime.millisecondsSinceEpoch}");
   }
 
 
   Map<String, dynamic> toMap(){
     Map<String, dynamic> map = {columnProject.toString(): project,
       columnTask.toString(): task,
-      columnDate.toString() : "${dateTime.day}/${dateTime.month}/${dateTime.year}",
+      columnDate.toString() : dateTime.millisecondsSinceEpoch,
       columnStart.toString() : "${start.hour}:${start.minute}",
       columnFinish.toString() : "${finish.hour}:${finish.minute}",
       columnDuration.toString() : "${duration.inHours}:${duration.inSeconds % 60}",
@@ -49,19 +50,11 @@ class TimeRecord{
     project = map[columnProject];
     task = map[columnTask];
 
-    List<dynamic> container = map[columnDate].toString().split("/").map((String element) {
+    dateTime = DateTime.fromMillisecondsSinceEpoch(map[columnDate]);
+
+    List<dynamic> container = map[columnStart].toString().split(":").map((String element) {
       return int.parse(element);
     }).toList();
-
-    print("fromMap: ${container.toString()}");
-
-    dateTime = new DateTime(container[2], container[1], container[0]);
-    container.clear();
-
-    container.addAll(map[columnStart].split(":").map((String element) {
-      print("fromMap: $element");
-      return int.parse(element);
-    }).toList());
 
     start = TimeOfDay(hour: container[0], minute: container[1]);
 
