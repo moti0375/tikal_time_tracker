@@ -72,6 +72,32 @@ class TimeRecordDatabaseOpenHelper {
     return null;
   }
 
+  Future<List<TimeRecord>> getRecordsBetweenDates(DateTime startDate, DateTime endDate) async {
+    if(db == null){
+      print("db is null");
+    }
+
+     var where = ["${startDate.millisecondsSinceEpoch}","${endDate.millisecondsSinceEpoch}"];
+    print("getTimeRecordForDate: from $where");
+    List<Map> maps  = await db.query(tableName,
+        columns: [columnId, columnProject, columnTask, columnDate, columnStart, columnFinish, columnDuration, columnComment],
+        where: "$columnDate >= ? AND $columnDate <= ?",
+        whereArgs: where,
+        orderBy: columnDate
+    );
+
+    List<TimeRecord> records = List<TimeRecord>();
+    if(maps != null && maps.isNotEmpty){
+      print("${maps.length} rows");
+      maps.forEach((element) =>
+          records.add(TimeRecord.fromMap(element)));
+    }
+
+    return records;
+  }
+
+
+
   Future<int> deleteRecordById(int id) async {
     return await db.delete(tableName, where: "$columnId = ?", whereArgs: [id]);
   }

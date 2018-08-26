@@ -51,4 +51,9 @@ class LocalDataSource implements TimeDateSource {
     return databaseOpenHelper.deleteRecordsForDate(dateTime);
   }
 
+  @override
+  Future<List<TimeRecord>> getRecordsBetweenDates(DateTime startDate, DateTime endDate) {
+    return databaseOpenHelper.getRecordsBetweenDates(startDate, endDate);
+  }
+
 }

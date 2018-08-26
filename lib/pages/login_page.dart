@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../bottom_navigation.dart';
 import '../data/repository/time_records_repository.dart';
+import '../data/user.dart';
+import '../data/models.dart';
 
 class LoginPage extends StatefulWidget {
   static String tag = "LoginPage";
@@ -57,9 +59,7 @@ class LoginPageState extends State<LoginPage> {
           minWidth: 200.0,
           height: 42.0,
           onPressed: () {
-            Navigator.of(context).
-            pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => new BottomNavigation()));
-            print("Button Clicked");
+            _createUserAndNavigate();
             },
           color: Colors.lightBlueAccent,
           child: Text("Login",
@@ -95,4 +95,17 @@ class LoginPageState extends State<LoginPage> {
       ),
     );
   }
+
+  _createUserAndNavigate(){
+
+    Project lemui = new Project(name: "Leumi", tasks: ["Development", "Consulting"]);
+    Project gm = new Project(name: "GM", tasks: ["Development", "Consulting"]);
+    Project tikal = new Project(name: "Tikal", tasks: ["Development", "Meeting", "Training", "Vacation", "Accounting", "ArmyService", "General", "Illness", "Management"]);
+
+    User.init("Moti Bartov", "User", "Tikal", <Project>[tikal, lemui, gm]);
+    Navigator.of(context).
+    pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => new BottomNavigation()));
+    print("Button Clicked");
+  }
+
 }

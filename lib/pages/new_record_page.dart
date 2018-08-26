@@ -34,8 +34,8 @@ class NewRecordPageState extends State<NewRecordPage> {
 
   List<Project> _projects = new List<Project>();
 
-  JobTask _selectedTask;
-  List<JobTask> _tasks = new List<JobTask>();
+  String _selectedTask;
+  List<String> _tasks = new List<String>();
 
   @override
   void initState() {
@@ -57,7 +57,7 @@ class NewRecordPageState extends State<NewRecordPage> {
     });
   }
 
-  void _onTaskSelected(JobTask value) {
+  void _onTaskSelected(String value) {
     setState(() {
       _selectedTask = value;
     });
@@ -77,7 +77,7 @@ class NewRecordPageState extends State<NewRecordPage> {
 
   void _setButtonState() {
     setState(() {
-      if (_date != null && _startTime != null) {
+      if (_date != null && _startTime != null && _selectedProject != null && _selectedTask != null) {
         print("setButtonState: Button enabled");
         isButtonEnabled = true;
       } else {
@@ -140,8 +140,8 @@ class NewRecordPageState extends State<NewRecordPage> {
                     ),
                   ),
                   value: _selectedTask,
-                  items: _tasks.map((JobTask value) {
-                    return new DropdownMenuItem<JobTask>(
+                  items: _tasks.map((String value) {
+                    return new DropdownMenuItem<String>(
                       value: value,
                       child: new Text(
                         value
@@ -151,7 +151,7 @@ class NewRecordPageState extends State<NewRecordPage> {
                       ),
                     );
                   }).toList(),
-                  onChanged: (JobTask value) {
+                  onChanged: (String value) {
                     _onTaskSelected(value);
                   })),
         ],
@@ -270,7 +270,7 @@ class NewRecordPageState extends State<NewRecordPage> {
       ),
       body: Center(
         child: ListView(
-          shrinkWrap: true,
+          shrinkWrap: false,
           children: <Widget>[
             new NewRecordTitle(),
             projectsDropDown,

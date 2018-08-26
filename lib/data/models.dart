@@ -1,14 +1,6 @@
 import 'package:flutter/material.dart';
 import '../data/database/database_helper.dart';
 
-class User{
-  String name;
-  String login;
-  Role role;
-
-  User({this.name, this.login, this.role});
-}
-
 class TimeRecord{
   int id;
   String project;
@@ -73,7 +65,7 @@ class TimeRecord{
 
   @override
   String toString() {
-    return 'TimeRecord{id: $id, project: $project, task: $task, start: $start, finish: $finish, duration: $duration, dateTime: $dateTime, comment: $comment}';
+    return 'TimeRecord{id: $id, project: $project, task: $task, start: $start, finish: $finish, duration: $duration, dateTime: ${dateTime.millisecondsSinceEpoch}, comment: $comment}';
   }
 
   String getDurationString(){
@@ -111,6 +103,45 @@ enum JobTask{
 
 class Project{
   final String name;
-  final List<JobTask> tasks;
+  final List<String> tasks;
   const Project({this.name, this.tasks});
 }
+
+
+class Report{
+  final DateTime startDate;
+  final DateTime endDate;
+  final List<TimeRecord> report;
+  final Project project;
+  final String task;
+  int total = 0;
+
+  Report({this.startDate, this.endDate, this.report, this.project, this.task}){
+    _calculateTotal();
+  }
+
+  _calculateTotal(){
+    if(this.report.isNotEmpty){
+      print("Calcultate total.. ${this.report.toString()}");
+      this.report.forEach((r){
+        print("Calcultate total.. ${r.duration.inMinutes}");
+        total = total +  r.duration.inMinutes;
+      });
+    }else{
+      print("report is empty");
+      total = 0;
+    }
+    print("Total: $total");
+  }
+
+  String getTotalString(){
+    return "${total~/60}:${total % 60 == 0 ? "00" : total % 60 < 10 ? "0${total % 60}" : total % 60}";
+  }
+
+  @override
+  String toString() {
+    return 'Report{startDate: $startDate, endTime: $endDate, report: $report, project: $project, task: $task}';
+  }
+
+}
+

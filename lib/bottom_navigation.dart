@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'pages/time_page.dart';
-import 'pages/reports_page.dart';
+import 'pages/reports/reports_page.dart';
 import 'pages/users_page.dart';
 import 'pages/profile_page.dart';
-
+import 'data/user.dart';
+import 'pages/reports/generate_report_page.dart';
 
 enum Tab{
   Time,
@@ -72,9 +73,9 @@ class BottomNavigationState extends State<BottomNavigation>{
   Widget _buildBody() {
     switch(currentTab){
       case Tab.Time:
-        return MainPage();
+        return TimePage();
       case Tab.Reports:
-        return ReportPage();
+        return GenerateReportPage();
       case Tab.Users:
         return UsersPage();
       case Tab.Profile:

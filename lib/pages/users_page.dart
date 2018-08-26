@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-
+import '../data/user.dart';
 
 class UsersPage extends StatefulWidget{
 
   @override
   State<StatefulWidget> createState() {
+    print("Users: ${User().name}, Projects: ${User().projects[0].name}");
     return UsersPageState();
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'pages/login_page.dart';
 import 'pages/time_page.dart';
+import 'data/user.dart';
 
 void main() => runApp(new TimeTracker());
 

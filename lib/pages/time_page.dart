@@ -3,19 +3,19 @@ import 'package:tikal_time_tracker/ui/app_drawer.dart';
 import 'package:tikal_time_tracker/ui/time_title.dart';
 import 'new_record_page.dart';
 import '../data/models.dart';
+import '../data/user.dart';
 import '../data/repository/time_records_repository.dart';
 import 'dart:async';
 import '../pages/login_page.dart';
-import 'dart:async';
 
-class MainPage extends StatefulWidget {
+class TimePage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return new MainPageState();
+    return new TimePageState();
   }
 }
 
-class MainPageState extends State<MainPage> implements DrawerOnClickListener {
+class TimePageState extends State<TimePage> implements DrawerOnClickListener {
   final _items = <String>["Moti", "Nurint", "Yarden", "Yahel"];
   Choice _onSelected;
   DateTime _selectedDate;
@@ -58,7 +58,7 @@ class MainPageState extends State<MainPage> implements DrawerOnClickListener {
               ),
               Container(
                 padding: EdgeInsets.only(bottom: 2.0),
-                child: Text("Moti Bartov, User, Tikal"),
+                child: Text("${User().name}, ${User().role}, ${User().company}"),
               ),
               Expanded(
                 child: _buildListView(_records),
@@ -70,8 +70,9 @@ class MainPageState extends State<MainPage> implements DrawerOnClickListener {
   }
 
   Widget _buildListRow(TimeRecord timeRecord ){
-    print("_buildListRow: task = ${timeRecord}");
+    print("_buildListRow: task = ${timeRecord.task}");
     return new Card(elevation: 1.0,
+        color: timeRecord.id %2 == 0 ? Colors.white : Colors.grey.shade400,
         margin: EdgeInsets.symmetric(vertical: 1.0, horizontal: 1.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -215,10 +216,8 @@ class MainPageState extends State<MainPage> implements DrawerOnClickListener {
   }
 
   _navigateToNextScreen(){
-    final projects = [
-      new Project(name: "Leumi", tasks: [JobTask.Development, JobTask.Consulting]),
-      new Project(name: "GM", tasks: [JobTask.Development, JobTask.Consulting]),
-      new Project(name: "Tikal", tasks: [JobTask.Development, JobTask.Meeting, JobTask.Training, JobTask.Vacation, JobTask.Accounting, JobTask.ArmyService, JobTask.General, JobTask.Illness, JobTask.Management])];
+    final projects = User().projects;
+    print("_navigateToNextScreen: " + projects.toString());
       Navigator.of(context).
       push(new MaterialPageRoute(builder: (BuildContext context) => new NewRecordPage(projects: projects))).then((value){
         if(value != null){
