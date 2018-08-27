@@ -21,8 +21,15 @@ class ReportPage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          _createTitle(context),
-          _buildContent()
+          Expanded(
+            flex: 0,
+            child: _createTitle(context),
+
+          ),
+          Expanded(
+            flex: 1,
+            child:_buildContent()
+          )
         ],
       ),
     );
@@ -30,13 +37,10 @@ class ReportPage extends StatelessWidget {
 
   _buildContent() {
     if (report == null || report.report.isEmpty) {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[PlaceholderContent()],
-      );
+      return PlaceholderContent();
     } else {
       return Container(
-        padding: EdgeInsets.symmetric(horizontal: 32.0),
+        padding: EdgeInsets.symmetric(horizontal: 32.0, vertical: 10.0),
         child: _buildListView(report.report)
       );
     }
