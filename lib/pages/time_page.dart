@@ -219,27 +219,35 @@ class TimePageState extends State<TimePage> implements DrawerOnClickListener {
     final projects = User().projects;
     print("_navigateToNextScreen: " + projects.toString());
       Navigator.of(context).
-      push(new MaterialPageRoute(builder: (BuildContext context) => new NewRecordPage(projects: projects))).then((value){
+      push(new MaterialPageRoute(builder: (BuildContext context) => new NewRecordPage(projects: projects, dateTime: _selectedDate,))).then((value){
+        print("got value from page");
         if(value != null){
-          print("go value from page");
-          _loadRecords(_selectedDate);
+          if(value is TimeRecord){
+            _onDateSelected(value.dateTime);
+          }else{
+            _loadRecords(_selectedDate);
+          }
         }
       });
   }
 
   Future<Null> _showDateDialog() async {
     final DateTime picked = await showDatePicker(context: context,
-        initialDate: DateTime.now(),
+        initialDate: _selectedDate != null ? _selectedDate : DateTime.now(),
         firstDate: DateTime(_selectedDate.year-1, 1),
         lastDate: DateTime(_selectedDate.year, 12));
 
     if(picked != null){
       setState(() {
-        _selectedDate = DateTime(picked.year, picked.month, picked.day, 0, 0, 0, 0, 0);
-        dateInputController = new TextEditingController(text: "${picked.day}/${picked.month}/${picked.year}");
-        _loadRecords(picked);
+        _onDateSelected(picked);
       });
     }
+  }
+
+  _onDateSelected(DateTime selectedDate){
+    _selectedDate = DateTime(selectedDate.year, selectedDate.month, selectedDate.day, 0, 0, 0, 0, 0);
+    dateInputController = new TextEditingController(text: "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}");
+    _loadRecords(selectedDate);
   }
 
   void _loadRecords(DateTime selectedDate) {

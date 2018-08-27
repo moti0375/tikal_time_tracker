@@ -7,8 +7,9 @@ import '../data/repository/time_records_repository.dart';
 // ignore: must_be_immutable
 class NewRecordPage extends StatefulWidget {
   List<Project> projects;
+  DateTime dateTime;
 
-  NewRecordPage({this.projects});
+  NewRecordPage({this.projects, this.dateTime});
 
   @override
   State<StatefulWidget> createState() {
@@ -46,6 +47,9 @@ class NewRecordPageState extends State<NewRecordPage> {
     );
     finishTimeController = new TextEditingController(text: "");
     dateInputController = new TextEditingController(text: "");
+    if(widget.dateTime != null){
+      _onDateSelected(widget.dateTime);
+    }
   }
 
   void _onProjectSelected(Project value) {
@@ -360,12 +364,17 @@ class NewRecordPageState extends State<NewRecordPage> {
 
     if (picked != null) {
       setState(() {
-        _date = DateTime(picked.year, picked.month, picked.day, 0, 0, 0, 0);
-        print("picked: ${_date.millisecondsSinceEpoch}");
-        dateInputController =
-        new TextEditingController(text: "${_date.day}/${_date.month}/${_date.year}");
+        _onDateSelected(picked);
       });
     }
+  }
+
+  _onDateSelected(DateTime selectedDate){
+    _date = DateTime(selectedDate.year, selectedDate.month, selectedDate.day, 0, 0, 0, 0);
+    print("picked: ${_date.millisecondsSinceEpoch}");
+    dateInputController =
+    new TextEditingController(text: "${_date.day}/${_date.month}/${_date.year}");
+
   }
 
   Future<Null> _showFinishTimeDialog() async {
@@ -392,7 +401,7 @@ class NewRecordPageState extends State<NewRecordPage> {
         .substring(_selectedTask.toString().indexOf('.') + 1), dateTime: _date, start: _startTime, finish: _finishTime, duration: calculateDuration(date: _date, startTime: _startTime, finishTime: _finishTime), comment: _comment);
     repository.addTimeForDate(timeRecord).then((value) {
       print("Record ${value.id} was added to db");
-      Navigator.of(context).pop(true);
+      Navigator.of(context).pop(value);
     });
     }
   }
