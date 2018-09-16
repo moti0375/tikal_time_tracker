@@ -34,7 +34,7 @@ class GenerateReportState extends State<GenerateReportPage> {
   bool isButtonEnabled = false;
 
   TimeRecordsRepository repository = TimeRecordsRepository();
-  
+
   @override
   void initState() {
     super.initState();
@@ -43,111 +43,100 @@ class GenerateReportState extends State<GenerateReportPage> {
   @override
   Widget build(BuildContext context) {
     final projectsDropDown = Container(
-        padding: EdgeInsets.symmetric(horizontal: 25.0),
-        child: Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              DropdownButton(
-                  hint: Container(
-                    width: MediaQuery.of(context).size.width * 0.7,
-                    padding: const EdgeInsets.all(8.0),
-                    child: new Text(
-                      "Select a Project",
-                      style: TextStyle(fontSize: 30.0),
-                    ),
+        margin: EdgeInsets.symmetric(vertical: 4.0),
+        decoration: BoxDecoration(
+            border: Border.all(width: 0.5, color: Colors.black26)),
+        padding: EdgeInsets.symmetric(horizontal: 10.0),
+        child: DropdownButtonHideUnderline(
+          child: DropdownButton(
+              hint: Container(
+                child: new Text(
+                  "Select a Project",
+                  style: TextStyle(fontSize: 30.0),
+                  textAlign: TextAlign.start,
+                ),
+              ),
+              value: _selectedProject,
+              isDense: true,
+              iconSize: 50.0,
+              items: User().projects.map((Project value) {
+                return new DropdownMenuItem<Project>(
+                  value: value,
+                  child: new Text(
+                    value.name,
+                    style: TextStyle(fontSize: 25.0),
                   ),
-                  value: _selectedProject,
-                  isDense: true,
-                  iconSize: 50.0,
-                  items: User().projects.map((Project value) {
-                    return new DropdownMenuItem<Project>(
-                      value: value,
-                      child: new Text(
-                        value.name,
-                        style: TextStyle(fontSize: 25.0),
-                      ),
-                    );
-                  }).toList(),
-                  onChanged: (Project value) {
-                    _onProjectSelected(value);
-                  })
-            ]));
+                );
+              }).toList(),
+              onChanged: (Project value) {
+                _onProjectSelected(value);
+              }),
+        ));
 
     final tasksDropDown = Container(
-      padding: EdgeInsets.symmetric(horizontal: 25.0),
-      child: Row(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          new Expanded(
-              child: new DropdownButton(
-                  iconSize: 50.0,
-                  hint: Container(
-                    width: MediaQuery.of(context).size.width * 0.7,
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      "Select a Task",
-                      style: TextStyle(fontSize: 30.0),
-                    ),
+        margin: EdgeInsets.symmetric(vertical: 4.0),
+        decoration: BoxDecoration(
+            border: Border.all(width: 0.5, color: Colors.black26)),
+        padding: EdgeInsets.symmetric(horizontal: 10.0),
+        child: DropdownButtonHideUnderline(
+          child: new DropdownButton(
+              iconSize: 50.0,
+              hint: Container(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  "Select a Task",
+                  style: TextStyle(fontSize: 30.0),
+                ),
+              ),
+              value: _selectedTask,
+              items: _tasks.map((String value) {
+                return new DropdownMenuItem<String>(
+                  value: value,
+                  child: new Text(
+                    value
+                        .toString()
+                        .substring(value.toString().indexOf('.') + 1),
+                    style: TextStyle(fontSize: 25.0),
                   ),
-                  value: _selectedTask,
-                  items: _tasks.map((String value) {
-                    return new DropdownMenuItem<String>(
-                      value: value,
-                      child: new Text(
-                        value
-                            .toString()
-                            .substring(value.toString().indexOf('.') + 1),
-                        style: TextStyle(fontSize: 25.0),
-                      ),
-                    );
-                  }).toList(),
-                  onChanged: (String value) {
-                    _onTaskSelected(value);
-                  })),
-        ],
-      ),
-    );
+                );
+              }).toList(),
+              onChanged: (String value) {
+                _onTaskSelected(value);
+              }),
+        ));
 
     final predefiendPeriod = Container(
-      padding: EdgeInsets.symmetric(horizontal: 25.0),
-      child: Row(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          new Expanded(
-              child: new DropdownButton(
-                  iconSize: 50.0,
-                  hint: Container(
-                    width: MediaQuery.of(context).size.width * 0.7,
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      "Select Time Period",
-                      style: TextStyle(fontSize: 30.0),
-                    ),
+        margin: EdgeInsets.symmetric(vertical: 4.0),
+        decoration: BoxDecoration(
+            border: Border.all(width: 0.5, color: Colors.black26)),
+        padding: EdgeInsets.symmetric(horizontal: 10.0),
+        child: DropdownButtonHideUnderline(
+          child: new DropdownButton(
+              iconSize: 50.0,
+              hint: Container(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  "Select Time Period",
+                  style: TextStyle(fontSize: 30.0),
+                ),
+              ),
+              value: _selectedPeriod,
+              items: _predefiendPeriod.map((String value) {
+                return new DropdownMenuItem<String>(
+                  value: value,
+                  child: new Text(
+                    value,
+                    style: TextStyle(fontSize: 25.0),
                   ),
-                  value: _selectedPeriod,
-                  items: _predefiendPeriod.map((String value) {
-                    return new DropdownMenuItem<String>(
-                      value: value,
-                      child: new Text(
-                        value,
-                        style: TextStyle(fontSize: 25.0),
-                      ),
-                    );
-                  }).toList(),
-                  onChanged: (String value) {
-                    _onPeriodSelected(value);
-                  })),
-        ],
-      ),
-    );
+                );
+              }).toList(),
+              onChanged: (String value) {
+                _onPeriodSelected(value);
+              }),
+        ));
 
     final startDateInput = Container(
-      padding: EdgeInsets.only(left: 32.0, right: 32.0, top: 8.0),
+      padding: EdgeInsets.only(left: 0.0, right: 0.0, top: 8.0),
       child: new Row(
         children: <Widget>[
           Padding(
@@ -177,7 +166,7 @@ class GenerateReportState extends State<GenerateReportPage> {
     );
 
     final endDateInput = Container(
-      padding: EdgeInsets.only(left: 32.0, right: 32.0, top: 8.0),
+      padding: EdgeInsets.only(left: 0.0, right: 0.0, top: 8.0),
       child: new Row(
         children: <Widget>[
           Padding(
@@ -206,57 +195,62 @@ class GenerateReportState extends State<GenerateReportPage> {
       ),
     );
 
-   final generateButton = Column(
-       mainAxisSize: MainAxisSize.max,
-       mainAxisAlignment: MainAxisAlignment.start,
-       children: <Widget>[
-         Material(borderRadius: BorderRadius.circular(10.0),
-           shadowColor: isButtonEnabled
-               ? Colors.orangeAccent.shade100
-               : Colors.grey.shade100,
-           elevation: 2.0,
-           child: MaterialButton(
-             minWidth: 200.0,
-             height: 42.0,
-             onPressed: () {
-               if (isButtonEnabled) {
-                 _handleGenerateButtonClicked();
-               }
-             },
-             color: isButtonEnabled ? Colors.orangeAccent : Colors
-                 .grey,
-             child: Text(
-                 "Generate", style: TextStyle(color: Colors.white)),
-           ),
-         ),
-       ],
-     );
-
+    var generateButton = Container(
+      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      child: Material(
+          borderRadius: BorderRadius.circular(10.0),
+          shadowColor: isButtonEnabled
+              ? Colors.orangeAccent.shade100
+              : Colors.grey.shade100,
+          elevation: 2.0,
+          child: MaterialButton(
+            minWidth: 200.0,
+            height: 42.0,
+            onPressed: () {
+              if (isButtonEnabled) {
+                _handleGenerateButtonClicked();
+              }
+            },
+            color: isButtonEnabled ? Colors.orangeAccent : Colors.grey,
+            child: Text("Generate", style: TextStyle(color: Colors.white)),
+          )),
+    );
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Reports"),
-        elevation: 1.0,
-      ),
-      backgroundColor: Colors.white,
-      body: Center(
-        child: Container(
-          padding: const EdgeInsets.all(8.0),
-          child: ListView(
-            padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 0.0),
-            shrinkWrap: false,
+        appBar: AppBar(
+          title: Text("Reports"),
+          elevation: 1.0,
+        ),
+        backgroundColor: Colors.white,
+        body: Container(
+          padding: EdgeInsets.symmetric(horizontal: 16.0),
+          child: Column(
             children: <Widget>[
-              projectsDropDown,
-              tasksDropDown,
-              startDateInput,
-              endDateInput,
-              predefiendPeriod,
-              generateButton
+              Flexible(
+                flex: 2,
+                child: ListView(
+                  padding:
+                      EdgeInsets.symmetric(vertical: 16.0, horizontal: 0.0),
+                  shrinkWrap: false,
+                  children: <Widget>[
+                    projectsDropDown,
+                    tasksDropDown,
+                    startDateInput,
+                    endDateInput,
+                    predefiendPeriod,
+                  ],
+                ),
+              ),
+              Flexible(
+                  flex: 1,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[generateButton],
+                  ))
             ],
           ),
-        ),
-      ),
-    );
+        ));
   }
 
   void _onProjectSelected(Project value) {
@@ -361,42 +355,54 @@ class GenerateReportState extends State<GenerateReportPage> {
   }
 
   void _onSelectThisMonth() {
-    _onSelectedStartDate(DateTime(DateTime.now().year, DateTime.now().month, 1));
-    _onSelectedEndDate(DateTime(DateTime.now().year, DateTime.now().month, _daysInMonth(DateTime.now().year, DateTime.now().month)));
+    _onSelectedStartDate(
+        DateTime(DateTime.now().year, DateTime.now().month, 1));
+    _onSelectedEndDate(DateTime(DateTime.now().year, DateTime.now().month,
+        _daysInMonth(DateTime.now().year, DateTime.now().month)));
   }
 
   void _onSelectPreviousMonth() {
-    _onSelectedStartDate(DateTime(DateTime.now().year, DateTime.now().month - 1, 1));
-    _onSelectedEndDate(DateTime(DateTime.now().year, DateTime.now().month - 1, _daysInMonth(DateTime.now().year, DateTime.now().month - 1)));
+    _onSelectedStartDate(
+        DateTime(DateTime.now().year, DateTime.now().month - 1, 1));
+    _onSelectedEndDate(DateTime(DateTime.now().year, DateTime.now().month - 1,
+        _daysInMonth(DateTime.now().year, DateTime.now().month - 1)));
   }
 
   void _onSelectThisWeek() {
     var startDay = DateTime.now().weekday;
-    _onSelectedStartDate(DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day - DateTime.now().weekday));
-    _onSelectedEndDate(DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day + (7 - DateTime.now().weekday) - 1) );
+    _onSelectedStartDate(DateTime(DateTime.now().year, DateTime.now().month,
+        DateTime.now().day - DateTime.now().weekday));
+    _onSelectedEndDate(DateTime(DateTime.now().year, DateTime.now().month,
+        DateTime.now().day + (7 - DateTime.now().weekday) - 1));
   }
 
   void _onSelectedPrevWeek() {
-    _onSelectedStartDate(DateTime(DateTime.now().year, DateTime.now().month, (DateTime.now().day - DateTime.now().weekday) - 7));
-    _onSelectedEndDate(DateTime(DateTime.now().year, DateTime.now().month, (DateTime.now().day + (7 - DateTime.now().weekday) - 1) - 7) );
+    _onSelectedStartDate(DateTime(DateTime.now().year, DateTime.now().month,
+        (DateTime.now().day - DateTime.now().weekday) - 7));
+    _onSelectedEndDate(DateTime(DateTime.now().year, DateTime.now().month,
+        (DateTime.now().day + (7 - DateTime.now().weekday) - 1) - 7));
   }
 
   void _onTodaySelected() {
-    _onSelectedStartDate(DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day));
-    _onSelectedEndDate(DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day));
+    _onSelectedStartDate(DateTime(
+        DateTime.now().year, DateTime.now().month, DateTime.now().day));
+    _onSelectedEndDate(DateTime(
+        DateTime.now().year, DateTime.now().month, DateTime.now().day));
   }
 
   void _onYesterdaySelected() {
-    _onSelectedStartDate(DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day - 1 ));
-    _onSelectedEndDate(DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day - 1));
+    _onSelectedStartDate(DateTime(
+        DateTime.now().year, DateTime.now().month, DateTime.now().day - 1));
+    _onSelectedEndDate(DateTime(
+        DateTime.now().year, DateTime.now().month, DateTime.now().day - 1));
   }
 
-  int _daysInMonth(int year, int month){
-    if(month == 4 || month == 6 || month == 9 || month == 11) return 30;
-    if(month == 2) {
-      if (year%4==0 && year%100!=0 || year%400==0) {
+  int _daysInMonth(int year, int month) {
+    if (month == 4 || month == 6 || month == 9 || month == 11) return 30;
+    if (month == 2) {
+      if (year % 4 == 0 && year % 100 != 0 || year % 400 == 0) {
         return 29;
-      }else{
+      } else {
         return 28;
       }
     }
@@ -404,14 +410,20 @@ class GenerateReportState extends State<GenerateReportPage> {
   }
 
   void _handleGenerateButtonClicked() {
-
-      print("_handleGenerateButtonClicked");
-      repository.getRecordsBetweenDates(_startDate, _endDate).then((items) {
-        if(items != null){
-          print("Got ${items.length} from database");
-        }
-        Navigator.of(context).push(new MaterialPageRoute(builder: (BuildContext context) => new ReportPage(report: Report(report: items, startDate: _startDate, endDate: _endDate, project: null, task: null))));
-      });
+    print("_handleGenerateButtonClicked");
+    repository.getRecordsBetweenDates(_startDate, _endDate).then((items) {
+      if (items != null) {
+        print("Got ${items.length} from database");
+      }
+      Navigator.of(context).push(new MaterialPageRoute(
+          builder: (BuildContext context) => new ReportPage(
+              report: Report(
+                  report: items,
+                  startDate: _startDate,
+                  endDate: _endDate,
+                  project: null,
+                  task: null))));
+    });
   }
 }
 

@@ -97,7 +97,7 @@ class NewRecordPageState extends State<NewRecordPage> {
         padding: EdgeInsets.symmetric(horizontal: 25.0),
         child: Row(
             mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               DropdownButton(
                   hint: Container(

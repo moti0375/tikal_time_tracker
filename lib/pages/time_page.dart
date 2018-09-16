@@ -231,17 +231,15 @@ class TimePageState extends State<TimePage> implements DrawerOnClickListener {
       });
   }
 
-  Future<Null> _showDateDialog() async {
-    final DateTime picked = await showDatePicker(context: context,
+   _showDateDialog() {
+     showDatePicker(context: context,
         initialDate: _selectedDate != null ? _selectedDate : DateTime.now(),
         firstDate: DateTime(_selectedDate.year-1, 1),
-        lastDate: DateTime(_selectedDate.year, 12));
-
-    if(picked != null){
-      setState(() {
-        _onDateSelected(picked);
-      });
-    }
+        lastDate: DateTime(_selectedDate.year, 12)).then((picked){
+        setState(() {
+         _onDateSelected(picked);
+       });
+    });
   }
 
   _onDateSelected(DateTime selectedDate){
