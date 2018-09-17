@@ -36,7 +36,7 @@ class ReportPage extends StatelessWidget {
       return PlaceholderContent();
     } else {
       return Container(
-          padding: EdgeInsets.symmetric(horizontal: 32.0, vertical: 10.0),
+          padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
           child: _buildListView(report.report));
     }
   }
@@ -156,6 +156,65 @@ class ReportPage extends StatelessWidget {
     );
   }
 
+  Widget _buildListTile(TimeRecord item, Color color){
+    return Container(
+      decoration: BoxDecoration(
+        color: color
+      ),
+      child: ListTile(
+        leading: Icon(Icons.work, color: Colors.lightBlueAccent),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisSize: MainAxisSize.max,
+          children: <Widget>[
+            Text("${item.project}", style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold)),
+            Text("${item.task}", style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold) )
+          ],
+        ),
+        subtitle: Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            Padding(
+                padding:
+                EdgeInsets.symmetric(horizontal: 5.0, vertical: 1.0),
+                child: Text(
+                    "${item.dateTime.day}/${item.dateTime.month}/${item.dateTime.year}",
+                    style: TextStyle(fontSize: 12.0))),
+            SizedBox(width: 2.0),
+            Padding(
+                padding:
+                EdgeInsets.symmetric(horizontal: 1.0, vertical: 1.0),
+                child: Text(
+                    "${item.start.hour}:${item.start.minute}",
+                    style: TextStyle(fontSize: 12.0))),
+            Padding(
+                padding:
+                EdgeInsets.symmetric(horizontal: 1.0, vertical: 1.0),
+                child: Text("-", style: TextStyle(fontSize: 12.0))),
+            Padding(
+                padding:
+                EdgeInsets.symmetric(horizontal: 1.0, vertical: 1.0),
+                child: Text(
+                    "${item.finish.hour}:${item.finish.minute}",
+                    style: TextStyle(fontSize: 12.0))),
+            SizedBox(width: 2.0),
+            Padding(
+                padding:
+                EdgeInsets.symmetric(horizontal: 2.0, vertical: 1.0),
+                child: Text(",", style: TextStyle(fontSize: 12.0))),
+            Padding(
+                padding:
+                EdgeInsets.symmetric(horizontal: 1.0, vertical: 1.0),
+                child: Text(item.getDurationString(),
+                    style: TextStyle(fontSize: 12.0))),
+
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildListView(List<TimeRecord> items) {
     print("_buildListView");
     DateTime day;
@@ -177,7 +236,7 @@ class ReportPage extends StatelessWidget {
           }
 
           day = items[i].dateTime;
-          return _buildListRow(items[i], color);
+          return _buildListTile(items[i], color);
         },
         shrinkWrap: true,
         itemCount: items == null ? 0 : items.length);
