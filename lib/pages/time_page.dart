@@ -69,23 +69,24 @@ class TimePageState extends State<TimePage> implements DrawerOnClickListener {
       );
   }
 
-  Widget _buildListRow(TimeRecord timeRecord ){
-    print("_buildListRow: task = ${timeRecord.task}");
+  Widget _buildListRow(TimeRecord timeRecord, Color color ){
+    print("_buildListRow: task = ${color}");
     return new Card(elevation: 1.0,
-        color: timeRecord.id %2 == 0 ? Colors.white : Colors.grey.shade400,
-        margin: EdgeInsets.symmetric(vertical: 1.0, horizontal: 1.0),
+        color: color,
+        margin: EdgeInsets.symmetric(horizontal: 1.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Flexible(
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Padding(padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 1.0),
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
                         child: Text(timeRecord.project, style: TextStyle(fontSize: 23.0, fontWeight: FontWeight.bold))
                     ),
                     SizedBox(width: 2.0),
-                    Padding(padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 1.0),
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
                         child: Text(timeRecord.task, style: TextStyle(fontSize: 23.0, fontWeight: FontWeight.bold))
                     ),
                   ],
@@ -93,25 +94,16 @@ class TimePageState extends State<TimePage> implements DrawerOnClickListener {
               ),
               Flexible(
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Padding(padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 1.0),
+                    Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
                         child: Text("${timeRecord.dateTime.day}/${timeRecord.dateTime.month}/${timeRecord.dateTime.year}", style: TextStyle(fontSize: 12.0))
                     ),
-                    SizedBox(width: 2.0),
-                    Padding(padding: EdgeInsets.symmetric(horizontal: 1.0, vertical: 1.0),
-                        child: Text("${timeRecord.start.hour}:${timeRecord.start.minute}", style: TextStyle(fontSize: 12.0))
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 1.0, vertical: 5.0),
+                        child: Text("${timeRecord.start.hour}:${timeRecord.start.minute} - ${timeRecord.finish.hour}:${timeRecord.finish.minute}", style: TextStyle(fontSize: 12.0))
                     ),
-                    Padding(padding: EdgeInsets.symmetric(horizontal: 1.0, vertical: 1.0),
-                        child: Text("-", style: TextStyle(fontSize: 12.0))
-                    ),
-                    Padding(padding: EdgeInsets.symmetric(horizontal: 1.0, vertical: 1.0),
-                        child: Text("${timeRecord.finish.hour}:${timeRecord.finish.minute}", style: TextStyle(fontSize: 12.0))
-                    ),
-                    SizedBox(width: 2.0),
-                    Padding(padding: EdgeInsets.symmetric(horizontal: 2.0, vertical: 1.0),
-                        child: Text(",", style: TextStyle(fontSize: 12.0))
-                    ),
-                    Padding(padding: EdgeInsets.symmetric(horizontal: 1.0, vertical: 1.0),
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 1.0, vertical: 5.0),
                         child: Text(timeRecord.getDurationString(), style: TextStyle(fontSize: 12.0))
                     ),
                   ],
@@ -124,8 +116,23 @@ class TimePageState extends State<TimePage> implements DrawerOnClickListener {
 
   Widget _buildListView(List<TimeRecord> items ){
     print("_buildListView");
+    Color evenColor = Colors.white;
+    Color oddColor = Colors.grey[200];
+    Color color = evenColor;
+    DateTime day;
+
     return ListView.builder(itemBuilder: (context, i) {
-      return _buildListRow(items[i]);
+      if(i != 0 ){
+        if(day != null && items[i].dateTime.day != day.day ){
+          if(color == evenColor){
+            color = oddColor;
+          } else {
+            color = evenColor;
+          }
+        }
+      }
+      day = items[i].dateTime;
+      return _buildListRow(items[i], color);
     }, shrinkWrap: true, itemCount: items == null ? 0 : items.length);
   }
 

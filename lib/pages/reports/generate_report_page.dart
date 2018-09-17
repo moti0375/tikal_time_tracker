@@ -4,6 +4,8 @@ import '../../data/user.dart';
 import '../../data/models.dart';
 import '../../data/repository/time_records_repository.dart';
 import 'report_page.dart';
+import 'input_field.dart';
+import '../../ui/drop_down_item.dart';
 
 class GenerateReportPage extends StatefulWidget {
   @override
@@ -42,50 +44,51 @@ class GenerateReportState extends State<GenerateReportPage> {
 
   @override
   Widget build(BuildContext context) {
+
     final projectsDropDown = Container(
         margin: EdgeInsets.symmetric(vertical: 4.0),
         decoration: BoxDecoration(
-            border: Border.all(width: 0.5, color: Colors.black26)),
+            border: Border.all(width: 0.5, color: Colors.black45)),
         padding: EdgeInsets.symmetric(horizontal: 10.0),
         child: DropdownButtonHideUnderline(
-          child: DropdownButton(
+          child: new DropdownButton(
+              iconSize: 30.0,
               hint: Container(
-                child: new Text(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
                   "Select a Project",
-                  style: TextStyle(fontSize: 30.0),
-                  textAlign: TextAlign.start,
+                  style: TextStyle(fontSize: 24.0, color: Colors.black26),
                 ),
               ),
               value: _selectedProject,
-              isDense: true,
-              iconSize: 50.0,
               items: User().projects.map((Project value) {
                 return new DropdownMenuItem<Project>(
                   value: value,
                   child: new Text(
                     value.name,
-                    style: TextStyle(fontSize: 25.0),
+                    style: TextStyle(fontSize: 24.0),
                   ),
                 );
               }).toList(),
               onChanged: (Project value) {
                 _onProjectSelected(value);
               }),
-        ));
+        )
+    );
 
     final tasksDropDown = Container(
         margin: EdgeInsets.symmetric(vertical: 4.0),
         decoration: BoxDecoration(
-            border: Border.all(width: 0.5, color: Colors.black26)),
+            border: Border.all(width: 0.5, color: Colors.black45)),
         padding: EdgeInsets.symmetric(horizontal: 10.0),
         child: DropdownButtonHideUnderline(
           child: new DropdownButton(
-              iconSize: 50.0,
+              iconSize: 30.0,
               hint: Container(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
                   "Select a Task",
-                  style: TextStyle(fontSize: 30.0),
+                  style: TextStyle(fontSize: 24.0, color: Colors.black26),
                 ),
               ),
               value: _selectedTask,
@@ -96,7 +99,7 @@ class GenerateReportState extends State<GenerateReportPage> {
                     value
                         .toString()
                         .substring(value.toString().indexOf('.') + 1),
-                    style: TextStyle(fontSize: 25.0),
+                    style: TextStyle(fontSize: 24.0),
                   ),
                 );
               }).toList(),
@@ -106,18 +109,18 @@ class GenerateReportState extends State<GenerateReportPage> {
         ));
 
     final predefiendPeriod = Container(
-        margin: EdgeInsets.symmetric(vertical: 4.0),
+        margin: EdgeInsets.symmetric(vertical: 8.0),
         decoration: BoxDecoration(
-            border: Border.all(width: 0.5, color: Colors.black26)),
+            border: Border.all(width: 0.5, color: Colors.black45)),
         padding: EdgeInsets.symmetric(horizontal: 10.0),
         child: DropdownButtonHideUnderline(
           child: new DropdownButton(
-              iconSize: 50.0,
+              iconSize: 30.0,
               hint: Container(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
                   "Select Time Period",
-                  style: TextStyle(fontSize: 30.0),
+                  style: TextStyle(fontSize: 24.0, color: Colors.black26),
                 ),
               ),
               value: _selectedPeriod,
@@ -126,17 +129,18 @@ class GenerateReportState extends State<GenerateReportPage> {
                   value: value,
                   child: new Text(
                     value,
-                    style: TextStyle(fontSize: 25.0),
+                    style: TextStyle(fontSize: 24.0),
                   ),
                 );
               }).toList(),
               onChanged: (String value) {
                 _onPeriodSelected(value);
               }),
-        ));
+        ),
+    );
 
     final startDateInput = Container(
-      padding: EdgeInsets.only(left: 0.0, right: 0.0, top: 8.0),
+      padding: EdgeInsets.only(left: 0.0, right: 0.0, top: 4.0),
       child: new Row(
         children: <Widget>[
           Padding(
@@ -154,8 +158,7 @@ class GenerateReportState extends State<GenerateReportPage> {
                 child: new TextField(
                     decoration: InputDecoration(
                         hintText: "Start Date",
-                        contentPadding:
-                            EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
+                        contentPadding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20.0))),
                     maxLines: 1,
@@ -217,6 +220,7 @@ class GenerateReportState extends State<GenerateReportPage> {
     );
 
     return Scaffold(
+        resizeToAvoidBottomPadding: false,
         appBar: AppBar(
           title: Text("Reports"),
           elevation: 1.0,
