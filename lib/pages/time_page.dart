@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/src/foundation/diagnostics.dart';
 import 'package:tikal_time_tracker/ui/app_drawer.dart';
 import 'package:tikal_time_tracker/ui/time_title.dart';
 import 'new_record_page.dart';
@@ -7,6 +8,7 @@ import '../data/user.dart';
 import '../data/repository/time_records_repository.dart';
 import 'dart:async';
 import '../pages/login_page.dart';
+import '../ui/time_record_list_adapter.dart';
 
 class TimePage extends StatefulWidget {
   @override
@@ -15,7 +17,7 @@ class TimePage extends StatefulWidget {
   }
 }
 
-class TimePageState extends State<TimePage> implements DrawerOnClickListener {
+class TimePageState extends State<TimePage> implements DrawerOnClickListener, ListAdapterClickListener {
   final _items = <String>["Moti", "Nurint", "Yarden", "Yahel"];
   Choice _onSelected;
   DateTime _selectedDate;
@@ -61,81 +63,13 @@ class TimePageState extends State<TimePage> implements DrawerOnClickListener {
                 child: Text("${User().name}, ${User().role}, ${User().company}"),
               ),
               Expanded(
-                child: _buildListView(_records),
+                child: TimeRecordListAdapter(items: _records, adapterClickListener: this),
               )
             ],
           ),
         ),
       );
   }
-
-  Widget _buildListRow(TimeRecord timeRecord, Color color ){
-    print("_buildListRow: task = ${color}");
-    return new Card(elevation: 1.0,
-        color: color,
-        margin: EdgeInsets.symmetric(horizontal: 1.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Flexible(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Padding(padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
-                        child: Text(timeRecord.project, style: TextStyle(fontSize: 23.0, fontWeight: FontWeight.bold))
-                    ),
-                    SizedBox(width: 2.0),
-                    Padding(padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
-                        child: Text(timeRecord.task, style: TextStyle(fontSize: 23.0, fontWeight: FontWeight.bold))
-                    ),
-                  ],
-                ),
-              ),
-              Flexible(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
-                        child: Text("${timeRecord.dateTime.day}/${timeRecord.dateTime.month}/${timeRecord.dateTime.year}", style: TextStyle(fontSize: 12.0))
-                    ),
-                    Padding(padding: EdgeInsets.symmetric(horizontal: 1.0, vertical: 5.0),
-                        child: Text("${timeRecord.start.hour}:${timeRecord.start.minute} - ${timeRecord.finish.hour}:${timeRecord.finish.minute}", style: TextStyle(fontSize: 12.0))
-                    ),
-                    Padding(padding: EdgeInsets.symmetric(horizontal: 1.0, vertical: 5.0),
-                        child: Text(timeRecord.getDurationString(), style: TextStyle(fontSize: 12.0))
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-    );
-  }
-
-  Widget _buildListView(List<TimeRecord> items ){
-    print("_buildListView");
-    Color evenColor = Colors.white;
-    Color oddColor = Colors.grey[200];
-    Color color = evenColor;
-    DateTime day;
-
-    return ListView.builder(itemBuilder: (context, i) {
-      if(i != 0 ){
-        if(day != null && items[i].dateTime.day != day.day ){
-          if(color == evenColor){
-            color = oddColor;
-          } else {
-            color = evenColor;
-          }
-        }
-      }
-      day = items[i].dateTime;
-      return _buildListRow(items[i], color);
-    }, shrinkWrap: true, itemCount: items == null ? 0 : items.length);
-  }
-
 
   @override
   void onLogoutClicked() {
@@ -267,6 +201,40 @@ class TimePageState extends State<TimePage> implements DrawerOnClickListener {
       print("records for ${_selectedDate} : ${records.toString()}");
       _records = records;
     });
+  }
+
+  @override
+  StatelessElement createElement() {
+    // TODO: implement createElement
+  }
+
+  @override
+  List<DiagnosticsNode> debugDescribeChildren() {
+    // TODO: implement debugDescribeChildren
+  }
+
+  // TODO: implement key
+  @override
+  Key get key => null;
+
+  @override
+  String toStringDeep({String prefixLineOne = '', String prefixOtherLines, DiagnosticLevel minLevel = DiagnosticLevel.debug}) {
+    // TODO: implement toStringDeep
+  }
+
+  @override
+  String toStringShallow({String joiner = ', ', DiagnosticLevel minLevel = DiagnosticLevel.debug}) {
+    // TODO: implement toStringShallow
+  }
+
+  @override
+  TimeRecord onListItemClicked(TimeRecord item) {
+    print("onListItemClicked: $item");
+  }
+
+  @override
+  TimeRecord onListItemLongClick(TimeRecord item) {
+    print("onListItemLongClick: $item");
   }
 }
 

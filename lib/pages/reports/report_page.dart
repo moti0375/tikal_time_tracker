@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'place_holder_content.dart';
 import '../../data/models.dart';
 import '../../data/user.dart';
-
-class ReportPage extends StatelessWidget {
+import '../../ui/time_record_list_adapter.dart';
+class ReportPage extends StatelessWidget implements ListAdapterClickListener{
   final Report report;
 
   ReportPage({this.report}) {
@@ -37,7 +37,7 @@ class ReportPage extends StatelessWidget {
     } else {
       return Container(
           padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-          child: _buildListView(report.report));
+          child: TimeRecordListAdapter(items: report.report, adapterClickListener: this));
     }
   }
 
@@ -82,163 +82,13 @@ class ReportPage extends StatelessWidget {
     );
   }
 
-  Widget _buildListRow(TimeRecord timeRecord, Color color) {
-    print("_buildListRow: task = ${timeRecord.task}");
-
-    return new Card(
-      color: color,
-      elevation: 1.0,
-      margin: EdgeInsets.symmetric(vertical: 1.0, horizontal: 1.0),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Flexible(
-            child: Row(
-              children: <Widget>[
-                Padding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 5.0, vertical: 1.0),
-                    child: Text(timeRecord.project,
-                        style: TextStyle(
-                            fontSize: 23.0, fontWeight: FontWeight.bold))),
-                SizedBox(width: 2.0),
-                Padding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 5.0, vertical: 1.0),
-                    child: Text(timeRecord.task,
-                        style: TextStyle(
-                            fontSize: 23.0, fontWeight: FontWeight.bold))),
-              ],
-            ),
-          ),
-          Flexible(
-            child: Row(
-              children: <Widget>[
-                Padding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 5.0, vertical: 1.0),
-                    child: Text(
-                        "${timeRecord.dateTime.day}/${timeRecord.dateTime.month}/${timeRecord.dateTime.year}",
-                        style: TextStyle(fontSize: 12.0))),
-                SizedBox(width: 2.0),
-                Padding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 1.0, vertical: 1.0),
-                    child: Text(
-                        "${timeRecord.start.hour}:${timeRecord.start.minute}",
-                        style: TextStyle(fontSize: 12.0))),
-                Padding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 1.0, vertical: 1.0),
-                    child: Text("-", style: TextStyle(fontSize: 12.0))),
-                Padding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 1.0, vertical: 1.0),
-                    child: Text(
-                        "${timeRecord.finish.hour}:${timeRecord.finish.minute}",
-                        style: TextStyle(fontSize: 12.0))),
-                SizedBox(width: 2.0),
-                Padding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 2.0, vertical: 1.0),
-                    child: Text(",", style: TextStyle(fontSize: 12.0))),
-                Padding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 1.0, vertical: 1.0),
-                    child: Text(timeRecord.getDurationString(),
-                        style: TextStyle(fontSize: 12.0))),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+  @override
+  TimeRecord onListItemClicked(TimeRecord item) {
+    print("Item Clicked: $item");
   }
 
-  Widget _buildListTile(TimeRecord item, Color color){
-    return Container(
-      decoration: BoxDecoration(
-        color: color
-      ),
-      child: ListTile(
-        leading: Icon(Icons.work, color: Colors.lightBlueAccent),
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          mainAxisSize: MainAxisSize.max,
-          children: <Widget>[
-            Text("${item.project}", style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold)),
-            Text("${item.task}", style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold) )
-          ],
-        ),
-        subtitle: Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            Padding(
-                padding:
-                EdgeInsets.symmetric(horizontal: 5.0, vertical: 1.0),
-                child: Text(
-                    "${item.dateTime.day}/${item.dateTime.month}/${item.dateTime.year}",
-                    style: TextStyle(fontSize: 12.0))),
-            SizedBox(width: 2.0),
-            Padding(
-                padding:
-                EdgeInsets.symmetric(horizontal: 1.0, vertical: 1.0),
-                child: Text(
-                    "${item.start.hour}:${item.start.minute}",
-                    style: TextStyle(fontSize: 12.0))),
-            Padding(
-                padding:
-                EdgeInsets.symmetric(horizontal: 1.0, vertical: 1.0),
-                child: Text("-", style: TextStyle(fontSize: 12.0))),
-            Padding(
-                padding:
-                EdgeInsets.symmetric(horizontal: 1.0, vertical: 1.0),
-                child: Text(
-                    "${item.finish.hour}:${item.finish.minute}",
-                    style: TextStyle(fontSize: 12.0))),
-            SizedBox(width: 2.0),
-            Padding(
-                padding:
-                EdgeInsets.symmetric(horizontal: 2.0, vertical: 1.0),
-                child: Text(",", style: TextStyle(fontSize: 12.0))),
-            Padding(
-                padding:
-                EdgeInsets.symmetric(horizontal: 1.0, vertical: 1.0),
-                child: Text(item.getDurationString(),
-                    style: TextStyle(fontSize: 12.0))),
-
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildListView(List<TimeRecord> items) {
-    print("_buildListView");
-    DateTime day;
-
-    Color evenColor = Colors.white;
-    Color oddColor = Colors.grey[200];
-    Color color = evenColor;
-
-    return ListView.builder(
-        itemBuilder: (context, i) {
-          print("$i ${items[i].dateTime.day} ");
-
-          if (day != null && (items[i].dateTime.day != day.day)) {
-            if (color == evenColor) {
-              color = oddColor;
-            } else {
-              color = evenColor;
-            }
-          }
-
-          day = items[i].dateTime;
-          return _buildListTile(items[i], color);
-        },
-        shrinkWrap: true,
-        itemCount: items == null ? 0 : items.length);
+  @override
+  TimeRecord onListItemLongClick(TimeRecord item) {
+    print("Item LongClicked: $item");
   }
 }
