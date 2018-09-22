@@ -155,14 +155,15 @@ class GenerateReportState extends State<GenerateReportPage> {
           ),
           Container(
             child: new Flexible(
-                child: new TextField(
-                    decoration: InputDecoration(
-                        hintText: "Start Date",
-                        contentPadding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20.0))),
-                    maxLines: 1,
-                    controller: startDateInputController)),
+                  child: new TextField(
+                      decoration: InputDecoration(
+                          hintText: "Start Date",
+                          contentPadding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20.0))),
+                      maxLines: 1,
+                      controller: startDateInputController),
+            ),
           ),
         ],
       ),

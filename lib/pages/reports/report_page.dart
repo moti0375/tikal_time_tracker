@@ -83,12 +83,12 @@ class ReportPage extends StatelessWidget implements ListAdapterClickListener{
   }
 
   @override
-  TimeRecord onListItemClicked(TimeRecord item) {
+  onListItemClicked(TimeRecord item) {
     print("Item Clicked: $item");
   }
 
   @override
-  TimeRecord onListItemLongClick(TimeRecord item) {
+  onListItemLongClick(TimeRecord item) {
     print("Item LongClicked: $item");
   }
 }

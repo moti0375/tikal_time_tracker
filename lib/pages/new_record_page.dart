@@ -3,13 +3,18 @@ import 'package:tikal_time_tracker/ui/new_record_title.dart';
 import '../data/models.dart';
 import 'dart:async';
 import '../data/repository/time_records_repository.dart';
+import '../utils/utils.dart';
+import '../data/user.dart';
 
 // ignore: must_be_immutable
 class NewRecordPage extends StatefulWidget {
   List<Project> projects;
   DateTime dateTime;
+  TimeRecord timeRecord;
 
-  NewRecordPage({this.projects, this.dateTime});
+  NewRecordFlow flow;
+
+  NewRecordPage({this.projects, this.dateTime, this.timeRecord, this.flow});
 
   @override
   State<StatefulWidget> createState() {
@@ -32,7 +37,6 @@ class NewRecordPageState extends State<NewRecordPage> {
   bool isButtonEnabled = false;
   TimeRecordsRepository repository = new TimeRecordsRepository();
 
-
   List<Project> _projects = new List<Project>();
 
   String _selectedTask;
@@ -41,7 +45,23 @@ class NewRecordPageState extends State<NewRecordPage> {
   @override
   void initState() {
     super.initState();
+    print("initState: flow ${widget.flow}");
     _projects.addAll(widget.projects);
+
+    switch (widget.flow){
+      case NewRecordFlow.new_record:
+        _initNewRecord();
+        break;
+      case NewRecordFlow.update_record:
+        _initUpdateRecord();
+        break;
+    }
+
+
+  }
+
+  _initNewRecord(){
+    print("_initNewRecord:");
     startTimeController = new TextEditingController(
       text: "",
     );
@@ -52,8 +72,25 @@ class NewRecordPageState extends State<NewRecordPage> {
     }
   }
 
+  _initUpdateRecord(){
+    print("_initUpdateRecord:");
+
+    Project p = _projects.firstWhere((element){
+       return element.name == widget.timeRecord.project;
+    });
+
+    print("record project: ${p.name}, start time: ${widget.timeRecord.start}" );
+
+    _onProjectSelected(p);
+    _onTaskSelected(widget.timeRecord.task);
+    _onDateSelected(widget.timeRecord.dateTime);
+    _onPickedStartTime(widget.timeRecord.start);
+    _onPickedFinishTime(widget.timeRecord.finish);
+  }
+
   void _onProjectSelected(Project value) {
     setState(() {
+      print("_onProjectSelected");
       _selectedProject = value;
       _tasks.clear();
       _tasks.addAll(value.tasks);
@@ -70,12 +107,23 @@ class NewRecordPageState extends State<NewRecordPage> {
   void _onPickedStartTime(TimeOfDay startTime) {
     setState(() {
       _startTime = startTime;
+      startTimeController =
+      new TextEditingController(text: Utils.buildTimeStringFromTime(startTime));
+      _setButtonState();
+
     });
   }
 
   void _onPickedFinishTime(TimeOfDay finishTime) {
     setState(() {
-      _startTime = finishTime;
+      _finishTime = finishTime;
+      finishTimeController =
+      new TextEditingController(text: Utils.buildTimeStringFromTime(finishTime));
+      _duration = calculateDuration(
+          date: DateTime.now(),
+          startTime: _startTime,
+          finishTime: _finishTime);
+      durationInputController = TextEditingController(text: Utils.buildTimeStringFromDuration(_duration));
     });
   }
 
@@ -93,77 +141,141 @@ class NewRecordPageState extends State<NewRecordPage> {
 
   @override
   Widget build(BuildContext context) {
-    final projectsDropDown = Container(
-        padding: EdgeInsets.symmetric(horizontal: 25.0),
-        child: Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              DropdownButton(
-                  hint: Container(
-                    width: MediaQuery.of(context).size.width * 0.7,
-                    padding: const EdgeInsets.all(8.0),
-                    child: new Text(
-                      "Select a Project",
-                      style: TextStyle(fontSize: 30.0),
-                    ),
-                  ),
-                  value: _selectedProject,
-                  isDense: true,
-                  iconSize: 50.0,
-                  items: _projects.map((Project value) {
-                    return new DropdownMenuItem<Project>(
-                      value: value,
-                      child: new Text(
-                        value.name,
-                        style: TextStyle(fontSize: 25.0),
-                      ),
-                    );
-                  }).toList(),
-                  onChanged: (Project value) {
-                    _onProjectSelected(value);
-                  })
-            ]));
+//    final projectsDropDown = Container(
+//        padding: EdgeInsets.symmetric(horizontal: 25.0),
+//        child: Row(
+//            mainAxisSize: MainAxisSize.max,
+//            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//            children: <Widget>[
+//              DropdownButton(
+//                  hint: Container(
+//                    width: MediaQuery.of(context).size.width * 0.7,
+//                    padding: const EdgeInsets.all(8.0),
+//                    child: new Text(
+//                      "Select a Project",
+//                      style: TextStyle(fontSize: 30.0),
+//                    ),
+//                  ),
+//                  value: _selectedProject,
+//                  iconSize: 50.0,
+//                  items: _projects.map((Project value) {
+//                    return new DropdownMenuItem<Project>(
+//                      value: value,
+//                      child: new Text(
+//                        value.name,
+//                        style: TextStyle(fontSize: 25.0),
+//                      ),
+//                    );
+//                  }).toList(),
+//                  onChanged: (Project value) {
+//                    _onProjectSelected(value);
+//                  })
+//            ]));
 
-    final tasksDropDown = Container(
-      padding: EdgeInsets.symmetric(horizontal: 25.0),
-      child: Row(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          new Expanded(
-              child: new DropdownButton(
-                  iconSize: 50.0,
-                  hint: Container(
-                    width: MediaQuery.of(context).size.width * 0.7,
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      "Select a Task",
-                      style: TextStyle(fontSize: 30.0),
-                    ),
+    final projectsDropDown = Container(
+        margin: EdgeInsets.symmetric(vertical: 4.0),
+        decoration: BoxDecoration(
+            border: Border.all(width: 0.5, color: Colors.black45)),
+        padding: EdgeInsets.symmetric(horizontal: 10.0),
+        child: DropdownButtonHideUnderline(
+          child: new DropdownButton(
+              iconSize: 30.0,
+              hint: Container(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  "Select a Project",
+                  style: TextStyle(fontSize: 24.0, color: Colors.black26),
+                ),
+              ),
+              value: _selectedProject,
+              items: _projects.map((Project value) {
+                return new DropdownMenuItem<Project>(
+                  value: value,
+                  child: new Text(
+                    value.name,
+                    style: TextStyle(fontSize: 24.0),
                   ),
-                  value: _selectedTask,
-                  items: _tasks.map((String value) {
-                    return new DropdownMenuItem<String>(
-                      value: value,
-                      child: new Text(
-                        value
-                            .toString()
-                            .substring(value.toString().indexOf('.') + 1),
-                        style: TextStyle(fontSize: 25.0),
-                      ),
-                    );
-                  }).toList(),
-                  onChanged: (String value) {
-                    _onTaskSelected(value);
-                  })),
-        ],
-      ),
+                );
+              }).toList(),
+              onChanged: (Project value) {
+                _onProjectSelected(value);
+              }),
+        )
     );
 
+
+//    final tasksDropDown = Container(
+//      padding: EdgeInsets.symmetric(horizontal: 25.0),
+//      child: Row(
+//        mainAxisSize: MainAxisSize.max,
+//        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//        crossAxisAlignment: CrossAxisAlignment.center,
+//        children: <Widget>[
+//          new Expanded(
+//              child: new DropdownButton(
+//                  iconSize: 50.0,
+//                  hint: Container(
+//                    width: MediaQuery.of(context).size.width * 0.7,
+//                    padding: const EdgeInsets.all(8.0),
+//                    child: Text(
+//                      "Select a Task",
+//                      style: TextStyle(fontSize: 30.0),
+//                    ),
+//                  ),
+//                  value: _selectedTask,
+//                  items: _tasks.map((String value) {
+//                    return new DropdownMenuItem<String>(
+//                      value: value,
+//                      child: new Text(
+//                        value
+//                            .toString()
+//                            .substring(value.toString().indexOf('.') + 1),
+//                        style: TextStyle(fontSize: 25.0),
+//                      ),
+//                    );
+//                  }).toList(),
+//                  onChanged: (String value) {
+//                    _onTaskSelected(value);
+//                  })),
+//        ],
+//      ),
+//    );
+
+    final tasksDropDown = Container(
+        margin: EdgeInsets.symmetric(vertical: 4.0),
+        decoration: BoxDecoration(
+            border: Border.all(width: 0.5, color: Colors.black45)),
+        padding: EdgeInsets.symmetric(horizontal: 10.0),
+        child: DropdownButtonHideUnderline(
+          child: new DropdownButton(
+              iconSize: 30.0,
+              hint: Container(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  "Select a Task",
+                  style: TextStyle(fontSize: 24.0, color: Colors.black26),
+                ),
+              ),
+              value: _selectedTask,
+              items: _tasks.map((String value) {
+                return new DropdownMenuItem<String>(
+                  value: value,
+                  child: new Text(
+                    value
+                        .toString()
+                        .substring(value.toString().indexOf('.') + 1),
+                    style: TextStyle(fontSize: 24.0),
+                  ),
+                );
+              }).toList(),
+              onChanged: (String value) {
+                _onTaskSelected(value);
+              }),
+        ));
+
+
     final startTimePicker = Container(
-      padding: EdgeInsets.only(left: 32.0, right: 32.0, top: 8.0),
+      padding: EdgeInsets.only(left: 4.0, right: 4.0, top: 8.0),
       child: new Row(
         children: <Widget>[
           Padding(
@@ -192,7 +304,7 @@ class NewRecordPageState extends State<NewRecordPage> {
     );
 
     final finishTimePicker = Container(
-      padding: EdgeInsets.only(left: 32.0, right: 32.0, top: 8.0),
+      padding: EdgeInsets.only(left: 4.0, right: 4.0, top: 8.0),
       child: new Row(
         children: <Widget>[
           Padding(
@@ -221,7 +333,7 @@ class NewRecordPageState extends State<NewRecordPage> {
     );
 
     final durationInput = Container(
-      padding: EdgeInsets.only(left: 32.0, right: 32.0, top: 8.0),
+      padding: EdgeInsets.only(left: 4.0, right: 4.0, top: 8.0),
       child: new Row(
         children: <Widget>[
           Container(
@@ -240,7 +352,7 @@ class NewRecordPageState extends State<NewRecordPage> {
     );
 
     final dateInput = Container(
-      padding: EdgeInsets.only(left: 32.0, right: 32.0, top: 8.0),
+      padding: EdgeInsets.only(left: 4.0, right: 4.0, top: 8.0),
       child: new Row(
         children: <Widget>[
           Padding(
@@ -267,69 +379,80 @@ class NewRecordPageState extends State<NewRecordPage> {
         ],
       ),
     );
-
     return Scaffold(
       appBar: new AppBar(
-        title: new Text("Edit New Record"),
+        title: new Text(widget.flow == NewRecordFlow.update_record ? "Edit a Record" : "New Time Record"),
       ),
-      body: Center(
-        child: ListView(
-          shrinkWrap: false,
+      body: Container(
+        padding: EdgeInsets.symmetric(horizontal: 16.0),
+        child: Column(
           children: <Widget>[
-            new NewRecordTitle(),
-            projectsDropDown,
-            tasksDropDown,
-            dateInput,
-            startTimePicker,
-            finishTimePicker,
-            durationInput,
-            Container(
-                padding: EdgeInsets.only(left: 32.0, right: 32.0, top: 8.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  children: <Widget>[
-                    TextField(maxLines: 3,
-                        onChanged: (value){
-                          _comment = value;
+            Flexible(
+              flex: 3,
+              child: ListView(
+                shrinkWrap: false,
+                children: <Widget>[
+                  new NewRecordTitle(),
+                  projectsDropDown,
+                  tasksDropDown,
+                  dateInput,
+                  startTimePicker,
+                  finishTimePicker,
+                  durationInput,
+                  Container(
+                      padding: EdgeInsets.only(left: 4.0, right: 4.0, top: 8.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        children: <Widget>[
+                          TextField(maxLines: 4,
+                              onChanged: (value){
+                                _comment = value;
+                              },
+                              controller: commentInputController,
+                              decoration: InputDecoration(
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10.0)),
+                                  contentPadding: EdgeInsets.fromLTRB(
+                                      10.0, 10.0, 10.0, 10.0),
+                                  hintText: "Note:"))
+                        ],
+                      )),
+
+                ],
+              ),
+            ),
+            Flexible(
+              flex: 1,
+              child:  Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        vertical: 16.0, horizontal: 16.0),
+                    child: Material(
+                      borderRadius: BorderRadius.circular(10.0),
+                      shadowColor: isButtonEnabled
+                          ? Colors.orangeAccent.shade100
+                          : Colors.grey.shade100,
+                      elevation: 2.0,
+                      child: MaterialButton(
+                        minWidth: 200.0,
+                        height: 42.0,
+                        onPressed: () {
+                          if (isButtonEnabled) {
+                            _handleSaveButtonClicked();
+                          }
                         },
-                        controller: commentInputController,
-                        decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(20.0)),
-                            contentPadding: EdgeInsets.fromLTRB(
-                                10.0, 10.0, 10.0, 10.0),
-                            hintText: "Note:"))
-                  ],
-                )),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                      vertical: 16.0, horizontal: 16.0),
-                  child: Material(
-                    borderRadius: BorderRadius.circular(10.0),
-                    shadowColor: isButtonEnabled
-                        ? Colors.orangeAccent.shade100
-                        : Colors.grey.shade100,
-                    elevation: 2.0,
-                    child: MaterialButton(
-                      minWidth: 200.0,
-                      height: 42.0,
-                      onPressed: () {
-                        if (isButtonEnabled) {
-                          _handleSaveButtonClicked();
-                        }
-                      },
-                      color: isButtonEnabled ? Colors.orangeAccent : Colors
-                          .grey,
-                      child: Text(
-                          "Save", style: TextStyle(color: Colors.white)),
+                        color: isButtonEnabled ? Colors.orangeAccent : Colors
+                            .grey,
+                        child: Text(
+                            "Save", style: TextStyle(color: Colors.white)),
+                      ),
                     ),
-                  ),
-                )
-              ],
+                  )
+                ],
+              )
             )
           ],
         ),
@@ -343,11 +466,8 @@ class NewRecordPageState extends State<NewRecordPage> {
 
     if (picked != null) {
       setState(() {
-        _startTime = picked;
-        startTimeController =
-        new TextEditingController(text: "${picked.hour}:${picked.minute}");
+        _onPickedStartTime(picked);
       });
-      _setButtonState();
     }
   }
 
@@ -383,15 +503,8 @@ class NewRecordPageState extends State<NewRecordPage> {
 
     if (picked != null) {
       setState(() {
-        _finishTime = picked;
-        finishTimeController =
-        new TextEditingController(text: "${picked.hour}:${picked.minute}");
-        _duration = calculateDuration(
-            date: DateTime.now(),
-            startTime: _startTime,
-            finishTime: _finishTime);
-        durationInputController = TextEditingController(text: "${_duration.inHours}:${_duration.inMinutes % 60 == 0 ? 0 : _duration.inMinutes % 60 < 10 ? "0${_duration.inMinutes % 60}" : _duration.inMinutes % 60}");
-      });
+        _onPickedFinishTime(picked);
+       });
     }
   }
 
@@ -403,6 +516,19 @@ class NewRecordPageState extends State<NewRecordPage> {
       print("Record ${value.id} was added to db");
       Navigator.of(context).pop(value);
     });
+    }
+
+  _createEmptyDropDown( ) {
+    _tasks.add(_selectedTask);
+    return _tasks.map((String item) {
+      print("item: $item");
+      return new DropdownMenuItem<String>(
+        value: item,
+        child: new Text(item ,
+          style: TextStyle(fontSize: 25.0),
+        ),
+      );
+    }).toList();
     }
   }
 
@@ -416,6 +542,12 @@ class NewRecordPageState extends State<NewRecordPage> {
     Duration d = f.difference(s);
     print("${d.inHours}:${d.inSeconds % 60}");
     return d;
+  }
+
+
+  enum NewRecordFlow{
+    new_record,
+    update_record
   }
 
 

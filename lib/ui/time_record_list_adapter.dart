@@ -82,7 +82,6 @@ class TimeRecordListAdapter extends StatelessWidget{
   }
 
   Widget _buildListView(List<TimeRecord> items) {
-    print("_buildListView");
     DateTime day;
 
     Color evenColor = Colors.white;
@@ -91,7 +90,6 @@ class TimeRecordListAdapter extends StatelessWidget{
 
     return ListView.builder(
         itemBuilder: (context, i) {
-          print("$i ${items[i].dateTime.day} ");
 
           if (day != null && (items[i].dateTime.day != day.day)) {
             if (color == evenColor) {
@@ -112,6 +110,6 @@ class TimeRecordListAdapter extends StatelessWidget{
 }
 
 class ListAdapterClickListener{
-   TimeRecord onListItemClicked(TimeRecord item){}
-   TimeRecord onListItemLongClick(TimeRecord item){}
+   void onListItemClicked(TimeRecord item){}
+   void onListItemLongClick(TimeRecord item){}
 }

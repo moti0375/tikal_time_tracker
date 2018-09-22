@@ -9,6 +9,7 @@ import '../data/repository/time_records_repository.dart';
 import 'dart:async';
 import '../pages/login_page.dart';
 import '../ui/time_record_list_adapter.dart';
+import 'new_record_page.dart';
 
 class TimePage extends StatefulWidget {
   @override
@@ -18,7 +19,7 @@ class TimePage extends StatefulWidget {
 }
 
 class TimePageState extends State<TimePage> implements DrawerOnClickListener, ListAdapterClickListener {
-  final _items = <String>["Moti", "Nurint", "Yarden", "Yahel"];
+  final _items = <String>["Moti", "Nurit", "Yarden", "Yahel"];
   Choice _onSelected;
   DateTime _selectedDate;
   TextEditingController dateInputController = new TextEditingController(text: "");
@@ -160,7 +161,7 @@ class TimePageState extends State<TimePage> implements DrawerOnClickListener, Li
     final projects = User().projects;
     print("_navigateToNextScreen: " + projects.toString());
       Navigator.of(context).
-      push(new MaterialPageRoute(builder: (BuildContext context) => new NewRecordPage(projects: projects, dateTime: _selectedDate,))).then((value){
+      push(new MaterialPageRoute(builder: (BuildContext context) => new NewRecordPage(projects: projects, dateTime: _selectedDate, timeRecord: null, flow: NewRecordFlow.new_record))).then((value){
         print("got value from page");
         if(value != null){
           if(value is TimeRecord){
@@ -170,6 +171,21 @@ class TimePageState extends State<TimePage> implements DrawerOnClickListener, Li
           }
         }
       });
+  }
+
+  _navigateToEditScreen(TimeRecord item){
+    print("_navigateToEditScreen: ");
+    Navigator.of(context).
+    push(new MaterialPageRoute(builder: (BuildContext context) => new NewRecordPage(projects: User().projects, dateTime: _selectedDate, timeRecord: item, flow: NewRecordFlow.update_record))).then((value){
+      print("got value from page");
+      if(value != null){
+        if(value is TimeRecord){
+          _onDateSelected(value.dateTime);
+        }else{
+          _loadRecords(_selectedDate);
+        }
+      }
+    });
   }
 
    _showDateDialog() {
@@ -228,12 +244,13 @@ class TimePageState extends State<TimePage> implements DrawerOnClickListener, Li
   }
 
   @override
-  TimeRecord onListItemClicked(TimeRecord item) {
+  onListItemClicked(TimeRecord item) {
     print("onListItemClicked: $item");
+    _navigateToEditScreen(item);
   }
 
   @override
-  TimeRecord onListItemLongClick(TimeRecord item) {
+  onListItemLongClick(TimeRecord item) {
     print("onListItemLongClick: $item");
   }
 }
