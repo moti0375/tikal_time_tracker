@@ -17,7 +17,6 @@ class TimeTrackerApi extends _$TimeTrackerApiClient implements ApiClient{
   SerializerRepo serializers;
 
   TimeTrackerApi({this.base, this.serializers}){
-    this.base.authHeader(scheme, credentials)
     this.base.authHeader("Authorization", "{login: motib, password: motibtik23}");
     globalClient = IOClient();
   }
