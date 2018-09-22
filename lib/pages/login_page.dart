@@ -20,6 +20,8 @@ class LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
 
+    _login();
+
     final logo = Hero(tag: 'hero',
         child: CircleAvatar(
           backgroundColor: Colors.transparent,
@@ -106,6 +108,14 @@ class LoginPageState extends State<LoginPage> {
     Navigator.of(context).
     pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => new BottomNavigation()));
     print("Button Clicked");
+  }
+
+  void _login() {
+    repository.login().then((value){
+      print("Got response: $value");
+    }).catchError((err){
+      print("${err.toString()}");
+    });
   }
 
 }

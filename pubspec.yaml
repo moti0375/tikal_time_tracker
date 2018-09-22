@@ -13,9 +13,10 @@ dependencies:
   flutter_launcher_icons: ^0.6.0
 
 dev_dependencies:
+  jaguar_retrofit_gen:
+  build_runner:
   flutter_test:
     sdk: flutter
-
 
 flutter_icons:
   android: true

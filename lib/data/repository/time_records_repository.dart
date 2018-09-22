@@ -1,12 +1,14 @@
 import 'dart:async';
 import '../models.dart';
 import 'time_data_source.dart';
-import 'local_data_source.dart';
+import '../../data/repository/local/local_data_source.dart';
+import '../../data/repository/remote/remote_data_source.dart';
 
 
 class TimeRecordsRepository implements TimeDateSource{
 
   final TimeDateSource dateSource = LocalDataSource();
+  final TimeDateSource remoteDateSource = RemoteDateSource();
 
   static final TimeRecordsRepository _instance = TimeRecordsRepository._internal();
 
@@ -42,6 +44,11 @@ class TimeRecordsRepository implements TimeDateSource{
     print("getRecordsBetweenDates:");
 
   return dateSource.getRecordsBetweenDates(startDate, endDate);
+  }
+
+  @override
+  Future<String> login() {
+    return remoteDateSource.login();
   }
 
 }

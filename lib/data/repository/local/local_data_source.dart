@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../models.dart';
-import 'time_data_source.dart';
-import '../database/database_helper.dart';
+import '../../models.dart';
+import '../time_data_source.dart';
+import '../../database/database_helper.dart';
 import 'dart:async';
 import 'package:sqflite/sqflite.dart';
 
@@ -54,6 +54,11 @@ class LocalDataSource implements TimeDateSource {
   @override
   Future<List<TimeRecord>> getRecordsBetweenDates(DateTime startDate, DateTime endDate) {
     return databaseOpenHelper.getRecordsBetweenDates(startDate, endDate);
+  }
+
+  @override
+  Future<String> login() {
+    return null;
   }
 
 }
