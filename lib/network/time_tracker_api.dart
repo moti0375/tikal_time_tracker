@@ -4,6 +4,9 @@ import 'package:jaguar_resty/jaguar_resty.dart' as resty;
 import 'package:jaguar_resty/jaguar_resty.dart';
 import 'package:http/http.dart';
 import '../network/requests/login_request.dart';
+import 'dart:convert';
+import 'package:crypto/crypto.dart';
+
 
 import 'dart:async';
 
@@ -17,11 +20,13 @@ class TimeTrackerApi extends _$TimeTrackerApiClient implements ApiClient{
   SerializerRepo serializers;
 
   TimeTrackerApi({this.base, this.serializers}){
-    this.base.authHeader("Authorization", "{login: motib, password: motibtik23}");
+    List<int> convert = Utf8Encoder().convert("motib:motibtik23");
+    print("encoded: ${Base64Encoder().convert(convert)}");
+    this.base.authHeader("Basic", Base64Encoder().convert(convert));
     globalClient = IOClient();
   }
 
   @PostReq(path: "login.php" )
-  Future<String> login(@AsJson() FormRequest formRequest);
+  Future<dynamic> login(@AsJson() FormRequest formRequest);
 
 }

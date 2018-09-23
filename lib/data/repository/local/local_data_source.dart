@@ -57,7 +57,7 @@ class LocalDataSource implements TimeDateSource {
   }
 
   @override
-  Future<String> login() {
+  Future<dynamic> login() {
     return null;
   }
 

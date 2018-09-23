@@ -47,7 +47,7 @@ class TimeRecordsRepository implements TimeDateSource{
   }
 
   @override
-  Future<String> login() {
+  Future<dynamic> login() {
     return remoteDateSource.login();
   }
 

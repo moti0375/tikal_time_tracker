@@ -18,7 +18,7 @@ class FormRequestSerializer extends Serializer<FormRequest>{
   Map<String, String> toMap(FormRequest model) {
     Map<String, String> form = Map<String, String>();
     form["form"] = "{login : ${model.form.login}, password : ${model.form.password}}";
-    print("toMap: ${form.toString()}" );
+//    print("toMap: ${form.toString()}" );
     return form;
   }
 

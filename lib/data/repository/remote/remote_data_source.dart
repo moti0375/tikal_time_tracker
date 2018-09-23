@@ -50,7 +50,7 @@ class RemoteDateSource implements TimeDateSource{
   }
 
   @override
-  Future<String> login() {
+  Future<dynamic> login() {
     return api.login(new FormRequest(form: new Form(login: "motib", password: "motibtik23")));
   }
 
