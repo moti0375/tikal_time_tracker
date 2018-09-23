@@ -374,7 +374,8 @@ class NewRecordPageState extends State<NewRecordPage> {
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20.0))),
                     maxLines: 1,
-                    controller: dateInputController)),
+                    controller: dateInputController)
+            ),
           ),
         ],
       ),

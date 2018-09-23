@@ -6,6 +6,7 @@ import 'package:http/http.dart';
 import '../network/requests/login_request.dart';
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
+import 'credentials.dart';
 
 
 import 'dart:async';
@@ -19,14 +20,16 @@ class TimeTrackerApi extends _$TimeTrackerApiClient implements ApiClient{
   @override
   SerializerRepo serializers;
 
-  TimeTrackerApi({this.base, this.serializers}){
-    List<int> convert = Utf8Encoder().convert("motib:motibtik23");
+  Credentials credentials;
+
+  TimeTrackerApi({this.base, this.serializers, this.credentials}){
+    globalClient = IOClient();
+    List<int> convert = Utf8Encoder().convert("${credentials.signInUserName}:${credentials.signInPassword}");
     print("encoded: ${Base64Encoder().convert(convert)}");
     this.base.authHeader("Basic", Base64Encoder().convert(convert));
-    globalClient = IOClient();
   }
 
-  @PostReq(path: "login.php" )
-  Future<dynamic> login(@AsJson() FormRequest formRequest);
+  @GetReq(path: "login.php" )
+  Future<dynamic> signIn();
 
 }

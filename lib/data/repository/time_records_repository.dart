@@ -3,20 +3,36 @@ import '../models.dart';
 import 'time_data_source.dart';
 import '../../data/repository/local/local_data_source.dart';
 import '../../data/repository/remote/remote_data_source.dart';
+import '../../network/credentials.dart';
 
 
 class TimeRecordsRepository implements TimeDateSource{
 
+  static final String _TAG = "TimeRecordsRepository";
+  Credentials credentials;
   final TimeDateSource dateSource = LocalDataSource();
-  final TimeDateSource remoteDateSource = RemoteDateSource();
+  TimeDateSource remoteDateSource;
 
-  static final TimeRecordsRepository _instance = TimeRecordsRepository._internal();
+  static TimeRecordsRepository _instance;
+  static TimeRecordsRepository get instance => _instance;
+
+
+  static TimeRecordsRepository init(Credentials credentials) {
+    if (_instance == null) {
+      print("$_TAG : init: ${credentials.toString()}");
+      _instance = TimeRecordsRepository._internal(credentials);
+    }
+    return _instance;
+  }
+
+  TimeRecordsRepository._internal(this.credentials){
+    print("$_TAG: _internal: ${this.credentials}");
+   remoteDateSource = RemoteDateSource(credentials: this.credentials);
+  }
 
   factory TimeRecordsRepository(){
     return _instance;
   }
-
-  TimeRecordsRepository._internal();
 
   @override
   Future<TimeRecord> addTimeForDate(TimeRecord time) {
@@ -47,8 +63,14 @@ class TimeRecordsRepository implements TimeDateSource{
   }
 
   @override
-  Future<dynamic> login() {
-    return remoteDateSource.login();
+  Future<dynamic> singIn(String userName, String password) {
+    return remoteDateSource.singIn(userName, password);
+  }
+
+  @override
+  void updateCredentials(Credentials credentials) {
+    print("repository: updateCredentials ");
+    remoteDateSource.updateCredentials(credentials);
   }
 
 }

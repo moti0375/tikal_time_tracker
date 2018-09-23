@@ -8,20 +8,17 @@ import 'package:jaguar_serializer/jaguar_serializer.dart';
 import '../../../network/serializers/from_request_serializer.dart';
 import '../../../network/serializers/form_serializer.dart';
 import '../../../network/requests/login_request.dart';
+import '../../../network/credentials.dart';
 
 import '../time_data_source.dart';
-class RemoteDateSource implements TimeDateSource{
 
+class RemoteDateSource implements TimeDateSource {
   TimeTrackerApi api;
   JsonRepo serializers = JsonRepo();
+  Credentials credentials;
 
-  RemoteDateSource(){
-    serializers.add(FormRequestSerializer());
-    serializers.add(FormSerializer());
-
-    api = TimeTrackerApi(base: route("https://planet.tikalk.com").before((route){
-      print("Metadata: ${route.metadataMap}");
-    }), serializers: serializers);
+  RemoteDateSource({this.credentials}) {
+    _setApi(credentials);
   }
 
   @override
@@ -45,13 +42,31 @@ class RemoteDateSource implements TimeDateSource{
   }
 
   @override
-  Future<List<TimeRecord>> getRecordsBetweenDates(DateTime startDate, DateTime endDate) {
+  Future<List<TimeRecord>> getRecordsBetweenDates(
+      DateTime startDate, DateTime endDate) {
     // TODO: implement getRecordsBetweenDates
   }
 
   @override
-  Future<dynamic> login() {
-    return api.login(new FormRequest(form: new Form(login: "motib", password: "motibtik23")));
+  Future<dynamic> singIn(String userName, String password) {
+//    api.setCredentials(userName, password);
+    return api.signIn();
   }
 
+  @override
+  void updateCredentials(Credentials credentials) {
+    print("remoteDateSource: updateCredentials: ");
+    _setApi(credentials);
+  }
+
+  _setApi(Credentials credentials) {
+    print("remoteDateSource: _setApi: ");
+    serializers.add(FormRequestSerializer());
+    serializers.add(FormSerializer());
+    api = TimeTrackerApi(
+        base: route("https://planet.tikalk.com").before((route) {
+          print("Metadata: ${route.metadataMap}");
+        }),
+        serializers: serializers, credentials: credentials);
+  }
 }

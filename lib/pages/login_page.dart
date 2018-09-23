@@ -3,7 +3,8 @@ import '../bottom_navigation.dart';
 import '../data/repository/time_records_repository.dart';
 import '../data/user.dart';
 import '../data/models.dart';
-
+import 'dart:async';
+import '../network/credentials.dart';
 class LoginPage extends StatefulWidget {
   static String tag = "LoginPage";
 
@@ -15,14 +16,14 @@ class LoginPage extends StatefulWidget {
 
 class LoginPageState extends State<LoginPage> {
 
-  TimeRecordsRepository repository = TimeRecordsRepository();
+   TimeRecordsRepository repository = TimeRecordsRepository.init(new Credentials(signInUserName: "", signInPassword: ""));
 
   @override
   Widget build(BuildContext context) {
+    _signIn("", "");
 
-    _login();
-
-    final logo = Hero(tag: 'hero',
+    final logo = Hero(
+        tag: 'hero',
         child: CircleAvatar(
           backgroundColor: Colors.transparent,
           radius: 48.0,
@@ -34,10 +35,8 @@ class LoginPageState extends State<LoginPage> {
       decoration: InputDecoration(
           hintText: 'Email',
           contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-          border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(30.0)
-          )
-      ),
+          border:
+              OutlineInputBorder(borderRadius: BorderRadius.circular(30.0))),
     );
 
     final password = TextFormField(
@@ -45,10 +44,8 @@ class LoginPageState extends State<LoginPage> {
       decoration: InputDecoration(
           hintText: 'password',
           contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-          border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(30.0)
-          )
-      ),
+          border:
+              OutlineInputBorder(borderRadius: BorderRadius.circular(30.0))),
     );
 
     final loginButton = Padding(
@@ -62,19 +59,17 @@ class LoginPageState extends State<LoginPage> {
           height: 42.0,
           onPressed: () {
             _createUserAndNavigate();
-            },
+          },
           color: Colors.lightBlueAccent,
-          child: Text("Login",
-              style: TextStyle(color: Colors.white)),
+          child: Text("Login", style: TextStyle(color: Colors.white)),
         ),
       ),
     );
 
     final forgotLabel = FlatButton(
         onPressed: () {},
-        child: Text("Forgot password?", style: TextStyle(color: Colors.black45))
-    );
-
+        child:
+            Text("Forgot password?", style: TextStyle(color: Colors.black45)));
 
     return new Scaffold(
       backgroundColor: Colors.white,
@@ -98,24 +93,124 @@ class LoginPageState extends State<LoginPage> {
     );
   }
 
-  _createUserAndNavigate(){
-
-    Project lemui = new Project(name: "Leumi", tasks: ["Development", "Consulting"]);
+  _createUserAndNavigate() {
+    Project lemui =
+        new Project(name: "Leumi", tasks: ["Development", "Consulting"]);
     Project gm = new Project(name: "GM", tasks: ["Development", "Consulting"]);
-    Project tikal = new Project(name: "Tikal", tasks: ["Development", "Meeting", "Training", "Vacation", "Accounting", "ArmyService", "General", "Illness", "Management"]);
+    Project tikal = new Project(name: "Tikal", tasks: [
+      "Development",
+      "Meeting",
+      "Training",
+      "Vacation",
+      "Accounting",
+      "ArmyService",
+      "General",
+      "Illness",
+      "Management"
+    ]);
 
     User.init("Moti Bartov", "User", "Tikal", <Project>[tikal, lemui, gm]);
-    Navigator.of(context).
-    pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => new BottomNavigation()));
+    Navigator.of(context).pushReplacement(new MaterialPageRoute(
+        builder: (BuildContext context) => new BottomNavigation()));
     print("Button Clicked");
   }
 
-  void _login() {
-    repository.login().then((value){
+  void _signIn(String userName, String password) {
+    repository.updateCredentials(new Credentials(signInUserName: userName, signInPassword: password));
+    repository.singIn(userName, password).then((value) {
       print("Got response: $value");
-    }).catchError((err){
+      if (value.toString().contains("401 Unauthorized")) {
+        _showSignInDialog();
+      }
+    }).catchError((err) {
       print("_login: ${err.toString()}");
+      _showSignInDialog();
     });
   }
 
+  Future<Null> _showSignInDialog() async {
+
+    String userName;
+    String password;
+
+    Widget dialogContent = Container(
+      padding: EdgeInsets.all(4.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Container(
+            padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 0.0, bottom: 4.0),
+            child: new TextField(
+                onChanged: (value){
+                  userName = value;
+                },
+                decoration: InputDecoration(
+                    hintText: "username",
+                    contentPadding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0))),
+                maxLines: 1),
+          ),
+          Container(
+            padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 4.0, bottom: 0.0),
+            child: new TextField(
+              onChanged: (value){
+                password = value;
+              },
+                decoration: InputDecoration(
+                    hintText: "password",
+                    contentPadding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0))),
+                maxLines: 1),
+          ),
+        ],
+      ),
+    );
+
+    AlertDialog dialog = AlertDialog(
+      title: Row(
+        children: <Widget>[
+          Container(
+            margin: EdgeInsets.all(8.0),
+            width: 24.0,
+            height: 24.0,
+            child:Image.asset('assets/logo.png',),
+          ),
+          Text("Sign In")
+        ],
+      ),
+      content: dialogContent,
+      actions: <Widget>[
+        FlatButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Text("Cancel"),
+        ),FlatButton(
+          onPressed: () {
+            print("Logging in for: $userName : $password");
+            _signIn(userName, password);
+            Navigator.pop(context);
+          },
+          child: Text("OK"),
+        )
+      ],
+    );
+
+    return showDialog<Null>(
+        context: context,
+        barrierDismissible: false, // user must tap button!
+        builder: (BuildContext context){
+          return dialog;
+        }
+    );
+  }
+
+  Widget _buildDialogContent() {
+    TextEditingController usernameInputController = TextEditingController();
+    TextEditingController passwordInputController = TextEditingController();
+  }
 }

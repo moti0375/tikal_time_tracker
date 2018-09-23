@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../network/credentials.dart';
 import '../../models.dart';
 import '../time_data_source.dart';
 import '../../database/database_helper.dart';
@@ -57,8 +58,13 @@ class LocalDataSource implements TimeDateSource {
   }
 
   @override
-  Future<dynamic> login() {
+  Future<dynamic> singIn(String userName, String password) {
     return null;
+  }
+
+  @override
+  void updateCredentials(Credentials credentials) {
+    // TODO: implement updateCredentials
   }
 
 }
