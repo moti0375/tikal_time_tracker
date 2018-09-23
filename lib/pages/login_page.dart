@@ -5,8 +5,13 @@ import '../data/user.dart';
 import '../data/models.dart';
 import 'dart:async';
 import '../network/credentials.dart';
+import '../storage/preferences.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 class LoginPage extends StatefulWidget {
+  static final String TAG = "LoginPage";
   static String tag = "LoginPage";
+  Preferences preferences;
 
   @override
   State<StatefulWidget> createState() {
@@ -15,12 +20,25 @@ class LoginPage extends StatefulWidget {
 }
 
 class LoginPageState extends State<LoginPage> {
+  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
-   TimeRecordsRepository repository = TimeRecordsRepository.init(new Credentials(signInUserName: "", signInPassword: ""));
+  TimeRecordsRepository repository = TimeRecordsRepository.init(
+      new Credentials(signInUserName: "", signInPassword: ""));
+
+  @override
+  void initState() {
+    super.initState();
+    initPrefs().then((value) {
+      String prefsUserName = widget.preferences.getSingInUserName();
+      String prefsPassword = widget.preferences.getSingInPassword();
+      print("initState: $prefsUserName:$prefsPassword");
+      _signIn(prefsUserName, prefsPassword);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    _signIn("", "");
+    print("${LoginPage.TAG}: build");
 
     final logo = Hero(
         tag: 'hero',
@@ -116,20 +134,23 @@ class LoginPageState extends State<LoginPage> {
   }
 
   void _signIn(String userName, String password) {
-    repository.updateCredentials(new Credentials(signInUserName: userName, signInPassword: password));
+    repository.updateCredentials(
+        new Credentials(signInUserName: userName, signInPassword: password));
     repository.singIn(userName, password).then((value) {
-      print("Got response: $value");
+      debugPrint("Got response: ${value.toString()}");
       if (value.toString().contains("401 Unauthorized")) {
         _showSignInDialog();
+      } else {
+        widget.preferences.setSingInUserName(userName);
+        widget.preferences.setSingInPassword(password);
       }
     }).catchError((err) {
-      print("_login: ${err.toString()}");
+      debugPrint("_login: ${err.toString()}");
       _showSignInDialog();
     });
   }
 
   Future<Null> _showSignInDialog() async {
-
     String userName;
     String password;
 
@@ -141,9 +162,10 @@ class LoginPageState extends State<LoginPage> {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Container(
-            padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 0.0, bottom: 4.0),
+            padding: const EdgeInsets.only(
+                left: 8.0, right: 8.0, top: 0.0, bottom: 4.0),
             child: new TextField(
-                onChanged: (value){
+                onChanged: (value) {
                   userName = value;
                 },
                 decoration: InputDecoration(
@@ -154,11 +176,12 @@ class LoginPageState extends State<LoginPage> {
                 maxLines: 1),
           ),
           Container(
-            padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 4.0, bottom: 0.0),
+            padding: const EdgeInsets.only(
+                left: 8.0, right: 8.0, top: 4.0, bottom: 0.0),
             child: new TextField(
-              onChanged: (value){
-                password = value;
-              },
+                onChanged: (value) {
+                  password = value;
+                },
                 decoration: InputDecoration(
                     hintText: "password",
                     contentPadding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
@@ -177,7 +200,9 @@ class LoginPageState extends State<LoginPage> {
             margin: EdgeInsets.all(8.0),
             width: 24.0,
             height: 24.0,
-            child:Image.asset('assets/logo.png',),
+            child: Image.asset(
+              'assets/logo.png',
+            ),
           ),
           Text("Sign In")
         ],
@@ -189,7 +214,8 @@ class LoginPageState extends State<LoginPage> {
             Navigator.pop(context);
           },
           child: Text("Cancel"),
-        ),FlatButton(
+        ),
+        FlatButton(
           onPressed: () {
             print("Logging in for: $userName : $password");
             _signIn(userName, password);
@@ -203,14 +229,18 @@ class LoginPageState extends State<LoginPage> {
     return showDialog<Null>(
         context: context,
         barrierDismissible: false, // user must tap button!
-        builder: (BuildContext context){
+        builder: (BuildContext context) {
           return dialog;
-        }
-    );
+        });
   }
 
   Widget _buildDialogContent() {
     TextEditingController usernameInputController = TextEditingController();
     TextEditingController passwordInputController = TextEditingController();
+  }
+
+  Future<Null> initPrefs() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    widget.preferences = Preferences.init(preferences);
   }
 }
