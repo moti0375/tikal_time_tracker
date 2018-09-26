@@ -1,4 +1,6 @@
 import 'dart:async';
+import '../../network/requests/login_request.dart';
+
 import '../models.dart';
 import 'time_data_source.dart';
 import '../../data/repository/local/local_data_source.dart';
@@ -71,6 +73,16 @@ class TimeRecordsRepository implements TimeDateSource{
   void updateCredentials(Credentials credentials) {
     print("repository: updateCredentials ");
     remoteDateSource.updateCredentials(credentials);
+  }
+
+  @override
+  Future<dynamic> login(String email, String password) {
+    return remoteDateSource.login(email, password);
+  }
+
+  @override
+  Future timePage() {
+    return remoteDateSource.timePage();
   }
 
 }

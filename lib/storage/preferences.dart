@@ -42,5 +42,9 @@ class Preferences{
     return prefs.getString(SING_IN_PASSWORD);
   }
 
+  void signOut(){
+    prefs.remove(SING_IN_USER_NAME);
+    prefs.remove(SING_IN_PASSWORD);
+  }
 
 }

@@ -1,18 +1,18 @@
 import 'package:jaguar_serializer/src/serializer/serializer.dart';
 import '../requests/login_request.dart';
 
-class FormSerializer extends Serializer<Form>{
+class FormSerializer extends Serializer<LoginForm>{
   @override
-  Form fromMap(Map map) {
-    return new Form(login: map['login'], password: map['password']);
+  LoginForm fromMap(Map map) {
+    return new LoginForm(Login: map['login'], Password: map['password']);
   }
 
   @override
-  Map<String, String> toMap(Form model) {
-    print("form serializer: toMap: ${model.toString()}");
-    Map<String, String> map;
-    map['login'] = model.login;
-    map['password'] = model.password;
+  Map<String, String> toMap(LoginForm model) {
+    print("form serializer: toSap: ${model.toString()}");
+    Map<String, String> map = Map<String, String>();;
+    map["login"] = model.Login;
+    map["password"] = model.Password;
     return map;
   }
 

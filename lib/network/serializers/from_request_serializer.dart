@@ -11,13 +11,13 @@ class FormRequestSerializer extends Serializer<FormRequest>{
   @override
   FormRequest fromMap(Map map) {
     print("fromMap was called");
-    return FormRequest(form: new Form(login: map['login'], password: map['password']));
+    return FormRequest(form: new LoginForm(Login: map['Login'], Password: map['Password']));
   }
 
   @override
   Map<String, String> toMap(FormRequest model) {
     Map<String, String> form = Map<String, String>();
-    form["form"] = "{login : ${model.form.login}, password : ${model.form.password}}";
+    form["form"] = "{Login : ${model.form.Login}, Password : ${model.form.Password}}";
 //    print("toMap: ${form.toString()}" );
     return form;
   }

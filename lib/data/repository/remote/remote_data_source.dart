@@ -9,6 +9,8 @@ import '../../../network/serializers/from_request_serializer.dart';
 import '../../../network/serializers/form_serializer.dart';
 import '../../../network/requests/login_request.dart';
 import '../../../network/credentials.dart';
+import 'dart:convert';
+
 
 import '../time_data_source.dart';
 
@@ -68,5 +70,20 @@ class RemoteDateSource implements TimeDateSource {
           print("Metadata: ${route.metadataMap}");
         }),
         serializers: serializers, credentials: credentials);
+  }
+
+  @override
+  Future<dynamic> login(String email, String password) {
+
+    List<int> emailConvert = Utf8Encoder().convert(email);
+    List<int> passwordConvert = Utf8Encoder().convert(password);
+    print("encoded: ${Base64Encoder().convert(emailConvert)}");
+
+    return api.login(LoginForm(Login: email, Password: password));
+  }
+
+  @override
+  Future timePage() {
+    return api.time();
   }
 }

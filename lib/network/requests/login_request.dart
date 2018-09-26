@@ -1,12 +1,17 @@
 
 
-class Form{
-  String login;
-  String password;
-  Form({this.login, this.password});
+class LoginForm{
+  String Login;
+  String Password;
+  LoginForm({this.Login, this.Password});
+
+  @override
+  String toString() {
+    return 'Form{Login: $Login, Password: $Password}';
+  }
 }
 
 class FormRequest{
-  Form form;
+  LoginForm form;
   FormRequest({this.form});
 }
