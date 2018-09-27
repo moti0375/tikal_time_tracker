@@ -13,6 +13,7 @@ dependencies:
   flutter_launcher_icons: ^0.6.0
   shared_preferences: ^0.4.2
   intl: ^0.15.7
+  html: any
 
 dev_dependencies:
   jaguar_retrofit_gen:

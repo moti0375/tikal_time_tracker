@@ -49,20 +49,18 @@ class LoginPageState extends State<LoginPage> {
         ));
 
     TextEditingController emailController = TextEditingController();
-    emailController.addListener((){
+    emailController.addListener(() {
 //      print("${emailController.text}");
       _email = emailController.text;
     });
-    
+
     final email = TextFormField(
       controller: emailController,
-      onFieldSubmitted: (value){
+      onFieldSubmitted: (value) {
         print("onFieldSubmitted: $value");
         _email = value;
       },
-      onEditingComplete: (){
-
-      },
+      onEditingComplete: () {},
       textInputAction: TextInputAction.next,
       keyboardType: TextInputType.emailAddress,
       decoration: InputDecoration(
@@ -73,7 +71,7 @@ class LoginPageState extends State<LoginPage> {
     );
 
     TextEditingController passwordController = TextEditingController();
-    passwordController.addListener((){
+    passwordController.addListener(() {
 //      print("${passwordController.text}");
       _password = passwordController.text;
     });
@@ -110,8 +108,7 @@ class LoginPageState extends State<LoginPage> {
         onPressed: () {
           _showSignOutDialog();
         },
-        child:
-            Text("Sign out", style: TextStyle(color: Colors.black45)));
+        child: Text("Sign out", style: TextStyle(color: Colors.black45)));
 
     return new Scaffold(
       backgroundColor: Colors.white,
@@ -136,44 +133,33 @@ class LoginPageState extends State<LoginPage> {
   }
 
   _createUserAndNavigate() {
-    Project lemui =
-        new Project(name: "Leumi", tasks: ["Development", "Consulting"]);
-    Project gm = new Project(name: "GM", tasks: ["Development", "Consulting"]);
-    Project tikal = new Project(name: "Tikal", tasks: [
-      "Development",
-      "Meeting",
-      "Training",
-      "Vacation",
-      "Accounting",
-      "ArmyService",
-      "General",
-      "Illness",
-      "Management"
-    ]);
-
-    User.init("Moti Bartov", "User", "Tikal", <Project>[tikal, lemui, gm]);
-    Navigator.of(context).pushReplacement(new MaterialPageRoute(
-        builder: (BuildContext context) => new BottomNavigation()));
+//    User.init("Moti Bartov", "User", "Tikal", <Project>[tikal, lemui, gm]);
     print("Button Clicked");
   }
 
-  void _navigateToTime(){
-    repository.timePage().then((response){
-      debugPrint("_navigateToTime: $response");
+  void _navigateToTime() {
+    repository.timePage().then((response) {
+
+      debugPrint("_navigateToTime response: $response");
+      User.init(response);
+      Navigator.of(context).pushReplacement(new MaterialPageRoute(
+          builder: (BuildContext context) => new BottomNavigation()));
     });
   }
 
-  void _login(String email, String password){
-    repository.login(email, password).then((response){
-      debugPrint("login response: ${response.toString()}");
-      if(response.toString().isEmpty){
+  void _login(String email, String password) {
+    repository.login(email, password).then((response) {
+//      debugPrint("signin response: ${response.toString()}");
+      if (response.toString().isEmpty) {
         print("navigating to Time");
         _navigateToTime();
+      } else if (response.toString().contains("Incorrect login or password")) {
+        print("Incorrect login or password");
       }
     });
   }
 
-  void _onClickSignIn(String userName, String password){
+  void _onClickSignIn(String userName, String password) {
     print("_onClickSignIn: $userName:$password");
     widget.preferences.setSingInUserName(userName);
     widget.preferences.setSingInPassword(password);
@@ -296,15 +282,15 @@ class LoginPageState extends State<LoginPage> {
             padding: const EdgeInsets.only(
                 left: 8.0, right: 8.0, top: 0.0, bottom: 4.0),
             child: new Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Text("Are you sure?"),
-                      Text("This will erase your credentials")
-                    ],
-                  ),
-                ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Text("Are you sure?"),
+                  Text("This will erase your credentials")
+                ],
+              ),
+            ),
           ),
         ],
       ),

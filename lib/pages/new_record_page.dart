@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tikal_time_tracker/ui/new_record_title.dart';
+import '../data/project.dart';
+import '../data/task.dart';
 import '../data/models.dart';
 import 'dart:async';
 import '../data/repository/time_records_repository.dart';
@@ -39,8 +41,8 @@ class NewRecordPageState extends State<NewRecordPage> {
 
   List<Project> _projects = new List<Project>();
 
-  String _selectedTask;
-  List<String> _tasks = new List<String>();
+  Task _selectedTask;
+  List<Task> _tasks = new List<Task>();
 
   @override
   void initState() {
@@ -98,7 +100,7 @@ class NewRecordPageState extends State<NewRecordPage> {
     });
   }
 
-  void _onTaskSelected(String value) {
+  void _onTaskSelected(Task value) {
     setState(() {
       _selectedTask = value;
     });
@@ -257,18 +259,18 @@ class NewRecordPageState extends State<NewRecordPage> {
                 ),
               ),
               value: _selectedTask,
-              items: _tasks.map((String value) {
-                return new DropdownMenuItem<String>(
+              items: _tasks.map((Task value) {
+                return new DropdownMenuItem<Task>(
                   value: value,
                   child: new Text(
-                    value
+                    value.name
                         .toString()
                         .substring(value.toString().indexOf('.') + 1),
                     style: TextStyle(fontSize: 24.0),
                   ),
                 );
               }).toList(),
-              onChanged: (String value) {
+              onChanged: (Task value) {
                 _onTaskSelected(value);
               }),
         ));
@@ -511,8 +513,7 @@ class NewRecordPageState extends State<NewRecordPage> {
 
   _handleSaveButtonClicked() {
     print("Button Clicked");
-    TimeRecord timeRecord = TimeRecord(project: _selectedProject.name, task: _selectedTask.toString()
-        .substring(_selectedTask.toString().indexOf('.') + 1), dateTime: _date, start: _startTime, finish: _finishTime, duration: calculateDuration(date: _date, startTime: _startTime, finishTime: _finishTime), comment: _comment);
+    TimeRecord timeRecord = TimeRecord(project: _selectedProject.name, task: _selectedTask, dateTime: _date, start: _startTime, finish: _finishTime, duration: calculateDuration(date: _date, startTime: _startTime, finishTime: _finishTime), comment: _comment);
     repository.addTimeForDate(timeRecord).then((value) {
       print("Record ${value.id} was added to db");
       Navigator.of(context).pop(value);
@@ -521,11 +522,11 @@ class NewRecordPageState extends State<NewRecordPage> {
 
   _createEmptyDropDown( ) {
     _tasks.add(_selectedTask);
-    return _tasks.map((String item) {
+    return _tasks.map((Task item) {
       print("item: $item");
-      return new DropdownMenuItem<String>(
+      return new DropdownMenuItem<Task>(
         value: item,
-        child: new Text(item ,
+        child: new Text(item.name ,
           style: TextStyle(fontSize: 25.0),
         ),
       );

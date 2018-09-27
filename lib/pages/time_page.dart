@@ -10,6 +10,8 @@ import 'dart:async';
 import '../pages/login_page.dart';
 import '../ui/time_record_list_adapter.dart';
 import 'new_record_page.dart';
+import '../data/project.dart';
+import '../data/task.dart';
 
 class TimePage extends StatefulWidget {
   @override

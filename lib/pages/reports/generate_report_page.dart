@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import '../../data/user.dart';
 import '../../data/models.dart';
+import '../../data/project.dart';
+import '../../data/task.dart';
 import '../../data/repository/time_records_repository.dart';
 import 'report_page.dart';
 import 'input_field.dart';
@@ -17,7 +19,7 @@ class GenerateReportPage extends StatefulWidget {
 
 class GenerateReportState extends State<GenerateReportPage> {
   Project _selectedProject;
-  List<String> _tasks = new List<String>();
+  List<Task> _tasks = new List<Task>();
   List<String> _predefiendPeriod = [
     "This Month",
     "Previuos Month",
@@ -26,7 +28,7 @@ class GenerateReportState extends State<GenerateReportPage> {
     "Today",
     "Yesterday"
   ];
-  String _selectedTask;
+  Task _selectedTask;
   String _selectedPeriod;
   TextEditingController startDateInputController;
   TextEditingController endDateInputController;
@@ -92,8 +94,8 @@ class GenerateReportState extends State<GenerateReportPage> {
                 ),
               ),
               value: _selectedTask,
-              items: _tasks.map((String value) {
-                return new DropdownMenuItem<String>(
+              items: _tasks.map((Task value) {
+                return new DropdownMenuItem<Task>(
                   value: value,
                   child: new Text(
                     value
@@ -103,7 +105,7 @@ class GenerateReportState extends State<GenerateReportPage> {
                   ),
                 );
               }).toList(),
-              onChanged: (String value) {
+              onChanged: (Task value) {
                 _onTaskSelected(value);
               }),
         ));
@@ -267,7 +269,7 @@ class GenerateReportState extends State<GenerateReportPage> {
     });
   }
 
-  void _onTaskSelected(String value) {
+  void _onTaskSelected(Task value) {
     setState(() {
       _selectedTask = value;
     });

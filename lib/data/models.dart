@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import '../data/database/database_helper.dart';
+import '../data/project.dart';
+import '../data/task.dart';
 
 class TimeRecord{
   int id;
   String project;
-  String task;
+  Task task;
   TimeOfDay start;
   TimeOfDay finish;
   Duration duration;
@@ -101,11 +103,6 @@ enum JobTask{
   Transport
 }
 
-class Project{
-  final String name;
-  final List<String> tasks;
-  const Project({this.name, this.tasks});
-}
 
 
 class Report{

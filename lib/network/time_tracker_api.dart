@@ -45,7 +45,7 @@ class TimeTrackerApi extends _$TimeTrackerApiClient implements ApiClient{
       }
     });
 
-    this.base.before((b){
+    this.base.before((b){  //This is 'before 'interceptor
       b.cookies(cookies);
     });
   }
