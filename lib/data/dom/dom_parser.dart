@@ -31,7 +31,6 @@ class DomParser {
   }
 
   List<Project> _extractProjectsForUser(String domStr, List<Task> tasks) {
-//    debugPrint("$TAG: _extractProjectsForUser: $domStr");
 
     List<Project> projects = _extractProjects(domStr);
 
@@ -53,6 +52,7 @@ class DomParser {
     });
 
     print("getUserFromDom: ${projects.toString()}");
+    return projects;
   }
 
   List<Project> _extractProjects(String domStr){

@@ -12,14 +12,14 @@ import '../../ui/drop_down_item.dart';
 class GenerateReportPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    print("Users: ${User().name}, Projects: ${User().projects[0].name}");
+//    print("Users: ${User.me.name}, Projects: ${User.me.projects[0].name}");
     return new GenerateReportState();
   }
 }
 
 class GenerateReportState extends State<GenerateReportPage> {
   Project _selectedProject;
-  List<Task> _tasks = new List<Task>();
+  List<Task> _tasks = User.me.tasks;
   List<String> _predefiendPeriod = [
     "This Month",
     "Previuos Month",
@@ -50,7 +50,7 @@ class GenerateReportState extends State<GenerateReportPage> {
     final projectsDropDown = Container(
         margin: EdgeInsets.symmetric(vertical: 4.0),
         decoration: BoxDecoration(
-            border: Border.all(width: 0.5, color: Colors.black45)),
+            border: Border.all(width: 0.5, color: Colors.black12)),
         padding: EdgeInsets.symmetric(horizontal: 10.0),
         child: DropdownButtonHideUnderline(
           child: new DropdownButton(
@@ -63,7 +63,7 @@ class GenerateReportState extends State<GenerateReportPage> {
                 ),
               ),
               value: _selectedProject,
-              items: User().projects.map((Project value) {
+              items: User.me.projects.map((Project value) {
                 return new DropdownMenuItem<Project>(
                   value: value,
                   child: new Text(
@@ -98,9 +98,7 @@ class GenerateReportState extends State<GenerateReportPage> {
                 return new DropdownMenuItem<Task>(
                   value: value,
                   child: new Text(
-                    value
-                        .toString()
-                        .substring(value.toString().indexOf('.') + 1),
+                    value.name,
                     style: TextStyle(fontSize: 24.0),
                   ),
                 );

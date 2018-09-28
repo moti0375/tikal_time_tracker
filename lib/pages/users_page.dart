@@ -5,7 +5,7 @@ class UsersPage extends StatefulWidget{
 
   @override
   State<StatefulWidget> createState() {
-    print("Users: ${User().name}, Projects: ${User().projects[0].name}");
+    print("Users: ${User.me.name}, Projects: ${User.me.projects[0].name}");
     return UsersPageState();
   }
 }
@@ -19,7 +19,7 @@ class UsersPageState extends State<UsersPage>{
         elevation: 1.0,
       ),
       body: _buildBody(),
-      backgroundColor: Colors.blueGrey,
+      backgroundColor: Colors.black12,
     );
   }
 

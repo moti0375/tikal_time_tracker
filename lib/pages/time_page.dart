@@ -43,7 +43,7 @@ class TimePageState extends State<TimePage> implements DrawerOnClickListener, Li
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.teal,
+      backgroundColor: Colors.black12,
         appBar: _buildAppBar(title: "Tikal Time Tracker"),
         floatingActionButton:
             new FloatingActionButton(onPressed: () {
@@ -63,7 +63,7 @@ class TimePageState extends State<TimePage> implements DrawerOnClickListener, Li
               ),
               Container(
                 padding: EdgeInsets.only(bottom: 2.0),
-                child: Text("${User().name}, ${User().role}, ${User().company}"),
+                child: Text("${User.me.name}, ${User.me.role}, ${User.me.company}"),
               ),
               Expanded(
                 child: TimeRecordListAdapter(items: _records, adapterClickListener: this),
@@ -160,7 +160,7 @@ class TimePageState extends State<TimePage> implements DrawerOnClickListener, Li
   }
 
   _navigateToNextScreen(){
-    final projects = User().projects;
+    final projects = User.me.projects;
     print("_navigateToNextScreen: " + projects.toString());
       Navigator.of(context).
       push(new MaterialPageRoute(builder: (BuildContext context) => new NewRecordPage(projects: projects, dateTime: _selectedDate, timeRecord: null, flow: NewRecordFlow.new_record))).then((value){

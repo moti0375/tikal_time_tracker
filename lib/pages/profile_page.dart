@@ -18,7 +18,7 @@ class ProfilePageState extends State<ProfilePage>{
         elevation: 1.0,
       ),
       body: _buildBody(),
-      backgroundColor: Colors.lightGreen,
+      backgroundColor: Colors.black12,
     );
   }
 

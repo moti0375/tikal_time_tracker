@@ -5,9 +5,9 @@ import '../data/dom/dom_parser.dart';
 
 
 class User {
-   String name = "Shmulik";
-   String role = "Cleaner";
-   String company = "Tikal";
+   String name;
+   String role;
+   String company;
    List<Project> projects;
    List<Task> tasks;
 
@@ -17,20 +17,28 @@ class User {
   DomParser parser = DomParser();
 
   static void init(String dom) {
-    print("User: init");
     if (_me == null) {
-      _me = User._internal(dom);
+      User._internal(dom);
     }
+    print("User: init ${me.toString()}");
   }
 
   User._internal(String dom){
     print("User: internal");
-    parser.getUserFromDom(dom);
+    _me = parser.getUserFromDom(dom);
   }
 
   User({this.name, this.role, this.company, this.projects, this.tasks});
 
   factory User.builder(String name, String role, String company, List<Project> projects, List<Task> tasks){
+    print("User.builder: projects: ${projects.toString()}, ${tasks.toString()}");
     return new User(name: name, role: role, company: company, projects: projects, tasks: tasks);
   }
+
+   @override
+   String toString() {
+     return 'User{name: $name, role: $role, company: $company, projects: $projects, tasks: $tasks}';
+   }
+
+
 }
