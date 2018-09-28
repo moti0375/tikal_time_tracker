@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tikal_time_tracker/ui/new_record_title.dart';
+import '../ui/new_record_title.dart';
 import '../data/project.dart';
 import '../data/task.dart';
 import '../data/models.dart';
@@ -143,36 +143,6 @@ class NewRecordPageState extends State<NewRecordPage> {
 
   @override
   Widget build(BuildContext context) {
-//    final projectsDropDown = Container(
-//        padding: EdgeInsets.symmetric(horizontal: 25.0),
-//        child: Row(
-//            mainAxisSize: MainAxisSize.max,
-//            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//            children: <Widget>[
-//              DropdownButton(
-//                  hint: Container(
-//                    width: MediaQuery.of(context).size.width * 0.7,
-//                    padding: const EdgeInsets.all(8.0),
-//                    child: new Text(
-//                      "Select a Project",
-//                      style: TextStyle(fontSize: 30.0),
-//                    ),
-//                  ),
-//                  value: _selectedProject,
-//                  iconSize: 50.0,
-//                  items: _projects.map((Project value) {
-//                    return new DropdownMenuItem<Project>(
-//                      value: value,
-//                      child: new Text(
-//                        value.name,
-//                        style: TextStyle(fontSize: 25.0),
-//                      ),
-//                    );
-//                  }).toList(),
-//                  onChanged: (Project value) {
-//                    _onProjectSelected(value);
-//                  })
-//            ]));
 
     final projectsDropDown = Container(
         margin: EdgeInsets.symmetric(vertical: 4.0),
@@ -206,42 +176,6 @@ class NewRecordPageState extends State<NewRecordPage> {
     );
 
 
-//    final tasksDropDown = Container(
-//      padding: EdgeInsets.symmetric(horizontal: 25.0),
-//      child: Row(
-//        mainAxisSize: MainAxisSize.max,
-//        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//        crossAxisAlignment: CrossAxisAlignment.center,
-//        children: <Widget>[
-//          new Expanded(
-//              child: new DropdownButton(
-//                  iconSize: 50.0,
-//                  hint: Container(
-//                    width: MediaQuery.of(context).size.width * 0.7,
-//                    padding: const EdgeInsets.all(8.0),
-//                    child: Text(
-//                      "Select a Task",
-//                      style: TextStyle(fontSize: 30.0),
-//                    ),
-//                  ),
-//                  value: _selectedTask,
-//                  items: _tasks.map((String value) {
-//                    return new DropdownMenuItem<String>(
-//                      value: value,
-//                      child: new Text(
-//                        value
-//                            .toString()
-//                            .substring(value.toString().indexOf('.') + 1),
-//                        style: TextStyle(fontSize: 25.0),
-//                      ),
-//                    );
-//                  }).toList(),
-//                  onChanged: (String value) {
-//                    _onTaskSelected(value);
-//                  })),
-//        ],
-//      ),
-//    );
 
     final tasksDropDown = Container(
         margin: EdgeInsets.symmetric(vertical: 4.0),

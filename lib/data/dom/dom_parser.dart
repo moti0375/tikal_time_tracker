@@ -5,13 +5,17 @@ import 'package:html/parser.dart' show parse;
 import '../user.dart';
 import '../project.dart';
 import '../task.dart';
+import '../models.dart';
 import 'package:flutter/material.dart';
-import 'dart:convert';
+import 'package:intl/intl.dart';
 
+import 'dart:convert';
 class DomParser {
   static const String TAG = "DomParser";
 
   DomParser() {}
+
+  DateFormat dateFormat = DateFormat('H:m');
 
   User getUserFromDom(String domStr) {
     String pageTitle = domStr.substring(
@@ -31,23 +35,24 @@ class DomParser {
   }
 
   List<Project> _extractProjectsForUser(String domStr, List<Task> tasks) {
-
     List<Project> projects = _extractProjects(domStr);
 
-    Map<int, List<int>> tasksForProjects = _extractTasksForProjects(domStr, projects);
+    Map<int, List<int>> tasksForProjects = _extractTasksForProjects(
+        domStr, projects);
 
 //    debugPrint("_extractTasks: $domStr");
 
-    projects.forEach((p){
+    projects.forEach((p) {
       print("getUserFromDom: p = ${p.name}:${tasksForProjects[p.value]}");
-      List<Task> tasksForProj = tasksForProjects[p.value].map((t){
-         Task task = tasks.firstWhere((e){
-           print("firstWhere: $t -> ${e.value}:${e.name}");
+      List<Task> tasksForProj = tasksForProjects[p.value].map((t) {
+        Task task = tasks.firstWhere((e) {
+          print("firstWhere: $t -> ${e.value}:${e.name}");
           return (e.value == t);
         });
-         return task;
+        return task;
       }).toList();
-      print("getUserFromDom: tasksForProj ${p.name} : ${tasksForProj.toString()}" );
+      print("getUserFromDom: tasksForProj ${p.name} : ${tasksForProj
+          .toString()}");
       p.tasks = tasksForProj;
     });
 
@@ -55,16 +60,18 @@ class DomParser {
     return projects;
   }
 
-  List<Project> _extractProjects(String domStr){
+  List<Project> _extractProjects(String domStr) {
     String firstDelimiter = "var projects = new Array();";
     String secondDelimiter = "// Prepare an array of task ids for projects";
-    String buffer = domStr.substring(domStr.indexOf(firstDelimiter)+firstDelimiter.length, domStr.indexOf(secondDelimiter));
+    String buffer = domStr.substring(
+        domStr.indexOf(firstDelimiter) + firstDelimiter.length,
+        domStr.indexOf(secondDelimiter));
 
     List<String> projects = buffer.split("projects[idx] = new Array(");
 
     projects.removeAt(0);
 
-    projects = projects.map((it){
+    projects = projects.map((it) {
       return it.substring(0, it.indexOf("\");"));
     }).toList();
 
@@ -110,8 +117,8 @@ class DomParser {
     return tasks;
   }
 
-  Map<int, List<int>> _extractTasksForProjects(
-      String domStr, List<Project> projects) {
+  Map<int, List<int>> _extractTasksForProjects(String domStr,
+      List<Project> projects) {
     String startDelimiter = "var task_ids = new Array()";
     String endDelimiter = "// Prepare an array of task names.";
 
@@ -146,5 +153,69 @@ class DomParser {
 
     print("_extractTasksForProjects ${projectsAndTasks.toString()}");
     return projectsAndTasks;
+  }
+
+
+  List<TimeRecord> parseTimePage(String timeDomStr) {
+    String start = "<table border=\"0\" cellpadding=\"3\" cellspacing=\"1\" width=\"100%\">";
+    String stop = "</table>";
+    String buffer = timeDomStr.substring(
+        timeDomStr.indexOf(start) + start.length);
+    buffer = buffer.substring(0, buffer.indexOf(stop));
+
+//    debugPrint("parseTimePage $timeDomStr");
+
+
+    DateTime date = _extractDateTime(timeDomStr);
+
+    List<String> rows = buffer.trim().split("<tr");
+    rows.removeAt(0);
+    rows.removeAt(0);
+
+    rows = rows.map((r) {
+      return r.substring(r.indexOf(">") + 1, r.indexOf("</tr>"));
+    }).toList();
+
+//    debugPrint("rows: ${rows.toString()}, size: ${rows.length}");
+
+    List<TimeRecord> result = rows.map((row) {
+      List<String> cells = row.split("</td>");
+
+      cells = cells.map((it) {
+        return it.substring(it.indexOf(">") + 1);
+      }).toList();
+//      debugPrint("cells: ${cells.toString()}, size: ${cells.length}");
+
+      Task task = User.me.tasks.firstWhere((it) {
+//        print("firstWhere: ${it.name}:${cells[1]}");
+        return it.name == cells[1];
+      });
+
+      TimeOfDay start = TimeOfDay.fromDateTime(dateFormat.parse(cells[2]));
+      TimeOfDay finish = TimeOfDay.fromDateTime(dateFormat.parse(cells[3]));
+      return TimeRecord(project: cells[0],
+          task: task,
+          start: start,
+          dateTime: date,
+          finish: finish,
+          comment: cells[4]);
+    }).toList();
+    return result;
+  }
+
+
+  DateTime _extractDateTime(String domStr) {
+    String pageTitleStart = "<!-- page title and user details -->";
+    String pageTitleEnd = "<!-- end of page title and user details -->";
+
+    String timeStr = domStr.substring(
+        domStr.indexOf(pageTitleStart) + pageTitleStart.length);
+    timeStr = timeStr.substring(0, timeStr.indexOf(pageTitleEnd));
+
+    timeStr = timeStr.substring(
+        timeStr.indexOf("Time: ") + 6, timeStr.indexOf("</div>"));
+    print("_extractDateTime: $timeStr");
+    DateFormat formatter = DateFormat("y-MM-d");
+    return formatter.parse(timeStr.trim());
   }
 }

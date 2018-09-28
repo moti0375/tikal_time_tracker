@@ -10,6 +10,7 @@ import '../../../network/serializers/form_serializer.dart';
 import '../../../network/requests/login_request.dart';
 import '../../../network/credentials.dart';
 import 'dart:convert';
+import '../../dom/dom_parser.dart';
 
 
 import '../time_data_source.dart';
@@ -18,6 +19,7 @@ class RemoteDateSource implements TimeDateSource {
   TimeTrackerApi api;
   JsonRepo serializers = JsonRepo();
   Credentials credentials;
+  DomParser parser = DomParser();
 
   RemoteDateSource({this.credentials}) {
     _setApi(credentials);
@@ -40,7 +42,11 @@ class RemoteDateSource implements TimeDateSource {
 
   @override
   Future<List<TimeRecord>> getAllTimeForDate(DateTime date) {
-    // TODO: implement getAllTimeForDate
+    String month = date.month < 10 ? "0${date.month}" : "${date.month}";
+    String day = date.day < 10 ? "0${date.day}" : "${date.day}";
+    return api.timeForDate("${date.year}-$month-$day").then((response){
+      return parser.parseTimePage(response.toString());
+    });
   }
 
   @override

@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 class PlaceholderContent extends StatelessWidget {
   final String title;
   final String subtitle;
+  final VoidCallback onPressed;
 
   PlaceholderContent(
       {this.title = "No Work On This Period",
-      this.subtitle = "Click to add report"});
+      this.subtitle = "Click to add report",
+      this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -20,11 +22,18 @@ class PlaceholderContent extends StatelessWidget {
             color: Colors.black54
           ),
           textAlign: TextAlign.center),
-          Text(subtitle, style: TextStyle(
-              fontSize: 16.0,
-              color: Colors.black54
-          ),
-              textAlign: TextAlign.center)
+          GestureDetector(
+            onTap: (){
+              if(onPressed != null){
+                onPressed();
+              }
+            },
+            child: Text(subtitle, style: TextStyle(
+                fontSize: 16.0,
+                color: Colors.black54
+            ),
+                textAlign: TextAlign.center),
+          )
         ],
       ),
     );

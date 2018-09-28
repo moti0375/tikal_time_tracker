@@ -12,6 +12,7 @@ import '../ui/time_record_list_adapter.dart';
 import 'new_record_page.dart';
 import '../data/project.dart';
 import '../data/task.dart';
+import '../pages/reports/place_holder_content.dart';
 
 class TimePage extends StatefulWidget {
   @override
@@ -36,12 +37,19 @@ class TimePageState extends State<TimePage> implements DrawerOnClickListener, Li
     print("initState");
     var now = DateTime.now();
     _selectedDate = DateTime(now.year, now.month, now.day, 0, 0, 0, 0, 0);
-    _loadRecords(_selectedDate);
+//    _loadRecords(_selectedDate);
     dateInputController = new TextEditingController(text: "${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}");
   }
 
+
   @override
   Widget build(BuildContext context) {
+
+    PlaceholderContent placeholderContent = PlaceholderContent(title: "No Work Today", subtitle: "Tap to add report",onPressed: (){
+      _navigateToNextScreen();
+    });
+
+
     return Scaffold(
       backgroundColor: Colors.black12,
         appBar: _buildAppBar(title: "Tikal Time Tracker"),
@@ -66,7 +74,7 @@ class TimePageState extends State<TimePage> implements DrawerOnClickListener, Li
                 child: Text("${User.me.name}, ${User.me.role}, ${User.me.company}"),
               ),
               Expanded(
-                child: TimeRecordListAdapter(items: _records, adapterClickListener: this),
+                child: (_records == null || _records.isEmpty) ? placeholderContent : TimeRecordListAdapter(items: _records, adapterClickListener: this),
               )
             ],
           ),
@@ -102,10 +110,14 @@ class TimePageState extends State<TimePage> implements DrawerOnClickListener, Li
   void _select(Choice choice){
     setState(() {
       if(choice.action == Action.Logout ){
-        Navigator.of(context).
-        pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => new LoginPage()));
+        _logout();
       }
     });
+  }
+
+  _logout(){
+    Navigator.of(context).
+    pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => new LoginPage()));
   }
 
   AppBar _buildAppBar({String title}) {
@@ -209,14 +221,21 @@ class TimePageState extends State<TimePage> implements DrawerOnClickListener, Li
 
   void _loadRecords(DateTime selectedDate) {
     repository.getAllTimeForDate(_selectedDate).then((records) {
-      print(records.toString());
+//      debugPrint(records.toString());
       _refreshList(records);
+    }, onError: (e){
+      print("There was an error: $e");
+      if(e is RangeError){
+        _refreshList(new List<TimeRecord>());
+      }else{
+        _logout();
+      }
     });
   }
 
   void _refreshList(List<TimeRecord> records){
     setState(() {
-      print("records for ${_selectedDate} : ${records.toString()}");
+      print("records for ${_selectedDate} : ${records.toString()}:${records.length}");
       _records = records;
     });
   }

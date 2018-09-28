@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import '../data/user.dart';
 
 class NewRecordTitle extends StatefulWidget{
   @override
@@ -25,7 +26,7 @@ class PageTitleState extends State<NewRecordTitle>{
                   children: <Widget>[
                     Container(
                       padding: EdgeInsets.only(bottom: 2.0),
-                      child: Text("Moti Bartov, User, Tikal"),
+                      child: Text("${User.me.name}, ${User.me.role}, ${User.me.company}"),
                     )
                   ],
                 ),

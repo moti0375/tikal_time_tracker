@@ -49,7 +49,7 @@ class TimeRecordsRepository implements TimeDateSource{
 
   @override
   Future<List<TimeRecord>> getAllTimeForDate(DateTime date) {
-    return dateSource.getAllTimeForDate(date);
+    return remoteDateSource.getAllTimeForDate(date);
   }
 
   @override

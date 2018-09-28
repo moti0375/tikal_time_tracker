@@ -20,6 +20,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class LoginPageState extends State<LoginPage> {
+
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   TimeRecordsRepository repository = TimeRecordsRepository.init(
@@ -28,16 +29,41 @@ class LoginPageState extends State<LoginPage> {
   String _email;
   String _password;
 
+
+
   @override
   void initState() {
     super.initState();
-    initPrefs().then((value) {
+    initPrefs().then((prefs) {
+      widget.preferences = prefs;
       _signIn();
+      setState(() {
+        _email = widget.preferences.getLoginUserName();
+        _password = widget.preferences.getLoginPassword();
+      });
+      print("initState: $_email:$_password");
     });
   }
 
   @override
   Widget build(BuildContext context) {
+
+    if(widget.preferences == null) {
+      widget.preferences = Preferences();
+    }
+
+    TextEditingController emailController = TextEditingController(text: _email);
+    emailController.addListener(() {
+//      print("${emailController.text}");
+      _email = emailController.text;
+    });
+
+    TextEditingController passwordController = TextEditingController(text: _password);
+    passwordController.addListener(() {
+//      print("${passwordController.text}");
+      _password = passwordController.text;
+    });
+
     print("${LoginPage.TAG}: build");
 
     final logo = Hero(
@@ -48,11 +74,10 @@ class LoginPageState extends State<LoginPage> {
           child: Image.asset('assets/logo.png'),
         ));
 
-    TextEditingController emailController = TextEditingController();
-    emailController.addListener(() {
-//      print("${emailController.text}");
-      _email = emailController.text;
-    });
+
+//    if(_email != null && _email.isNotEmpty){
+//      emailController.value = TextEditingValue(text: _email);
+//    }
 
     final email = TextFormField(
       controller: emailController,
@@ -70,11 +95,10 @@ class LoginPageState extends State<LoginPage> {
               OutlineInputBorder(borderRadius: BorderRadius.circular(30.0))),
     );
 
-    TextEditingController passwordController = TextEditingController();
-    passwordController.addListener(() {
-//      print("${passwordController.text}");
-      _password = passwordController.text;
-    });
+//    if(_password != null && _password.isNotEmpty){
+//      passwordController.value = TextEditingValue(text: _password);
+//    }
+
 
     final password = TextFormField(
       controller: passwordController,
@@ -138,7 +162,7 @@ class LoginPageState extends State<LoginPage> {
   }
 
   void _navigateToTime() {
-    repository.timePage().then((response) {
+     repository.timePage().then((response) {
 
       debugPrint("_navigateToTime response: $response");
       User.init(response);
@@ -152,6 +176,8 @@ class LoginPageState extends State<LoginPage> {
 //      debugPrint("signin response: ${response.toString()}");
       if (response.toString().isEmpty) {
         print("navigating to Time");
+        widget.preferences.setLoginUserName(_email);
+        widget.preferences.setLoginPassword(_password);
         _navigateToTime();
       } else if (response.toString().contains("Incorrect login or password")) {
         print("Incorrect login or password");
@@ -169,12 +195,13 @@ class LoginPageState extends State<LoginPage> {
   void _signIn() {
     String username = widget.preferences.getSingInUserName();
     String password = widget.preferences.getSingInPassword();
+
     print("_signIn: $username:$password");
 
     repository.updateCredentials(
         new Credentials(signInUserName: username, signInPassword: password));
     repository.singIn(username, password).then((value) {
-      debugPrint("Got response: ${value.toString()}");
+//      debugPrint("Got response: ${value.toString()}");
       if (value.toString().contains("401 Unauthorized")) {
         widget.preferences.signOut();
         _showSignInDialog();
@@ -315,6 +342,7 @@ class LoginPageState extends State<LoginPage> {
         FlatButton(
           onPressed: () {
             Navigator.pop(context);
+            _signIn();
           },
           child: Text("Cancel"),
         ),
@@ -342,8 +370,8 @@ class LoginPageState extends State<LoginPage> {
     TextEditingController passwordInputController = TextEditingController();
   }
 
-  Future<Null> initPrefs() async {
+  Future<Preferences> initPrefs() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    widget.preferences = Preferences.init(preferences);
+    return Preferences.init(preferences);
   }
 }
