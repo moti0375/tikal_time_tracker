@@ -31,7 +31,11 @@ abstract class _$TimeTrackerApiClient implements ApiClient {
 
   Future<dynamic> timeForDate(String date) async {
     var req = base.get.path(basePath).path("time.php").query("date", date);
-    print("timeForDate request: ${req.getUrl}");
+    return serializers.from(await req.go().body);
+  }
+
+  Future<dynamic> users() async {
+    var req = base.get.path(basePath).path("users.php");
     return serializers.from(await req.go().body);
   }
 }

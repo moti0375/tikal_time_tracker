@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../data/member.dart';
 import 'package:tikal_time_tracker/network/requests/login_request.dart';
 import '../../../network/credentials.dart';
 import '../../models.dart';
@@ -75,6 +76,11 @@ class LocalDataSource implements TimeDateSource {
 
   @override
   Future<dynamic> timePage() {
+    return null;
+  }
+
+  @override
+  Future<List<Member>> getAllMembers() {
     return null;
   }
 

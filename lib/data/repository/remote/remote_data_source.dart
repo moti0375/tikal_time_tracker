@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:http/http.dart';
+import '../../../data/member.dart';
 import '../../../data/models.dart';
 import '../../../network/time_tracker_api.dart';
 import 'package:jaguar_retrofit/jaguar_retrofit.dart';
@@ -91,5 +92,14 @@ class RemoteDateSource implements TimeDateSource {
   @override
   Future timePage() {
     return api.time();
+  }
+
+  @override
+  Future<List<Member>> getAllMembers() {
+    return api.users().then((response){
+      List<Member> members = List<Member>();
+      parser.parseUsersPage(response);
+      return members;
+    });
   }
 }

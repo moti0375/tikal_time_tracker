@@ -6,6 +6,7 @@ import '../user.dart';
 import '../project.dart';
 import '../task.dart';
 import '../models.dart';
+import '../member.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -218,4 +219,33 @@ class DomParser {
     DateFormat formatter = DateFormat("y-MM-d");
     return formatter.parse(timeStr.trim());
   }
+
+
+
+  List<Member> parseUsersPage(String domStr){
+
+    String start = "<table cellspacing=\"1\" cellpadding=\"3\" border=\"0\" width=\"100%\">";
+    String end = "</table>";
+
+    String buffer = domStr.substring(domStr.indexOf(start) + start.length);
+    buffer = buffer.substring(0, buffer.indexOf(end));
+
+    List<String> rows = buffer.split("</tr>");
+    rows.removeAt(0);
+    rows.removeLast();
+
+    List<Member> members = rows.map((r){
+      List<String> cells = r.substring(r.indexOf("<td>")).split("</td>");
+      cells = cells.map((cell){
+        return cell.substring(cell.indexOf("<td>") + 4);
+      }).toList();
+
+      cells.removeLast();
+      return Member(name: cells[0], email: cells[1], role: cells[2]);
+    }).toList();
+
+    print("members: ${members.toString()}");
+    return members;
+  }
+
 }

@@ -61,4 +61,7 @@ class TimeTrackerApi extends _$TimeTrackerApiClient implements ApiClient{
 
   @GetReq(path: "time.php")
   Future<dynamic> timeForDate(@QueryParam("date") String date);
+
+  @GetReq(path: "users.php")
+  Future<dynamic> users();
 }
