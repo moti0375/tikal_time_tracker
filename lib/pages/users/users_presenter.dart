@@ -12,6 +12,7 @@ class UsersPresenter implements MembersPresenterContract{
   @override
   void loadUsers() {
     repository.getAllMembers().then((response){
+      print("loadUsers: ${response.toString()}");
       view.showMembers(response);
     },onError: (e){
 
