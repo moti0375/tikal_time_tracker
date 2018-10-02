@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../data/member.dart';
 import 'package:tikal_time_tracker/network/requests/login_request.dart';
 import '../../../network/credentials.dart';
+import '../../../network/requests/reports_form.dart';
 import '../../models.dart';
 import '../time_data_source.dart';
 import '../../database/database_helper.dart';
@@ -81,6 +82,21 @@ class LocalDataSource implements TimeDateSource {
 
   @override
   Future<List<Member>> getAllMembers() {
+    return null;
+  }
+
+  @override
+  Future<List<TimeRecord>> generateReport(ReportForm request) {
+    return null;
+  }
+
+  @override
+  Future reportsPage() {
+    return null;
+  }
+
+  @override
+  Future getReport(ReportForm request) {
     return null;
   }
 

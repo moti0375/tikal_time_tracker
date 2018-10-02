@@ -16,8 +16,12 @@ class TimeRecord{
   TimeRecord({this.id, this.project, this.task, this.start, this.finish,
       this.dateTime, this.comment, this.duration}){
     DateTime s  = DateTime(dateTime.year, dateTime.month, dateTime.day, start.hour, start.minute);
-    DateTime f  = DateTime(dateTime.year, dateTime.month, dateTime.day, finish.hour, finish.minute);
-    duration = _calculateDuration(start: s, finish: f);
+    if(this.finish != null){
+      DateTime f  = DateTime(dateTime.year, dateTime.month, dateTime.day, finish.hour, finish.minute);
+      duration = _calculateDuration(start: s, finish: f);
+    } else {
+
+    }
     print("TimeRecord: ${dateTime.millisecondsSinceEpoch}");
   }
 

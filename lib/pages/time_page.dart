@@ -228,7 +228,8 @@ class TimePageState extends State<TimePage> implements DrawerOnClickListener, Li
       if(e is RangeError){
         _refreshList(new List<TimeRecord>());
       }else{
-        _logout();
+        print(e);
+       // _logout();
       }
     });
   }

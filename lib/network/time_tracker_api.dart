@@ -5,6 +5,7 @@ import 'package:jaguar_resty/jaguar_resty.dart';
 import 'package:http/http.dart';
 import 'package:client_cookie/client_cookie.dart';
 import '../network/requests/login_request.dart';
+import '../network/requests/reports_form.dart';
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'credentials.dart';
@@ -30,14 +31,15 @@ class TimeTrackerApi extends _$TimeTrackerApiClient implements ApiClient{
     print("encoded: ${Base64Encoder().convert(convert)}");
     this.base.authHeader("Basic", Base64Encoder().convert(convert));
     this.base.after((resty.StringResponse response){
-//      debugPrint("resty After: ${response.headers.toString()}" );
+
+      debugPrint("resty After: status: ${response.statusCode}, headers: ${response.headers.toString()}, body: ${response.body}" );
 
       Map map = response.headers.map((key, value){
         return MapEntry(key, value);
       });
 
       String cookieStr = map["set-cookie"];
-      print("Cookies Str: $cookieStr");
+//      print("Cookies Str: $cookieStr");
 
       if(cookieStr != null){
         cookies.clear();
@@ -64,4 +66,13 @@ class TimeTrackerApi extends _$TimeTrackerApiClient implements ApiClient{
 
   @GetReq(path: "users.php")
   Future<dynamic> users();
+
+  @GetReq(path: "reports.php")
+  Future<dynamic> reports();
+
+  @PostReq(path: "reports.php")
+  Future<dynamic> generateReport(@AsForm() ReportForm request);
+
+  @PostReq(path: "report.php")
+  Future<dynamic> getReport();
 }

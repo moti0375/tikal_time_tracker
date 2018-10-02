@@ -38,4 +38,22 @@ abstract class _$TimeTrackerApiClient implements ApiClient {
     var req = base.get.path(basePath).path("users.php");
     return serializers.from(await req.go().body);
   }
+
+  Future<dynamic> reports() async {
+    var req = base.get.path(basePath).path("reports.php");
+    return serializers.from(await req.go().body);
+  }
+
+  Future<dynamic> generateReport(ReportForm request) async {
+    var req = base.post
+        .path(basePath)
+        .path("reports.php")
+        .urlEncodedForm(serializers.to(request));
+    return serializers.from(await req.go().body);
+  }
+
+  Future<dynamic> getReport() async {
+    var req = base.post.path(basePath).path("report.php");
+    return serializers.from(await req.go().body);
+  }
 }

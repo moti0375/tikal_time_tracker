@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'place_holder_content.dart';
+import '../reports/place_holder_content.dart';
 import '../../data/models.dart';
 import '../../data/user.dart';
 import '../../ui/time_record_list_adapter.dart';
@@ -69,7 +69,7 @@ class ReportPage extends StatelessWidget implements ListAdapterClickListener{
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text(
-                  "${User().name}, ${User().company}, ${User().role}",
+                  "${User.me.name}, ${User.me.company}, ${User.me.role}",
                   textAlign: TextAlign.start,
                 ),
                 Text("Total: ${report.getTotalString()}",

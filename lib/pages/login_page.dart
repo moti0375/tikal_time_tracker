@@ -6,6 +6,7 @@ import '../data/models.dart';
 import 'dart:async';
 import '../network/credentials.dart';
 import '../storage/preferences.dart';
+import '../ui/animation_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
@@ -147,7 +148,10 @@ class LoginPageState extends State<LoginPage> {
             SizedBox(height: 15.0),
             password,
             SizedBox(height: 24.0),
-            loginButton,
+            AnimationButton(callback: (){
+              print("onPressed");
+              _login(_email, _password);
+            }),
             SizedBox(height: 8.0),
             forgotLabel
           ],
@@ -164,7 +168,7 @@ class LoginPageState extends State<LoginPage> {
   void _navigateToTime() {
      repository.timePage().then((response) {
 
-      debugPrint("_navigateToTime response: $response");
+//      debugPrint("_navigateToTime response: $response");
       User.init(response);
       Navigator.of(context).pushReplacement(new MaterialPageRoute(
           builder: (BuildContext context) => new BottomNavigation()));
@@ -207,7 +211,7 @@ class LoginPageState extends State<LoginPage> {
         _showSignInDialog();
       }
     }).catchError((err) {
-      debugPrint("_login: ${err.toString()}");
+//      debugPrint("_login: ${err.toString()}");
       _showSignInDialog();
     });
   }

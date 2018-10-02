@@ -1,13 +1,16 @@
 import 'dart:async';
+import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:http/http.dart';
 import '../../../data/member.dart';
 import '../../../data/models.dart';
 import '../../../network/time_tracker_api.dart';
+import '../../../network/requests/reports_form.dart';
 import 'package:jaguar_retrofit/jaguar_retrofit.dart';
 import 'package:jaguar_serializer/jaguar_serializer.dart';
 import '../../../network/serializers/from_request_serializer.dart';
 import '../../../network/serializers/form_serializer.dart';
+import '../../../network/serializers/reports_form_serializer.dart';
 import '../../../network/requests/login_request.dart';
 import '../../../network/credentials.dart';
 import 'dart:convert';
@@ -72,6 +75,7 @@ class RemoteDateSource implements TimeDateSource {
     print("remoteDateSource: _setApi: ");
     serializers.add(FormRequestSerializer());
     serializers.add(FormSerializer());
+    serializers.add(ReportsFormSerializer());
     api = TimeTrackerApi(
         base: route("https://planet.tikalk.com").before((route) {
           print("Metadata: ${route.metadataMap}");
@@ -99,5 +103,26 @@ class RemoteDateSource implements TimeDateSource {
     return api.users().then((response){
       return parser.parseUsersPage(response);
     });
+  }
+
+  @override
+  Future<dynamic> reportsPage() {
+    return api.reports();
+  }
+
+  @override
+  Future<List<TimeRecord>> generateReport(ReportForm request) {
+    return api.generateReport(request).then((response){
+//      debugPrint("remoteDataSource: report ${response.toString()}");
+      List<TimeRecord> result = List<TimeRecord>();
+      return result;
+    }, onError: (e){
+      print("There was an error: ${e.toString()}");
+    });
+  }
+
+  @override
+  Future getReport(ReportForm request) {
+    return api.getReport();
   }
 }

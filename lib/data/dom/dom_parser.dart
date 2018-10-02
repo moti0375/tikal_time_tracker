@@ -177,7 +177,7 @@ class DomParser {
       return r.substring(r.indexOf(">") + 1, r.indexOf("</tr>"));
     }).toList();
 
-//    debugPrint("rows: ${rows.toString()}, size: ${rows.length}");
+    debugPrint("rows: ${rows.toString()}, size: ${rows.length}");
 
     List<TimeRecord> result = rows.map((row) {
       List<String> cells = row.split("</td>");
@@ -185,15 +185,24 @@ class DomParser {
       cells = cells.map((it) {
         return it.substring(it.indexOf(">") + 1);
       }).toList();
-//      debugPrint("cells: ${cells.toString()}, size: ${cells.length}");
+     debugPrint("cells: ${cells.toString()}, size: ${cells.length}");
 
       Task task = User.me.tasks.firstWhere((it) {
-//        print("firstWhere: ${it.name}:${cells[1]}");
+        print("firstWhere: ${it.name}:${cells[1]}");
         return it.name == cells[1];
       });
 
       TimeOfDay start = TimeOfDay.fromDateTime(dateFormat.parse(cells[2]));
-      TimeOfDay finish = TimeOfDay.fromDateTime(dateFormat.parse(cells[3]));
+      TimeOfDay finish = null;
+
+      try{
+        finish = TimeOfDay.fromDateTime(dateFormat.parse(cells[3]));
+      }
+      catch(e){
+        if(e is FormatException){
+          finish = null;
+        }
+      }
       return TimeRecord(project: cells[0],
           task: task,
           start: start,

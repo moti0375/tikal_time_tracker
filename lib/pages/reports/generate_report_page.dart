@@ -5,9 +5,9 @@ import '../../data/models.dart';
 import '../../data/project.dart';
 import '../../data/task.dart';
 import '../../data/repository/time_records_repository.dart';
-import 'report_page.dart';
-import 'input_field.dart';
-import '../../ui/drop_down_item.dart';
+import '../report/report_page.dart';
+import 'reports_contract.dart';
+import 'reports_presenter.dart';
 
 class GenerateReportPage extends StatefulWidget {
   @override
@@ -17,19 +17,18 @@ class GenerateReportPage extends StatefulWidget {
   }
 }
 
-class GenerateReportState extends State<GenerateReportPage> {
+class GenerateReportState extends State<GenerateReportPage> implements ReportsViewContract{
   Project _selectedProject;
   List<Task> _tasks = User.me.tasks;
-  List<String> _predefiendPeriod = [
-    "This Month",
-    "Previuos Month",
-    "This Week",
-    "Previuos Week",
-    "Today",
-    "Yesterday"
+  List<Period> _predefiendPeriod = [
+    Period(name: "This Month", value: 3),
+    Period(name: "Previuos Month", value: 7),
+    Period(name: "This Week", value: 2),
+    Period(name: "Today", value: 1),
+    Period(name: "Yesterday", value: 8),
   ];
   Task _selectedTask;
-  String _selectedPeriod;
+  Period _selectedPeriod;
   TextEditingController startDateInputController;
   TextEditingController endDateInputController;
   DateTime _startDate;
@@ -38,10 +37,14 @@ class GenerateReportState extends State<GenerateReportPage> {
   bool isButtonEnabled = false;
 
   TimeRecordsRepository repository = TimeRecordsRepository();
+  ReportsPresenter presenter;
+
 
   @override
   void initState() {
     super.initState();
+    presenter = new ReportsPresenter(repository: repository);
+    presenter.subscribe(this);
   }
 
   @override
@@ -124,16 +127,16 @@ class GenerateReportState extends State<GenerateReportPage> {
                 ),
               ),
               value: _selectedPeriod,
-              items: _predefiendPeriod.map((String value) {
-                return new DropdownMenuItem<String>(
+              items: _predefiendPeriod.map((Period value) {
+                return new DropdownMenuItem<Period>(
                   value: value,
                   child: new Text(
-                    value,
+                    value.name,
                     style: TextStyle(fontSize: 24.0),
                   ),
                 );
               }).toList(),
-              onChanged: (String value) {
+              onChanged: (Period value) {
                 _onPeriodSelected(value);
               }),
         ),
@@ -273,10 +276,10 @@ class GenerateReportState extends State<GenerateReportPage> {
     });
   }
 
-  void _onPeriodSelected(String value) {
+  void _onPeriodSelected(Period value) {
     setState(() {
       _selectedPeriod = value;
-      switch (value) {
+      switch (value.name) {
         case "This Month":
           _onSelectThisMonth();
           break;
@@ -416,22 +419,30 @@ class GenerateReportState extends State<GenerateReportPage> {
 
   void _handleGenerateButtonClicked() {
     print("_handleGenerateButtonClicked");
-    repository.getRecordsBetweenDates(_startDate, _endDate).then((items) {
-      if (items != null) {
-        print("Got ${items.length} from database");
-      }
-      Navigator.of(context).push(new MaterialPageRoute(
-          builder: (BuildContext context) => new ReportPage(
-              report: Report(
-                  report: items,
-                  startDate: _startDate,
-                  endDate: _endDate,
-                  project: null,
-                  task: null))));
-    });
+    presenter.onClickGenerateButton(_startDate, _endDate);
   }
+
+  @override
+  void showReport(List<TimeRecord> items) {
+    Navigator.of(context).push(new MaterialPageRoute(
+        builder: (BuildContext context) => new ReportPage(
+            report: Report(
+                report: items,
+                startDate: _startDate,
+                endDate: _endDate,
+                project: null,
+                task: null))));
+    }
 }
 
-Widget _buildBody() {
-  return Container();
+class Period{
+ final String name;
+ final int value;
+
+  Period({this.name, this.value});
+
+  @override
+  String toString() {
+    return 'Period{name: $name, value: $value}';
+  }
 }

@@ -1,6 +1,6 @@
 import 'dart:async';
 import '../../data/member.dart';
-import '../../network/requests/login_request.dart';
+import '../../network/requests/reports_form.dart';
 
 import '../models.dart';
 import 'time_data_source.dart';
@@ -89,6 +89,21 @@ class TimeRecordsRepository implements TimeDateSource{
   @override
   Future<List<Member>> getAllMembers() {
     return remoteDateSource.getAllMembers();
+  }
+
+  @override
+  Future<List<TimeRecord>> generateReport(ReportForm request) {
+    return remoteDateSource.generateReport(request);
+  }
+
+  @override
+  Future<dynamic> reportsPage() {
+    return remoteDateSource.reportsPage();
+  }
+
+  @override
+  Future getReport(ReportForm request) {
+    return remoteDateSource.getReport(request);
   }
 
 }
