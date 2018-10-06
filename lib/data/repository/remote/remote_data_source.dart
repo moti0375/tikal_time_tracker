@@ -12,9 +12,10 @@ import 'package:jaguar_serializer/jaguar_serializer.dart';
 import '../../../network/serializers/from_request_serializer.dart';
 import '../../../network/serializers/form_serializer.dart';
 import '../../../network/serializers/add_time_serializer.dart';
-import '../../../network/serializers/id_request_serializer.dart';
+import '../../../network/serializers/delete_request_serializer.dart';
 import '../../../network/serializers/reports_form_serializer.dart';
 import '../../../network/serializers/update_time_serializer.dart';
+import '../../../network/requests/delete_request.dart';
 import '../../../network/requests/login_request.dart';
 import '../../../network/credentials.dart';
 import 'dart:convert';
@@ -39,8 +40,8 @@ class RemoteDateSource implements TimeDateSource {
   }
 
   @override
-  Future<int> deleteTime(TimeRecord time) {
-    // TODO: implement deleteTime
+  Future<dynamic> deleteTime(TimeRecord time) {
+    return api.timeDelete(time.id, DeleteRequest(timeRecord: time));
   }
 
   @override
@@ -82,7 +83,7 @@ class RemoteDateSource implements TimeDateSource {
     serializers.add(ReportsFormSerializer());
     serializers.add(AddTimeSerializer());
     serializers.add(UpdateTimeSerializer());
-    serializers.add(IdRequestSerializer());
+    serializers.add(DeleteRequestSerializer());
     api = TimeTrackerApi(
         base: route("https://planet.tikalk.com").before((route) {
           print("Metadata: ${route.metadataMap}");

@@ -152,7 +152,17 @@ class NewRecordPresenter implements NewRecordPresenterContract {
 
   @override
   void deleteButtonClicked() {
+    _handleDeleteButton();
+  }
+
+  _handleDeleteButton(){
     print("About to delete record: ${this.timeRecord.toString()}");
+    repository.deleteTime(this.timeRecord).then((response){
+      print("Success: ${response}");
+      view.showSaveRecordSuccess(this.timeRecord);
+    }, onError: (e){
+      print("_handleDeleteButton: There was an error");
+    });
   }
 }
 

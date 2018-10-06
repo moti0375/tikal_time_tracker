@@ -361,7 +361,7 @@ class NewRecordPageState extends State<NewRecordPage>
           minWidth: 100.0,
           height: 42.0,
           onPressed: () {
-            presenter.saveButtonClicked();
+            presenter.deleteButtonClicked();
           },
           color:  Colors.orangeAccent,
           child: Text("Delete",

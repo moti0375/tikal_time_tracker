@@ -10,7 +10,7 @@ class TimeDateSource{
  Future<dynamic> addTime(TimeRecord time){return null;}
  Future<dynamic> updateTime(TimeRecord time){return null;}
  Future<List<TimeRecord>> getRecordsBetweenDates(DateTime startDate, DateTime endDate){return null;}
- Future<int> deleteTime(TimeRecord time){return null;}
+ Future<dynamic> deleteTime(TimeRecord time){return null;}
  Future<int> deleteTimeRecordForDate(DateTime dateTime){return null;}
  Future<dynamic> singIn(String userName, String password){return null;}
  Future<dynamic> login(String email, String password){return null;}

@@ -40,9 +40,8 @@ class LocalDataSource implements TimeDateSource {
   }
 
   @override
-  Future<int> deleteTime(TimeRecord time) {
-    records.remove(time.date);
-    return databaseOpenHelper.deleteRecordById(time.id);
+  Future<dynamic> deleteTime(TimeRecord time) {
+    return null;
   }
 
   @override

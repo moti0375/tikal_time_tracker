@@ -62,6 +62,8 @@ abstract class _$TimeTrackerApiClient implements ApiClient {
         .path(basePath)
         .path("time.php")
         .urlEncodedForm(serializers.to(request));
+
+    print("addTime: ${req.getUrl}, body: ${serializers.to(request)}");
     return serializers.from(await req.go().body);
   }
 
@@ -71,16 +73,17 @@ abstract class _$TimeTrackerApiClient implements ApiClient {
         .path("time_edit.php")
         .query("id", id)
         .urlEncodedForm(serializers.to(request));
-    print("updateTime: ${req.getUrl}, body: ${serializers.to(request)}");
     return serializers.from(await req.go().body);
   }
 
-  Future<dynamic> timeDelete(int id, IdRequest request) async {
+  Future<dynamic> timeDelete(int id, DeleteRequest request) async {
     var req = base.post
         .path(basePath)
         .path("time_delete.php")
         .query("id", id)
         .urlEncodedForm(serializers.to(request));
+
+    print("timeDelete: ${req.getUrl}, body: ${serializers.to(request)}");
     return serializers.from(await req.go().body);
   }
 }

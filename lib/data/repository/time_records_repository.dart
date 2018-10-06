@@ -39,13 +39,13 @@ class TimeRecordsRepository implements TimeDateSource{
 
   @override
   Future<dynamic> addTime(TimeRecord time) {
-    print("addTimeForDate: $time");
+    print("addTime: $time");
     return remoteDateSource.addTime(time);
   }
 
   @override
-  Future<int> deleteTime(TimeRecord time) {
-    return dateSource.deleteTime(time);
+  Future<dynamic> deleteTime(TimeRecord time) {
+    return remoteDateSource.deleteTime(time);
   }
 
   @override

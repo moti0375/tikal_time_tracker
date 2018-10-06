@@ -17,9 +17,6 @@ class AddTimeSerializer extends Serializer<TimeRecord>{
     print("form serializer: toSap: ${model.toString()}");
     Map<String, String> map = Map<String, String>();
 
-    if(model.id > 0){
-      map["id"] = "${model.id}";
-    }
     map["project"] = "${model.project.value}";
     map["task"] = "${model.task.value}";
     map["date"] = "${model.date.toString()}";
