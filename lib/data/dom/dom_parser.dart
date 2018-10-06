@@ -208,7 +208,11 @@ class DomParser {
       int trackerId = int.parse(cells[6].substring(cells[6].indexOf("id=")+3, cells[6].indexOf("\">")).trim());
       print("trackerId: $trackerId");
 
-      return TimeRecord(id: trackerId, project: cells[0],
+      Project project = User.me.projects.firstWhere((it){
+        return it.name == cells[0];
+      });
+
+      return TimeRecord(id: trackerId, project: project,
           task: task,
           start: start,
           dateTime: date,

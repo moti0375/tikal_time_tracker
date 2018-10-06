@@ -5,7 +5,7 @@ import '../data/task.dart';
 
 class TimeRecord{
   int id;
-  String project;
+  Project project;
   Task task;
   TimeOfDay start;
   TimeOfDay finish;

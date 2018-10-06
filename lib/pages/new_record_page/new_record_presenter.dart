@@ -45,7 +45,7 @@ class NewRecordPresenter implements NewRecordPresenterContract {
 
   @override
   void projectSelected(Project project) {
-    this.timeRecord.project = project.name;
+    this.timeRecord.project = project;
     _selectedProject = project;
     _tasks.clear();
     _tasks.addAll(project.tasks);

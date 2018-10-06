@@ -82,13 +82,7 @@ class NewRecordPageState extends State<NewRecordPage> implements NewRecordViewCo
   @override
   initUpdateRecord(){
     print("_initUpdateRecord:");
-    Project p = _projects.firstWhere((element){
-       return element.name == widget.timeRecord.project;
-    });
-
-    print("record project: ${p.name}, start time: ${widget.timeRecord.start}" );
-
-    presenter.projectSelected(p);
+    presenter.projectSelected(widget.timeRecord.project);
     presenter.taskSelected(widget.timeRecord.task);
     presenter.dateSelected(widget.timeRecord.dateTime);
     presenter.startTimeSelected(widget.timeRecord.start);

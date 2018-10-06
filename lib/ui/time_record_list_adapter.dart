@@ -35,7 +35,7 @@ class TimeRecordListAdapter extends StatelessWidget{
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           mainAxisSize: MainAxisSize.max,
           children: <Widget>[
-            Text("${item.project}", style: TextStyle(fontSize: 15.0)),
+            Text("${item.project.name}", style: TextStyle(fontSize: 15.0)),
             Text("${item.task.name}", style: TextStyle(fontSize: 15.0) )
           ],
         ),
