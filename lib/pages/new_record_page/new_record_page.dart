@@ -84,7 +84,7 @@ class NewRecordPageState extends State<NewRecordPage> implements NewRecordViewCo
     print("_initUpdateRecord:");
     presenter.projectSelected(widget.timeRecord.project);
     presenter.taskSelected(widget.timeRecord.task);
-    presenter.dateSelected(widget.timeRecord.dateTime);
+    presenter.dateSelected(widget.timeRecord.date);
     presenter.startTimeSelected(widget.timeRecord.start);
     presenter.endTimeSelected(widget.timeRecord.finish);
   }

@@ -62,8 +62,8 @@ class NewRecordPresenter implements NewRecordPresenterContract {
 
   @override
   void dateSelected(DateTime date) {
-    this.timeRecord.dateTime = date;
-    view.showSelectedDate(this.timeRecord.dateTime);
+    this.timeRecord.date = date;
+    view.showSelectedDate(this.timeRecord.date);
     _updateButtonState();
   }
 
@@ -114,7 +114,7 @@ class NewRecordPresenter implements NewRecordPresenterContract {
 
 
   _updateButtonState(){
-    if (timeRecord.dateTime != null && timeRecord.start != null && timeRecord.project != null && timeRecord.task != null) {
+    if (timeRecord.date != null && timeRecord.start != null && timeRecord.project != null && timeRecord.task != null) {
       print("setButtonState: Button enabled");
       formOk = true;
     } else {

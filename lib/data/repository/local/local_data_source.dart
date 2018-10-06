@@ -12,12 +12,12 @@ import 'package:sqflite/sqflite.dart';
 class LocalDataSource implements TimeDateSource {
 
   var records = [TimeRecord(id: 1,
-      dateTime: DateTime(2018, 8, 10),
+      date: DateTime(2018, 8, 10),
       start: TimeOfDay(hour: 8, minute: 0),
       finish: TimeOfDay(hour: 17, minute: 30),
       comment: "Great day"),
   TimeRecord(id: 2,
-      dateTime: DateTime(2018, 8, 11),
+      date: DateTime(2018, 8, 11),
       start: TimeOfDay(hour: 8, minute: 0),
       finish: TimeOfDay(hour: 17, minute: 0),
       comment: "Great day")
@@ -41,7 +41,7 @@ class LocalDataSource implements TimeDateSource {
 
   @override
   Future<int> deleteTime(TimeRecord time) {
-    records.remove(time.dateTime);
+    records.remove(time.date);
     return databaseOpenHelper.deleteRecordById(time.id);
   }
 

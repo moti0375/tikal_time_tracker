@@ -174,7 +174,7 @@ class TimePageState extends State<TimePage> implements DrawerOnClickListener, Li
         print("got value from page");
         if(value != null){
           if(value is TimeRecord){
-            _onDateSelected(value.dateTime);
+            _onDateSelected(value.date);
           }else{
             _loadRecords(_selectedDate);
           }
@@ -189,7 +189,7 @@ class TimePageState extends State<TimePage> implements DrawerOnClickListener, Li
       print("got value from page");
       if(value != null){
         if(value is TimeRecord){
-          _onDateSelected(value.dateTime);
+          _onDateSelected(value.date);
         }else{
           _loadRecords(_selectedDate);
         }

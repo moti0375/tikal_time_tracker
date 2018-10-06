@@ -215,7 +215,7 @@ class DomParser {
       return TimeRecord(id: trackerId, project: project,
           task: task,
           start: start,
-          dateTime: date,
+          date: date,
           finish: finish,
           comment: cells[5]);
     }).toList();

@@ -47,7 +47,7 @@ class TimeRecordListAdapter extends StatelessWidget{
                 padding:
                 EdgeInsets.symmetric(horizontal: 0.0, vertical: 1.0),
                 child: Text(
-                    "${item.dateTime.day}/${item.dateTime.month}/${item.dateTime.year}",
+                    "${item.date.day}/${item.date.month}/${item.date.year}",
                     style: TextStyle(fontSize: 12.0))),
             Padding(
                 padding:
@@ -91,7 +91,7 @@ class TimeRecordListAdapter extends StatelessWidget{
     return ListView.builder(
         itemBuilder: (context, i) {
 
-          if (day != null && (items[i].dateTime.day != day.day)) {
+          if (day != null && (items[i].date.day != day.day)) {
             if (color == evenColor) {
               color = oddColor;
             } else {
@@ -99,7 +99,7 @@ class TimeRecordListAdapter extends StatelessWidget{
             }
           }
 
-          day = items[i].dateTime;
+          day = items[i].date;
           return _buildListTile(items[i], color);
         },
         shrinkWrap: true,

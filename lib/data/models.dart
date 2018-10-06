@@ -10,7 +10,7 @@ class TimeRecord{
   TimeOfDay start;
   TimeOfDay finish;
   Duration duration;
-  DateTime dateTime;
+  DateTime date;
   String comment;
 
   TimeRecord.empty(){
@@ -18,20 +18,20 @@ class TimeRecord{
   }
 
   TimeRecord({this.id, this.project, this.task, this.start, this.finish,
-      this.dateTime, this.comment, this.duration}){
-    DateTime s  = DateTime(dateTime.year, dateTime.month, dateTime.day, start.hour, start.minute);
+      this.date, this.comment, this.duration}){
+    DateTime s  = DateTime(date.year, date.month, date.day, start.hour, start.minute);
     if(this.finish != null){
-      DateTime f  = DateTime(dateTime.year, dateTime.month, dateTime.day, finish.hour, finish.minute);
+      DateTime f  = DateTime(date.year, date.month, date.day, finish.hour, finish.minute);
       duration = _calculateDuration(start: s, finish: f);
     }
-    print("TimeRecord: ${dateTime.millisecondsSinceEpoch}");
+    print("TimeRecord: ${date.millisecondsSinceEpoch}");
   }
 
 
   Map<String, dynamic> toMap(){
     Map<String, dynamic> map = {columnProject.toString(): project,
       columnTask.toString(): task,
-      columnDate.toString() : dateTime.millisecondsSinceEpoch,
+      columnDate.toString() : date.millisecondsSinceEpoch,
       columnStart.toString() : "${start.hour}:${start.minute}",
       columnFinish.toString() : "${finish.hour}:${finish.minute}",
       columnDuration.toString() : "${duration.inHours}:${duration.inSeconds % 60}",
@@ -50,7 +50,7 @@ class TimeRecord{
     project = map[columnProject];
     task = map[columnTask];
 
-    dateTime = DateTime.fromMillisecondsSinceEpoch(map[columnDate]);
+    date = DateTime.fromMillisecondsSinceEpoch(map[columnDate]);
 
     List<dynamic> container = map[columnStart].toString().split(":").map((String element) {
       return int.parse(element);
@@ -66,14 +66,14 @@ class TimeRecord{
     finish = TimeOfDay(hour: container[0], minute: container[1]);
 
 
-    duration = _calculateDuration(start: DateTime(dateTime.year, dateTime.month, dateTime.day, start.hour, start.minute), finish: DateTime(dateTime.year, dateTime.month, dateTime.day, finish.hour, finish.minute));
+    duration = _calculateDuration(start: DateTime(date.year, date.month, date.day, start.hour, start.minute), finish: DateTime(date.year, date.month, date.day, finish.hour, finish.minute));
     comment = map[columnComment];
 
   }
 
   @override
   String toString() {
-    return 'TimeRecord{id: $id, project: $project, task: $task, start: $start, finish: $finish, duration: $duration, dateTime: ${dateTime.millisecondsSinceEpoch}, comment: $comment}';
+    return 'TimeRecord{id: $id, project: $project, task: $task, start: $start, finish: $finish, duration: $duration, dateTime: ${date.millisecondsSinceEpoch}, comment: $comment}';
   }
 
   String getDurationString(){
