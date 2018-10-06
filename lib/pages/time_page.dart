@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/diagnostics.dart';
 import 'package:tikal_time_tracker/ui/app_drawer.dart';
-import 'package:tikal_time_tracker/ui/time_title.dart';
-import 'new_record_page.dart';
 import '../data/models.dart';
 import '../data/user.dart';
 import '../data/repository/time_records_repository.dart';
-import 'dart:async';
 import '../pages/login_page.dart';
 import '../ui/time_record_list_adapter.dart';
-import 'new_record_page.dart';
-import '../data/project.dart';
-import '../data/task.dart';
+import '../pages/new_record_page/new_record_page.dart';
 import '../pages/reports/place_holder_content.dart';
 
 class TimePage extends StatefulWidget {
@@ -190,7 +185,7 @@ class TimePageState extends State<TimePage> implements DrawerOnClickListener, Li
   _navigateToEditScreen(TimeRecord item){
     print("_navigateToEditScreen: ");
     Navigator.of(context).
-    push(new MaterialPageRoute(builder: (BuildContext context) => new NewRecordPage(projects: User().projects, dateTime: _selectedDate, timeRecord: item, flow: NewRecordFlow.update_record))).then((value){
+    push(new MaterialPageRoute(builder: (BuildContext context) => new NewRecordPage(projects: User.me.projects, dateTime: _selectedDate, timeRecord: item, flow: NewRecordFlow.update_record))).then((value){
       print("got value from page");
       if(value != null){
         if(value is TimeRecord){

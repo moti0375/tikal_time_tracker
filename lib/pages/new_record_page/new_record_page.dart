@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import '../ui/new_record_title.dart';
-import '../data/project.dart';
-import '../data/task.dart';
-import '../data/models.dart';
+import '../../ui/new_record_title.dart';
+import '../../data/project.dart';
+import '../../data/task.dart';
+import '../../data/models.dart';
 import 'dart:async';
-import '../data/repository/time_records_repository.dart';
-import '../utils/utils.dart';
-import '../data/user.dart';
+import '../../data/repository/time_records_repository.dart';
+import '../../utils/utils.dart';
+import '../../data/user.dart';
 
 // ignore: must_be_immutable
 class NewRecordPage extends StatefulWidget {
@@ -80,6 +80,7 @@ class NewRecordPageState extends State<NewRecordPage> {
     Project p = _projects.firstWhere((element){
        return element.name == widget.timeRecord.project;
     });
+
 
     print("record project: ${p.name}, start time: ${widget.timeRecord.start}" );
 
