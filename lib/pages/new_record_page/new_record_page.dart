@@ -7,6 +7,8 @@ import 'dart:async';
 import '../../data/repository/time_records_repository.dart';
 import '../../utils/utils.dart';
 import '../../data/user.dart';
+import 'new_record_contract.dart';
+import 'new_record_presenter.dart';
 
 // ignore: must_be_immutable
 class NewRecordPage extends StatefulWidget {
@@ -24,7 +26,7 @@ class NewRecordPage extends StatefulWidget {
   }
 }
 
-class NewRecordPageState extends State<NewRecordPage> {
+class NewRecordPageState extends State<NewRecordPage> implements NewRecordViewContract{
   Project _selectedProject;
   TimeOfDay _startTime;
   TimeOfDay _finishTime;
@@ -38,6 +40,7 @@ class NewRecordPageState extends State<NewRecordPage> {
   TextEditingController commentInputController;
   bool isButtonEnabled = false;
   TimeRecordsRepository repository = new TimeRecordsRepository();
+  NewRecordPresenterContract presenter;
 
   List<Project> _projects = new List<Project>();
 
@@ -49,20 +52,22 @@ class NewRecordPageState extends State<NewRecordPage> {
     super.initState();
     print("initState: flow ${widget.flow}");
     _projects.addAll(widget.projects);
-
-    switch (widget.flow){
-      case NewRecordFlow.new_record:
-        _initNewRecord();
-        break;
-      case NewRecordFlow.update_record:
-        _initUpdateRecord();
-        break;
-    }
-
-
+    presenter = NewRecordPresenter(repository: repository, timeRecord: widget.timeRecord, flow: widget.flow);
+    presenter.subscribe(this);
   }
 
-  _initNewRecord(){
+  @override
+  void showSaveRecordFailed() {
+    // TODO: implement showSaveRecordFailed
+  }
+
+  @override
+  void showSaveRecordSuccess() {
+    // TODO: implement showSaveRecordSuccess
+  }
+
+  @override
+  initNewRecord(){
     print("_initNewRecord:");
     startTimeController = new TextEditingController(
       text: "",
@@ -70,75 +75,78 @@ class NewRecordPageState extends State<NewRecordPage> {
     finishTimeController = new TextEditingController(text: "");
     dateInputController = new TextEditingController(text: "");
     if(widget.dateTime != null){
-      _onDateSelected(widget.dateTime);
+      presenter.dateSelected(widget.dateTime);
     }
   }
 
-  _initUpdateRecord(){
+  @override
+  initUpdateRecord(){
     print("_initUpdateRecord:");
-
     Project p = _projects.firstWhere((element){
        return element.name == widget.timeRecord.project;
     });
 
-
     print("record project: ${p.name}, start time: ${widget.timeRecord.start}" );
 
-    _onProjectSelected(p);
-    _onTaskSelected(widget.timeRecord.task);
-    _onDateSelected(widget.timeRecord.dateTime);
-    _onPickedStartTime(widget.timeRecord.start);
-    _onPickedFinishTime(widget.timeRecord.finish);
+    presenter.projectSelected(p);
+    presenter.taskSelected(widget.timeRecord.task);
+    presenter.dateSelected(widget.timeRecord.dateTime);
+    presenter.startTimeSelected(widget.timeRecord.start);
+    presenter.endTimeSelected(widget.timeRecord.finish);
   }
 
-  void _onProjectSelected(Project value) {
+  @override
+  void showSelectedProject(Project value) {
     setState(() {
       print("_onProjectSelected");
       _selectedProject = value;
-      _tasks.clear();
-      _tasks.addAll(value.tasks);
-      _selectedTask = null;
     });
   }
 
-  void _onTaskSelected(Task value) {
+  @override
+  void showAssignedTasks(List<Task> tasks) {
+    setState(() {
+      _tasks = tasks;
+    });
+  }
+
+  @override
+  void showSelectedTask(Task value) {
     setState(() {
       _selectedTask = value;
     });
   }
 
-  void _onPickedStartTime(TimeOfDay startTime) {
+  @override
+  void showSelectedStartTime(TimeOfDay startTime) {
     setState(() {
       _startTime = startTime;
       startTimeController =
       new TextEditingController(text: Utils.buildTimeStringFromTime(startTime));
-      _setButtonState();
-
     });
   }
 
-  void _onPickedFinishTime(TimeOfDay finishTime) {
+  @override
+  void showSelectedFinishTime(TimeOfDay finishTime) {
     setState(() {
       _finishTime = finishTime;
       finishTimeController =
       new TextEditingController(text: Utils.buildTimeStringFromTime(finishTime));
-      _duration = calculateDuration(
-          date: DateTime.now(),
-          startTime: _startTime,
-          finishTime: _finishTime);
+    });
+  }
+
+  @override
+  void showDuration(Duration duration) {
+    setState(() {
+      _duration = duration;
       durationInputController = TextEditingController(text: Utils.buildTimeStringFromDuration(_duration));
     });
   }
 
-  void _setButtonState() {
+  @override
+  void setButtonState(bool enabled) {
     setState(() {
-      if (_date != null && _startTime != null && _selectedProject != null && _selectedTask != null) {
-        print("setButtonState: Button enabled");
-        isButtonEnabled = true;
-      } else {
-        print("setButtonState: Button diabled");
-        isButtonEnabled = false;
-      }
+      isButtonEnabled = enabled;
     });
   }
 
@@ -171,7 +179,7 @@ class NewRecordPageState extends State<NewRecordPage> {
                 );
               }).toList(),
               onChanged: (Project value) {
-                _onProjectSelected(value);
+                presenter.projectSelected(value);
               }),
         )
     );
@@ -206,7 +214,7 @@ class NewRecordPageState extends State<NewRecordPage> {
                 );
               }).toList(),
               onChanged: (Task value) {
-                _onTaskSelected(value);
+                presenter.taskSelected(value);
               }),
         ));
 
@@ -379,7 +387,7 @@ class NewRecordPageState extends State<NewRecordPage> {
                         height: 42.0,
                         onPressed: () {
                           if (isButtonEnabled) {
-                            _handleSaveButtonClicked();
+                            presenter.saveButtonClicked();
                           }
                         },
                         color: isButtonEnabled ? Colors.orangeAccent : Colors
@@ -403,9 +411,7 @@ class NewRecordPageState extends State<NewRecordPage> {
     await showTimePicker(context: context, initialTime: _startTime != null ? _startTime : TimeOfDay.now());
 
     if (picked != null) {
-      setState(() {
-        _onPickedStartTime(picked);
-      });
+      presenter.startTimeSelected(picked);
     }
   }
 
@@ -419,20 +425,17 @@ class NewRecordPageState extends State<NewRecordPage> {
         lastDate: DateTime(DateTime
             .now()
             .year, 12));
-
     if (picked != null) {
-      setState(() {
-        _onDateSelected(picked);
-      });
+      presenter.dateSelected(picked);
     }
   }
 
-  _onDateSelected(DateTime selectedDate){
-    _date = DateTime(selectedDate.year, selectedDate.month, selectedDate.day, 0, 0, 0, 0);
-    print("picked: ${_date.millisecondsSinceEpoch}");
-    dateInputController =
-    new TextEditingController(text: "${_date.day}/${_date.month}/${_date.year}");
-
+  @override
+  showSelectedDate(DateTime date){
+    setState(() {
+      _date = date;
+      dateInputController = new TextEditingController(text: "${_date.day}/${_date.month}/${_date.year}");
+    });
   }
 
   Future<Null> _showFinishTimeDialog() async {
@@ -440,20 +443,9 @@ class NewRecordPageState extends State<NewRecordPage> {
     await showTimePicker(context: context, initialTime: _finishTime != null ? _finishTime : TimeOfDay.now());
 
     if (picked != null) {
-      setState(() {
-        _onPickedFinishTime(picked);
-       });
+      presenter.endTimeSelected(picked);
     }
   }
-
-  _handleSaveButtonClicked() {
-    print("Button Clicked");
-    TimeRecord timeRecord = TimeRecord(project: _selectedProject.name, task: _selectedTask, dateTime: _date, start: _startTime, finish: _finishTime, duration: calculateDuration(date: _date, startTime: _startTime, finishTime: _finishTime), comment: _comment);
-    repository.addTimeForDate(timeRecord).then((value) {
-      print("Record ${value.id} was added to db");
-      Navigator.of(context).pop(value);
-    });
-    }
 
   _createEmptyDropDown( ) {
     _tasks.add(_selectedTask);
@@ -467,18 +459,6 @@ class NewRecordPageState extends State<NewRecordPage> {
       );
     }).toList();
     }
-  }
-
-  Duration calculateDuration(
-      {DateTime date, TimeOfDay startTime, TimeOfDay finishTime}) {
-    DateTime s = new DateTime(
-        date.year, date.month, date.day, startTime.hour, startTime.minute);
-    DateTime f = new DateTime(
-        date.year, date.month, date.day, finishTime.hour, finishTime.minute);
-
-    Duration d = f.difference(s);
-    print("${d.inHours}:${d.inSeconds % 60}");
-    return d;
   }
 
 
