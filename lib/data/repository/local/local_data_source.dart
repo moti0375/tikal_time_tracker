@@ -35,8 +35,8 @@ class LocalDataSource implements TimeDateSource {
   }
   
   @override
-  Future<TimeRecord> addTimeForDate(TimeRecord time) {
-    return databaseOpenHelper.insert(time);
+  Future<dynamic> addTime(TimeRecord time) {
+    return null;
   }
 
   @override

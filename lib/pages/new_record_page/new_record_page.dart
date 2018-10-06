@@ -26,7 +26,8 @@ class NewRecordPage extends StatefulWidget {
   }
 }
 
-class NewRecordPageState extends State<NewRecordPage> implements NewRecordViewContract{
+class NewRecordPageState extends State<NewRecordPage>
+    implements NewRecordViewContract {
   Project _selectedProject;
   TimeOfDay _startTime;
   TimeOfDay _finishTime;
@@ -52,7 +53,10 @@ class NewRecordPageState extends State<NewRecordPage> implements NewRecordViewCo
     super.initState();
     print("initState: flow ${widget.flow}");
     _projects.addAll(widget.projects);
-    presenter = NewRecordPresenter(repository: repository, timeRecord: widget.timeRecord, flow: widget.flow);
+    presenter = NewRecordPresenter(
+        repository: repository,
+        timeRecord: widget.timeRecord,
+        flow: widget.flow);
     presenter.subscribe(this);
   }
 
@@ -62,25 +66,25 @@ class NewRecordPageState extends State<NewRecordPage> implements NewRecordViewCo
   }
 
   @override
-  void showSaveRecordSuccess() {
-    // TODO: implement showSaveRecordSuccess
+  void showSaveRecordSuccess(TimeRecord timeRecord) {
+    Navigator.of(context).pop(timeRecord);
   }
 
   @override
-  initNewRecord(){
+  initNewRecord() {
     print("_initNewRecord:");
     startTimeController = new TextEditingController(
       text: "",
     );
     finishTimeController = new TextEditingController(text: "");
     dateInputController = new TextEditingController(text: "");
-    if(widget.dateTime != null){
+    if (widget.dateTime != null) {
       presenter.dateSelected(widget.dateTime);
     }
   }
 
   @override
-  initUpdateRecord(){
+  initUpdateRecord() {
     print("_initUpdateRecord:");
     presenter.projectSelected(widget.timeRecord.project);
     presenter.taskSelected(widget.timeRecord.task);
@@ -115,8 +119,8 @@ class NewRecordPageState extends State<NewRecordPage> implements NewRecordViewCo
   void showSelectedStartTime(TimeOfDay startTime) {
     setState(() {
       _startTime = startTime;
-      startTimeController =
-      new TextEditingController(text: Utils.buildTimeStringFromTime(startTime));
+      startTimeController = new TextEditingController(
+          text: Utils.buildTimeStringFromTime(startTime));
     });
   }
 
@@ -124,8 +128,8 @@ class NewRecordPageState extends State<NewRecordPage> implements NewRecordViewCo
   void showSelectedFinishTime(TimeOfDay finishTime) {
     setState(() {
       _finishTime = finishTime;
-      finishTimeController =
-      new TextEditingController(text: Utils.buildTimeStringFromTime(finishTime));
+      finishTimeController = new TextEditingController(
+          text: Utils.buildTimeStringFromTime(finishTime));
     });
   }
 
@@ -133,7 +137,8 @@ class NewRecordPageState extends State<NewRecordPage> implements NewRecordViewCo
   void showDuration(Duration duration) {
     setState(() {
       _duration = duration;
-      durationInputController = TextEditingController(text: Utils.buildTimeStringFromDuration(_duration));
+      durationInputController = TextEditingController(
+          text: Utils.buildTimeStringFromDuration(_duration));
     });
   }
 
@@ -146,7 +151,6 @@ class NewRecordPageState extends State<NewRecordPage> implements NewRecordViewCo
 
   @override
   Widget build(BuildContext context) {
-
     final projectsDropDown = Container(
         margin: EdgeInsets.symmetric(vertical: 4.0),
         decoration: BoxDecoration(
@@ -175,10 +179,7 @@ class NewRecordPageState extends State<NewRecordPage> implements NewRecordViewCo
               onChanged: (Project value) {
                 presenter.projectSelected(value);
               }),
-        )
-    );
-
-
+        ));
 
     final tasksDropDown = Container(
         margin: EdgeInsets.symmetric(vertical: 4.0),
@@ -212,7 +213,6 @@ class NewRecordPageState extends State<NewRecordPage> implements NewRecordViewCo
               }),
         ));
 
-
     final startTimePicker = Container(
       padding: EdgeInsets.only(left: 4.0, right: 4.0, top: 8.0),
       child: new Row(
@@ -230,9 +230,10 @@ class NewRecordPageState extends State<NewRecordPage> implements NewRecordViewCo
           Container(
             child: new Flexible(
                 child: new TextField(
-                    decoration: InputDecoration(hintText: "Start",
-                        contentPadding: EdgeInsets.fromLTRB(
-                            10.0, 10.0, 10.0, 10.0),
+                    decoration: InputDecoration(
+                        hintText: "Start",
+                        contentPadding:
+                            EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20.0))),
                     maxLines: 1,
@@ -259,9 +260,10 @@ class NewRecordPageState extends State<NewRecordPage> implements NewRecordViewCo
           Container(
             child: new Flexible(
                 child: new TextField(
-                    decoration: InputDecoration(hintText: "Finish",
-                        contentPadding: EdgeInsets.fromLTRB(
-                            10.0, 10.0, 10.0, 10.0),
+                    decoration: InputDecoration(
+                        hintText: "Finish",
+                        contentPadding:
+                            EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20.0))),
                     maxLines: 1,
@@ -279,9 +281,10 @@ class NewRecordPageState extends State<NewRecordPage> implements NewRecordViewCo
             child: new Flexible(
                 child: new TextField(
                     controller: durationInputController,
-                    decoration: InputDecoration(hintText: "Duration",
-                        contentPadding: EdgeInsets.fromLTRB(
-                            10.0, 10.0, 10.0, 10.0),
+                    decoration: InputDecoration(
+                        hintText: "Duration",
+                        contentPadding:
+                            EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20.0))),
                     maxLines: 1)),
@@ -307,21 +310,23 @@ class NewRecordPageState extends State<NewRecordPage> implements NewRecordViewCo
           Container(
             child: new Flexible(
                 child: new TextField(
-                    decoration: InputDecoration(hintText: "Date",
-                        contentPadding: EdgeInsets.fromLTRB(
-                            10.0, 10.0, 10.0, 10.0),
+                    decoration: InputDecoration(
+                        hintText: "Date",
+                        contentPadding:
+                            EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20.0))),
                     maxLines: 1,
-                    controller: dateInputController)
-            ),
+                    controller: dateInputController)),
           ),
         ],
       ),
     );
     return Scaffold(
       appBar: new AppBar(
-        title: new Text(widget.flow == NewRecordFlow.update_record ? "Edit a Record" : "New Time Record"),
+        title: new Text(widget.flow == NewRecordFlow.update_record
+            ? "Edit a Record"
+            : "New Time Record"),
       ),
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: 16.0),
@@ -344,56 +349,58 @@ class NewRecordPageState extends State<NewRecordPage> implements NewRecordViewCo
                       child: Column(
                         mainAxisSize: MainAxisSize.max,
                         children: <Widget>[
-                          TextField(maxLines: 4,
-                              onChanged: (value){
+                          TextField(
+                              maxLines: 4,
+                              onChanged: (value) {
                                 _comment = value;
+                                presenter.commentEntered(value);
                               },
                               controller: commentInputController,
                               decoration: InputDecoration(
                                   border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10.0)),
+                                      borderRadius:
+                                          BorderRadius.circular(10.0)),
                                   contentPadding: EdgeInsets.fromLTRB(
                                       10.0, 10.0, 10.0, 10.0),
                                   hintText: "Note:"))
                         ],
                       )),
-
                 ],
               ),
             ),
             Flexible(
-              flex: 1,
-              child:  Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                        vertical: 16.0, horizontal: 16.0),
-                    child: Material(
-                      borderRadius: BorderRadius.circular(10.0),
-                      shadowColor: isButtonEnabled
-                          ? Colors.orangeAccent.shade100
-                          : Colors.grey.shade100,
-                      elevation: 2.0,
-                      child: MaterialButton(
-                        minWidth: 200.0,
-                        height: 42.0,
-                        onPressed: () {
-                          if (isButtonEnabled) {
-                            presenter.saveButtonClicked();
-                          }
-                        },
-                        color: isButtonEnabled ? Colors.orangeAccent : Colors
-                            .grey,
-                        child: Text(
-                            "Save", style: TextStyle(color: Colors.white)),
+                flex: 1,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          vertical: 16.0, horizontal: 16.0),
+                      child: Material(
+                        borderRadius: BorderRadius.circular(10.0),
+                        shadowColor: isButtonEnabled
+                            ? Colors.orangeAccent.shade100
+                            : Colors.grey.shade100,
+                        elevation: 2.0,
+                        child: MaterialButton(
+                          minWidth: 200.0,
+                          height: 42.0,
+                          onPressed: () {
+                            if (isButtonEnabled) {
+                              presenter.saveButtonClicked();
+                            }
+                          },
+                          color: isButtonEnabled
+                              ? Colors.orangeAccent
+                              : Colors.grey,
+                          child: Text("Save",
+                              style: TextStyle(color: Colors.white)),
+                        ),
                       ),
-                    ),
-                  )
-                ],
-              )
-            )
+                    )
+                  ],
+                ))
           ],
         ),
       ),
@@ -401,8 +408,9 @@ class NewRecordPageState extends State<NewRecordPage> implements NewRecordViewCo
   }
 
   Future<Null> _showStartTimeDialog() async {
-    final TimeOfDay picked =
-    await showTimePicker(context: context, initialTime: _startTime != null ? _startTime : TimeOfDay.now());
+    final TimeOfDay picked = await showTimePicker(
+        context: context,
+        initialTime: _startTime != null ? _startTime : TimeOfDay.now());
 
     if (picked != null) {
       presenter.startTimeSelected(picked);
@@ -413,52 +421,45 @@ class NewRecordPageState extends State<NewRecordPage> implements NewRecordViewCo
     final DateTime picked = await showDatePicker(
         context: context,
         initialDate: DateTime.now(),
-        firstDate: DateTime(DateTime
-            .now()
-            .year - 1, 1),
-        lastDate: DateTime(DateTime
-            .now()
-            .year, 12));
+        firstDate: DateTime(DateTime.now().year - 1, 1),
+        lastDate: DateTime(DateTime.now().year, 12));
     if (picked != null) {
       presenter.dateSelected(picked);
     }
   }
 
   @override
-  showSelectedDate(DateTime date){
+  showSelectedDate(DateTime date) {
     setState(() {
       _date = date;
-      dateInputController = new TextEditingController(text: "${_date.day}/${_date.month}/${_date.year}");
+      dateInputController = new TextEditingController(
+          text: "${_date.day}/${_date.month}/${_date.year}");
     });
   }
 
   Future<Null> _showFinishTimeDialog() async {
-    final TimeOfDay picked =
-    await showTimePicker(context: context, initialTime: _finishTime != null ? _finishTime : TimeOfDay.now());
+    final TimeOfDay picked = await showTimePicker(
+        context: context,
+        initialTime: _finishTime != null ? _finishTime : TimeOfDay.now());
 
     if (picked != null) {
       presenter.endTimeSelected(picked);
     }
   }
 
-  _createEmptyDropDown( ) {
+  _createEmptyDropDown() {
     _tasks.add(_selectedTask);
     return _tasks.map((Task item) {
       print("item: $item");
       return new DropdownMenuItem<Task>(
         value: item,
-        child: new Text(item.name ,
+        child: new Text(
+          item.name,
           style: TextStyle(fontSize: 25.0),
         ),
       );
     }).toList();
-    }
   }
+}
 
-
-  enum NewRecordFlow{
-    new_record,
-    update_record
-  }
-
-
+enum NewRecordFlow { new_record, update_record }

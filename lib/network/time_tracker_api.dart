@@ -6,6 +6,8 @@ import 'package:http/http.dart';
 import 'package:client_cookie/client_cookie.dart';
 import '../network/requests/login_request.dart';
 import '../network/requests/reports_form.dart';
+import '../network/requests/id_request.dart';
+import '../data/models.dart';
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'credentials.dart';
@@ -75,4 +77,14 @@ class TimeTrackerApi extends _$TimeTrackerApiClient implements ApiClient{
 
   @PostReq(path: "report.php")
   Future<dynamic> getReport();
+
+  @PostReq(path: "time.php")
+  Future<dynamic> addTime(@AsForm() TimeRecord request);
+
+  @PostReq(path: "time_edit.php")
+  Future<dynamic> timeEdit(@QueryParam("id") int id, @AsForm() IdRequest request);
+
+  @PostReq(path: "time_delete.php")
+  Future<dynamic> timeDelete(@QueryParam("id") int id, @AsForm() IdRequest request);
+
 }

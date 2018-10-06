@@ -57,6 +57,7 @@ class NewRecordPresenter implements NewRecordPresenterContract {
 
   @override
   void saveButtonClicked() {
+    print("saveButtonClicked");
     _saveTimeRecord();
   }
 
@@ -97,6 +98,12 @@ class NewRecordPresenter implements NewRecordPresenterContract {
 
   void _saveTimeRecord(){
     print("_saveTimeRecord: about to save ${this.timeRecord.toString()}");
+    repository.addTime(this.timeRecord).then((response){
+      print("Response: $response");
+      view.showSaveRecordSuccess(this.timeRecord);
+    },onError: (e){
+      print("There was an error: ${e.toString()}");
+    });
   }
 
   Duration calculateDuration(
@@ -122,6 +129,11 @@ class NewRecordPresenter implements NewRecordPresenterContract {
       formOk = false;
     }
     view.setButtonState(formOk);
+  }
+
+  @override
+  void noteChanged(String note) {
+    this.timeRecord.comment = note;
   }
 }
 

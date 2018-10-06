@@ -1,6 +1,7 @@
 import 'package:jaguar_serializer/src/serializer/serializer.dart';
 import 'package:intl/intl.dart';
 import '../../data/models.dart';
+import '../../utils/utils.dart';
 
 class AddTimeSerializer extends Serializer<TimeRecord>{
 
@@ -15,16 +16,17 @@ class AddTimeSerializer extends Serializer<TimeRecord>{
   Map<String, String> toMap(TimeRecord model) {
     print("form serializer: toSap: ${model.toString()}");
     Map<String, String> map = Map<String, String>();
+
     map["project"] = "${model.project.value}";
     map["task"] = "${model.task.value}";
     map["date"] = "${model.date.toString()}";
-    map["start"] = "${model.start.toString()}";
-    map["finish"] = "${model.finish.toString()}";
-    map["note"] = "${model.comment}";
+    map["start"] = Utils.buildTimeStringFromTime(model.start);
+    map["finish"] = model.finish == null ? "" : Utils.buildTimeStringFromTime(model.finish);
+    map["duration"] = "";
+    map["note"] = model.comment;
     map["btn_submit"] = "Submit";
     map["browser_today"] = "${dateFormat.format(DateTime.now())}";
     return map;
-
   }
 
 }

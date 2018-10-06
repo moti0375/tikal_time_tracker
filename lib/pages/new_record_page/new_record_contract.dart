@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../data/project.dart';
+import '../../data/models.dart';
 import '../../data/task.dart';
 
 class NewRecordPresenterContract{
@@ -11,6 +12,7 @@ class NewRecordPresenterContract{
   void endTimeSelected(TimeOfDay endTime){}
   void commentEntered(String comment){}
   void saveButtonClicked(){}
+  void noteChanged(String note){}
 }
 
 class NewRecordViewContract{
@@ -23,7 +25,7 @@ class NewRecordViewContract{
   void showSelectedStartTime(TimeOfDay startTime){}
   void showSelectedFinishTime(TimeOfDay finishTime){}
   void showDuration(Duration duration){}
-  void showSaveRecordSuccess(){}
+  void showSaveRecordSuccess(TimeRecord timeRecord){}
   void showSaveRecordFailed(){}
   void setButtonState(bool enabled){}
 }

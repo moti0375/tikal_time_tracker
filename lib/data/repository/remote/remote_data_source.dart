@@ -10,6 +10,8 @@ import 'package:jaguar_retrofit/jaguar_retrofit.dart';
 import 'package:jaguar_serializer/jaguar_serializer.dart';
 import '../../../network/serializers/from_request_serializer.dart';
 import '../../../network/serializers/form_serializer.dart';
+import '../../../network/serializers/add_time_serializer.dart';
+import '../../../network/serializers/id_request_serializer.dart';
 import '../../../network/serializers/reports_form_serializer.dart';
 import '../../../network/requests/login_request.dart';
 import '../../../network/credentials.dart';
@@ -30,8 +32,8 @@ class RemoteDateSource implements TimeDateSource {
   }
 
   @override
-  Future<TimeRecord> addTimeForDate(TimeRecord time) {
-    // TODO: implement addTimeForDate
+  Future<dynamic> addTime(TimeRecord time) {
+    return api.addTime(time);
   }
 
   @override
@@ -76,6 +78,8 @@ class RemoteDateSource implements TimeDateSource {
     serializers.add(FormRequestSerializer());
     serializers.add(FormSerializer());
     serializers.add(ReportsFormSerializer());
+    serializers.add(AddTimeSerializer());
+    serializers.add(IdRequestSerializer());
     api = TimeTrackerApi(
         base: route("https://planet.tikalk.com").before((route) {
           print("Metadata: ${route.metadataMap}");
