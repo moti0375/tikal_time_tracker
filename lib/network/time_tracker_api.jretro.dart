@@ -65,12 +65,13 @@ abstract class _$TimeTrackerApiClient implements ApiClient {
     return serializers.from(await req.go().body);
   }
 
-  Future<dynamic> timeEdit(int id, IdRequest request) async {
+  Future<dynamic> updateTime(int id, UpdateRequest request) async {
     var req = base.post
         .path(basePath)
         .path("time_edit.php")
         .query("id", id)
         .urlEncodedForm(serializers.to(request));
+    print("updateTime: ${req.getUrl}, body: ${serializers.to(request)}");
     return serializers.from(await req.go().body);
   }
 

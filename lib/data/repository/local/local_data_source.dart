@@ -100,4 +100,9 @@ class LocalDataSource implements TimeDateSource {
     return null;
   }
 
+  @override
+  Future updateTime(TimeRecord time) {
+    return null;
+  }
+
 }

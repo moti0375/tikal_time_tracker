@@ -106,4 +106,9 @@ class TimeRecordsRepository implements TimeDateSource{
     return remoteDateSource.getReport(request);
   }
 
+  @override
+  Future updateTime(TimeRecord time) {
+    return remoteDateSource.updateTime(time);
+  }
+
 }

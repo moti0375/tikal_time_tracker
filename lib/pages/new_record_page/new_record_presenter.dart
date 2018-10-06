@@ -78,12 +78,15 @@ class NewRecordPresenter implements NewRecordPresenterContract {
   @override
   void endTimeSelected(TimeOfDay endTime) {
     this.timeRecord.finish = endTime;
+
     view.showSelectedFinishTime(this.timeRecord.finish);
 
-    this.timeRecord.duration = calculateDuration(
-        date: DateTime.now(),
-        startTime: this.timeRecord.start,
-        finishTime: timeRecord.finish);
+    if(this.timeRecord.finish != null){
+      this.timeRecord.duration = calculateDuration(
+          date: DateTime.now(),
+          startTime: this.timeRecord.start,
+          finishTime: timeRecord.finish);
+    }
     _updateButtonState();
 
   }
@@ -97,13 +100,24 @@ class NewRecordPresenter implements NewRecordPresenterContract {
 
 
   void _saveTimeRecord(){
-    print("_saveTimeRecord: about to save ${this.timeRecord.toString()}");
-    repository.addTime(this.timeRecord).then((response){
-      print("Response: $response");
-      view.showSaveRecordSuccess(this.timeRecord);
-    },onError: (e){
-      print("There was an error: ${e.toString()}");
-    });
+    if(flow == NewRecordFlow.new_record){
+      print("_saveTimeRecord: about to save ${this.timeRecord.toString()}");
+      repository.addTime(this.timeRecord).then((response){
+        print("Response: $response");
+        view.showSaveRecordSuccess(this.timeRecord);
+      },onError: (e){
+        print("There was an error: ${e.toString()}");
+      });
+    }
+
+    if(flow == NewRecordFlow.update_record){
+      print("_saveTimeRecord: about to update ${this.timeRecord.toString()}");
+      repository.updateTime(this.timeRecord).then((response){
+        view.showSaveRecordSuccess(this.timeRecord);
+      },onError: (e){
+        print("There was an error: ${e.toString()}");
+      });
+    }
   }
 
   Duration calculateDuration(

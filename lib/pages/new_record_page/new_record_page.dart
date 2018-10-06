@@ -129,7 +129,7 @@ class NewRecordPageState extends State<NewRecordPage>
     setState(() {
       _finishTime = finishTime;
       finishTimeController = new TextEditingController(
-          text: Utils.buildTimeStringFromTime(finishTime));
+          text: _finishTime == null ? "" :Utils.buildTimeStringFromTime(finishTime));
     });
   }
 
@@ -138,7 +138,7 @@ class NewRecordPageState extends State<NewRecordPage>
     setState(() {
       _duration = duration;
       durationInputController = TextEditingController(
-          text: Utils.buildTimeStringFromDuration(_duration));
+          text: _duration == null ? "" : Utils.buildTimeStringFromDuration(_duration));
     });
   }
 

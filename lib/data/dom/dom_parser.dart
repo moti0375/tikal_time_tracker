@@ -233,7 +233,7 @@ class DomParser {
 
     timeStr = timeStr.substring(
         timeStr.indexOf("Time: ") + 6, timeStr.indexOf("</div>"));
-    print("_extractDateTime: $timeStr");
+//    print("_extractDateTime: $timeStr");
     DateFormat formatter = DateFormat("y-MM-d");
     return formatter.parse(timeStr.trim());
   }

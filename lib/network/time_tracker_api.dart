@@ -6,6 +6,7 @@ import 'package:http/http.dart';
 import 'package:client_cookie/client_cookie.dart';
 import '../network/requests/login_request.dart';
 import '../network/requests/reports_form.dart';
+import '../network/requests/update_request.dart';
 import '../network/requests/id_request.dart';
 import '../data/models.dart';
 import 'dart:convert';
@@ -34,7 +35,7 @@ class TimeTrackerApi extends _$TimeTrackerApiClient implements ApiClient{
     this.base.authHeader("Basic", Base64Encoder().convert(convert));
     this.base.after((resty.StringResponse response){
 
-      debugPrint("resty After: status: ${response.statusCode}, headers: ${response.headers.toString()}, body: ${response.body}" );
+      debugPrint("resty After: status: ${response.statusCode}, response headers: ${response.headers.toString()}" );
 
       Map map = response.headers.map((key, value){
         return MapEntry(key, value);
@@ -82,7 +83,7 @@ class TimeTrackerApi extends _$TimeTrackerApiClient implements ApiClient{
   Future<dynamic> addTime(@AsForm() TimeRecord request);
 
   @PostReq(path: "time_edit.php")
-  Future<dynamic> timeEdit(@QueryParam("id") int id, @AsForm() IdRequest request);
+  Future<dynamic> updateTime(@QueryParam("id") int id, @AsForm() UpdateRequest request);
 
   @PostReq(path: "time_delete.php")
   Future<dynamic> timeDelete(@QueryParam("id") int id, @AsForm() IdRequest request);
