@@ -12,6 +12,7 @@ class NewRecordPresenterContract{
   void endTimeSelected(TimeOfDay endTime){}
   void commentEntered(String comment){}
   void saveButtonClicked(){}
+  void deleteButtonClicked(){}
   void noteChanged(String note){}
 }
 

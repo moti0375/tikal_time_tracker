@@ -322,6 +322,72 @@ class NewRecordPageState extends State<NewRecordPage>
         ],
       ),
     );
+
+
+    Widget _saveButton = Padding(
+      padding: EdgeInsets.symmetric(
+          vertical: 16.0, horizontal: 16.0),
+      child: Material(
+        borderRadius: BorderRadius.circular(10.0),
+        shadowColor: isButtonEnabled
+            ? Colors.orangeAccent.shade100
+            : Colors.grey.shade100,
+        elevation: 2.0,
+        child: MaterialButton(
+          minWidth: 100.0,
+          height: 42.0,
+          onPressed: () {
+            if (isButtonEnabled) {
+              presenter.saveButtonClicked();
+            }
+          },
+          color: isButtonEnabled
+              ? Colors.orangeAccent
+              : Colors.grey,
+          child: Text("Save",
+              style: TextStyle(color: Colors.white)),
+        ),
+      ),
+    );
+
+    Widget _deleteButton = Padding(
+      padding: EdgeInsets.symmetric(
+          vertical: 16.0, horizontal: 16.0),
+      child: Material(
+        borderRadius: BorderRadius.circular(10.0),
+        shadowColor: Colors.orangeAccent.shade100,
+        elevation: 2.0,
+        child: MaterialButton(
+          minWidth: 100.0,
+          height: 42.0,
+          onPressed: () {
+            presenter.saveButtonClicked();
+          },
+          color:  Colors.orangeAccent,
+          child: Text("Delete",
+              style: TextStyle(color: Colors.white)),
+        ),
+      ),
+    );
+
+    Row _buildButtonsRow(){
+      List<Widget> children;
+      MainAxisAlignment alignment;
+      if(widget.flow == NewRecordFlow.update_record){
+        children = [_saveButton, _deleteButton];
+        alignment = MainAxisAlignment.spaceBetween;
+      }else{
+        children =  [_saveButton];
+        alignment = MainAxisAlignment.center;
+      }
+
+      return Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: alignment,
+        children: children,
+      );
+    }
+
     return Scaffold(
       appBar: new AppBar(
         title: new Text(widget.flow == NewRecordFlow.update_record
@@ -374,31 +440,7 @@ class NewRecordPageState extends State<NewRecordPage>
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          vertical: 16.0, horizontal: 16.0),
-                      child: Material(
-                        borderRadius: BorderRadius.circular(10.0),
-                        shadowColor: isButtonEnabled
-                            ? Colors.orangeAccent.shade100
-                            : Colors.grey.shade100,
-                        elevation: 2.0,
-                        child: MaterialButton(
-                          minWidth: 200.0,
-                          height: 42.0,
-                          onPressed: () {
-                            if (isButtonEnabled) {
-                              presenter.saveButtonClicked();
-                            }
-                          },
-                          color: isButtonEnabled
-                              ? Colors.orangeAccent
-                              : Colors.grey,
-                          child: Text("Save",
-                              style: TextStyle(color: Colors.white)),
-                        ),
-                      ),
-                    )
+                    _buildButtonsRow()
                   ],
                 ))
           ],

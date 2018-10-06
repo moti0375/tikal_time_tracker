@@ -149,5 +149,10 @@ class NewRecordPresenter implements NewRecordPresenterContract {
   void noteChanged(String note) {
     this.timeRecord.comment = note;
   }
+
+  @override
+  void deleteButtonClicked() {
+    print("About to delete record: ${this.timeRecord.toString()}");
+  }
 }
 
