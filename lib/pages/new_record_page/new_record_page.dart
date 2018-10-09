@@ -91,6 +91,8 @@ class NewRecordPageState extends State<NewRecordPage>
     presenter.dateSelected(widget.timeRecord.date);
     presenter.startTimeSelected(widget.timeRecord.start);
     presenter.endTimeSelected(widget.timeRecord.finish);
+    presenter.commentEntered(widget.timeRecord.comment);
+    commentInputController = TextEditingController(text: widget.timeRecord.comment);
   }
 
   @override

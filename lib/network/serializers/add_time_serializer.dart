@@ -23,7 +23,9 @@ class AddTimeSerializer extends Serializer<TimeRecord>{
     map["start"] = Utils.buildTimeStringFromTime(model.start);
     map["finish"] = model.finish == null ? "" : Utils.buildTimeStringFromTime(model.finish);
     map["duration"] = "";
-    map["note"] = model.comment;
+    if(model.comment != null && model.comment.isNotEmpty){
+      map["note"] = model.comment;
+    }
     map["btn_submit"] = "Submit";
     map["browser_today"] = "${dateFormat.format(DateTime.now())}";
     return map;

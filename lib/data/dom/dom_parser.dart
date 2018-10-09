@@ -217,7 +217,7 @@ class DomParser {
           start: start,
           date: date,
           finish: finish,
-          comment: cells[5]);
+          comment: cells[5].trim().replaceAll("&nbsp;", ""));
     }).toList();
     return result;
   }
@@ -317,7 +317,7 @@ class DomParser {
           finish = null;
         }
       }
-      return TimeRecord(date: dateTime, project: project, task: task, start: start, finish: finish, comment: cells[6]);
+      return TimeRecord(date: dateTime, project: project, task: task, start: start, finish: finish, comment: cells[6].trim().replaceAll("&nbsp;", ""));
     }).toList();
 
 //    print("parseReportPage: ${records.toString()}");

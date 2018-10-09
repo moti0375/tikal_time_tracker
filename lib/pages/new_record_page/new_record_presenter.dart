@@ -40,6 +40,7 @@ class NewRecordPresenter implements NewRecordPresenterContract {
 
   @override
   void commentEntered(String comment) {
+    print("commentEntered: ${comment}");
     this.timeRecord.comment = comment;
   }
 

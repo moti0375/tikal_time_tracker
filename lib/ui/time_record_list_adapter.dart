@@ -12,11 +12,11 @@ class TimeRecordListAdapter extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    return _buildListView(items);
+    return _buildListView(items, context);
   }
 
 
-  Widget _buildListTile(TimeRecord item, Color color){
+  Widget _buildListTile(TimeRecord item, Color color, BuildContext context){
     print("_buildListTile: ${item.toString()}");
     return Container(
       decoration: BoxDecoration(
@@ -71,19 +71,16 @@ class TimeRecordListAdapter extends StatelessWidget{
             SizedBox(
               width: 4.0,
             ),
-            Container(
-                padding: EdgeInsets.symmetric(horizontal: 1.0, vertical: 0.0),
-                margin: EdgeInsets.symmetric(vertical: 1.0),
-                child: Text(item.comment, style: TextStyle(fontSize: 12.0,), softWrap: false, maxLines: 1, textAlign: TextAlign.center)
-            ),
-
+            Expanded(
+            child: Text(item.comment, style: TextStyle(fontSize: 12.0,), softWrap: false, maxLines: 1, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis)
+            )
           ],
         ),
       ),
     );
   }
 
-  Widget _buildListView(List<TimeRecord> items) {
+  Widget _buildListView(List<TimeRecord> items, BuildContext context) {
     DateTime day;
 
     Color evenColor = Colors.white;
@@ -102,7 +99,7 @@ class TimeRecordListAdapter extends StatelessWidget{
           }
 
           day = items[i].date;
-          return _buildListTile(items[i], color);
+          return _buildListTile(items[i], color, context);
         },
         shrinkWrap: true,
         itemCount: items == null ? 0 : items.length);

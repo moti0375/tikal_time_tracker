@@ -34,6 +34,7 @@ class TimePageState extends State<TimePage> implements DrawerOnClickListener, Li
     _selectedDate = DateTime(now.year, now.month, now.day, 0, 0, 0, 0, 0);
 //    _loadRecords(_selectedDate);
     dateInputController = new TextEditingController(text: "${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}");
+    _loadRecords(_selectedDate);
   }
 
 
@@ -175,9 +176,9 @@ class TimePageState extends State<TimePage> implements DrawerOnClickListener, Li
         if(value != null){
           if(value is TimeRecord){
             _onDateSelected(value.date);
-          }else{
-            _loadRecords(_selectedDate);
           }
+        } else {
+          _loadRecords(_selectedDate);
         }
       });
   }
@@ -190,9 +191,9 @@ class TimePageState extends State<TimePage> implements DrawerOnClickListener, Li
       if(value != null){
         if(value is TimeRecord){
           _onDateSelected(value.date);
-        }else{
-          _loadRecords(_selectedDate);
         }
+      } else {
+        _loadRecords(_selectedDate);
       }
     });
   }
