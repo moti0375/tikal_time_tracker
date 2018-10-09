@@ -419,7 +419,7 @@ class GenerateReportState extends State<GenerateReportPage> implements ReportsVi
 
   void _handleGenerateButtonClicked() {
     print("_handleGenerateButtonClicked");
-    presenter.onClickGenerateButton(_startDate, _endDate);
+    presenter.onClickGenerateButton(_selectedProject, _selectedTask, _startDate, _endDate, _selectedPeriod);
   }
 
   @override

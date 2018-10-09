@@ -40,8 +40,8 @@ class TimeRecordListAdapter extends StatelessWidget{
           ],
         ),
         subtitle: Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Padding(
                 padding:
@@ -49,31 +49,33 @@ class TimeRecordListAdapter extends StatelessWidget{
                 child: Text(
                     "${item.date.day}/${item.date.month}/${item.date.year}",
                     style: TextStyle(fontSize: 12.0))),
+            SizedBox(
+              width: 4.0,
+            ),
             Padding(
                 padding:
-                EdgeInsets.symmetric(horizontal: 1.0, vertical: 1.0),
+                EdgeInsets.symmetric(horizontal: 1.0, vertical: 0.0),
                 child: Text(
-                    "${item.start.hour}:${item.start.minute}",
+                    "${item.start.hour}:${item.start.minute} - ${item.finish.hour}:${item.finish.minute}",
                     style: TextStyle(fontSize: 12.0))),
             Padding(
                 padding:
-                EdgeInsets.symmetric(horizontal: 1.0, vertical: 1.0),
-                child: Text("-", style: TextStyle(fontSize: 12.0))),
-            Padding(
-                padding:
-                EdgeInsets.symmetric(horizontal: 1.0, vertical: 1.0),
-                child: item.finish == null ? Text("") : Text(
-                    "${item.finish.hour}:${item.finish.minute}",
-                    style: TextStyle(fontSize: 12.0))),
-            Padding(
-                padding:
-                EdgeInsets.symmetric(horizontal: 0.0, vertical: 1.0),
-                child: Text(",", style: TextStyle(fontSize: 12.0))),
+                EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
+                child: Text(",", style: TextStyle(fontSize: 12.0))
+            ),
             Padding(
                 padding:
                 EdgeInsets.symmetric(horizontal: 1.0, vertical: 1.0),
                 child: item.duration == null ? Text("Uncompleted", style: TextStyle(color: Colors.red),) : Text(item.getDurationString(),
                     style: TextStyle(fontSize: 12.0))),
+            SizedBox(
+              width: 4.0,
+            ),
+            Container(
+                padding: EdgeInsets.symmetric(horizontal: 1.0, vertical: 0.0),
+                margin: EdgeInsets.symmetric(vertical: 1.0),
+                child: Text(item.comment, style: TextStyle(fontSize: 12.0,), softWrap: false, maxLines: 1, textAlign: TextAlign.center)
+            ),
 
           ],
         ),

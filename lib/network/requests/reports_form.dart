@@ -1,9 +1,12 @@
-
+import '../../pages/reports/generate_report_page.dart';
+import '../../data/project.dart';
+import '../../data/task.dart';
 class ReportForm{
 
   String favoriteReport;
-  String project;
-  String task;
+  Project project;
+  Task task;
+  Period period;
   DateTime startDate;
   DateTime endDate;
   int chProject = 1;
@@ -12,5 +15,5 @@ class ReportForm{
   int chFinish = 1;
   int chNote = 1;
 
-  ReportForm({this.project, this.task, this.startDate, this.endDate});
+  ReportForm({this.project, this.task, this.startDate, this.endDate, this.period});
 }

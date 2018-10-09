@@ -16,7 +16,7 @@ class DomParser {
 
   DomParser() {}
 
-  DateFormat dateFormat = DateFormat('H:m');
+  DateFormat timeFormat = DateFormat('H:m');
 
   User getUserFromDom(String domStr) {
     String pageTitle = domStr.substring(
@@ -192,11 +192,11 @@ class DomParser {
         return it.name == cells[1];
       });
 
-      TimeOfDay start = TimeOfDay.fromDateTime(dateFormat.parse(cells[2]));
+      TimeOfDay start = TimeOfDay.fromDateTime(timeFormat.parse(cells[2]));
       TimeOfDay finish = null;
 
       try{
-        finish = TimeOfDay.fromDateTime(dateFormat.parse(cells[3]));
+        finish = TimeOfDay.fromDateTime(timeFormat.parse(cells[3]));
       }
       catch(e){
         if(e is FormatException){
@@ -266,4 +266,61 @@ class DomParser {
     return members;
   }
 
+
+  List<TimeRecord> parseReportPage(String domStr){
+   // print("parseReportPage: $domStr");
+    DateFormat dateFormat = DateFormat('yyyy-MM-dd');
+    String formStart = "<form name=\"reportForm\" method=\"post\">";
+    String formEnd = "</form>";
+    String reportStart = "-- normal report -->";
+    String reportEnd = "</table>";
+    String buffer = domStr.substring(domStr.indexOf(formStart)+formStart.length, domStr.indexOf(formEnd));
+//    debugPrint("parseReportPage: $buffer");
+
+    buffer = buffer.substring(buffer.indexOf(reportStart) + reportStart.length);
+    buffer = buffer.substring(0, buffer.indexOf(reportEnd));
+
+    List<String> rows = buffer.split("</tr>");
+
+    rows.removeAt(0);
+    rows.removeLast();
+    rows.removeLast();
+    rows.removeLast();
+
+    List<TimeRecord> records = rows.map((row){
+      List<String> cells = row.substring(row.indexOf("<td ")).split("</td>");
+      cells.removeLast();
+      cells = cells.map((cell){
+        cell = cell.substring(cell.indexOf("<td") + 3);
+        return cell.substring(cell.indexOf(">") + 1);
+      }).toList();
+
+//      print("parseReportPage: ${cells.toString()}");
+
+      DateTime dateTime = dateFormat.parse(cells[0]);
+      Project project = User.me.projects.firstWhere((it){
+        return it.name == cells[1];
+      });
+
+      Task task = User.me.tasks.firstWhere((it){
+        return it.name == cells[2];
+      });
+
+      TimeOfDay start = TimeOfDay.fromDateTime(timeFormat.parse(cells[3]));
+      TimeOfDay finish = null;
+
+      try{
+        finish = TimeOfDay.fromDateTime(timeFormat.parse(cells[4]));
+      }
+      catch(e){
+        if(e is FormatException){
+          finish = null;
+        }
+      }
+      return TimeRecord(date: dateTime, project: project, task: task, start: start, finish: finish, comment: cells[6]);
+    }).toList();
+
+//    print("parseReportPage: ${records.toString()}");
+    return records;
+  }
 }
