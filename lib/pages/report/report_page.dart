@@ -37,7 +37,7 @@ class ReportPage extends StatelessWidget implements ListAdapterClickListener{
     } else {
       return Container(
           padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-          child: TimeRecordListAdapter(items: report.report, adapterClickListener: this));
+          child: TimeRecordListAdapter(items: report.report, adapterClickListener: this, intermittently: false,));
     }
   }
 

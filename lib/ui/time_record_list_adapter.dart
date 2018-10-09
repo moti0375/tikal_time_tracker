@@ -7,12 +7,13 @@ class TimeRecordListAdapter extends StatelessWidget{
 
   List<TimeRecord> items;
   ListAdapterClickListener adapterClickListener;
+  bool intermittently;
 
-  TimeRecordListAdapter({this.items, this.adapterClickListener});
+  TimeRecordListAdapter({this.items, this.adapterClickListener, this.intermittently});
 
   @override
   Widget build(BuildContext context) {
-    return _buildListView(items, context);
+    return _buildListView(items, context, this.intermittently);
   }
 
 
@@ -80,7 +81,7 @@ class TimeRecordListAdapter extends StatelessWidget{
     );
   }
 
-  Widget _buildListView(List<TimeRecord> items, BuildContext context) {
+  Widget _buildListView(List<TimeRecord> items, BuildContext context, bool intermittently) {
     DateTime day;
 
     Color evenColor = Colors.white;
@@ -90,11 +91,19 @@ class TimeRecordListAdapter extends StatelessWidget{
     return ListView.builder(
         itemBuilder: (context, i) {
 
-          if (day != null && (items[i].date.day != day.day)) {
-            if (color == evenColor) {
-              color = oddColor;
-            } else {
+          if(intermittently){
+            if( i %2 == 0){
               color = evenColor;
+            }else{
+              color = oddColor;
+            }
+          }else{
+            if (day != null && (items[i].date.day != day.day)) {
+              if (color == evenColor) {
+                color = oddColor;
+              } else {
+                color = evenColor;
+              }
             }
           }
 

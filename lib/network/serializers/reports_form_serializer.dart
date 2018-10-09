@@ -18,7 +18,7 @@ class ReportsFormSerializer extends Serializer<ReportForm>{
     Map<String, String> map = Map<String, String>();;
     map["start_date"] = dateFormat.format(form.startDate);
     map["end_date"] = dateFormat.format(form.endDate);
-    map["project"] = "${form.project.value}";
+    map["project"] = form.project == null ? "" : "${form.project.value}";
     map["task"] = form.task == null ? "" : "${form.task.value}";
     map["period"] = "${form.period.value}";
     map["chduration"] = "1";

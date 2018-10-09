@@ -70,7 +70,7 @@ class TimePageState extends State<TimePage> implements DrawerOnClickListener, Li
                 child: Text("${User.me.name}, ${User.me.role}, ${User.me.company}"),
               ),
               Expanded(
-                child: (_records == null || _records.isEmpty) ? placeholderContent : TimeRecordListAdapter(items: _records, adapterClickListener: this),
+                child: (_records == null || _records.isEmpty) ? placeholderContent : TimeRecordListAdapter(items: _records, intermittently: true, adapterClickListener: this),
               )
             ],
           ),
