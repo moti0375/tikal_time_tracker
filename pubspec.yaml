@@ -14,6 +14,7 @@ dependencies:
   shared_preferences: ^0.4.2
   intl: ^0.15.7
   html: any
+  ktoast: ^1.0.3
 
 dev_dependencies:
   jaguar_retrofit_gen:

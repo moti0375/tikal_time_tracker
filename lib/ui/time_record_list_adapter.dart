@@ -57,7 +57,7 @@ class TimeRecordListAdapter extends StatelessWidget{
                 padding:
                 EdgeInsets.symmetric(horizontal: 1.0, vertical: 0.0),
                 child: Text(
-                    "${item.start.hour}:${item.start.minute} - ${item.finish.hour}:${item.finish.minute}",
+                    "${item.start.hour}:${item.start.minute} - " + (item.finish == null ? "" : "${item.finish.hour}:${item.finish.minute}"),
                     style: TextStyle(fontSize: 12.0))),
             Padding(
                 padding:

@@ -8,6 +8,7 @@ import '../network/credentials.dart';
 import '../storage/preferences.dart';
 import '../ui/animation_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ktoast/ktoast.dart';
 
 class LoginPage extends StatefulWidget {
   static final String TAG = "LoginPage";
@@ -183,8 +184,10 @@ class LoginPageState extends State<LoginPage> {
         widget.preferences.setLoginUserName(_email);
         widget.preferences.setLoginPassword(_password);
         _navigateToTime();
+        showToast(context, "Success", second: 2, position: ToastPosition.bottom);
       } else if (response.toString().contains("Incorrect login or password")) {
         print("Incorrect login or password");
+        showToast(context, "Incorrect login or password", second: 2, position: ToastPosition.bottom);
       }
     });
   }
