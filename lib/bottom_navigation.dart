@@ -9,7 +9,6 @@ enum Tab{
   Time,
   Reports,
   Users,
-  Profile
 }
 
 class BottomNavigation extends StatefulWidget{
@@ -27,8 +26,6 @@ String tabName({Tab tab}){
       return "Reports";
     case Tab.Users:
       return "Users";
-    case Tab.Profile:
-      return "Profile";
   }
   return null;
 }
@@ -47,9 +44,6 @@ class BottomNavigationState extends State<BottomNavigation>{
         break;
       case 2:
         _updateCurrentTab(Tab.Users);
-        break;
-      case 3:
-        _updateCurrentTab(Tab.Profile);
         break;
     }
   }
@@ -77,8 +71,6 @@ class BottomNavigationState extends State<BottomNavigation>{
         return GenerateReportPage();
       case Tab.Users:
         return UsersPage();
-      case Tab.Profile:
-        return ProfilePage();
     }
     return Container();
   }
@@ -88,8 +80,7 @@ class BottomNavigationState extends State<BottomNavigation>{
       type: BottomNavigationBarType.fixed,
       items: [_buildItem(icon: Icons.access_time, tab: Tab.Time),
               _buildItem(icon: Icons.line_weight, tab: Tab.Reports),
-              _buildItem(icon: Icons.contacts, tab: Tab.Users),
-              _buildItem(icon: Icons.account_box, tab: Tab.Profile)],
+              _buildItem(icon: Icons.contacts, tab: Tab.Users)],
       onTap: _onSelectedTab,
     );
   }
