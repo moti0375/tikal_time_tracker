@@ -365,9 +365,8 @@ class NewRecordPageState extends State<NewRecordPage>
           onPressed: () {
             presenter.deleteButtonClicked();
           },
-          color:  Colors.orangeAccent,
-          child: Text("Delete",
-              style: TextStyle(color: Colors.white)),
+          color: Colors.orangeAccent,
+          child: Text("Delete", style: TextStyle(color: Colors.white)),
         ),
       ),
     );
@@ -390,62 +389,65 @@ class NewRecordPageState extends State<NewRecordPage>
       );
     }
 
+
+    Widget _commentField = Container(
+          padding: EdgeInsets.only(left: 4.0, right: 4.0, top: 8.0),
+          child: TextField(
+              maxLines: 4,
+              onChanged: (value) {
+                _comment = value;
+                presenter.commentEntered(value);
+              },
+              controller: commentInputController,
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                      borderRadius:
+                      BorderRadius.circular(10.0)),
+                  contentPadding: EdgeInsets.fromLTRB(
+                      10.0, 10.0, 10.0, 10.0),
+                  hintText: "Note:")
+          )
+      );
+
     return Scaffold(
       appBar: new AppBar(
         title: new Text(widget.flow == NewRecordFlow.update_record
             ? "Edit a Record"
             : "New Time Record"),
       ),
-      body: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16.0),
-        child: Column(
-          children: <Widget>[
-            Flexible(
-              flex: 3,
-              child: ListView(
-                shrinkWrap: false,
-                children: <Widget>[
-                  new NewRecordTitle(),
-                  projectsDropDown,
-                  tasksDropDown,
-                  dateInput,
-                  startTimePicker,
-                  finishTimePicker,
-                  durationInput,
-                  Container(
-                      padding: EdgeInsets.only(left: 4.0, right: 4.0, top: 8.0),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        children: <Widget>[
-                          TextField(
-                              maxLines: 4,
-                              onChanged: (value) {
-                                _comment = value;
-                                presenter.commentEntered(value);
-                              },
-                              controller: commentInputController,
-                              decoration: InputDecoration(
-                                  border: OutlineInputBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(10.0)),
-                                  contentPadding: EdgeInsets.fromLTRB(
-                                      10.0, 10.0, 10.0, 10.0),
-                                  hintText: "Note:"))
-                        ],
-                      )),
-                ],
-              ),
-            ),
-            Flexible(
-                flex: 1,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+      body: SafeArea(
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 16.0),
+          child: Column(
+            children: <Widget>[
+              Flexible(
+                flex: 3,
+                child: ListView(
                   children: <Widget>[
-                    _buildButtonsRow()
+                    new NewRecordTitle(),
+                    projectsDropDown,
+                    tasksDropDown,
+                    dateInput,
+                    startTimePicker,
+                    finishTimePicker,
+                    durationInput,
+                    _commentField
                   ],
-                ))
-          ],
+                ),
+              ),
+              Flexible(
+                  flex: 1,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      Expanded(
+                        flex: 1,
+                          child: _buildButtonsRow())
+                    ],
+                  ))
+            ],
+          ),
         ),
       ),
     );
