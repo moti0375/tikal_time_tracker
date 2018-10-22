@@ -6,4 +6,5 @@ class MembersPresenterContract{
 
 class MembersViewContract{
   void showMembers(List<Member> members){return null;}
+  void setLoadingIndicator(bool loading){}
 }

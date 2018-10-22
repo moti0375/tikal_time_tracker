@@ -11,11 +11,13 @@ class UsersPresenter implements MembersPresenterContract{
 
   @override
   void loadUsers() {
+    view.setLoadingIndicator(true);
     repository.getAllMembers().then((response){
       print("loadUsers: ${response.toString()}");
+      view.setLoadingIndicator(false);
       view.showMembers(response);
     },onError: (e){
-
+      view.setLoadingIndicator(false);
     });
   }
 
