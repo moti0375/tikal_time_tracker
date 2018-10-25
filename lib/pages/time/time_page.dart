@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/diagnostics.dart';
 import 'package:tikal_time_tracker/ui/app_drawer.dart';
-import '../data/models.dart';
-import '../data/user.dart';
-import '../data/repository/time_records_repository.dart';
-import '../pages/login_page.dart';
-import '../ui/time_record_list_adapter.dart';
-import '../pages/new_record_page/new_record_page.dart';
-import '../pages/reports/place_holder_content.dart';
+import '../../data/models.dart';
+import '../../data/user.dart';
+import '../../data/repository/time_records_repository.dart';
+import '../../pages/login_page.dart';
+import '../../ui/time_record_list_adapter.dart';
+import '../../pages/new_record_page/new_record_page.dart';
+import '../../pages/reports/place_holder_content.dart';
+import 'time_presenter.dart';
+import 'time_contract.dart';
 
 class TimePage extends StatefulWidget {
   @override
@@ -16,25 +18,28 @@ class TimePage extends StatefulWidget {
   }
 }
 
-class TimePageState extends State<TimePage> implements DrawerOnClickListener, ListAdapterClickListener {
+class TimePageState extends State<TimePage> implements ListAdapterClickListener, TimeContractView{
   final _items = <String>["Moti", "Nurit", "Yarden", "Yahel"];
   Choice _onSelected;
   DateTime _selectedDate;
   TextEditingController dateInputController = new TextEditingController(text: "");
 
-
   TimeRecordsRepository repository = TimeRecordsRepository();
   List<TimeRecord> _records;
+  TimePresenter presenter;
+
 
   @override
   void initState() {
     super.initState();
     print("initState");
+    presenter = TimePresenter(repository: this.repository);
+    presenter.subscribe(this);
     var now = DateTime.now();
     _selectedDate = DateTime(now.year, now.month, now.day, 0, 0, 0, 0, 0);
 //    _loadRecords(_selectedDate);
     dateInputController = new TextEditingController(text: "${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}");
-    _loadRecords(_selectedDate);
+    presenter.loadTimeForDate(_selectedDate);
   }
 
 
@@ -42,7 +47,7 @@ class TimePageState extends State<TimePage> implements DrawerOnClickListener, Li
   Widget build(BuildContext context) {
 
     PlaceholderContent placeholderContent = PlaceholderContent(title: "No Work Today", subtitle: "Tap to add report",onPressed: (){
-      _navigateToNextScreen();
+      presenter.listItemClicked(null);
     });
 
 
@@ -51,7 +56,7 @@ class TimePageState extends State<TimePage> implements DrawerOnClickListener, Li
         appBar: _buildAppBar(title: "Tikal Time Tracker"),
         floatingActionButton:
             new FloatingActionButton(onPressed: () {
-              _navigateToNextScreen();
+              presenter.listItemClicked(null);
             }, child: Icon(Icons.add)),
         body: Container(
           padding: const EdgeInsets.all(32.0),
@@ -78,35 +83,10 @@ class TimePageState extends State<TimePage> implements DrawerOnClickListener, Li
       );
   }
 
-  @override
-  void onLogoutClicked() {
-    print("onLogoutClicked");
-  }
-
-  @override
-  void onProfileClicked() {
-    print("onProfileClicked");
-  }
-
-  @override
-  void onReportClicked() {
-    print("onReportClicked");
-  }
-
-  @override
-  void onTimeClicked() {
-    print("onTimeClicked");
-  }
-
-  @override
-  void onUsersClicked() {
-    print("onUsersClicked");
-  }
-
   void _select(Choice choice){
     setState(() {
       if(choice.action == Action.Logout ){
-        _logout();
+        presenter.onLogoutClicked();
       }
     });
   }
@@ -178,7 +158,7 @@ class TimePageState extends State<TimePage> implements DrawerOnClickListener, Li
             _onDateSelected(value.date);
           }
         } else {
-          _loadRecords(_selectedDate);
+          presenter.loadTimeForDate(_selectedDate);
         }
       });
   }
@@ -193,7 +173,7 @@ class TimePageState extends State<TimePage> implements DrawerOnClickListener, Li
           _onDateSelected(value.date);
         }
       } else {
-        _loadRecords(_selectedDate);
+        presenter.loadTimeForDate(_selectedDate);
       }
     });
   }
@@ -212,22 +192,7 @@ class TimePageState extends State<TimePage> implements DrawerOnClickListener, Li
   _onDateSelected(DateTime selectedDate){
     _selectedDate = DateTime(selectedDate.year, selectedDate.month, selectedDate.day, 0, 0, 0, 0, 0);
     dateInputController = new TextEditingController(text: "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}");
-    _loadRecords(selectedDate);
-  }
-
-  void _loadRecords(DateTime selectedDate) {
-    repository.getAllTimeForDate(_selectedDate).then((records) {
-//      debugPrint(records.toString());
-      _refreshList(records);
-    }, onError: (e){
-      print("There was an error: $e");
-      if(e is RangeError){
-        _refreshList(new List<TimeRecord>());
-      }else{
-        print(e);
-       // _logout();
-      }
-    });
+    presenter.loadTimeForDate(selectedDate);
   }
 
   void _refreshList(List<TimeRecord> records){
@@ -264,12 +229,33 @@ class TimePageState extends State<TimePage> implements DrawerOnClickListener, Li
   @override
   onListItemClicked(TimeRecord item) {
     print("onListItemClicked: $item");
-    _navigateToEditScreen(item);
+    presenter.listItemClicked(item);
   }
 
   @override
   onListItemLongClick(TimeRecord item) {
     print("onListItemLongClick: $item");
+  }
+
+  @override
+  void openNewRecordPage(TimeRecord item) {
+    if(item != null){
+      _navigateToEditScreen(item);
+    }else{
+      _navigateToNextScreen();
+    }
+  }
+
+  @override
+  void timeLoadFinished(List<TimeRecord> timeRecord) {
+    setState(() {
+      this._records = timeRecord;
+    });
+  }
+
+  @override
+  void logOut() {
+    _logout();
   }
 }
 

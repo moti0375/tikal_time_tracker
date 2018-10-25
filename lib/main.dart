@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'pages/login_page.dart';
-import 'pages/time_page.dart';
+import 'package:tikal_time_tracker/pages/time/time_page.dart';
 import 'data/user.dart';
 import 'storage/preferences.dart';
 import 'dart:async';
@@ -18,6 +18,8 @@ class TimeTracker extends StatelessWidget {
     return new MaterialApp(
         title: "Time Tracker",
         debugShowCheckedModeBanner: false,
+        debugShowMaterialGrid: false,
+        showSemanticsDebugger: false,
         theme: ThemeData(
             primarySwatch: Colors.orange,
             textSelectionColor: Colors.white,

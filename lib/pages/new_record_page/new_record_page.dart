@@ -421,7 +421,7 @@ class NewRecordPageState extends State<NewRecordPage>
           child: Column(
             children: <Widget>[
               Flexible(
-                flex: 3,
+                flex: 4,
                 child: ListView(
                   children: <Widget>[
                     new NewRecordTitle(),

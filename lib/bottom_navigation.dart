@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'pages/time_page.dart';
+import 'pages/time/time_page.dart';
 import 'pages/users/users_page.dart';
 import 'pages/profile_page.dart';
 import 'data/user.dart';
