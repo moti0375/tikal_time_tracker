@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/diagnostics.dart';
-import 'package:tikal_time_tracker/ui/app_drawer.dart';
-import '../../data/models.dart';
-import '../../data/user.dart';
-import '../../data/repository/time_records_repository.dart';
-import '../../pages/login_page.dart';
-import '../../ui/time_record_list_adapter.dart';
-import '../../pages/new_record_page/new_record_page.dart';
-import '../../pages/reports/place_holder_content.dart';
-import '../../ui/date_picker_widget.dart';
-import 'time_presenter.dart';
-import 'time_contract.dart';
+import 'package:tikal_time_tracker/data/models.dart';
+import 'package:tikal_time_tracker/data/user.dart';
+import 'package:tikal_time_tracker/data/repository/time_records_repository.dart';
+import 'package:tikal_time_tracker/pages/login_page.dart';
+import 'package:tikal_time_tracker/ui/time_record_list_adapter.dart';
+import 'package:tikal_time_tracker/pages/new_record_page/new_record_page.dart';
+import 'package:tikal_time_tracker/pages/reports/place_holder_content.dart';
+import 'package:tikal_time_tracker/ui/date_picker_widget.dart';
+import 'package:tikal_time_tracker/pages/time/time_presenter.dart';
+import 'package:tikal_time_tracker/pages/time/time_contract.dart';
 
 class TimePage extends StatefulWidget {
   @override
@@ -235,39 +233,11 @@ class TimePageState extends State<TimePage>
   void _refreshList(List<TimeRecord> records) {
     setState(() {
       print(
-          "records for ${_selectedDate} : ${records.toString()}:${records.length}");
+          "records for $_selectedDate : ${records.toString()}:${records.length}");
       _records = records;
     });
   }
 
-  @override
-  StatelessElement createElement() {
-    // TODO: implement createElement
-  }
-
-  @override
-  List<DiagnosticsNode> debugDescribeChildren() {
-    // TODO: implement debugDescribeChildren
-  }
-
-  // TODO: implement key
-  @override
-  Key get key => null;
-
-  @override
-  String toStringDeep(
-      {String prefixLineOne = '',
-      String prefixOtherLines,
-      DiagnosticLevel minLevel = DiagnosticLevel.debug}) {
-    // TODO: implement toStringDeep
-  }
-
-  @override
-  String toStringShallow(
-      {String joiner = ', ',
-      DiagnosticLevel minLevel = DiagnosticLevel.debug}) {
-    // TODO: implement toStringShallow
-  }
 
   @override
   onListItemClicked(TimeRecord item) {

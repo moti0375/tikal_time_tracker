@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../data/member.dart';
+import 'package:tikal_time_tracker/data/member.dart';
 
 
 

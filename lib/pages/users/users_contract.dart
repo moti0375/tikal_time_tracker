@@ -1,4 +1,4 @@
-import '../../data/member.dart';
+import 'package:tikal_time_tracker/data/member.dart';
 class MembersPresenterContract{
   void loadUsers(){return null;}
   void subscribe(MembersViewContract view){return null;}

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import '../../data/member.dart';
-import '../../data/user.dart';
-import 'users_presenter.dart';
-import 'users_contract.dart';
-import 'users_list_adapter.dart';
-import '../../data/repository/time_records_repository.dart';
+import 'package:tikal_time_tracker/data/member.dart';
+import 'package:tikal_time_tracker/data/user.dart';
+import 'package:tikal_time_tracker/pages/users/users_presenter.dart';
+import 'package:tikal_time_tracker/pages/users/users_contract.dart';
+import 'package:tikal_time_tracker/pages/users/users_list_adapter.dart';
+import 'package:tikal_time_tracker/data/repository/time_records_repository.dart';
 
 class UsersPage extends StatefulWidget{
 

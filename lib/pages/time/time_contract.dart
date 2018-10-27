@@ -1,5 +1,5 @@
-import '../mvp_base.dart';
-import '../../data/models.dart';
+import 'package:tikal_time_tracker/pages/mvp_base.dart';
+import 'package:tikal_time_tracker/data/models.dart';
 class TimeContractPresenter extends BasePresenter{
   void listItemClicked(TimeRecord item){}
   void loadTimeForDate(DateTime date){}

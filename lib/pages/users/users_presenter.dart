@@ -1,5 +1,5 @@
 import 'users_contract.dart';
-import '../../data/repository/time_records_repository.dart';
+import 'package:tikal_time_tracker/data/repository/time_records_repository.dart';
 
 class UsersPresenter implements MembersPresenterContract{
 
