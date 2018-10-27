@@ -7,6 +7,7 @@ import 'dart:async';
 import '../../data/repository/time_records_repository.dart';
 import '../../utils/utils.dart';
 import '../../data/user.dart';
+import '../../ui/date_picker_widget.dart';
 import 'new_record_contract.dart';
 import 'new_record_presenter.dart';
 
@@ -325,6 +326,12 @@ class NewRecordPageState extends State<NewRecordPage>
       ),
     );
 
+    Widget datePicker = TimeTrackerDatePicker(dateTime: _date, callback: (date){
+      print("datePicker: callback ${date.toString()}");
+      setState(() {
+        _date = date;
+      });
+    });
 
     Widget _saveButton = Padding(
       padding: EdgeInsets.symmetric(
@@ -427,7 +434,7 @@ class NewRecordPageState extends State<NewRecordPage>
                     new NewRecordTitle(),
                     projectsDropDown,
                     tasksDropDown,
-                    dateInput,
+                    datePicker,
                     startTimePicker,
                     finishTimePicker,
                     durationInput,
