@@ -1,10 +1,5 @@
 import 'package:flutter/material.dart';
-import 'pages/login_page.dart';
-import 'package:tikal_time_tracker/pages/time/time_page.dart';
-import 'data/user.dart';
-import 'storage/preferences.dart';
-import 'dart:async';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tikal_time_tracker/pages/login_page.dart';
 
 
 void main() {

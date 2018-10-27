@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import '../bottom_navigation.dart';
-import '../data/repository/time_records_repository.dart';
-import '../data/user.dart';
-import '../data/models.dart';
+import 'package:tikal_time_tracker/bottom_navigation.dart';
+import 'package:tikal_time_tracker/data/repository/time_records_repository.dart';
+import 'package:tikal_time_tracker/data/user.dart';
 import 'dart:async';
-import '../network/credentials.dart';
-import '../storage/preferences.dart';
-import '../ui/animation_button.dart';
+import 'package:tikal_time_tracker/network/credentials.dart';
+import 'package:tikal_time_tracker/storage/preferences.dart';
+import 'package:tikal_time_tracker/ui/animation_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ktoast/ktoast.dart';
 

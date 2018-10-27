@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'pages/time/time_page.dart';
-import 'pages/users/users_page.dart';
-import 'pages/profile_page.dart';
-import 'data/user.dart';
-import 'pages/reports/generate_report_page.dart';
+import 'package:tikal_time_tracker/pages/time/time_page.dart';
+import 'package:tikal_time_tracker/pages/users/users_page.dart';
+import 'package:tikal_time_tracker/pages/reports/generate_report_page.dart';
 
 enum Tab{
   Time,
