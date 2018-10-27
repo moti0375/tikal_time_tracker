@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tikal_time_tracker/utils/utils.dart';
 import 'dart:async';
+import 'package:intl/intl.dart';
 
 
 class TimeTrackerTimePicker extends StatelessWidget{
@@ -9,8 +10,12 @@ class TimeTrackerTimePicker extends StatelessWidget{
   String hint;
   TimeOfDay pickedTime;
   TextEditingController startTimeController;
+  RegExp timePatter;
+  DateFormat timeFormat = DateFormat('H:m');
+
 
   TimeTrackerTimePicker({this.pickedTime, this.hint, this.callback}){
+    timePatter = RegExp("^[0-9]{1,2}:[1-5][0-9]\$");
     if(this.pickedTime != null){
       startTimeController = new TextEditingController(
           text: Utils.buildTimeStringFromTime(pickedTime)) ;
@@ -36,6 +41,7 @@ class TimeTrackerTimePicker extends StatelessWidget{
           Container(
             child: new Flexible(
                 child: new TextField(
+                    onChanged: _validator,
                     decoration: InputDecoration(
                         hintText: hint != null ? hint : "",
                         contentPadding:
@@ -57,6 +63,18 @@ class TimeTrackerTimePicker extends StatelessWidget{
     if (picked != null) {
       callback(picked);
     }
+  }
+
+  void _validator(String value){
+    Match match = timePatter.firstMatch(value);
+    if(match != null){
+      print("_validator: ${match.toString()}");
+      TimeOfDay time = TimeOfDay.fromDateTime(timeFormat.parse(value));
+      callback(time);
+    }else{
+      callback(null);
+    }
+
   }
 
 }
