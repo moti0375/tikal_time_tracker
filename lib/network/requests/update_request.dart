@@ -1,4 +1,4 @@
-import '../../data/models.dart';
+import 'package:tikal_time_tracker/data/models.dart';
 class UpdateRequest{
   final TimeRecord timeRecord;
 

@@ -4,18 +4,17 @@ import 'package:jaguar_resty/jaguar_resty.dart' as resty;
 import 'package:jaguar_resty/jaguar_resty.dart';
 import 'package:http/http.dart';
 import 'package:client_cookie/client_cookie.dart';
-import '../network/requests/login_request.dart';
-import '../network/requests/reports_form.dart';
-import '../network/requests/update_request.dart';
-import '../network/requests/delete_request.dart';
-import '../network/requests/id_request.dart';
-import '../data/models.dart';
+import 'package:tikal_time_tracker/network/requests/login_request.dart';
+import 'package:tikal_time_tracker/network/requests/reports_form.dart';
+import 'package:tikal_time_tracker/network/requests/update_request.dart';
+import 'package:tikal_time_tracker/network/requests/delete_request.dart';
+import 'package:tikal_time_tracker/data/models.dart';
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'credentials.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
-import '../utils/utils.dart';
+import 'package:tikal_time_tracker/utils/utils.dart';
 
 part  'time_tracker_api.jretro.dart';
 

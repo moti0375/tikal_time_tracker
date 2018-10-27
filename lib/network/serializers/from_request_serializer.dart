@@ -1,5 +1,5 @@
 import 'package:jaguar_serializer/src/serializer/serializer.dart';
-import '../requests/login_request.dart';
+import 'package:tikal_time_tracker/network/requests/login_request.dart';
 
 
 class FormRequestSerializer extends Serializer<FormRequest>{

@@ -1,8 +1,8 @@
 import 'package:jaguar_serializer/src/serializer/serializer.dart';
 import 'package:intl/intl.dart';
-import '../../network/requests/update_request.dart';
-import '../../data/models.dart';
-import '../../utils/utils.dart';
+import 'package:tikal_time_tracker/network/requests/update_request.dart';
+import 'package:tikal_time_tracker/data/models.dart';
+import 'package:tikal_time_tracker/utils/utils.dart';
 
 class UpdateTimeSerializer extends Serializer<UpdateRequest>{
 

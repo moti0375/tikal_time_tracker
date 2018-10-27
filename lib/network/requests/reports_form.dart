@@ -1,6 +1,6 @@
-import '../../pages/reports/generate_report_page.dart';
-import '../../data/project.dart';
-import '../../data/task.dart';
+import 'package:tikal_time_tracker/pages/reports/generate_report_page.dart';
+import 'package:tikal_time_tracker/data/project.dart';
+import 'package:tikal_time_tracker/data/task.dart';
 class ReportForm{
 
   String favoriteReport;
