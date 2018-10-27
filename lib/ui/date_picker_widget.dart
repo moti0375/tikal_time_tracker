@@ -6,10 +6,11 @@ class TimeTrackerDatePicker extends StatelessWidget{
   DateTime dateTime;
   DatePickerOnPickedListener onPickedListener;
   TextEditingController dateInputController;
+  String hint;
   var callback = (DateTime d){};
 
 
-  TimeTrackerDatePicker({this.dateTime, this.callback}){
+  TimeTrackerDatePicker({this.dateTime, this.callback, this.hint}){
     if(this.dateTime != null){
       dateInputController = new TextEditingController(
           text: "${dateTime.day}/${dateTime.month}/${dateTime.year}");
@@ -37,7 +38,7 @@ class TimeTrackerDatePicker extends StatelessWidget{
             child: new Flexible(
                 child: new TextField(
                     decoration: InputDecoration(
-                        hintText: "Date",
+                        hintText: hint != null ? hint : "Date",
                         contentPadding:
                         EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
                         border: OutlineInputBorder(

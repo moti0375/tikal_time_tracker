@@ -6,6 +6,7 @@ import '../../data/project.dart';
 import '../../data/task.dart';
 import '../../data/repository/time_records_repository.dart';
 import '../report/report_page.dart';
+import '../../ui/date_picker_widget.dart';
 import 'reports_contract.dart';
 import 'reports_presenter.dart';
 
@@ -142,6 +143,18 @@ class GenerateReportState extends State<GenerateReportPage> implements ReportsVi
         ),
     );
 
+    final _startDatePicker = TimeTrackerDatePicker(dateTime: _startDate, hint: "Start Date", callback: (date){
+      setState(() {
+        _startDate = date;
+      });
+    });
+
+    final _endDatePicker = TimeTrackerDatePicker(dateTime: _endDate, hint: "End Date", callback: (date){
+      setState(() {
+        _endDate = date;
+      });
+    });
+
     final startDateInput = Container(
       padding: EdgeInsets.only(left: 0.0, right: 0.0, top: 4.0),
       child: new Row(
@@ -203,7 +216,7 @@ class GenerateReportState extends State<GenerateReportPage> implements ReportsVi
     );
 
     var generateButton = Container(
-      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
       child: Material(
           borderRadius: BorderRadius.circular(10.0),
           shadowColor: isButtonEnabled
