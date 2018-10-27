@@ -1,9 +1,8 @@
-import '../models.dart';
-import '../member.dart';
+import 'package:tikal_time_tracker/data/models.dart';
+import 'package:tikal_time_tracker/data/member.dart';
 import 'dart:async';
-import '../../network/credentials.dart';
-import '../../network/requests/login_request.dart';
-import '../../network/requests/reports_form.dart';
+import 'package:tikal_time_tracker/network/credentials.dart';
+import 'package:tikal_time_tracker/network/requests/reports_form.dart';
 
 class TimeDateSource{
  Future<List<TimeRecord>> getAllTimeForDate(DateTime date){return null;}

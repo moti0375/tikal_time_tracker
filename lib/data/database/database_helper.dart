@@ -1,6 +1,6 @@
 import 'package:sqflite/sqflite.dart';
 import 'dart:async';
-import '../models.dart';
+import 'package:tikal_time_tracker/data/models.dart';
 
 const String tableName = "times_record";
 const String columnId = "_id";

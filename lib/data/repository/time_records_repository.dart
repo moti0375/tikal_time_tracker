@@ -1,12 +1,12 @@
 import 'dart:async';
-import '../../data/member.dart';
-import '../../network/requests/reports_form.dart';
+import 'package:tikal_time_tracker/data/member.dart';
+import 'package:tikal_time_tracker/network/requests/reports_form.dart';
 
-import '../models.dart';
-import 'time_data_source.dart';
-import '../../data/repository/local/local_data_source.dart';
-import '../../data/repository/remote/remote_data_source.dart';
-import '../../network/credentials.dart';
+import 'package:tikal_time_tracker/data/models.dart';
+import 'package:tikal_time_tracker/data/repository/time_data_source.dart';
+import 'package:tikal_time_tracker/data/repository/local/local_data_source.dart';
+import 'package:tikal_time_tracker/data/repository/remote/remote_data_source.dart';
+import 'package:tikal_time_tracker/network/credentials.dart';
 
 
 class TimeRecordsRepository implements TimeDateSource{

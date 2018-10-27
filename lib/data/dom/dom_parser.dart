@@ -2,11 +2,11 @@ import 'package:html/dom.dart' as DomText;
 import 'package:html/dom.dart' show Document;
 import 'package:html/dom.dart' as DomElement;
 import 'package:html/parser.dart' show parse;
-import '../user.dart';
-import '../project.dart';
-import '../task.dart';
-import '../models.dart';
-import '../member.dart';
+import 'package:tikal_time_tracker/data/user.dart';
+import 'package:tikal_time_tracker/data/project.dart';
+import 'package:tikal_time_tracker/data/task.dart';
+import 'package:tikal_time_tracker/data/models.dart';
+import 'package:tikal_time_tracker/data/member.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
