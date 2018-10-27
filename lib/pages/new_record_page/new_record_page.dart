@@ -9,6 +9,7 @@ import 'package:tikal_time_tracker/utils/utils.dart';
 import 'package:tikal_time_tracker/ui/date_picker_widget.dart';
 import 'package:tikal_time_tracker/pages/new_record_page/new_record_contract.dart';
 import 'package:tikal_time_tracker/pages/new_record_page/new_record_presenter.dart';
+import 'package:tikal_time_tracker/ui/time_picker.dart';
 
 // ignore: must_be_immutable
 class NewRecordPage extends StatefulWidget {
@@ -121,8 +122,6 @@ class NewRecordPageState extends State<NewRecordPage>
   void showSelectedStartTime(TimeOfDay startTime) {
     setState(() {
       _startTime = startTime;
-      startTimeController = new TextEditingController(
-          text: Utils.buildTimeStringFromTime(startTime));
     });
   }
 
@@ -130,8 +129,6 @@ class NewRecordPageState extends State<NewRecordPage>
   void showSelectedFinishTime(TimeOfDay finishTime) {
     setState(() {
       _finishTime = finishTime;
-      finishTimeController = new TextEditingController(
-          text: _finishTime == null ? "" :Utils.buildTimeStringFromTime(finishTime));
     });
   }
 
@@ -215,65 +212,14 @@ class NewRecordPageState extends State<NewRecordPage>
               }),
         ));
 
-    final startTimePicker = Container(
-      padding: EdgeInsets.only(left: 4.0, right: 4.0, top: 8.0),
-      child: new Row(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: GestureDetector(
-              onTap: () {
-                print("onTap start");
-                _showStartTimeDialog();
-              },
-              child: Icon(Icons.access_time),
-            ),
-          ),
-          Container(
-            child: new Flexible(
-                child: new TextField(
-                    decoration: InputDecoration(
-                        hintText: "Start",
-                        contentPadding:
-                            EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20.0))),
-                    maxLines: 1,
-                    controller: startTimeController)),
-          ),
-        ],
-      ),
-    );
 
-    final finishTimePicker = Container(
-      padding: EdgeInsets.only(left: 4.0, right: 4.0, top: 8.0),
-      child: new Row(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: GestureDetector(
-              onTap: () {
-                print("onTap finish");
-                _showFinishTimeDialog();
-              },
-              child: Icon(Icons.access_time),
-            ),
-          ),
-          Container(
-            child: new Flexible(
-                child: new TextField(
-                    decoration: InputDecoration(
-                        hintText: "Finish",
-                        contentPadding:
-                            EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20.0))),
-                    maxLines: 1,
-                    controller: finishTimeController)),
-          ),
-        ],
-      ),
-    );
+    final startTimePicker = TimeTrackerTimePicker(pickedTime: _startTime, hint: "Start Time", callback: (TimeOfDay time){
+      presenter.startTimeSelected(time);
+    });
+
+    final finishTimePicker = TimeTrackerTimePicker(pickedTime: _finishTime, hint: "Finish Time", callback: (TimeOfDay time){
+      presenter.endTimeSelected(time);
+    });
 
     final durationInput = Container(
       padding: EdgeInsets.only(left: 4.0, right: 4.0, top: 8.0),
@@ -282,6 +228,7 @@ class NewRecordPageState extends State<NewRecordPage>
           Container(
             child: new Flexible(
                 child: new TextField(
+                    enabled: false,
                     controller: durationInputController,
                     decoration: InputDecoration(
                         hintText: "Duration",
