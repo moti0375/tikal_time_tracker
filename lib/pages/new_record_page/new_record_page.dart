@@ -272,7 +272,7 @@ class NewRecordPageState extends State<NewRecordPage>
       ),
     );
 
-    Widget datePicker = TimeTrackerDatePicker(dateTime: _date, callback: (date){
+    Widget datePicker = TimeTrackerDatePicker(dateTime: _date, onSubmittedCallback: (date){
       print("datePicker: callback ${date.toString()}");
       setState(() {
         _date = date;

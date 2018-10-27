@@ -55,7 +55,7 @@ class TimePageState extends State<TimePage>
 
     Widget _datePicker = TimeTrackerDatePicker(
         dateTime: _selectedDate,
-        callback: (date) {
+        onSubmittedCallback: (date) {
           setState(() {
             _selectedDate = date;
             presenter.loadTimeForDate(_selectedDate);

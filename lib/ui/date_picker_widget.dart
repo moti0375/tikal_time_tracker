@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:intl/intl.dart';
 
 class TimeTrackerDatePicker extends StatelessWidget{
 
@@ -7,10 +8,13 @@ class TimeTrackerDatePicker extends StatelessWidget{
   DatePickerOnPickedListener onPickedListener;
   TextEditingController dateInputController;
   String hint;
-  var callback = (DateTime d){};
+  var onSubmittedCallback = (DateTime d){};
+  var onChangedCallback = (DateTime date){};
+  RegExp datePattern = RegExp("^[0-3]?[0-9]/[0-1]?[0-9]/[2]?[0]?[0-9]{2}\$");
+  DateFormat dateFormat = DateFormat("d/M/y");
+  String dateString;
 
-
-  TimeTrackerDatePicker({this.dateTime, this.callback, this.hint}){
+  TimeTrackerDatePicker({this.dateTime, this.onSubmittedCallback, this.hint}){
     if(this.dateTime != null){
       dateInputController = new TextEditingController(
           text: "${dateTime.day}/${dateTime.month}/${dateTime.year}");
@@ -37,6 +41,12 @@ class TimeTrackerDatePicker extends StatelessWidget{
           Container(
             child: new Flexible(
                 child: new TextField(
+                    onSubmitted: (value){
+                      _onSubmit();
+                    },
+                    onChanged: (value){
+                      _validator(value);
+                    },
                     decoration: InputDecoration(
                         hintText: hint != null ? hint : "Date",
                         contentPadding:
@@ -58,8 +68,26 @@ class TimeTrackerDatePicker extends StatelessWidget{
         firstDate: DateTime(DateTime.now().year - 1, 1),
         lastDate: DateTime(DateTime.now().year, 12));
     if (picked != null) {
-      callback(picked);
+      onSubmittedCallback(picked);
     }
+  }
+  
+  void _validator(String value){
+    Match match = datePattern.firstMatch(value);
+    if(match != null){
+      print("matched: $value");
+      dateTime = dateFormat.parse(value);
+      print("entered date: ${dateTime.day}-${dateTime.month}-${dateTime.year}");
+      if(onChangedCallback != null){
+        onChangedCallback(dateTime);
+      }
+    }else{
+      dateTime = null;
+    }
+  }
+
+  void _onSubmit(){
+    onSubmittedCallback(dateTime);
   }
 }
 
