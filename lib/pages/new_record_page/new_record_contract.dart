@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../data/project.dart';
-import '../../data/models.dart';
-import '../../data/task.dart';
+import 'package:tikal_time_tracker/data/project.dart';
+import 'package:tikal_time_tracker/data/models.dart';
+import 'package:tikal_time_tracker/data/task.dart';
 
 class NewRecordPresenterContract{
   void subscribe(NewRecordViewContract view){}

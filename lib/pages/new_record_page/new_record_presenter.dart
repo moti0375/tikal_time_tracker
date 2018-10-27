@@ -1,11 +1,11 @@
 import 'package:flutter/src/material/time.dart';
 
-import '../../data/project.dart';
-import '../../data/task.dart';
-import '../../data/models.dart';
-import '../../data/repository/time_records_repository.dart';
-import 'new_record_contract.dart';
-import 'new_record_page.dart';
+import 'package:tikal_time_tracker/data/project.dart';
+import 'package:tikal_time_tracker/data/task.dart';
+import 'package:tikal_time_tracker/data/models.dart';
+import 'package:tikal_time_tracker/data/repository/time_records_repository.dart';
+import 'package:tikal_time_tracker/pages/new_record_page/new_record_contract.dart';
+import 'package:tikal_time_tracker/pages/new_record_page/new_record_page.dart';
 
 class NewRecordPresenter implements NewRecordPresenterContract {
   static const String  TAG = "NewRecordPresenter";

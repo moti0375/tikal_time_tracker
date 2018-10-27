@@ -1,7 +1,7 @@
-import '../../data/models.dart';
-import '../../data/project.dart';
-import '../../data/task.dart';
-import '../../pages/reports/generate_report_page.dart';
+import 'package:tikal_time_tracker/data/models.dart';
+import 'package:tikal_time_tracker/data/project.dart';
+import 'package:tikal_time_tracker/data/task.dart';
+import 'package:tikal_time_tracker/pages/reports/generate_report_page.dart';
 
 class ReportsPresenterContract{
   void subscribe(ReportsViewContract view){}

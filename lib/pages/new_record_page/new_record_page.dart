@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import '../../ui/new_record_title.dart';
-import '../../data/project.dart';
-import '../../data/task.dart';
-import '../../data/models.dart';
+import 'package:tikal_time_tracker/ui/new_record_title.dart';
+import 'package:tikal_time_tracker/data/project.dart';
+import 'package:tikal_time_tracker/data/task.dart';
+import 'package:tikal_time_tracker/data/models.dart';
 import 'dart:async';
-import '../../data/repository/time_records_repository.dart';
-import '../../utils/utils.dart';
-import '../../data/user.dart';
-import '../../ui/date_picker_widget.dart';
-import 'new_record_contract.dart';
-import 'new_record_presenter.dart';
+import 'package:tikal_time_tracker/data/repository/time_records_repository.dart';
+import 'package:tikal_time_tracker/utils/utils.dart';
+import 'package:tikal_time_tracker/ui/date_picker_widget.dart';
+import 'package:tikal_time_tracker/pages/new_record_page/new_record_contract.dart';
+import 'package:tikal_time_tracker/pages/new_record_page/new_record_presenter.dart';
 
 // ignore: must_be_immutable
 class NewRecordPage extends StatefulWidget {

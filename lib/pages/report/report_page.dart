@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../reports/place_holder_content.dart';
-import '../../data/models.dart';
-import '../../data/user.dart';
-import '../../ui/time_record_list_adapter.dart';
+import 'package:tikal_time_tracker/pages/reports/place_holder_content.dart';
+import 'package:tikal_time_tracker/data/models.dart';
+import 'package:tikal_time_tracker/data/user.dart';
+import 'package:tikal_time_tracker/ui/time_record_list_adapter.dart';
 class ReportPage extends StatelessWidget implements ListAdapterClickListener{
   final Report report;
 

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import '../../data/user.dart';
-import '../../data/models.dart';
-import '../../data/project.dart';
-import '../../data/task.dart';
-import '../../data/repository/time_records_repository.dart';
-import '../report/report_page.dart';
-import '../../ui/date_picker_widget.dart';
-import 'reports_contract.dart';
-import 'reports_presenter.dart';
+import 'package:tikal_time_tracker/data/user.dart';
+import 'package:tikal_time_tracker/data/models.dart';
+import 'package:tikal_time_tracker/data/project.dart';
+import 'package:tikal_time_tracker/data/task.dart';
+import 'package:tikal_time_tracker/data/repository/time_records_repository.dart';
+import 'package:tikal_time_tracker/pages/report/report_page.dart';
+import 'package:tikal_time_tracker/ui/date_picker_widget.dart';
+import 'package:tikal_time_tracker/pages/reports/reports_contract.dart';
+import 'package:tikal_time_tracker/pages/reports/reports_presenter.dart';
 
 class GenerateReportPage extends StatefulWidget {
   @override

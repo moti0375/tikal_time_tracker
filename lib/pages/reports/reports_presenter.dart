@@ -1,10 +1,10 @@
 import 'reports_contract.dart';
-import '../../data/repository/time_records_repository.dart';
-import '../../data/project.dart';
-import '../../data/task.dart';
-import '../../network/requests/reports_form.dart';
+import 'package:tikal_time_tracker/data/repository/time_records_repository.dart';
+import 'package:tikal_time_tracker/data/project.dart';
+import 'package:tikal_time_tracker/data/task.dart';
+import 'package:tikal_time_tracker/network/requests/reports_form.dart';
 import 'package:flutter/material.dart';
-import 'generate_report_page.dart';
+import 'package:tikal_time_tracker/pages/reports/generate_report_page.dart';
 
 class ReportsPresenter implements ReportsPresenterContract {
 
