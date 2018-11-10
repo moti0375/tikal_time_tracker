@@ -89,14 +89,18 @@ class NewRecordPageState extends State<NewRecordPage>
   @override
   initUpdateRecord() {
     print("_initUpdateRecord: date: ${widget.timeRecord.date.toString()}");
+    _selectedDate = widget.timeRecord.date;
+    _startTime = widget.timeRecord.start;
+    _finishTime = widget.timeRecord.finish;
+
     presenter.projectSelected(widget.timeRecord.project);
     presenter.taskSelected(widget.timeRecord.task);
     presenter.commentEntered(widget.timeRecord.comment);
     commentInputController = TextEditingController(text: widget.timeRecord.comment);
-    _selectedDate = widget.timeRecord.date;
-     presenter.dateSelected(_selectedDate);
-    _startTime = widget.timeRecord.start;
-    _finishTime = widget.timeRecord.finish;
+    presenter.dateSelected(_selectedDate);
+    presenter.startTimeSelected(_startTime);
+    presenter.endTimeSelected(_finishTime);
+
   }
 
   @override
