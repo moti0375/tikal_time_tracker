@@ -143,13 +143,13 @@ class GenerateReportState extends State<GenerateReportPage> implements ReportsVi
         ),
     );
 
-    final _startDatePicker = TimeTrackerDatePicker(dateTime: _startDate, hint: "Start Date", onSubmittedCallback: (date){
+    final _startDatePicker = TimeTrackerDatePicker(initializedDateTime: _startDate, hint: "Start Date", onSubmittedCallback: (date){
       setState(() {
         _startDate = date;
       });
     });
 
-    final _endDatePicker = TimeTrackerDatePicker(dateTime: _endDate, hint: "End Date", onSubmittedCallback: (date){
+    final _endDatePicker = TimeTrackerDatePicker(initializedDateTime: _endDate, hint: "End Date", onSubmittedCallback: (date){
       setState(() {
         _endDate = date;
       });

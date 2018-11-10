@@ -22,9 +22,6 @@ class NewRecordViewContract{
   void showSelectedProject(Project project){}
   void showSelectedTask(Task task){}
   void showAssignedTasks(List<Task> tasks){}
-  void showSelectedDate(DateTime date){}
-  void showSelectedStartTime(TimeOfDay startTime){}
-  void showSelectedFinishTime(TimeOfDay finishTime){}
   void showDuration(Duration duration){}
   void showSaveRecordSuccess(TimeRecord timeRecord){}
   void showSaveRecordFailed(){}

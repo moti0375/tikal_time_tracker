@@ -2,25 +2,37 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:intl/intl.dart';
 
-class TimeTrackerDatePicker extends StatelessWidget{
+class TimeTrackerDatePicker extends StatefulWidget{
 
-  DateTime dateTime;
+  DateTime initializedDateTime;
   DatePickerOnPickedListener onPickedListener;
-  TextEditingController dateInputController;
   String hint;
   var onSubmittedCallback = (DateTime d){};
-  var onChangedCallback = (DateTime date){};
   RegExp datePattern = RegExp("^[0-3]?[0-9]/[0-1]?[0-9]/[2]?[0]?[0-9]{2}\$");
   DateFormat dateFormat = DateFormat("d/M/y");
   String dateString;
 
-  TimeTrackerDatePicker({this.dateTime, this.onSubmittedCallback, this.hint}){
-    if(this.dateTime != null){
+  TimeTrackerDatePicker({this.initializedDateTime, this.onSubmittedCallback, this.hint});
+
+  @override
+  State<StatefulWidget> createState() {
+    return DatePickerState();
+  }
+}
+
+
+class DatePickerState extends State<TimeTrackerDatePicker>{
+  TextEditingController dateInputController;
+  DateTime _dateTime;
+  @override
+  void initState() {
+    super.initState();
+    if(widget.initializedDateTime != null){
+      _dateTime = widget.initializedDateTime;
       dateInputController = new TextEditingController(
-          text: "${dateTime.day}/${dateTime.month}/${dateTime.year}");
+          text: "${_dateTime.day}/${_dateTime.month}/${_dateTime.year}");
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -42,13 +54,10 @@ class TimeTrackerDatePicker extends StatelessWidget{
             child: new Flexible(
                 child: new TextField(
                     onSubmitted: (value){
-                      _onSubmit();
-                    },
-                    onChanged: (value){
                       _validator(value);
                     },
                     decoration: InputDecoration(
-                        hintText: hint != null ? hint : "Date",
+                        hintText: widget.hint != null ? widget.hint : "Date",
                         contentPadding:
                         EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
                         border: OutlineInputBorder(
@@ -64,31 +73,36 @@ class TimeTrackerDatePicker extends StatelessWidget{
   Future<Null> _showDatePicker(BuildContext context) async {
     final DateTime picked = await showDatePicker(
         context: context,
-        initialDate: DateTime.now(),
+        initialDate: _dateTime,
         firstDate: DateTime(DateTime.now().year - 1, 1),
         lastDate: DateTime(DateTime.now().year, 12));
     if (picked != null) {
-      onSubmittedCallback(picked);
-    }
-  }
-  
-  void _validator(String value){
-    Match match = datePattern.firstMatch(value);
-    if(match != null){
-      print("matched: $value");
-      dateTime = dateFormat.parse(value);
-      print("entered date: ${dateTime.day}-${dateTime.month}-${dateTime.year}");
-      if(onChangedCallback != null){
-        onChangedCallback(dateTime);
-      }
-    }else{
-      dateTime = null;
+      _onDateSelected(picked);
     }
   }
 
-  void _onSubmit(){
-    onSubmittedCallback(dateTime);
+  void _validator(String value){
+    Match match = widget.datePattern.firstMatch(value);
+    if(match != null){
+      print("matched: $value");
+      DateTime date = widget.dateFormat.parse(value);
+      print("entered date: ${date.day}:${date.month}:${date.year}");
+      _onDateSelected(date);
+    }else{
+      _dateTime = null;
+      widget.onSubmittedCallback(null);
+    }
   }
+
+  void _onDateSelected(DateTime date){
+    widget.onSubmittedCallback(date);
+    setState(() {
+      _dateTime = date;
+      dateInputController = new TextEditingController(
+          text: "${_dateTime.day}/${_dateTime.month}/${_dateTime.year}");
+    });
+  }
+
 }
 
 class DatePickerOnPickedListener{

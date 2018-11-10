@@ -4,22 +4,61 @@ import 'dart:async';
 import 'package:intl/intl.dart';
 
 
-class TimeTrackerTimePicker extends StatelessWidget{
+class TimeTrackerTimePicker extends StatefulWidget {
 
-  var callback = (TimeOfDay time){};
+  var callback = (TimeOfDay time) {};
   String hint;
-  TimeOfDay pickedTime;
+  TimeOfDay initialTimeValue;
+  RegExp timePattern;
+  RegExp simpleTimePattern;
+  DateFormat timeFormatter = DateFormat('H:m');
+  DateFormat simpleTimeFormatter = DateFormat('H');
+
+
+  TimeTrackerTimePicker({this.initialTimeValue, this.hint, this.callback}) {
+    timePattern = RegExp("^[0-9]{1,2}:[0-5][0-9]\$");
+    simpleTimePattern = RegExp("^[0-2]?[0-9]{1}\$");
+  }
+
+
+  @override
+  State<StatefulWidget> createState() {
+    return TimePickerState();
+  }
+}
+
+
+class TimePickerState extends State<TimeTrackerTimePicker> {
   TextEditingController startTimeController;
-  RegExp timePatter;
-  DateFormat timeFormat = DateFormat('H:m');
+  TimeOfDay _pickedTime;
+  FocusNode focusNode;
+  String buffer;
 
+  @override
+  void initState() {
+    super.initState();
+    focusNode = FocusNode();
+    focusNode.addListener(() {
+      if (focusNode.hasFocus) {
+        print("has focus...");
+      } else {
+        _validator(buffer);
+      }
+    });
+    if (widget.initialTimeValue != null) {
+      print("Initial time not null");
+      _pickedTime = widget.initialTimeValue;
+      startTimeController = TextEditingController(
+          text: Utils.buildTimeStringFromTime(_pickedTime));
 
-  TimeTrackerTimePicker({this.pickedTime, this.hint, this.callback}){
-    timePatter = RegExp("^[0-9]{1,2}:[1-5][0-9]\$");
-    if(this.pickedTime != null){
-      startTimeController = new TextEditingController(
-          text: Utils.buildTimeStringFromTime(pickedTime)) ;
+      // _onTimeSelected(widget.initialTimeValue);
     }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    focusNode.dispose();
   }
 
   @override
@@ -41,9 +80,13 @@ class TimeTrackerTimePicker extends StatelessWidget{
           Container(
             child: new Flexible(
                 child: new TextField(
-                    onChanged: _validator,
+                    onSubmitted: _validator,
+                    onChanged: (value){
+                      buffer = value;
+                    },
+                    focusNode: focusNode,
                     decoration: InputDecoration(
-                        hintText: hint != null ? hint : "",
+                        hintText: widget.hint != null ? widget.hint : "",
                         contentPadding:
                         EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
                         border: OutlineInputBorder(
@@ -59,22 +102,50 @@ class TimeTrackerTimePicker extends StatelessWidget{
   Future<Null> _showStartTimeDialog(BuildContext context) async {
     final TimeOfDay picked = await showTimePicker(
         context: context,
-        initialTime: pickedTime != null ? pickedTime : TimeOfDay.now());
+        initialTime: widget.initialTimeValue != null
+            ? widget.initialTimeValue
+            : TimeOfDay.now());
     if (picked != null) {
-      callback(picked);
+      _onTimeSelected(picked);
     }
   }
 
-  void _validator(String value){
-    Match match = timePatter.firstMatch(value);
-    if(match != null){
+  void _validator(String value) {
+    Match simpleMatch = widget.simpleTimePattern.firstMatch(value);
+    Match match = widget.timePattern.firstMatch(value);
+
+    if (simpleMatch != null) {
+      print("_validator: simpleMatch ${simpleMatch.toString()}");
+      TimeOfDay time = TimeOfDay.fromDateTime(
+          widget.simpleTimeFormatter.parse(value));
+      _onTimeSelected(time);
+    } else if (match != null) {
       print("_validator: ${match.toString()}");
-      TimeOfDay time = TimeOfDay.fromDateTime(timeFormat.parse(value));
-      callback(time);
-    }else{
-      callback(null);
+      TimeOfDay time = TimeOfDay.fromDateTime(
+          widget.timeFormatter.parse(value));
+      _onTimeSelected(time);
+    } else {
+      print("_validator: no match");
+      widget.callback(null);
     }
+  }
+
+
+  void _handleSimpleTimeMatch() {
 
   }
 
+  void _handleTimeMatch() {
+
+  }
+
+  void _onTimeSelected(TimeOfDay time) {
+    widget.callback(time);
+    setState(() {
+      _pickedTime = time;
+      startTimeController =
+          TextEditingController(
+              text: Utils.buildTimeStringFromTime(_pickedTime));
+    });
+  }
 }

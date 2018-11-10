@@ -33,7 +33,7 @@ class NewRecordPageState extends State<NewRecordPage>
   TimeOfDay _startTime;
   TimeOfDay _finishTime;
   Duration _duration;
-  DateTime _date;
+  DateTime _selectedDate;
   String _comment;
   TextEditingController startTimeController;
   TextEditingController finishTimeController;
@@ -59,6 +59,7 @@ class NewRecordPageState extends State<NewRecordPage>
         timeRecord: widget.timeRecord,
         flow: widget.flow);
     presenter.subscribe(this);
+    _selectedDate = widget.dateTime;
   }
 
   @override
@@ -80,20 +81,22 @@ class NewRecordPageState extends State<NewRecordPage>
     finishTimeController = new TextEditingController(text: "");
     dateInputController = new TextEditingController(text: "");
     if (widget.dateTime != null) {
-      presenter.dateSelected(widget.dateTime);
+      _selectedDate = widget.dateTime;
+      presenter.dateSelected(_selectedDate);
     }
   }
 
   @override
   initUpdateRecord() {
-    print("_initUpdateRecord:");
+    print("_initUpdateRecord: date: ${widget.timeRecord.date.toString()}");
     presenter.projectSelected(widget.timeRecord.project);
     presenter.taskSelected(widget.timeRecord.task);
-    presenter.dateSelected(widget.timeRecord.date);
-    presenter.startTimeSelected(widget.timeRecord.start);
-    presenter.endTimeSelected(widget.timeRecord.finish);
     presenter.commentEntered(widget.timeRecord.comment);
     commentInputController = TextEditingController(text: widget.timeRecord.comment);
+    _selectedDate = widget.timeRecord.date;
+     presenter.dateSelected(_selectedDate);
+    _startTime = widget.timeRecord.start;
+    _finishTime = widget.timeRecord.finish;
   }
 
   @override
@@ -115,20 +118,6 @@ class NewRecordPageState extends State<NewRecordPage>
   void showSelectedTask(Task value) {
     setState(() {
       _selectedTask = value;
-    });
-  }
-
-  @override
-  void showSelectedStartTime(TimeOfDay startTime) {
-    setState(() {
-      _startTime = startTime;
-    });
-  }
-
-  @override
-  void showSelectedFinishTime(TimeOfDay finishTime) {
-    setState(() {
-      _finishTime = finishTime;
     });
   }
 
@@ -213,13 +202,19 @@ class NewRecordPageState extends State<NewRecordPage>
         ));
 
 
-    final startTimePicker = TimeTrackerTimePicker(pickedTime: _startTime, hint: "Start Time", callback: (TimeOfDay time){
+    final startTimePicker = TimeTrackerTimePicker(initialTimeValue: _startTime, hint: "Start Time", callback: (TimeOfDay time){
       presenter.startTimeSelected(time);
     });
 
-    final finishTimePicker = TimeTrackerTimePicker(pickedTime: _finishTime, hint: "Finish Time", callback: (TimeOfDay time){
+    final finishTimePicker = TimeTrackerTimePicker(initialTimeValue: _finishTime, hint: "Finish Time", callback: (TimeOfDay time){
       presenter.endTimeSelected(time);
     });
+
+    Widget datePicker = TimeTrackerDatePicker(initializedDateTime: _selectedDate, onSubmittedCallback: (date){
+      print("datePicker: callback ${date.toString()}");
+      presenter.dateSelected(date);
+    });
+
 
     final durationInput = Container(
       padding: EdgeInsets.only(left: 4.0, right: 4.0, top: 8.0),
@@ -242,42 +237,8 @@ class NewRecordPageState extends State<NewRecordPage>
       ),
     );
 
-    final dateInput = Container(
-      padding: EdgeInsets.only(left: 4.0, right: 4.0, top: 8.0),
-      child: new Row(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: GestureDetector(
-              onTap: () {
-                print("onTap dateInput");
-                _showDatePicker();
-              },
-              child: Icon(Icons.date_range),
-            ),
-          ),
-          Container(
-            child: new Flexible(
-                child: new TextField(
-                    decoration: InputDecoration(
-                        hintText: "Date",
-                        contentPadding:
-                            EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20.0))),
-                    maxLines: 1,
-                    controller: dateInputController)),
-          ),
-        ],
-      ),
-    );
 
-    Widget datePicker = TimeTrackerDatePicker(dateTime: _date, onSubmittedCallback: (date){
-      print("datePicker: callback ${date.toString()}");
-      setState(() {
-        _date = date;
-      });
-    });
+
 
     Widget _saveButton = Padding(
       padding: EdgeInsets.symmetric(
@@ -406,45 +367,7 @@ class NewRecordPageState extends State<NewRecordPage>
     );
   }
 
-  Future<Null> _showStartTimeDialog() async {
-    final TimeOfDay picked = await showTimePicker(
-        context: context,
-        initialTime: _startTime != null ? _startTime : TimeOfDay.now());
 
-    if (picked != null) {
-      presenter.startTimeSelected(picked);
-    }
-  }
-
-  Future<Null> _showDatePicker() async {
-    final DateTime picked = await showDatePicker(
-        context: context,
-        initialDate: DateTime.now(),
-        firstDate: DateTime(DateTime.now().year - 1, 1),
-        lastDate: DateTime(DateTime.now().year, 12));
-    if (picked != null) {
-      presenter.dateSelected(picked);
-    }
-  }
-
-  @override
-  showSelectedDate(DateTime date) {
-    setState(() {
-      _date = date;
-      dateInputController = new TextEditingController(
-          text: "${_date.day}/${_date.month}/${_date.year}");
-    });
-  }
-
-  Future<Null> _showFinishTimeDialog() async {
-    final TimeOfDay picked = await showTimePicker(
-        context: context,
-        initialTime: _finishTime != null ? _finishTime : TimeOfDay.now());
-
-    if (picked != null) {
-      presenter.endTimeSelected(picked);
-    }
-  }
 
   _createEmptyDropDown() {
     _tasks.add(_selectedTask);

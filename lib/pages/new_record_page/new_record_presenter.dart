@@ -65,31 +65,31 @@ class NewRecordPresenter implements NewRecordPresenterContract {
   @override
   void dateSelected(DateTime date) {
     this.timeRecord.date = date;
-    view.showSelectedDate(this.timeRecord.date);
     _updateButtonState();
   }
 
   @override
   void startTimeSelected(TimeOfDay startTime) {
     this.timeRecord.start = startTime;
-    view.showSelectedStartTime(this.timeRecord.start);
+    _calculateDuration();
     _updateButtonState();
   }
 
   @override
   void endTimeSelected(TimeOfDay endTime) {
     this.timeRecord.finish = endTime;
+    _calculateDuration();
+    _updateButtonState();
 
-    view.showSelectedFinishTime(this.timeRecord.finish);
+  }
 
+  void _calculateDuration(){
     if(this.timeRecord.finish != null){
       this.timeRecord.duration = calculateDuration(
           date: DateTime.now(),
           startTime: this.timeRecord.start,
           finishTime: timeRecord.finish);
     }
-    _updateButtonState();
-
   }
 
   @override
