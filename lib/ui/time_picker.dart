@@ -16,8 +16,8 @@ class TimeTrackerTimePicker extends StatefulWidget {
 
 
   TimeTrackerTimePicker({this.initialTimeValue, this.hint, this.callback}) {
-    timePattern = RegExp("^[0-9]{1,2}:[0-5][0-9]\$");
-    simpleTimePattern = RegExp("^[0-2]?[0-9]{1}\$");
+    timePattern = RegExp("^([01]?[0-9]|2[0-3]):[0-5][0-9]\$");
+    simpleTimePattern = RegExp("^([01]?[0-9]|2[0-3])\$");
   }
 
 
@@ -80,9 +80,10 @@ class TimePickerState extends State<TimeTrackerTimePicker> {
           Container(
             child: new Flexible(
                 child: new TextField(
-                    onSubmitted: _validator,
+                    onSubmitted: submitValidator,
                     onChanged: (value){
-                      buffer = value;
+                      //buffer = value;
+                      typeValidator(value);
                     },
                     focusNode: focusNode,
                     decoration: InputDecoration(
@@ -110,23 +111,40 @@ class TimePickerState extends State<TimeTrackerTimePicker> {
     }
   }
 
-  void _validator(String value) {
-    Match simpleMatch = widget.simpleTimePattern.firstMatch(value);
+  void typeValidator(String value){
+    TimeOfDay time = _validator(value);
+    if(time != null){
+      widget.callback(time);
+    }
+  }
+
+  void submitValidator(String value){
+    TimeOfDay time = _validator(value);
+    if(time != null){
+      _onTimeSelected(time);
+    }else{
+      widget.callback(null);
+    }
+  }
+
+  TimeOfDay _validator(String value) {
+    print("validating: $value");
+    var simpleMatch = widget.simpleTimePattern.firstMatch(value);
     Match match = widget.timePattern.firstMatch(value);
 
     if (simpleMatch != null) {
       print("_validator: simpleMatch ${simpleMatch.toString()}");
       TimeOfDay time = TimeOfDay.fromDateTime(
           widget.simpleTimeFormatter.parse(value));
-      _onTimeSelected(time);
+      return time;
     } else if (match != null) {
       print("_validator: ${match.toString()}");
       TimeOfDay time = TimeOfDay.fromDateTime(
           widget.timeFormatter.parse(value));
-      _onTimeSelected(time);
+      return time;
     } else {
       print("_validator: no match");
-      widget.callback(null);
+      return null;
     }
   }
 
