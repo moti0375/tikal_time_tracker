@@ -7,6 +7,7 @@ import 'package:tikal_time_tracker/network/credentials.dart';
 import 'package:tikal_time_tracker/storage/preferences.dart';
 import 'package:tikal_time_tracker/ui/animation_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tikal_time_tracker/utils/page_transition.dart';
 import 'package:ktoast/ktoast.dart';
 
 class LoginPage extends StatefulWidget {
@@ -21,7 +22,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class LoginPageState extends State<LoginPage> {
-
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   TimeRecordsRepository repository = TimeRecordsRepository.init(
@@ -29,8 +29,8 @@ class LoginPageState extends State<LoginPage> {
 
   String _email;
   String _password;
-
-
+  bool _loggingIn = false;
+  String loginError = "";
 
   @override
   void initState() {
@@ -48,8 +48,7 @@ class LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-
-    if(widget.preferences == null) {
+    if (widget.preferences == null) {
       widget.preferences = Preferences();
     }
 
@@ -59,7 +58,8 @@ class LoginPageState extends State<LoginPage> {
       _email = emailController.text;
     });
 
-    TextEditingController passwordController = TextEditingController(text: _password);
+    TextEditingController passwordController =
+        TextEditingController(text: _password);
     passwordController.addListener(() {
 //      print("${passwordController.text}");
       _password = passwordController.text;
@@ -74,7 +74,6 @@ class LoginPageState extends State<LoginPage> {
           radius: 48.0,
           child: Image.asset('assets/logo.png'),
         ));
-
 
 //    if(_email != null && _email.isNotEmpty){
 //      emailController.value = TextEditingValue(text: _email);
@@ -99,7 +98,6 @@ class LoginPageState extends State<LoginPage> {
 //    if(_password != null && _password.isNotEmpty){
 //      passwordController.value = TextEditingValue(text: _password);
 //    }
-
 
     final password = TextFormField(
       controller: passwordController,
@@ -135,26 +133,50 @@ class LoginPageState extends State<LoginPage> {
         },
         child: Text("Sign out", style: TextStyle(color: Colors.black45)));
 
+    Widget getLoginInfo() {
+      if (_loggingIn) {
+        return SizedBox(
+            width: 15.0,
+            height: 15.0,
+            child: CircularProgressIndicator(
+                value: null,
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.blue)));
+      } else {
+        return Container(
+            height: 15,
+            padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+            child: Text(
+              loginError,
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+            ));
+      }
+    }
+
     return new Scaffold(
       backgroundColor: Colors.white,
       body: Center(
-        child: ListView(
-          shrinkWrap: true,
-          padding: EdgeInsets.only(left: 24.0, right: 24.0),
-          children: <Widget>[
-            logo,
-            SizedBox(height: 48.0),
-            email,
-            SizedBox(height: 15.0),
-            password,
-            SizedBox(height: 24.0),
-            AnimationButton(callback: (){
-              print("onPressed");
-              _login(_email, _password);
-            }),
-            SizedBox(height: 8.0),
-            forgotLabel
-          ],
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              logo,
+              SizedBox(height: 48.0),
+              email,
+              SizedBox(height: 15.0),
+              password,
+              SizedBox(height: 24.0),
+              AnimationButton(callback: () {
+                print("onPressed");
+                _login(_email, _password);
+              }),
+              SizedBox(height: 8.0),
+              forgotLabel,
+              getLoginInfo()
+            ],
+          ),
         ),
       ),
     );
@@ -166,28 +188,40 @@ class LoginPageState extends State<LoginPage> {
   }
 
   void _navigateToTime() {
-     repository.timePage().then((response) {
-
+    repository.timePage().then((response) {
 //      debugPrint("_navigateToTime response: $response");
       User.init(response);
-      Navigator.of(context).pushReplacement(new MaterialPageRoute(
-          builder: (BuildContext context) => new BottomNavigation()));
+      Navigator.of(context).pushReplacement(PageTransition(widget: BottomNavigation()));
     });
   }
 
   void _login(String email, String password) {
+    setState(() {
+      loginError = "";
+      _loggingIn = true;
+    });
+
     repository.login(email, password).then((response) {
 //      debugPrint("signin response: ${response.toString()}");
+//      setState(() {
+//        _loggingIn = false;
+//      });
+
       if (response.toString().isEmpty) {
         print("navigating to Time");
         widget.preferences.setLoginUserName(_email);
         widget.preferences.setLoginPassword(_password);
         _navigateToTime();
-        showToast(context, "Success", second: 2, position: ToastPosition.bottom);
       } else if (response.toString().contains("Incorrect login or password")) {
-        print("Incorrect login or password");
-        showToast(context, "Incorrect login or password", second: 2, position: ToastPosition.bottom);
+        _updateError("Incorrect login or password");
       }
+    });
+  }
+
+  void _updateError(String error) {
+    print("updateError: $error");
+    setState(() {
+      loginError = error;
     });
   }
 

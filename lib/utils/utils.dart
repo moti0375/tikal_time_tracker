@@ -24,15 +24,15 @@ class Utils {
       ClientCookie sessionCookie = _getCookieMap(sessionCookieStr);
       ClientCookie loginCookie = _getCookieMap(ttLoginCookie);
 
-      print("Session Cookie: ${sessionCookie.toString()}");
-      print("ttLogin Cookie: ${loginCookie.toString()}");
+//      print("Session Cookie: ${sessionCookie.toString()}");
+//      print("ttLogin Cookie: ${loginCookie.toString()}");
 
       cookies.add(sessionCookie);
       cookies.add(loginCookie);
 //      print("session cookie: $sessionCookieStr\n ttLoginCookie: $ttLoginCookie");
     } else {
       ClientCookie sessionCookie = _getCookieMap(cookiesString);
-      print("Session Cookie: ${sessionCookie.toString()}");
+//      print("Session Cookie: ${sessionCookie.toString()}");
       cookies.add(sessionCookie);
     }
 

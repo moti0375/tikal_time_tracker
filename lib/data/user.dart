@@ -20,7 +20,7 @@ class User {
     if (_me == null) {
       User._internal(dom);
     }
-    print("User: init ${me.toString()}");
+//    print("User: init ${me.toString()}");
   }
 
   User._internal(String dom){

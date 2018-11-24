@@ -40,7 +40,7 @@ class TimePresenter implements TimeContractPresenter{
         this.records = records;
         view.timeLoadFinished(this.records);
     }, onError: (e){
-      print("There was an error: $e");
+      print("PagePresenter There was an error: $e");
       if(e is RangeError){
         this.records = new List<TimeRecord>();
         view.timeLoadFinished(this.records);

@@ -40,7 +40,7 @@ class AnimationButtonState extends State<AnimationButton>
               setState(() {
                 _isPressed = isPressed;
                 if (_state == 0) {
-                  animateButton();
+                  //animateButton();
                 }
               });
             },
@@ -52,7 +52,7 @@ class AnimationButtonState extends State<AnimationButton>
     double initialWidth = _globalKey.currentContext.size.width;
 
     var controller =
-    AnimationController(duration: Duration(milliseconds: 10), vsync: this);
+    AnimationController(duration: Duration(milliseconds: 1000), vsync: this);
 
     _animation = Tween(begin: 0.0, end: 1.0).animate(controller)
       ..addListener(() {
@@ -62,8 +62,7 @@ class AnimationButtonState extends State<AnimationButton>
       });
 
     controller.forward();
-
-    Timer(Duration(milliseconds: 50), (){
+    Timer(Duration(milliseconds: 500), (){
       setState(() {
         _state = 2;
       });

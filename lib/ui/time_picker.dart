@@ -39,10 +39,8 @@ class TimePickerState extends State<TimeTrackerTimePicker> {
     super.initState();
     focusNode = FocusNode();
     focusNode.addListener(() {
-      if (focusNode.hasFocus) {
-        print("has focus...");
-      } else {
-        _validator(buffer);
+      if (!focusNode.hasFocus) {
+        submitValidator(buffer);
       }
     });
     if (widget.initialTimeValue != null) {
@@ -82,7 +80,7 @@ class TimePickerState extends State<TimeTrackerTimePicker> {
                 child: new TextField(
                     onSubmitted: submitValidator,
                     onChanged: (value){
-                      //buffer = value;
+                      buffer = value;
                       typeValidator(value);
                     },
                     focusNode: focusNode,
@@ -119,6 +117,7 @@ class TimePickerState extends State<TimeTrackerTimePicker> {
   }
 
   void submitValidator(String value){
+    print("submitValidator: $value");
     TimeOfDay time = _validator(value);
     if(time != null){
       _onTimeSelected(time);

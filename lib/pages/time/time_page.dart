@@ -9,6 +9,7 @@ import 'package:tikal_time_tracker/pages/reports/place_holder_content.dart';
 import 'package:tikal_time_tracker/ui/date_picker_widget.dart';
 import 'package:tikal_time_tracker/pages/time/time_presenter.dart';
 import 'package:tikal_time_tracker/pages/time/time_contract.dart';
+import 'package:tikal_time_tracker/utils/page_transition.dart';
 
 class TimePage extends StatefulWidget {
   @override
@@ -17,7 +18,7 @@ class TimePage extends StatefulWidget {
   }
 }
 
-class TimePageState extends State<TimePage>
+class TimePageState extends State<TimePage> with TickerProviderStateMixin
     implements ListAdapterClickListener, TimeContractView {
   final _items = <String>["Moti", "Nurit", "Yarden", "Yahel"];
   Choice _onSelected;
@@ -32,15 +33,14 @@ class TimePageState extends State<TimePage>
   @override
   void initState() {
     super.initState();
-    print("initState");
+    print("TimePage: initState");
     presenter = TimePresenter(repository: this.repository);
     presenter.subscribe(this);
     var now = DateTime.now();
     _selectedDate = DateTime(now.year, now.month, now.day, 0, 0, 0, 0, 0);
 //    _loadRecords(_selectedDate);
     dateInputController = new TextEditingController(
-        text:
-            "${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}");
+        text: "${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}");
     presenter.loadTimeForDate(_selectedDate);
   }
 
@@ -168,13 +168,13 @@ class TimePageState extends State<TimePage>
     final projects = User.me.projects;
     print("_navigateToNextScreen: " + projects.toString());
     Navigator.of(context)
-        .push(new MaterialPageRoute(
-            builder: (BuildContext context) => new NewRecordPage(
+        .push(new PageTransition(
+            widget: new NewRecordPage(
                 projects: projects,
                 dateTime: _selectedDate,
                 timeRecord: null,
-                flow: NewRecordFlow.new_record)))
-        .then((value) {
+                flow: NewRecordFlow.new_record))
+    ).then((value) {
       print("got value from page");
       if (value != null) {
         if (value is TimeRecord) {
@@ -189,8 +189,8 @@ class TimePageState extends State<TimePage>
   _navigateToEditScreen(TimeRecord item) {
     print("_navigateToEditScreen: ");
     Navigator.of(context)
-        .push(new MaterialPageRoute(
-            builder: (BuildContext context) => new NewRecordPage(
+        .push(new PageTransition(
+            widget:new NewRecordPage(
                 projects: User.me.projects,
                 dateTime: _selectedDate,
                 timeRecord: item,

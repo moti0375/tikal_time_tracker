@@ -35,7 +35,7 @@ class TimeTrackerApi extends _$TimeTrackerApiClient implements ApiClient{
     this.base.authHeader("Basic", Base64Encoder().convert(convert));
     this.base.after((resty.StringResponse response){
 
-      debugPrint("resty After: status: ${response.statusCode}, response headers: ${response.headers.toString()}");
+//      debugPrint("resty After: status: ${response.statusCode}, response headers: ${response.headers.toString()}");
 
       Map map = response.headers.map((key, value){
         return MapEntry(key, value);
