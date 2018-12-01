@@ -140,4 +140,9 @@ class RemoteDateSource implements TimeDateSource {
   Future updateTime(TimeRecord time) {
     return api.updateTime(time.id, UpdateRequest(timeRecord: time));
   }
+
+  @override
+  Future resetPasswordPage() {
+    return api.resetPassword();
+  }
 }

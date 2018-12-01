@@ -18,5 +18,6 @@ class TimeDateSource{
  Future<dynamic> reportsPage(){return null;}
  Future<List<TimeRecord>> generateReport(ReportForm request){return null;}
  Future<dynamic> getReport(ReportForm request){return null;}
+ Future<dynamic> resetPasswordPage(){return null;}
  void updateCredentials(Credentials credentials){}
 }

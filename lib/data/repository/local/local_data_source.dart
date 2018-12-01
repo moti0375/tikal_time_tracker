@@ -104,4 +104,9 @@ class LocalDataSource implements TimeDateSource {
     return null;
   }
 
+  @override
+  Future resetPasswordPage() {
+    return null;
+  }
+
 }

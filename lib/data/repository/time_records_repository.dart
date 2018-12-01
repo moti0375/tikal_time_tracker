@@ -111,4 +111,9 @@ class TimeRecordsRepository implements TimeDateSource{
     return remoteDateSource.updateTime(time);
   }
 
+  @override
+  Future resetPasswordPage() {
+    return null;
+  }
+
 }

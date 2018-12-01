@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 class AnimationButton extends StatefulWidget {
   VoidCallback callback;
-  AnimationButton({this.callback});
+  String buttonText;
+  AnimationButton({this.buttonText, this.callback});
 
   @override
   State<StatefulWidget> createState() {
@@ -76,7 +77,7 @@ class AnimationButtonState extends State<AnimationButton>
   Widget buildButtonChild() {
     if (_state == 0) {
       return Text(
-        'Login',
+        widget.buttonText,
         style: TextStyle(color: Colors.white, fontSize: 16.0),
       );
     } else if (_state == 1) {

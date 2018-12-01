@@ -8,6 +8,7 @@ import 'package:tikal_time_tracker/storage/preferences.dart';
 import 'package:tikal_time_tracker/ui/animation_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tikal_time_tracker/utils/page_transition.dart';
+import 'package:tikal_time_tracker/pages/reset_password/reset_password_page.dart';
 import 'package:ktoast/ktoast.dart';
 
 class LoginPage extends StatefulWidget {
@@ -127,11 +128,24 @@ class LoginPageState extends State<LoginPage> {
       ),
     );
 
-    final forgotLabel = FlatButton(
-        onPressed: () {
-          _showSignOutDialog();
-        },
-        child: Text("Sign out", style: TextStyle(color: Colors.black45)));
+    final forgotLabel = Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisSize: MainAxisSize.max,
+      children: <Widget>[
+        FlatButton(
+            onPressed: () {
+              _navigateToResetPassword(_email);
+            },
+            child: Text("Forgot Password", style: TextStyle(color: Colors.black45))
+        ),
+        FlatButton(
+            onPressed: () {
+              _showSignOutDialog();
+            },
+            child: Text("Sign out", style: TextStyle(color: Colors.black45))
+        ),
+      ],
+    );
 
     Widget getLoginInfo() {
       if (_loggingIn) {
@@ -168,7 +182,7 @@ class LoginPageState extends State<LoginPage> {
               SizedBox(height: 15.0),
               password,
               SizedBox(height: 24.0),
-              AnimationButton(callback: () {
+              AnimationButton(buttonText: "Login",callback: () {
                 print("onPressed");
                 _login(_email, _password);
               }),
@@ -193,6 +207,10 @@ class LoginPageState extends State<LoginPage> {
       User.init(response);
       Navigator.of(context).pushReplacement(PageTransition(widget: BottomNavigation()));
     });
+  }
+
+  void _navigateToResetPassword(String email) {
+    Navigator.of(context).push(PageTransition(widget: ResetPasswordPage(emailAddress: email)));
   }
 
   void _login(String email, String password) {

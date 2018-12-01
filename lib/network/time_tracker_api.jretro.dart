@@ -49,9 +49,6 @@ abstract class _$TimeTrackerApiClient implements ApiClient {
         .path(basePath)
         .path("reports.php")
         .urlEncodedForm(serializers.to(request));
-
-    print("generateReport: ${req.getUrl}, body: ${serializers.to(request)}");
-
     return serializers.from(await req.go().body);
   }
 
@@ -83,6 +80,11 @@ abstract class _$TimeTrackerApiClient implements ApiClient {
         .path("time_delete.php")
         .query("id", id)
         .urlEncodedForm(serializers.to(request));
+    return serializers.from(await req.go().body);
+  }
+
+  Future<dynamic> resetPassword() async {
+    var req = base.get.path(basePath).path("password_reset.php");
     return serializers.from(await req.go().body);
   }
 }
