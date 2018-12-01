@@ -91,7 +91,7 @@ class LocalDataSource implements TimeDateSource {
   }
 
   @override
-  Future reportsPage() {
+  Future reportsPage(Role role) {
     return null;
   }
 

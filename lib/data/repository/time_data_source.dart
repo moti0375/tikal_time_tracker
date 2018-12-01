@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:tikal_time_tracker/network/credentials.dart';
 import 'package:tikal_time_tracker/network/requests/reports_form.dart';
 import 'package:tikal_time_tracker/network/requests/reset_password_form.dart';
+import 'package:tikal_time_tracker/data/models.dart';
 
 class TimeDateSource{
  Future<List<TimeRecord>> getAllTimeForDate(DateTime date){return null;}
@@ -16,7 +17,7 @@ class TimeDateSource{
  Future<dynamic> login(String email, String password){return null;}
  Future<dynamic> timePage(){return null;}
  Future<List<Member>> getAllMembers(){return null;}
- Future<dynamic> reportsPage(){return null;}
+ Future<dynamic> reportsPage(Role role){return null;}
  Future<List<TimeRecord>> generateReport(ReportForm request){return null;}
  Future<dynamic> getReport(ReportForm request){return null;}
  Future<dynamic> resetPasswordPage(){return null;}

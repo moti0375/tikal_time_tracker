@@ -97,8 +97,8 @@ class TimeRecordsRepository implements TimeDateSource{
   }
 
   @override
-  Future<dynamic> reportsPage() {
-    return remoteDateSource.reportsPage();
+  Future<dynamic> reportsPage(Role role) {
+    return remoteDateSource.reportsPage(role);
   }
 
   @override

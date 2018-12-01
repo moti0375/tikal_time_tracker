@@ -28,7 +28,7 @@ class DomParser {
     String name = userDetails.substring(0, userDetails.indexOf(" - "));
     String roleStr = userDetails.substring(
         userDetails.indexOf(" - ") + 3, userDetails.indexOf(", "));
-    Role role = getRoleFromRoleString(roleStr);
+    Role role = _getRoleFromRoleString(roleStr);
     String company = userDetails.substring(userDetails.indexOf(", ") + 1);
     print("$TAG: name: $name, role: $role, company: $company");
     List<Task> tasks = _extractTasks(domStr);
@@ -260,7 +260,7 @@ class DomParser {
       }).toList();
 
       cells.removeLast();
-      Role role = getRoleFromRoleString(cells[2]);
+      Role role = _getRoleFromRoleString(cells[2]);
       return Member(name: cells[0], email: cells[1], role: role);
     }).toList();
 
@@ -336,7 +336,40 @@ class DomParser {
     }
   }
 
-  Role getRoleFromRoleString(String roleStr){
+
+  List<Member> parseGenerateReportPage(String apiResponse){
+    String buffer = apiResponse.substring(apiResponse.indexOf(">Deselect all"), apiResponse.indexOf("function setAllusers(value)"));
+    String tableStart = "100%\">";
+    buffer = buffer.substring(buffer.indexOf(tableStart) + tableStart.length, buffer.indexOf("</table>")).trim();
+    List<String> trs = buffer.split("<tr>");
+//    debugPrint("tr: $trs");
+
+    trs.removeAt(0);
+    trs = trs.map((tr){
+      tr =  tr.substring(0, tr.indexOf("</tr>")).trim();
+      return tr;
+    }).toList();
+
+
+    List<Member> members = List();
+
+    trs.forEach((tds){
+      List<String> b = tds.split("</td>");
+      b.removeLast();
+//      print("${b.length}");
+         b.forEach((cb){
+        Member member = _getMemberFromCheckbox(cb.trim());
+//        print(member.toString());
+        members.add(member);
+      });
+    });
+
+//    print("${members.length}, ${members.toString()}");
+    return members;
+  }
+
+
+  Role _getRoleFromRoleString(String roleStr){
      switch(roleStr){
       case "Manager": {
         return Role.Manager;
@@ -354,5 +387,26 @@ class DomParser {
          return Role.User;
       }
     }
+  }
+
+  Member _getMemberFromCheckbox(String cbString){
+
+//    print("_getMemberFromCheckbox: $cbString");
+
+    String name;
+    int value;
+    String id;
+    
+    id = cbString.substring(cbString.indexOf("id=\"")+4, cbString.indexOf("checked=") - 2);
+    String needle = "value=\"";
+    var b = cbString.substring(cbString.indexOf(needle)+needle.length);
+    b = b.substring(0, b.indexOf("\""));
+    value = int.parse(b);
+    String lableDelimiter = "<label for=";
+    b = cbString.substring(cbString.indexOf(lableDelimiter) + 1);
+    name = b.substring(b.indexOf(">") + 1, b.indexOf("<"));
+//    print("_getMemberFromCheckbox: id : $id, value: $value, name: $name");
+
+    return Member(id: id, value: value, name: name);
   }
 }

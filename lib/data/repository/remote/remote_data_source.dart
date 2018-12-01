@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:http/http.dart';
 import 'package:tikal_time_tracker/data/member.dart';
 import 'package:tikal_time_tracker/data/models.dart';
+import 'package:tikal_time_tracker/data/member.dart';
 import 'package:tikal_time_tracker/network/time_tracker_api.dart';
 import 'package:tikal_time_tracker/network/requests/reports_form.dart';
 import 'package:tikal_time_tracker/network/requests/update_request.dart';
@@ -117,9 +118,14 @@ class RemoteDateSource implements TimeDateSource {
   }
 
   @override
-  Future<dynamic> reportsPage() {
+  Future<dynamic> reportsPage(Role role) {
     return api.reports().then((response){
-      debugPrint("Response: ${response.toString()}");
+      //debugPrint("Response: ${response.toString()}");
+      if(role == Role.Manager || role == Role.CoManager || role == Role.TopManager){
+        List<Member> members = parser.parseGenerateReportPage(response);
+        return members;
+      }
+      return null;
     }, onError: (e){
       debugPrint("There was an error loading reportPage: ${e.toString()}");
     });

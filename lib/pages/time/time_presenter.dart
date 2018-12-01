@@ -46,7 +46,7 @@ class TimePresenter implements TimeContractPresenter{
         view.timeLoadFinished(this.records);
       }else{
         print(e);
-        // _logout();
+        view.logOut();
       }
     });
   }
