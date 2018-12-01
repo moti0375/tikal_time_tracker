@@ -254,6 +254,14 @@ class GenerateReportState extends State<GenerateReportPage> implements ReportsVi
                       EdgeInsets.symmetric(vertical: 16.0, horizontal: 0.0),
                   shrinkWrap: false,
                   children: <Widget>[
+                    Container(
+                      height: 1.5,
+                      color: Colors.black26,
+                    ),
+                    Container(
+                      padding: EdgeInsets.only(bottom: 2.0),
+                      child: Text("${User.me.name}, ${User.me.role.toString().split(".").last}, ${User.me.company}"),
+                    ),
                     projectsDropDown,
                     tasksDropDown,
                     startDateInput,

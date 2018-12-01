@@ -64,7 +64,7 @@ class UsersPageState extends State<UsersPage> implements MembersViewContract{
             ),
             Container(
               padding: EdgeInsets.only(bottom: 2.0),
-              child: Text("${User.me.name}, ${User.me.role}, ${User.me.company}"),
+              child: Text("${User.me.name}, ${User.me.role.toString().split(".").last}, ${User.me.company}"),
             ),
             Expanded(
               child:  UsersListAdapter(items: _users),

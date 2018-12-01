@@ -87,7 +87,9 @@ Duration _calculateDuration({DateTime start, DateTime finish}){
 
 enum Role{
   User,
-  Admin
+  Manager,
+  CoManager,
+  TopManager
 }
 
 enum JobTask{

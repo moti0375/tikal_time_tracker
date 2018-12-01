@@ -239,6 +239,7 @@ class LoginPageState extends State<LoginPage> {
   void _updateError(String error) {
     print("updateError: $error");
     setState(() {
+      _loggingIn = false;
       loginError = error;
     });
   }
@@ -406,7 +407,7 @@ class LoginPageState extends State<LoginPage> {
         ),
         FlatButton(
           onPressed: () {
-            widget.preferences.signOut();
+            _signOut();
             Navigator.pop(context);
             _signIn();
           },
@@ -431,5 +432,14 @@ class LoginPageState extends State<LoginPage> {
   Future<Preferences> initPrefs() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     return Preferences.init(preferences);
+  }
+
+  void _signOut(){
+    setState(() {
+      _email = "";
+      _password = "";
+    });
+    widget.preferences.signOut();
+    User.signOut();
   }
 }

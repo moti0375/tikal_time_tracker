@@ -26,8 +26,9 @@ class DomParser {
     String userDetails = pageTitle.substring(
         pageTitle.indexOf("<tr><td>") + 8, pageTitle.indexOf('</table>') - 19);
     String name = userDetails.substring(0, userDetails.indexOf(" - "));
-    String role = userDetails.substring(
+    String roleStr = userDetails.substring(
         userDetails.indexOf(" - ") + 3, userDetails.indexOf(", "));
+    Role role = getRoleFromRoleString(roleStr);
     String company = userDetails.substring(userDetails.indexOf(", ") + 1);
     print("$TAG: name: $name, role: $role, company: $company");
     List<Task> tasks = _extractTasks(domStr);
@@ -259,7 +260,8 @@ class DomParser {
       }).toList();
 
       cells.removeLast();
-      return Member(name: cells[0], email: cells[1], role: cells[2]);
+      Role role = getRoleFromRoleString(cells[2]);
+      return Member(name: cells[0], email: cells[1], role: role);
     }).toList();
 
    // print("members: ${members.toString()}");
@@ -331,6 +333,26 @@ class DomParser {
       return "No user with this login";
     } else {
       return "Failed to reset password";
+    }
+  }
+
+  Role getRoleFromRoleString(String roleStr){
+     switch(roleStr){
+      case "Manager": {
+        return Role.Manager;
+      }
+      case "Co-Manager":{
+        return Role.CoManager;
+      }
+      case "Top-Manager" : {
+         return Role.TopManager;
+      }
+      case "User":{
+        return Role.User;
+      }
+      default: {
+         return Role.User;
+      }
     }
   }
 }

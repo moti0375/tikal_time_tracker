@@ -36,7 +36,7 @@ class UsersListAdapter extends StatelessWidget{
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(item.email, style: TextStyle(fontSize: 12.0)),
-            Text(item.role, style: TextStyle(fontSize: 12.0))
+            Text(item.role.toString().split(".").last, style: TextStyle(fontSize: 12.0))
           ],
         ),
       ),

@@ -63,6 +63,8 @@ class Preferences{
   void signOut(){
     prefs.remove(SING_IN_USER_NAME);
     prefs.remove(SING_IN_PASSWORD);
+    prefs.remove(LOGIN_IN_PASSWORD);
+    prefs.remove(LOGIN_IN_USER_NAME);
   }
 
 }

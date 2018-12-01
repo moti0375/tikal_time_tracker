@@ -118,7 +118,11 @@ class RemoteDateSource implements TimeDateSource {
 
   @override
   Future<dynamic> reportsPage() {
-    return api.reports();
+    return api.reports().then((response){
+      debugPrint("Response: ${response.toString()}");
+    }, onError: (e){
+      debugPrint("There was an error loading reportPage: ${e.toString()}");
+    });
   }
 
   @override
