@@ -44,7 +44,7 @@ class DatePickerState extends State<TimeTrackerDatePicker>{
             padding: const EdgeInsets.all(8.0),
             child: GestureDetector(
               onTap: () {
-                print("datPicker onTap dateInput");
+                print("datePicker onTap dateInput");
                 _showDatePicker(context);
               },
               child: Icon(Icons.date_range),
@@ -75,7 +75,7 @@ class DatePickerState extends State<TimeTrackerDatePicker>{
         context: context,
         initialDate: _dateTime,
         firstDate: DateTime(DateTime.now().year - 1, 1),
-        lastDate: DateTime(DateTime.now().year, 12));
+        lastDate: DateTime(DateTime.now().year + 1, 12));
     if (picked != null) {
       _onDateSelected(picked);
     }

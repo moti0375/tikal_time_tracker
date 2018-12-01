@@ -38,7 +38,6 @@ class TimePageState extends State<TimePage> with TickerProviderStateMixin
     presenter.subscribe(this);
     var now = DateTime.now();
     _selectedDate = DateTime(now.year, now.month, now.day, 0, 0, 0, 0, 0);
-//    _loadRecords(_selectedDate);
     dateInputController = new TextEditingController(
         text: "${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}");
     presenter.loadTimeForDate(_selectedDate);
@@ -208,11 +207,11 @@ class TimePageState extends State<TimePage> with TickerProviderStateMixin
   }
 
   _showDateDialog() {
+    print("_showDateDialog");
     showDatePicker(
             context: context,
             initialDate: _selectedDate != null ? _selectedDate : DateTime.now(),
-            firstDate: DateTime(_selectedDate.year - 1, 1),
-            lastDate: DateTime(_selectedDate.year, 12))
+            firstDate: DateTime(_selectedDate.year - 1, 1))
         .then((picked) {
       setState(() {
         _onDateSelected(picked);
