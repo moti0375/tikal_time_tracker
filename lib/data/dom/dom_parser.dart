@@ -323,4 +323,14 @@ class DomParser {
 //    print("parseReportPage: ${records.toString()}");
     return records;
   }
+  
+  String parseResetPasswordResponse(String response){
+    if(response.contains("Password reset request sent by email")){
+      return "Password reset request sent by email";
+    }else if(response.contains("No user with this login")) {
+      return "No user with this login";
+    } else {
+      return "Failed to reset password";
+    }
+  }
 }

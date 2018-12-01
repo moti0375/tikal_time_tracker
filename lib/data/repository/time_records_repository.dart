@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:tikal_time_tracker/data/member.dart';
 import 'package:tikal_time_tracker/network/requests/reports_form.dart';
-
+import 'package:tikal_time_tracker/network/requests/reset_password_form.dart';
 import 'package:tikal_time_tracker/data/models.dart';
 import 'package:tikal_time_tracker/data/repository/time_data_source.dart';
 import 'package:tikal_time_tracker/data/repository/local/local_data_source.dart';
@@ -113,7 +113,13 @@ class TimeRecordsRepository implements TimeDateSource{
 
   @override
   Future resetPasswordPage() {
-    return null;
+    print("resetPasswordPage: ");
+    return remoteDateSource.resetPasswordPage();
+  }
+
+  @override
+  Future resetPassword(ResetPasswordForm request) {
+    return remoteDateSource.resetPassword(request);
   }
 
 }

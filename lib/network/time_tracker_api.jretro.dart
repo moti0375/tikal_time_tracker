@@ -87,4 +87,12 @@ abstract class _$TimeTrackerApiClient implements ApiClient {
     var req = base.get.path(basePath).path("password_reset.php");
     return serializers.from(await req.go().body);
   }
+
+  Future<dynamic> resetPasswordRequest(ResetPasswordForm request) async {
+    var req = base.post
+        .path(basePath)
+        .path("password_reset.php")
+        .urlEncodedForm(serializers.to(request));
+    return serializers.from(await req.go().body);
+  }
 }

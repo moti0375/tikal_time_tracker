@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tikal_time_tracker/ui/animation_button.dart';
+import 'package:tikal_time_tracker/pages/reset_password/reset_password_presenter.dart';
+import 'package:tikal_time_tracker/data/repository/time_records_repository.dart';
+import 'package:tikal_time_tracker/pages/reset_password/reset_password_contract.dart';
 
 class ResetPasswordPage extends StatefulWidget {
   String emailAddress;
@@ -12,13 +15,25 @@ class ResetPasswordPage extends StatefulWidget {
   }
 }
 
-class ResetPasswordState extends State<ResetPasswordPage> {
+class ResetPasswordState extends State<ResetPasswordPage> implements ResetPasswordBaseView{
+
+
+  ResetPasswordPresenter _presenter;
+  String _statusText = "";
+
+  @override
+  void initState() {
+    super.initState();
+    _presenter = ResetPasswordPresenter(repository: TimeRecordsRepository());
+    _presenter.subscribe(this);
+  }
+
   @override
   Widget build(BuildContext context) {
     TextEditingController emailController =
         TextEditingController(text: widget.emailAddress);
     emailController.addListener(() {
-//      print("${emailController.text}");
+      print("${emailController.text}");
       widget.emailAddress = emailController.text;
     });
 
@@ -59,7 +74,13 @@ class ResetPasswordState extends State<ResetPasswordPage> {
     );
 
     final resetPasswordButton = AnimationButton(buttonText: "Reset password",callback: () {
+      _presenter.onResetPasswordButtonClicked(widget.emailAddress);
     });
+
+    final statusField = Container(
+      padding: EdgeInsets.symmetric(vertical: 8.0),
+      child: Text(_statusText, style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold, color: Colors.red), textAlign: TextAlign.start,),
+    );
 
     return Scaffold(
         body: Center(
@@ -71,7 +92,23 @@ class ResetPasswordState extends State<ResetPasswordPage> {
                     children: <Widget>[
                       title,
                       emailField,
-                      resetPasswordButton
+                      resetPasswordButton,
+                      statusField
                     ]))));
+  }
+
+  @override
+  void handleError() {
+  }
+
+  @override
+  void logOut() {
+  }
+
+  @override
+  void showResultStatus(String status) {
+    setState(() {
+      _statusText = status;
+    });
   }
 }

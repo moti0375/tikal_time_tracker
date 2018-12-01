@@ -14,9 +14,11 @@ import 'package:tikal_time_tracker/network/serializers/form_serializer.dart';
 import 'package:tikal_time_tracker/network/serializers/add_time_serializer.dart';
 import 'package:tikal_time_tracker/network/serializers/delete_request_serializer.dart';
 import 'package:tikal_time_tracker/network/serializers/reports_form_serializer.dart';
+import 'package:tikal_time_tracker/network/serializers/reset_password_serializer.dart';
 import 'package:tikal_time_tracker/network/serializers/update_time_serializer.dart';
 import 'package:tikal_time_tracker/network/requests/delete_request.dart';
 import 'package:tikal_time_tracker/network/requests/login_request.dart';
+import 'package:tikal_time_tracker/network/requests/reset_password_form.dart';
 import 'package:tikal_time_tracker/network/credentials.dart';
 import 'dart:convert';
 import 'package:tikal_time_tracker/data/dom/dom_parser.dart';
@@ -84,6 +86,7 @@ class RemoteDateSource implements TimeDateSource {
     serializers.add(AddTimeSerializer());
     serializers.add(UpdateTimeSerializer());
     serializers.add(DeleteRequestSerializer());
+    serializers.add(ResetPasswordSerializer());
     api = TimeTrackerApi(
         base: route("https://planet.tikalk.com").before((route) {
           print("Metadata: ${route.metadataMap}");
@@ -143,6 +146,20 @@ class RemoteDateSource implements TimeDateSource {
 
   @override
   Future resetPasswordPage() {
-    return api.resetPassword();
+    return api.resetPassword().then((response){
+      debugPrint("resetPasswordPage response: $response");
+    });
+  }
+
+  @override
+  Future resetPassword(ResetPasswordForm request) {
+    debugPrint("resetPassword: $login");
+
+    return api.resetPasswordRequest(request).then((response){
+      debugPrint("resetPasswordRequest response: $response");
+      return parser.parseResetPasswordResponse(response.toString());
+    }, onError: (e){
+      print("There was an error: ${e.toString()}");
+    });
   }
 }

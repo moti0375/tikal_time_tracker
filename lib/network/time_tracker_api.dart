@@ -7,6 +7,7 @@ import 'package:tikal_time_tracker/network/requests/login_request.dart';
 import 'package:tikal_time_tracker/network/requests/reports_form.dart';
 import 'package:tikal_time_tracker/network/requests/update_request.dart';
 import 'package:tikal_time_tracker/network/requests/delete_request.dart';
+import 'package:tikal_time_tracker/network/requests/reset_password_form.dart';
 import 'package:tikal_time_tracker/data/models.dart';
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
@@ -91,4 +92,6 @@ class TimeTrackerApi extends _$TimeTrackerApiClient implements ApiClient{
   @GetReq(path: "password_reset.php")
   Future<dynamic> resetPassword();
 
+  @PostReq(path: "password_reset.php")
+  Future<dynamic> resetPasswordRequest(@AsForm() ResetPasswordForm request);
 }

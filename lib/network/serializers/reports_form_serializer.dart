@@ -1,5 +1,5 @@
 import 'package:jaguar_serializer/src/serializer/serializer.dart';
-import '../requests/reports_form.dart';
+import 'package:tikal_time_tracker/network/requests/reports_form.dart';
 import 'dart:convert';
 import 'package:intl/intl.dart';
 
@@ -15,7 +15,7 @@ class ReportsFormSerializer extends Serializer<ReportForm>{
   @override
   Map<String, String> toMap(ReportForm form) {
     print("form serializer: toMap: ${form.toString()}");
-    Map<String, String> map = Map<String, String>();;
+    Map<String, String> map = Map<String, String>();
     map["start_date"] = dateFormat.format(form.startDate);
     map["end_date"] = dateFormat.format(form.endDate);
     map["project"] = form.project == null ? "" : "${form.project.value}";

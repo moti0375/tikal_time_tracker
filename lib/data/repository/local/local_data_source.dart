@@ -3,6 +3,7 @@ import 'package:tikal_time_tracker/data/member.dart';
 import 'package:tikal_time_tracker/network/requests/login_request.dart';
 import 'package:tikal_time_tracker/network/credentials.dart';
 import 'package:tikal_time_tracker/network/requests/reports_form.dart';
+import 'package:tikal_time_tracker/network/requests/reset_password_form.dart';
 import 'package:tikal_time_tracker/data/models.dart';
 import 'package:tikal_time_tracker/data/repository/time_data_source.dart';
 import 'package:tikal_time_tracker/data/database/database_helper.dart';
@@ -106,6 +107,11 @@ class LocalDataSource implements TimeDateSource {
 
   @override
   Future resetPasswordPage() {
+    return null;
+  }
+
+  @override
+  Future resetPassword(ResetPasswordForm request) {
     return null;
   }
 
