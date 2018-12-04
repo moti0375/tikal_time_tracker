@@ -13,9 +13,9 @@ class ReportsFormSerializer extends Serializer<ReportForm>{
   }
 
   @override
-  Map<String, String> toMap(ReportForm form) {
-    print("form serializer: toMap: ${form.toString()}");
-    Map<String, String> map = Map<String, String>();
+  Map<String, dynamic> toMap(ReportForm form) {
+//    print("form serializer: toMap: ${form.toString()}");
+    Map<String, dynamic> map = Map<String, dynamic>();
     map["start_date"] = dateFormat.format(form.startDate);
     map["end_date"] = dateFormat.format(form.endDate);
     map["project"] = form.project == null ? "" : "${form.project.value}";
@@ -39,7 +39,14 @@ class ReportsFormSerializer extends Serializer<ReportForm>{
     map["btn_generate"] = "Generate";
     map["group_by"] = "no_grouping";
 
+    String membersJson = form.members.map((member){
+     return member.toJson();
+    }).toList().toString();
+    map["users[]"] = "'281', '376'";
+
+
+//    print("form serializer: membersJson: ${map.toString()}");
+
     return map;
   }
-
 }

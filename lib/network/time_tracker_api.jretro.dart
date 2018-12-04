@@ -49,6 +49,8 @@ abstract class _$TimeTrackerApiClient implements ApiClient {
         .path(basePath)
         .path("reports.php")
         .urlEncodedForm(serializers.to(request));
+
+    print("generateReportRequest: ${serializers.to(request)}");
     return serializers.from(await req.go().body);
   }
 

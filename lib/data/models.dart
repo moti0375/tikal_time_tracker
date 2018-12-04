@@ -12,13 +12,14 @@ class TimeRecord{
   Duration duration;
   DateTime date;
   String comment;
+  String userName;
 
   TimeRecord.empty(){
 
   }
 
   TimeRecord({this.id, this.project, this.task, this.start, this.finish,
-      this.date, this.comment, this.duration}){
+      this.date, this.comment, this.duration, this.userName}){
     DateTime s  = DateTime(date.year, date.month, date.day, start.hour, start.minute);
     if(this.finish != null){
       DateTime f  = DateTime(date.year, date.month, date.day, finish.hour, finish.minute);

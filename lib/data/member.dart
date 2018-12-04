@@ -6,12 +6,17 @@ class Member{
   final Role role;
   String id;
   int value;
+  bool checked = true;
 
   Member({this.name, this.email, this.role, this.id, this.value});
 
   @override
   String toString() {
-    return 'Member{name: $name, email: $email, role: $role, id: $id, value: $value}';
+    return '{name: $name, email: $email, role: $role, id: $id, value: $value}';
+  }
+
+  String toJson(){
+    return '{id: ${id.split("_").last}, name: $name}';
   }
 
 

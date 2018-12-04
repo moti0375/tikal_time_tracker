@@ -102,8 +102,8 @@ class TimeRecordsRepository implements TimeDateSource{
   }
 
   @override
-  Future getReport(ReportForm request) {
-    return remoteDateSource.getReport(request);
+  Future getReport(ReportForm request, Role role) {
+    return remoteDateSource.getReport(request, role);
   }
 
   @override

@@ -134,7 +134,7 @@ class RemoteDateSource implements TimeDateSource {
   @override
   Future<List<TimeRecord>> generateReport(ReportForm request) {
     return api.generateReport(request).then((response){
-//      debugPrint("remoteDataSource: report ${response.toString()}");
+      debugPrint("remoteDataSource: report ${response.toString()}");
       List<TimeRecord> result = List<TimeRecord>();
       return result;
     }, onError: (e){
@@ -143,9 +143,10 @@ class RemoteDateSource implements TimeDateSource {
   }
 
   @override
-  Future<dynamic> getReport(ReportForm request) {
+  Future<dynamic> getReport(ReportForm request, Role role) {
     return api.getReport().then((response){
-      return parser.parseReportPage(response);
+//      debugPrint("getReport: report ${response.toString()}");
+      return parser.parseReportPage(response, role);
     });
   }
 
