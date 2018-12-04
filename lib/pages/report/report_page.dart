@@ -69,7 +69,7 @@ class ReportPage extends StatelessWidget implements ListAdapterClickListener{
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text(
-                  "${User.me.name}, ${User.me.company}, ${User.me.role}",
+                  "${User.me.name}, ${User.me.company}, ${User.me.role.toString().split(".").last}",
                   textAlign: TextAlign.start,
                 ),
                 Text("Total: ${report.getTotalString()}",

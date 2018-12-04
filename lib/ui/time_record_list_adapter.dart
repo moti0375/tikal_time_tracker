@@ -35,10 +35,7 @@ class TimeRecordListAdapter extends StatelessWidget{
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           mainAxisSize: MainAxisSize.max,
-          children: <Widget>[
-            Text("${item.project.name}", style: TextStyle(fontSize: 15.0)),
-            Text("${item.task.name}", style: TextStyle(fontSize: 15.0) )
-          ],
+          children: buildTitleRow(item)
         ),
         subtitle: Row(
           mainAxisSize: MainAxisSize.min,
@@ -114,8 +111,22 @@ class TimeRecordListAdapter extends StatelessWidget{
         itemCount: items == null ? 0 : items.length);
   }
 
-
+  List<Widget> buildTitleRow(TimeRecord timeRecord){
+    if(timeRecord.userName != null){
+      return [
+        Text("${timeRecord.userName}", style: TextStyle(fontSize: 15.0)),
+        Text("${timeRecord.project.name}", style: TextStyle(fontSize: 15.0)),
+        Text("${timeRecord.task.name}", style: TextStyle(fontSize: 15.0) )
+      ];
+    }else{
+      return [
+        Text("${timeRecord.project.name}", style: TextStyle(fontSize: 15.0)),
+        Text("${timeRecord.task.name}", style: TextStyle(fontSize: 15.0) )
+      ];
+    }
+  }
 }
+
 
 class ListAdapterClickListener{
    void onListItemClicked(TimeRecord item){}
