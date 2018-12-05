@@ -14,7 +14,7 @@ class ReportsPresenter implements ReportsPresenterContract {
   static const String TAG = "ReportsPresenter";
   TimeRecordsRepository repository;
   ReportsViewContract view;
-  List<Member> members = List();
+  List<Member> members;
 
   ReportsPresenter({this.repository});
 
@@ -36,7 +36,7 @@ class ReportsPresenter implements ReportsPresenterContract {
 
       if(response is List<Member>){
         this.members = response;
-//        print("_loadReportsPage: ${this.members.toString()}");
+        print("_loadReportsPage: ${this.members.toString()}");
         List<MemberListItem> items = response.map((member){
 //          print("_loadReportsPage: ${member.toString()}");
           return MemberListItem(member: member);
@@ -44,7 +44,7 @@ class ReportsPresenter implements ReportsPresenterContract {
       }
 //      print("$TAG: reportsPage: ${response}");
     },onError: (e){
-      debugPrint("There was an error ${e.toString()}");
+      debugPrint("_loadReportsPage There was an error ${e.toString()}");
     });
   }
 
@@ -53,6 +53,9 @@ class ReportsPresenter implements ReportsPresenterContract {
     repository.generateReport(request).then((report){
       debugPrint("$TAG: _generateReport: ${report.toString()}");
       _getReport(request);
+    }, onError: (e){
+      debugPrint("$TAG: _generateReport: There was an error ${e.toString()}");
+
     });
   }
 

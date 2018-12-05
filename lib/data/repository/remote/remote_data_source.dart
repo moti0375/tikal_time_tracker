@@ -145,6 +145,7 @@ class RemoteDateSource implements TimeDateSource {
   @override
   Future<dynamic> getReport(ReportForm request, Role role) {
     return api.getReport().then((response){
+      print("RemoteDateSource: getReport");
 //      debugPrint("getReport: report ${response.toString()}");
       return parser.parseReportPage(response, role);
     });

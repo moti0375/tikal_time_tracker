@@ -269,7 +269,7 @@ class DomParser {
   }
 
   List<TimeRecord> parseReportPage(String domStr, Role role) {
-    // print("parseReportPage: $domStr");
+     print("parseReportPage: $domStr");
     DateFormat dateFormat = DateFormat('yyyy-MM-dd');
     String formStart = "<form name=\"reportForm\" method=\"post\">";
     String formEnd = "</form>";
@@ -308,7 +308,7 @@ class DomParser {
       switch (role) {
         case Role.User:
           {
-            print("parsing for User");
+//            print("parsing for User");
              project = User.me.projects.firstWhere((it) {
               return it.name == cells[1 + cellsOffset];
             });
@@ -320,7 +320,7 @@ class DomParser {
           }
         default:
           {
-            print("parsing for Manager");
+//            print("parsing for Manager");
             cellsOffset = 1;
             userName = cells[1];
             project = Project(name: cells[1 + cellsOffset]);
@@ -329,8 +329,17 @@ class DomParser {
           }
       }
 
-      TimeOfDay start =
-          TimeOfDay.fromDateTime(timeFormat.parse(cells[3 + cellsOffset]));
+      TimeOfDay start = null;
+
+      try {
+        start =
+            TimeOfDay.fromDateTime(timeFormat.parse(cells[3 + cellsOffset]));
+      } catch (e) {
+        if (e is FormatException) {
+          start = null;
+        }
+      }
+
       TimeOfDay finish = null;
 
       try {
@@ -341,12 +350,20 @@ class DomParser {
           finish = null;
         }
       }
+
+      Duration d;
+      if(start == null && finish == null){
+        TimeOfDay duration = TimeOfDay.fromDateTime(timeFormat.parse(cells[5 + cellsOffset]));
+        d = Duration(hours: duration.hour, minutes:  duration.minute);
+      }
+
       return TimeRecord(
           date: dateTime,
           project: project,
           task: task,
           start: start,
           finish: finish,
+          duration: d,
           comment: cells[6].trim().replaceAll("&nbsp;", ""),
           userName: userName);
     }).toList();
@@ -387,11 +404,13 @@ class DomParser {
     trs.forEach((tds) {
       List<String> b = tds.split("</td>");
       b.removeLast();
-//      print("${b.length}");
+      print("${b.length}");
       b.forEach((cb) {
         Member member = _getMemberFromCheckbox(cb.trim());
+        if(member != null){
+          members.add(member);
+        }
 //        print(member.toString());
-        members.add(member);
       });
     });
 
@@ -425,11 +444,16 @@ class DomParser {
   }
 
   Member _getMemberFromCheckbox(String cbString) {
-//    print("_getMemberFromCheckbox: $cbString");
+    print("_getMemberFromCheckbox: $cbString");
 
     String name;
     int value;
     String id;
+
+
+    if(!cbString.contains("type=\"checkbox\"")){
+      return null;
+    }
 
     id = cbString.substring(
         cbString.indexOf("id=\"") + 4, cbString.indexOf("checked=") - 2);

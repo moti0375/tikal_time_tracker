@@ -20,7 +20,12 @@ class TimeRecord{
 
   TimeRecord({this.id, this.project, this.task, this.start, this.finish,
       this.date, this.comment, this.duration, this.userName}){
-    DateTime s  = DateTime(date.year, date.month, date.day, start.hour, start.minute);
+
+    DateTime s;
+
+    if(this.start != null){
+      s = DateTime(date.year, date.month, date.day, start.hour, start.minute);
+    }
     if(this.finish != null){
       DateTime f  = DateTime(date.year, date.month, date.day, finish.hour, finish.minute);
       duration = _calculateDuration(start: s, finish: f);

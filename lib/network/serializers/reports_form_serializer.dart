@@ -2,6 +2,8 @@ import 'package:jaguar_serializer/src/serializer/serializer.dart';
 import 'package:tikal_time_tracker/network/requests/reports_form.dart';
 import 'dart:convert';
 import 'package:intl/intl.dart';
+import 'package:flutter/material.dart';
+
 
 class ReportsFormSerializer extends Serializer<ReportForm>{
   DateFormat dateFormat = DateFormat("yyyy-MM-dd");
@@ -39,11 +41,16 @@ class ReportsFormSerializer extends Serializer<ReportForm>{
     map["btn_generate"] = "Generate";
     map["group_by"] = "no_grouping";
 
-    String membersJson = form.members.map((member){
-     return member.toJson();
-    }).toList().toString();
-    map["users[]"] = "'281', '376'";
 
+    if(form.members != null){
+      String usersArray = form.members.map((member){
+        print("processing: ${member.toString()}");
+        return "'${member.id.split("_").last}'";
+      }).toList().toString();
+
+      usersArray = usersArray.toString().substring(1, usersArray.toString().length-1);
+      map["users[]"] = usersArray;
+    }
 
 //    print("form serializer: membersJson: ${map.toString()}");
 
