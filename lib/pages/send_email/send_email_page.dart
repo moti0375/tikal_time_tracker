@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:tikal_time_tracker/ui/page_title.dart';
+import 'package:tikal_time_tracker/network/requests/send_email_form.dart';
+import 'package:tikal_time_tracker/data/repository/time_records_repository.dart';
+import 'package:tikal_time_tracker/pages/send_email/send_email_contract.dart';
+import 'package:tikal_time_tracker/pages/send_email/send_email_presenter.dart';
 
 class SendEmailPage extends StatefulWidget {
   @override
@@ -8,10 +12,15 @@ class SendEmailPage extends StatefulWidget {
   }
 }
 
-class SendEmailPageState extends State<SendEmailPage> {
+class SendEmailPageState extends State<SendEmailPage> implements SendMailContractView{
+
+  SendMailContractPresenter presenter;
+
   @override
   void initState() {
     super.initState();
+    presenter = SendEmailPresenter(repository: TimeRecordsRepository());
+    presenter.subscribe(this);
     setState(() {});
   }
 
@@ -238,5 +247,20 @@ class SendEmailPageState extends State<SendEmailPage> {
         ),
       ),
     );
+  }
+
+  @override
+  void logOut() {
+    // TODO: implement logOut
+  }
+
+  @override
+  void showPageDetails(SendEmailForm form) {
+    // TODO: implement showPageDetails
+  }
+
+  @override
+  void showSentStatus() {
+    // TODO: implement showSentStatus
   }
 }
