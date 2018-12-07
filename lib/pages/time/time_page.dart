@@ -7,6 +7,7 @@ import 'package:tikal_time_tracker/ui/time_record_list_adapter.dart';
 import 'package:tikal_time_tracker/pages/new_record_page/new_record_page.dart';
 import 'package:tikal_time_tracker/pages/reports/place_holder_content.dart';
 import 'package:tikal_time_tracker/ui/date_picker_widget.dart';
+import 'package:tikal_time_tracker/utils/action_choice.dart';
 import 'package:tikal_time_tracker/pages/time/time_presenter.dart';
 import 'package:tikal_time_tracker/pages/time/time_contract.dart';
 import 'package:tikal_time_tracker/utils/page_transition.dart';
@@ -20,8 +21,12 @@ class TimePage extends StatefulWidget {
 
 class TimePageState extends State<TimePage> with TickerProviderStateMixin
     implements ListAdapterClickListener, TimeContractView {
-  final _items = <String>["Moti", "Nurit", "Yarden", "Yahel"];
-  Choice _onSelected;
+
+  List<Choice> choices = const <Choice>[
+    const Choice(
+        action: Action.Logout, title: "Logout", icon: Icons.transit_enterexit)
+  ];
+
   DateTime _selectedDate;
   TextEditingController dateInputController =
       new TextEditingController(text: "");
@@ -269,17 +274,4 @@ class TimePageState extends State<TimePage> with TickerProviderStateMixin
   }
 }
 
-enum Action { Logout, Close }
 
-class Choice {
-  final Action action;
-  final String title;
-  final IconData icon;
-
-  const Choice({this.action, this.title, this.icon});
-}
-
-const List<Choice> choices = const <Choice>[
-  const Choice(
-      action: Action.Logout, title: "Logout", icon: Icons.transit_enterexit)
-];

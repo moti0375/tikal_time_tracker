@@ -3,19 +3,62 @@ import 'package:tikal_time_tracker/pages/reports/place_holder_content.dart';
 import 'package:tikal_time_tracker/data/models.dart';
 import 'package:tikal_time_tracker/data/user.dart';
 import 'package:tikal_time_tracker/ui/time_record_list_adapter.dart';
-class ReportPage extends StatelessWidget implements ListAdapterClickListener{
+import 'package:tikal_time_tracker/utils/action_choice.dart';
+import 'package:tikal_time_tracker/utils/page_transition.dart';
+import 'package:tikal_time_tracker/pages/send_email/send_email_page.dart';
+
+class ReportPage extends StatelessWidget implements ListAdapterClickListener {
   final Report report;
+
+  List<Choice> choices = const <Choice>[
+    const Choice(
+        action: Action.SendEmail, title: "Send Email", icon: Icons.email)
+  ];
 
   ReportPage({this.report}) {
     print("Total: ${report.getTotalString()}");
   }
 
+
   @override
   Widget build(BuildContext context) {
+    void _select(Choice choice) {
+      if (choice.action == Action.SendEmail) {
+        print("Navigate to SendEmail page");
+        Navigator.of(context)
+            .push(new PageTransition(
+            widget: SendEmailPage())
+        );
+      }
+    }
+
+    AppBar _buildAppBar({String title}) {
+      return AppBar(
+        title: Text(title),
+        actions: <Widget>[
+          PopupMenuButton<Choice>(
+            onSelected: _select,
+            itemBuilder: (BuildContext context) {
+              return choices.map((Choice c) {
+                return PopupMenuItem<Choice>(
+                  value: c,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      Icon(c.icon),
+                      Text(c.title)
+                    ],
+                  ),
+                );
+              }).toList();
+            },
+          )
+        ],
+      );
+    }
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Report"),
-      ),
+      appBar: _buildAppBar(title: "Report"),
       body: Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -37,13 +80,18 @@ class ReportPage extends StatelessWidget implements ListAdapterClickListener{
     } else {
       return Container(
           padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-          child: TimeRecordListAdapter(items: report.report, adapterClickListener: this, intermittently: false,));
+          child: TimeRecordListAdapter(items: report.report,
+            adapterClickListener: this,
+            intermittently: false,));
     }
   }
 
   Widget _createTitle(BuildContext context) {
     return Container(
-      width: MediaQuery.of(context).size.width * 1,
+      width: MediaQuery
+          .of(context)
+          .size
+          .width * 1,
       padding: const EdgeInsets.only(
           right: 32.0, left: 32.0, top: 16.0, bottom: 16.0),
       child: Column(
@@ -54,7 +102,9 @@ class ReportPage extends StatelessWidget implements ListAdapterClickListener{
           Container(
             padding: EdgeInsets.only(bottom: 2.0),
             child: Text(
-              "Report: ${report.startDate.day}/${report.startDate.month}/${report.startDate.year} - ${report.endDate.day}/${report.endDate.month}/${report.endDate.year}",
+              "Report: ${report.startDate.day}/${report.startDate
+                  .month}/${report.startDate.year} - ${report.endDate
+                  .day}/${report.endDate.month}/${report.endDate.year}",
               style: TextStyle(fontSize: 20.0, color: Colors.black45),
             ),
           ),
@@ -69,7 +119,10 @@ class ReportPage extends StatelessWidget implements ListAdapterClickListener{
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text(
-                  "${User.me.name}, ${User.me.company}, ${User.me.role.toString().split(".").last}",
+                  "${User.me.name}, ${User.me.company}, ${User.me.role
+                      .toString()
+                      .split(".")
+                      .last}",
                   textAlign: TextAlign.start,
                 ),
                 Text("Total: ${report.getTotalString()}",

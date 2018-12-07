@@ -7,6 +7,7 @@ import 'package:tikal_time_tracker/data/task.dart';
 import 'package:tikal_time_tracker/data/repository/time_records_repository.dart';
 import 'package:tikal_time_tracker/pages/report/report_page.dart';
 import 'package:tikal_time_tracker/ui/date_picker_widget.dart';
+import 'package:tikal_time_tracker/ui/page_title.dart';
 import 'package:tikal_time_tracker/pages/reports/reports_contract.dart';
 import 'package:tikal_time_tracker/pages/reports/reports_presenter.dart';
 
@@ -247,6 +248,7 @@ class GenerateReportState extends State<GenerateReportPage> implements ReportsVi
           padding: EdgeInsets.symmetric(horizontal: 16.0),
           child: Column(
             children: <Widget>[
+              TimeTrackerPageTitle(),
               Flexible(
                 flex: 2,
                 child: ListView(
@@ -254,14 +256,6 @@ class GenerateReportState extends State<GenerateReportPage> implements ReportsVi
                       EdgeInsets.symmetric(vertical: 16.0, horizontal: 0.0),
                   shrinkWrap: false,
                   children: <Widget>[
-                    Container(
-                      height: 1.5,
-                      color: Colors.black26,
-                    ),
-                    Container(
-                      padding: EdgeInsets.only(bottom: 2.0),
-                      child: Text("${User.me.name}, ${User.me.role.toString().split(".").last}, ${User.me.company}"),
-                    ),
                     projectsDropDown,
                     tasksDropDown,
                     startDateInput,

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import '../data/user.dart';
 
-class NewRecordTitle extends StatefulWidget{
+class TimeTrackerPageTitle extends StatefulWidget{
   @override
   State<StatefulWidget> createState() {
     return new PageTitleState();
@@ -10,12 +10,12 @@ class NewRecordTitle extends StatefulWidget{
 }
 
 
-class PageTitleState extends State<NewRecordTitle>{
+class PageTitleState extends State<TimeTrackerPageTitle>{
 
   @override
   Widget build(BuildContext context) {
     return new Container(
-      padding: const EdgeInsets.only(right: 16.0, left: 16.0, top: 16.0),
+      padding: const EdgeInsets.only(right: 16.0, left: 16.0, top: 8.0),
       child: new Row(
         children: <Widget>[
            Expanded(

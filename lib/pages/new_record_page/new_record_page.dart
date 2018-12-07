@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tikal_time_tracker/ui/new_record_title.dart';
+import 'package:tikal_time_tracker/ui/page_title.dart';
 import 'package:tikal_time_tracker/data/project.dart';
 import 'package:tikal_time_tracker/data/task.dart';
 import 'package:tikal_time_tracker/data/models.dart';
@@ -342,7 +342,7 @@ class NewRecordPageState extends State<NewRecordPage>
                 flex: 4,
                 child: ListView(
                   children: <Widget>[
-                    new NewRecordTitle(),
+                    new TimeTrackerPageTitle(),
                     projectsDropDown,
                     tasksDropDown,
                     datePicker,
