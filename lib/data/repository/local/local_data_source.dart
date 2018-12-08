@@ -9,6 +9,7 @@ import 'package:tikal_time_tracker/data/repository/time_data_source.dart';
 import 'package:tikal_time_tracker/data/database/database_helper.dart';
 import 'dart:async';
 import 'package:sqflite/sqflite.dart';
+import 'package:tikal_time_tracker/network/requests/send_email_form.dart';
 
 class LocalDataSource implements TimeDateSource {
 
@@ -112,6 +113,16 @@ class LocalDataSource implements TimeDateSource {
 
   @override
   Future resetPassword(ResetPasswordForm request) {
+    return null;
+  }
+
+  @override
+  Future sendEmail(SendEmailForm request) {
+    return null;
+  }
+
+  @override
+  Future<SendEmailForm> sendEmailPage() {
     return null;
   }
 

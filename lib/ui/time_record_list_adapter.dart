@@ -18,7 +18,7 @@ class TimeRecordListAdapter extends StatelessWidget{
 
 
   Widget _buildListTile(TimeRecord item, Color color, BuildContext context){
-    print("_buildListTile: ${item.toString()}");
+//    print("_buildListTile: ${item.toString()}");
     return Container(
       decoration: BoxDecoration(
           color: color

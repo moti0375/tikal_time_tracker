@@ -15,6 +15,11 @@ class SendEmailPage extends StatefulWidget {
 class SendEmailPageState extends State<SendEmailPage> implements SendMailContractView{
 
   SendMailContractPresenter presenter;
+  String status = "";
+  TextEditingController toInputTextController;
+  TextEditingController ccInputTextController;
+  TextEditingController subjectInputTextController;
+
 
   @override
   void initState() {
@@ -77,6 +82,8 @@ class SendEmailPageState extends State<SendEmailPage> implements SendMailContrac
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 5),
                 child: TextField(
+                  onChanged: presenter.onToInputTextChanged,
+                  controller: toInputTextController,
                   decoration: InputDecoration(
                       contentPadding:
                           EdgeInsets.symmetric(vertical: 10.0, horizontal: 5.0),
@@ -108,6 +115,8 @@ class SendEmailPageState extends State<SendEmailPage> implements SendMailContrac
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 5),
                 child: TextField(
+                  onChanged: presenter.onCcInputTextChanged,
+                  controller: ccInputTextController,
                   decoration: InputDecoration(
                       contentPadding:
                           EdgeInsets.symmetric(vertical: 10.0, horizontal: 5.0),
@@ -139,6 +148,8 @@ class SendEmailPageState extends State<SendEmailPage> implements SendMailContrac
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 5),
                 child: TextField(
+                  onChanged: presenter.onSubjectInputTextChanged,
+                  controller: subjectInputTextController,
                   decoration: InputDecoration(
                       contentPadding:
                           EdgeInsets.symmetric(vertical: 10.0, horizontal: 5.0),
@@ -171,6 +182,7 @@ class SendEmailPageState extends State<SendEmailPage> implements SendMailContrac
                 height: 25,
                 padding: EdgeInsets.symmetric(horizontal: 5),
                 child: TextField(
+                  onChanged: presenter.onCommentInputTextChanged,
                   decoration: InputDecoration(
                       contentPadding:
                           EdgeInsets.symmetric(vertical: 10.0, horizontal: 5.0),
@@ -188,12 +200,12 @@ class SendEmailPageState extends State<SendEmailPage> implements SendMailContrac
       return Container(
         height: 25.0,
         padding: EdgeInsets.symmetric(horizontal: 35.0, vertical: 35),
-        child: Text("Mail Sent", style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.red),
+        child: Text(status, style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.red),
         textAlign: TextAlign.center,),
       );
     }
 
-    var generateButton = Container(
+    var sendButton = Container(
       padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
       child: Material(
           borderRadius: BorderRadius.circular(10.0),
@@ -206,7 +218,7 @@ class SendEmailPageState extends State<SendEmailPage> implements SendMailContrac
 
             },
             color: Colors.orangeAccent ,
-            child: Text("Generate", style: TextStyle(color: Colors.white)),
+            child: Text("Send", style: TextStyle(color: Colors.white)),
           )),
     );
 
@@ -241,7 +253,7 @@ class SendEmailPageState extends State<SendEmailPage> implements SendMailContrac
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[generateButton],
+                  children: <Widget>[sendButton],
                 ))
           ],
         ),
@@ -256,11 +268,20 @@ class SendEmailPageState extends State<SendEmailPage> implements SendMailContrac
 
   @override
   void showPageDetails(SendEmailForm form) {
-    // TODO: implement showPageDetails
+    setState(() {
+      toInputTextController = TextEditingController(text: form.to);
+      ccInputTextController = TextEditingController(text: form.cc);
+      subjectInputTextController = TextEditingController(text: form.subject);
+      presenter.onToInputTextChanged(form.to);
+      presenter.onCcInputTextChanged(form.cc);
+      presenter.onSubjectInputTextChanged(form.subject);
+    });
   }
 
   @override
-  void showSentStatus() {
-    // TODO: implement showSentStatus
+  void showSentStatus(String status) {
+    setState(() {
+      this.status = status;
+    });
   }
 }

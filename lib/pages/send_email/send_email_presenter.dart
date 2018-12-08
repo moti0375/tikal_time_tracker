@@ -4,9 +4,11 @@ import 'package:tikal_time_tracker/data/repository/time_records_repository.dart'
 
 class SendEmailPresenter implements SendMailContractPresenter{
 
+  static const String TAG = "SendEmailPresenter:";
   TimeRecordsRepository repository;
 
   SendEmailPresenter({this.repository});
+  SendMailContractView view;
 
   String toText;
   String ccText;
@@ -15,7 +17,8 @@ class SendEmailPresenter implements SendMailContractPresenter{
 
   @override
   void subscribe(BaseView view) {
-    // TODO: implement subscribe
+    this.view = view;
+    _loadSendEmailPage();
   }
 
   @override
@@ -25,21 +28,25 @@ class SendEmailPresenter implements SendMailContractPresenter{
 
   @override
   void onToInputTextChanged(String toText) {
+    print("$TAG onToInputTextChanged: $toText");
     this.toText = toText;
   }
 
   @override
   void onCcInputTextChanged(String ccText) {
+    print("$TAG onCcInputTextChanged: $ccText");
     this.ccText = ccText;
   }
 
   @override
   void onCommentInputTextChanged(String commentText) {
+    print("$TAG onCommentInputTextChanged: $commentText");
     this.commentText = commentText;
   }
 
   @override
   void onSubjectInputTextChanged(String subjectText) {
+    print("$TAG onSubjectInputTextChanged: $subjectText");
     this.subjectText = subjectText;
   }
 
@@ -49,6 +56,13 @@ class SendEmailPresenter implements SendMailContractPresenter{
   }
 
   void _handleButtonClick(){
+  }
 
+  void _loadSendEmailPage() {
+    repository.sendEmailPage().then((form){
+      print("_loadSendEmailPage: ${form.toString()}" );
+      view.showPageDetails(form);
+    }, onError: (e){
+    });
   }
 }

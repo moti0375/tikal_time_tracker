@@ -5,6 +5,7 @@ import 'package:http/http.dart';
 import 'package:tikal_time_tracker/data/member.dart';
 import 'package:tikal_time_tracker/data/models.dart';
 import 'package:tikal_time_tracker/data/member.dart';
+import 'package:tikal_time_tracker/network/requests/send_email_form.dart';
 import 'package:tikal_time_tracker/network/time_tracker_api.dart';
 import 'package:tikal_time_tracker/network/requests/reports_form.dart';
 import 'package:tikal_time_tracker/network/requests/update_request.dart';
@@ -173,5 +174,19 @@ class RemoteDateSource implements TimeDateSource {
     }, onError: (e){
       print("There was an error: ${e.toString()}");
     });
+  }
+
+  @override
+  Future<SendEmailForm> sendEmailPage() {
+    return api.sendEmailPage().then((response){
+      return parser.parseSendEmailPage(response.toString());
+    }, onError: (e){
+      print("sendEmailPage: There was an error: ${e.toString()}");
+    });
+  }
+
+  @override
+  Future sendEmail(SendEmailForm request) {
+    return api.sendEmail(request);
   }
 }

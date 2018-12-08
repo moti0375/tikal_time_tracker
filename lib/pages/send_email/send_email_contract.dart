@@ -10,6 +10,6 @@ class SendMailContractPresenter extends BasePresenter{
 
 class SendMailContractView extends BaseView{
   void showPageDetails(SendEmailForm form){}
-  void showSentStatus(){}
+  void showSentStatus(String status){}
   void logOut(){}
 }

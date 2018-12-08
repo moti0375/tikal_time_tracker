@@ -9,6 +9,8 @@ import 'package:tikal_time_tracker/data/models.dart';
 import 'package:tikal_time_tracker/data/member.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:tikal_time_tracker/network/requests/send_email_form.dart';
+
 
 import 'dart:convert';
 
@@ -467,5 +469,32 @@ class DomParser {
 //    print("_getMemberFromCheckbox: id : $id, value: $value, name: $name");
 
     return Member(id: id, value: value, name: name);
+  }
+
+
+  SendEmailForm parseSendEmailPage(String response) {
+
+    String formStart = "<form name=\"mailForm\" method=\"post\">";
+    String formEnd = "form>";
+    String formTableStart = " <table cellspacing=\"4\" cellpadding=\"7\" border=\"0\">";
+    String formBuffer = response.substring(response.indexOf(formStart));
+    formBuffer = formBuffer.substring(0, formBuffer.indexOf(formEnd));
+    formBuffer = formBuffer.substring(formBuffer.indexOf(formTableStart) + formTableStart.length);
+
+    String toStringStartTitle = "<td align=\"right\">To (*):<\/td>";
+    String toString = formBuffer.substring(formBuffer.indexOf(toStringStartTitle) + toStringStartTitle.length);
+    toString = toString.substring(toString.indexOf("value=\"") + 7,  toString.indexOf("\">"));
+
+
+    String ccStringStartTitle = "<td align=\"right\">Cc:<\/td>";
+    String ccString = formBuffer.substring(formBuffer.indexOf(ccStringStartTitle) + ccStringStartTitle.length);
+    ccString = ccString.substring(ccString.indexOf("value=\"") + 7,  ccString.indexOf("\">"));
+
+    String subjectStringStartTitle = "<td align=\"right\">Subject (*):<\/td>";
+    String subjectString = formBuffer.substring(formBuffer.indexOf(subjectStringStartTitle) + subjectStringStartTitle.length);
+    subjectString = subjectString.substring(subjectString.indexOf("value=\"") + 7,  subjectString.indexOf("\">"));
+
+//    debugPrint("parseSendEmailPager: page body: $formBuffer");
+    return SendEmailForm(to: toString, cc: ccString, subject: subjectString);
   }
 }

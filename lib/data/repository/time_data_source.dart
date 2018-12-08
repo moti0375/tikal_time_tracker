@@ -3,6 +3,7 @@ import 'package:tikal_time_tracker/data/member.dart';
 import 'dart:async';
 import 'package:tikal_time_tracker/network/credentials.dart';
 import 'package:tikal_time_tracker/network/requests/reports_form.dart';
+import 'package:tikal_time_tracker/network/requests/send_email_form.dart';
 import 'package:tikal_time_tracker/network/requests/reset_password_form.dart';
 import 'package:tikal_time_tracker/data/models.dart';
 
@@ -22,5 +23,7 @@ class TimeDateSource{
  Future<dynamic> getReport(ReportForm request, Role role){return null;}
  Future<dynamic> resetPasswordPage(){return null;}
  Future<dynamic> resetPassword(ResetPasswordForm login){return null;}
+ Future<dynamic> sendEmailPage(){return null;}
+ Future<dynamic> sendEmail(SendEmailForm request){return null;}
  void updateCredentials(Credentials credentials){}
 }

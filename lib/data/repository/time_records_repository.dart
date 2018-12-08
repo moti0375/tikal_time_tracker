@@ -7,6 +7,7 @@ import 'package:tikal_time_tracker/data/repository/time_data_source.dart';
 import 'package:tikal_time_tracker/data/repository/local/local_data_source.dart';
 import 'package:tikal_time_tracker/data/repository/remote/remote_data_source.dart';
 import 'package:tikal_time_tracker/network/credentials.dart';
+import 'package:tikal_time_tracker/network/requests/send_email_form.dart';
 
 
 class TimeRecordsRepository implements TimeDateSource{
@@ -120,6 +121,16 @@ class TimeRecordsRepository implements TimeDateSource{
   @override
   Future resetPassword(ResetPasswordForm request) {
     return remoteDateSource.resetPassword(request);
+  }
+
+  @override
+  Future sendEmail(SendEmailForm request) {
+    return null;
+  }
+
+  @override
+  Future<SendEmailForm> sendEmailPage() {
+    return remoteDateSource.sendEmailPage();
   }
 
 }
