@@ -112,9 +112,9 @@ class RemoteDateSource implements TimeDateSource {
   }
 
   @override
-  Future<List<Member>> getAllMembers() {
+  Future<List<Member>> getAllMembers(Role role) {
     return api.users().then((response){
-      return parser.parseUsersPage(response);
+      return parser.parseUsersPage(response, role);
     });
   }
 

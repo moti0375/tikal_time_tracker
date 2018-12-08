@@ -74,7 +74,7 @@ class TimePageState extends State<TimePage> with TickerProviderStateMixin
           },
           child: Icon(Icons.add)),
       body: Container(
-        padding: const EdgeInsets.all(32.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.start,

@@ -88,8 +88,8 @@ class TimeRecordsRepository implements TimeDateSource{
   }
 
   @override
-  Future<List<Member>> getAllMembers() {
-    return remoteDateSource.getAllMembers();
+  Future<List<Member>> getAllMembers(Role role) {
+    return remoteDateSource.getAllMembers(role);
   }
 
   @override

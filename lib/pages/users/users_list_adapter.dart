@@ -27,7 +27,7 @@ class UsersListAdapter extends StatelessWidget{
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           mainAxisSize: MainAxisSize.max,
           children: <Widget>[
-            Text("${item.name}", style: TextStyle(fontSize: 15.0)),
+            Text("${item.name}", style: TextStyle(fontSize: 15.0, color: item.hasIncompleteEntry ? Colors.red: Colors.black)),
           ],
         ),
         subtitle: Row(

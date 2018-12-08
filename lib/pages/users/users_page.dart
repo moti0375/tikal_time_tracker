@@ -4,6 +4,7 @@ import 'package:tikal_time_tracker/data/user.dart';
 import 'package:tikal_time_tracker/pages/users/users_presenter.dart';
 import 'package:tikal_time_tracker/pages/users/users_contract.dart';
 import 'package:tikal_time_tracker/pages/users/users_list_adapter.dart';
+import 'package:tikal_time_tracker/ui/page_title.dart';
 import 'package:tikal_time_tracker/data/repository/time_records_repository.dart';
 
 class UsersPage extends StatefulWidget{
@@ -52,20 +53,13 @@ class UsersPageState extends State<UsersPage> implements MembersViewContract{
       );
     }else{
       return Container(
-        padding: const EdgeInsets.only(top: 32.0, left: 16.0, right: 16.0),
+        padding: const EdgeInsets.only(top: 0.0, left: 16.0, right: 16.0),
         child: Column(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Container(
-              height: 1.5,
-              color: Colors.black26,
-            ),
-            Container(
-              padding: EdgeInsets.only(bottom: 2.0),
-              child: Text("${User.me.name}, ${User.me.role.toString().split(".").last}, ${User.me.company}"),
-            ),
+           TimeTrackerPageTitle(),
             Expanded(
               child:  UsersListAdapter(items: _users),
             )

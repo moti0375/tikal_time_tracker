@@ -17,7 +17,7 @@ class TimeDateSource{
  Future<dynamic> singIn(String userName, String password){return null;}
  Future<dynamic> login(String email, String password){return null;}
  Future<dynamic> timePage(){return null;}
- Future<List<Member>> getAllMembers(){return null;}
+ Future<List<Member>> getAllMembers(Role role){return null;}
  Future<dynamic> reportsPage(Role role){return null;}
  Future<List<TimeRecord>> generateReport(ReportForm request){return null;}
  Future<dynamic> getReport(ReportForm request, Role role){return null;}

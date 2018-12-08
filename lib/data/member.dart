@@ -7,12 +7,14 @@ class Member{
   String id;
   int value;
   bool checked = true;
+  bool hasIncompleteEntry = false;
 
-  Member({this.name, this.email, this.role, this.id, this.value});
+  Member({this.name, this.email, this.role, this.id, this.value, this.hasIncompleteEntry});
+
 
   @override
   String toString() {
-    return '{name: $name, email: $email, role: $role, id: $id, value: $value}';
+    return 'Member{name: $name, email: $email, role: $role, id: $id, value: $value, checked: $checked, hasIncompleteEntry: $hasIncompleteEntry}';
   }
 
   String toJson(){

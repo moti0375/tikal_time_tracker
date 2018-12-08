@@ -82,7 +82,7 @@ class LocalDataSource implements TimeDateSource {
   }
 
   @override
-  Future<List<Member>> getAllMembers() {
+  Future<List<Member>> getAllMembers(Role role) {
     return null;
   }
 

@@ -1,6 +1,6 @@
 import 'users_contract.dart';
 import 'package:tikal_time_tracker/data/repository/time_records_repository.dart';
-
+import 'package:tikal_time_tracker/data/user.dart';
 class UsersPresenter implements MembersPresenterContract{
 
 
@@ -12,7 +12,7 @@ class UsersPresenter implements MembersPresenterContract{
   @override
   void loadUsers() {
     view.setLoadingIndicator(true);
-    repository.getAllMembers().then((response){
+    repository.getAllMembers(User.me.role).then((response){
       print("loadUsers: ${response.toString()}");
       view.setLoadingIndicator(false);
       view.showMembers(response);

@@ -243,7 +243,8 @@ class DomParser {
     return formatter.parse(timeStr.trim());
   }
 
-  List<Member> parseUsersPage(String domStr) {
+  List<Member> parseUsersPage(String domStr, Role myRole) {
+
     String start =
         "<table cellspacing=\"1\" cellpadding=\"3\" border=\"0\" width=\"100%\">";
     String end = "</table>";
@@ -253,6 +254,9 @@ class DomParser {
 
     List<String> rows = buffer.split("</tr>");
     rows.removeAt(0);
+    if(myRole != Role.User){
+      rows.removeAt(0);
+    }
     rows.removeLast();
 
     List<Member> members = rows.map((r) {
@@ -262,12 +266,29 @@ class DomParser {
       }).toList();
 
       cells.removeLast();
+      if(myRole != Role.User){
+        return createMemberForManager(cells);
+      }
+
       Role role = _getRoleFromRoleString(cells[2]);
-      return Member(name: cells[0], email: cells[1], role: role);
+      return Member(name: cells[0], email: cells[1], role: role, hasIncompleteEntry: false);
     }).toList();
 
-    // print("members: ${members.toString()}");
+//     print("members: ${members.toString()}");
     return members;
+  }
+
+  Member createMemberForManager(List<String> cells){
+    String name;
+    bool hasIncompleteEntry = false;
+
+    if(cells[0].contains("User has an uncompleted time entry")){
+      hasIncompleteEntry = true;
+    }
+    name = cells[0].substring(cells[0].indexOf("span>") + 5).trim();
+    debugPrint("user: ${cells[0]}" );
+    Role role = _getRoleFromRoleString(cells[2]);
+    return Member(name: name, email: cells[1], role: role, hasIncompleteEntry: hasIncompleteEntry);
   }
 
   List<TimeRecord> parseReportPage(String domStr, Role role) {
@@ -393,7 +414,7 @@ class DomParser {
             buffer.indexOf("</table>"))
         .trim();
     List<String> trs = buffer.split("<tr>");
-//    debugPrint("tr: $trs");
+    debugPrint("tr: $trs");
 
     trs.removeAt(0);
     trs = trs.map((tr) {
@@ -406,7 +427,7 @@ class DomParser {
     trs.forEach((tds) {
       List<String> b = tds.split("</td>");
       b.removeLast();
-      print("${b.length}");
+      print("$b: ${b.length}");
       b.forEach((cb) {
         Member member = _getMemberFromCheckbox(cb.trim());
         if(member != null){
@@ -457,8 +478,15 @@ class DomParser {
       return null;
     }
 
-    id = cbString.substring(
-        cbString.indexOf("id=\"") + 4, cbString.indexOf("checked=") - 2);
+    if(cbString.contains("checked")){
+      id = cbString.substring(
+          cbString.indexOf("id=\"") + 4, cbString.indexOf("checked=") - 2);
+
+    }else{
+      id = cbString.substring(
+          cbString.indexOf("id=\"") + 4, cbString.indexOf("value=") - 2);
+    }
+
     String needle = "value=\"";
     var b = cbString.substring(cbString.indexOf(needle) + needle.length);
     b = b.substring(0, b.indexOf("\""));

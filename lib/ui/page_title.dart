@@ -15,7 +15,7 @@ class PageTitleState extends State<TimeTrackerPageTitle>{
   @override
   Widget build(BuildContext context) {
     return new Container(
-      padding: const EdgeInsets.only(right: 16.0, left: 16.0, top: 8.0),
+      padding: const EdgeInsets.only(right: 16.0, left: 16.0, top: 8.0, bottom: 8.0),
       child: new Row(
         children: <Widget>[
            Expanded(
@@ -26,7 +26,7 @@ class PageTitleState extends State<TimeTrackerPageTitle>{
                   children: <Widget>[
                     Container(
                       padding: EdgeInsets.only(bottom: 2.0),
-                      child: Text("${User.me.name}, ${User.me.role}, ${User.me.company}"),
+                      child: Text("${User.me.name}, ${User.me.role.toString().split(".").last}, ${User.me.company}"),
                     )
                   ],
                 ),

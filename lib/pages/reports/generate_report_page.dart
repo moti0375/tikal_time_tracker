@@ -253,7 +253,7 @@ class GenerateReportState extends State<GenerateReportPage> implements ReportsVi
                 flex: 2,
                 child: ListView(
                   padding:
-                      EdgeInsets.symmetric(vertical: 16.0, horizontal: 0.0),
+                      EdgeInsets.symmetric(vertical: 8.0, horizontal: 0.0),
                   shrinkWrap: false,
                   children: <Widget>[
                     projectsDropDown,
