@@ -61,6 +61,7 @@ class SendEmailPresenter implements SendMailContractPresenter{
     if((toText != null && toText.isNotEmpty) &&  (subjectText != null && subjectText.isNotEmpty)){
       SendEmailForm request = SendEmailForm(to: toText, cc: ccText, subject: subjectText, comment: commentText);
       repository.sendEmail(request).then((response){
+        print("_handleButtonClick: $response");
         view.showSentStatus(response);
       }, onError: (e){
         _handleError(e);

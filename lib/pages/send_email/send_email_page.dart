@@ -198,10 +198,10 @@ class SendEmailPageState extends State<SendEmailPage> implements SendMailContrac
 
     Widget statusRow() {
       return Container(
-        height: 25.0,
+        height: 15,
         padding: EdgeInsets.symmetric(horizontal: 35.0, vertical: 35),
         child: Text(status, style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.red),
-        textAlign: TextAlign.center,),
+        textAlign: TextAlign.center),
       );
     }
 
@@ -215,6 +215,9 @@ class SendEmailPageState extends State<SendEmailPage> implements SendMailContrac
             minWidth: 200.0,
             height: 42.0,
             onPressed: () {
+              setState(() {
+                status = "";
+              });
               presenter.onSendMailButtonClicked();
             },
             color: Colors.orangeAccent ,
@@ -253,7 +256,9 @@ class SendEmailPageState extends State<SendEmailPage> implements SendMailContrac
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[sendButton],
+                  children: <Widget>[
+                    sendButton
+                  ],
                 ))
           ],
         ),
