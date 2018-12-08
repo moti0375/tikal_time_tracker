@@ -125,7 +125,7 @@ class TimeRecordsRepository implements TimeDateSource{
 
   @override
   Future sendEmail(SendEmailForm request) {
-    return null;
+    return remoteDateSource.sendEmail(request);
   }
 
   @override

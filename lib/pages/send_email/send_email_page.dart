@@ -73,7 +73,7 @@ class SendEmailPageState extends State<SendEmailPage> implements SendMailContrac
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Expanded(
-                child: Text("To: ",
+                child: Text("To(*): ",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         fontSize: 20.0, fontWeight: FontWeight.bold))),
@@ -139,7 +139,7 @@ class SendEmailPageState extends State<SendEmailPage> implements SendMailContrac
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Expanded(
-                child: Text("Subject: ",
+                child: Text("Subject(*): ",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         fontSize: 20.0, fontWeight: FontWeight.bold))),
@@ -215,7 +215,7 @@ class SendEmailPageState extends State<SendEmailPage> implements SendMailContrac
             minWidth: 200.0,
             height: 42.0,
             onPressed: () {
-
+              presenter.onSendMailButtonClicked();
             },
             color: Colors.orangeAccent ,
             child: Text("Send", style: TextStyle(color: Colors.white)),

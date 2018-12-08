@@ -17,6 +17,7 @@ import 'package:tikal_time_tracker/network/serializers/add_time_serializer.dart'
 import 'package:tikal_time_tracker/network/serializers/delete_request_serializer.dart';
 import 'package:tikal_time_tracker/network/serializers/reports_form_serializer.dart';
 import 'package:tikal_time_tracker/network/serializers/reset_password_serializer.dart';
+import 'package:tikal_time_tracker/network/serializers/send_email_form_serializer.dart';
 import 'package:tikal_time_tracker/network/serializers/update_time_serializer.dart';
 import 'package:tikal_time_tracker/network/requests/delete_request.dart';
 import 'package:tikal_time_tracker/network/requests/login_request.dart';
@@ -89,6 +90,7 @@ class RemoteDateSource implements TimeDateSource {
     serializers.add(UpdateTimeSerializer());
     serializers.add(DeleteRequestSerializer());
     serializers.add(ResetPasswordSerializer());
+    serializers.add(SendEmailSerializer());
     api = TimeTrackerApi(
         base: route("https://planet.tikalk.com").before((route) {
           print("Metadata: ${route.metadataMap}");
@@ -187,6 +189,8 @@ class RemoteDateSource implements TimeDateSource {
 
   @override
   Future sendEmail(SendEmailForm request) {
-    return api.sendEmail(request);
+    return api.sendEmail(request).then((response){
+      return parser.parseSendEmailResponse(response);
+    });
   }
 }
