@@ -497,4 +497,14 @@ class DomParser {
 //    debugPrint("parseSendEmailPager: page body: $formBuffer");
     return SendEmailForm(to: toString, cc: ccString, subject: subjectString);
   }
+
+
+  String parseSendEmailResponse(String response) {
+    debugPrint("parseSendEmailResponse: $response");
+    if(response.contains("Report sent")){
+      return "Report sent";
+    } else{
+      return "Failed to sent report";
+    }
+  }
 }

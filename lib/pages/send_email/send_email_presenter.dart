@@ -1,6 +1,7 @@
 import 'package:tikal_time_tracker/pages/mvp_base.dart';
 import 'package:tikal_time_tracker/pages/send_email/send_email_contract.dart';
 import 'package:tikal_time_tracker/data/repository/time_records_repository.dart';
+import 'package:tikal_time_tracker/network/requests/send_email_form.dart';
 
 class SendEmailPresenter implements SendMailContractPresenter{
 
@@ -56,6 +57,16 @@ class SendEmailPresenter implements SendMailContractPresenter{
   }
 
   void _handleButtonClick(){
+
+    if((toText != null && toText.isNotEmpty) &&  (subjectText != null && subjectText.isNotEmpty)){
+      SendEmailForm request = SendEmailForm(to: toText, cc: ccText, subject: subjectText, comment: commentText);
+      repository.sendEmail(request).then((response){
+        view.showSentStatus(response);
+      }, onError: (e){
+        _handleError(e);
+      });
+    }
+
   }
 
   void _loadSendEmailPage() {
@@ -63,6 +74,16 @@ class SendEmailPresenter implements SendMailContractPresenter{
       print("_loadSendEmailPage: ${form.toString()}" );
       view.showPageDetails(form);
     }, onError: (e){
+      _handleError(e);
     });
+  }
+
+  void _handleError(dynamic e){
+    if(e is RangeError){
+      print("${e.message}");
+    }else{
+      print(e);
+      view.logOut();
+    }
   }
 }

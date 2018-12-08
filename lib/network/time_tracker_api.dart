@@ -101,5 +101,4 @@ class TimeTrackerApi extends _$TimeTrackerApiClient implements ApiClient{
 
   @PostReq(path: "report_send.php")
   Future<dynamic> sendEmail(@AsForm() SendEmailForm request);
-
 }
