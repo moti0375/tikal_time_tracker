@@ -10,6 +10,7 @@ import 'package:tikal_time_tracker/ui/date_picker_widget.dart';
 import 'package:tikal_time_tracker/utils/action_choice.dart';
 import 'package:tikal_time_tracker/pages/time/time_presenter.dart';
 import 'package:tikal_time_tracker/pages/time/time_contract.dart';
+import 'package:tikal_time_tracker/pages/about_screen/about_screen.dart';
 import 'package:tikal_time_tracker/utils/page_transition.dart';
 
 class TimePage extends StatefulWidget {
@@ -24,7 +25,8 @@ class TimePageState extends State<TimePage> with TickerProviderStateMixin
 
   List<Choice> choices = const <Choice>[
     const Choice(
-        action: Action.Logout, title: "Logout", icon: Icons.transit_enterexit)
+        action: Action.Logout, title: "Logout", icon: Icons.transit_enterexit),
+    const Choice(action: Action.About, title: "About", icon: Icons.info_outline)
   ];
 
   DateTime _selectedDate;
@@ -87,8 +89,7 @@ class TimePageState extends State<TimePage> with TickerProviderStateMixin
             ),
             Container(
               padding: EdgeInsets.only(bottom: 2.0),
-              child:
-                  Text("${User.me.name}, ${User.me.role.toString().split(".").last}, ${User.me.company}"),
+              child: Text("${User.me.name}, ${User.me.role.toString().split(".").last}, ${User.me.company}"),
             ),
             Expanded(
               child: (_records == null || _records.isEmpty)
@@ -109,6 +110,9 @@ class TimePageState extends State<TimePage> with TickerProviderStateMixin
       if (choice.action == Action.Logout) {
         presenter.onLogoutClicked();
       }
+      if(choice.action == Action.About){
+        presenter.onAboutClicked();
+      }
     });
   }
 
@@ -119,7 +123,22 @@ class TimePageState extends State<TimePage> with TickerProviderStateMixin
 
   AppBar _buildAppBar({String title}) {
     return AppBar(
-      title: Text(title),
+      title: Row(
+        children: [
+          Container(
+            margin: EdgeInsets.all(8.0),
+            width: 24.0,
+            height: 24.0,
+            child: Hero(
+              tag: 'hero',
+              child: Image.asset(
+                'assets/logo_no_background.png',
+              ),
+            ),
+          ),
+          Text(title)
+        ]
+      ),
       actions: <Widget>[
         PopupMenuButton<Choice>(
           onSelected: _select,
@@ -271,6 +290,18 @@ class TimePageState extends State<TimePage> with TickerProviderStateMixin
   @override
   void logOut() {
     _logout();
+  }
+
+  @override
+  void showAboutScreen() {
+    _navigateToAboutScreen();
+  }
+
+  void _navigateToAboutScreen() {
+    Navigator.of(context)
+        .push(new PageTransition(
+        widget:new AboutScreen())
+    );
   }
 }
 

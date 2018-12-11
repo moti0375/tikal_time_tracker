@@ -73,8 +73,9 @@ class LoginPageState extends State<LoginPage> {
         child: CircleAvatar(
           backgroundColor: Colors.transparent,
           radius: 48.0,
-          child: Image.asset('assets/logo.png'),
-        ));
+          child: Image.asset('assets/logo_no_background.png'),
+        )
+    );
 
 //    if(_email != null && _email.isNotEmpty){
 //      emailController.value = TextEditingValue(text: _email);

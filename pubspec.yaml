@@ -15,6 +15,7 @@ dependencies:
   intl: ^0.15.7
   html: any
   ktoast: ^1.0.3
+  url_launcher: ^4.0.2
 
 dev_dependencies:
   jaguar_retrofit_gen:
@@ -25,7 +26,7 @@ dev_dependencies:
 flutter_icons:
   android: true
   ios: true
-  image_path: "assets/logo.png"
+  image_path: "assets/logo_no_background.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec
@@ -41,7 +42,10 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/logo.png
+    - assets/logo_no_background.png
     - assets/drawer.png
+    - assets/flutter_logo.png
+    - assets/dart_logo.png
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -5,10 +5,12 @@ class TimeContractPresenter extends BasePresenter{
   void loadTimeForDate(DateTime date){}
   void setProgressView(bool visible){}
   void onLogoutClicked(){}
+  void onAboutClicked(){}
 }
 
 class TimeContractView extends BaseView{
     void openNewRecordPage(TimeRecord item){}
     void timeLoadFinished(List<TimeRecord> timeRecord){}
     void logOut(){}
+    void showAboutScreen(){}
 }

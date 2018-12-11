@@ -75,6 +75,7 @@ class SendEmailPageState extends State<SendEmailPage> implements SendMailContrac
             Expanded(
                 child: Text("To(*): ",
                     textAlign: TextAlign.center,
+                    maxLines: 1,
                     style: TextStyle(
                         fontSize: 20.0, fontWeight: FontWeight.bold))),
             Expanded(
@@ -108,6 +109,7 @@ class SendEmailPageState extends State<SendEmailPage> implements SendMailContrac
             Expanded(
                 child: Text("CC: ",
                     textAlign: TextAlign.center,
+                    maxLines: 1,
                     style: TextStyle(
                         fontSize: 20.0, fontWeight: FontWeight.bold))),
             Expanded(
@@ -141,6 +143,7 @@ class SendEmailPageState extends State<SendEmailPage> implements SendMailContrac
             Expanded(
                 child: Text("Subject(*): ",
                     textAlign: TextAlign.center,
+                    maxLines: 1,
                     style: TextStyle(
                         fontSize: 20.0, fontWeight: FontWeight.bold))),
             Expanded(
@@ -173,6 +176,7 @@ class SendEmailPageState extends State<SendEmailPage> implements SendMailContrac
           children: <Widget>[
             Flexible(
                 child: Text("Comment: ",
+                    maxLines: 1,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         fontSize: 20.0, fontWeight: FontWeight.bold))),

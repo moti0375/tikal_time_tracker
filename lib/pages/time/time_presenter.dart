@@ -60,4 +60,9 @@ class TimePresenter implements TimeContractPresenter{
   void onLogoutClicked() {
     view.logOut();
   }
+
+  @override
+  void onAboutClicked() {
+    view.showAboutScreen();
+  }
 }

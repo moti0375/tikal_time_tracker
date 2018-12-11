@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-enum Action { Logout, Close, SendEmail }
+enum Action { Logout, Close, SendEmail, About }
 
 class Choice {
   final Action action;

@@ -55,7 +55,7 @@ class GenerateReportState extends State<GenerateReportPage> implements ReportsVi
     final projectsDropDown = Container(
         margin: EdgeInsets.symmetric(vertical: 4.0),
         decoration: BoxDecoration(
-            border: Border.all(width: 0.5, color: Colors.black12)),
+            border: Border.all(width: 0.5, color: Colors.black45)),
         padding: EdgeInsets.symmetric(horizontal: 10.0),
         child: DropdownButtonHideUnderline(
           child: new DropdownButton(
