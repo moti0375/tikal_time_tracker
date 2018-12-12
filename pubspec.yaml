@@ -16,6 +16,8 @@ dependencies:
   html: any
   ktoast: ^1.0.3
   url_launcher: ^4.0.2
+  firebase_core: ^0.2.5
+  firebase_analytics: ^1.0.4
 
 dev_dependencies:
   jaguar_retrofit_gen:

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tikal_time_tracker/pages/login_page.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
 
 
 void main() {
@@ -8,6 +10,7 @@ void main() {
 
 class TimeTracker extends StatelessWidget {
 
+  final FirebaseAnalytics analytics = FirebaseAnalytics();
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
@@ -15,6 +18,9 @@ class TimeTracker extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         debugShowMaterialGrid: false,
         showSemanticsDebugger: false,
+        navigatorObservers: [
+          FirebaseAnalyticsObserver(analytics: analytics)
+        ],
         theme: ThemeData(
             primarySwatch: Colors.orange,
             textSelectionColor: Colors.white,
