@@ -247,10 +247,13 @@ class GenerateReportState extends State<GenerateReportPage> implements ReportsVi
         body: Container(
           padding: EdgeInsets.symmetric(horizontal: 16.0),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               TimeTrackerPageTitle(),
-              Flexible(
-                flex: 2,
+              Expanded(
+                flex: 3,
                 child: ListView(
                   padding:
                       EdgeInsets.symmetric(vertical: 8.0, horizontal: 0.0),
@@ -265,12 +268,12 @@ class GenerateReportState extends State<GenerateReportPage> implements ReportsVi
                 ),
               ),
               Flexible(
-                  flex: 1,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[generateButton],
-                  ))
+                child:  ListView(
+                  children: <Widget>[
+                    generateButton,
+                  ],
+                ),
+              )
             ],
           ),
         ));

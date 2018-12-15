@@ -150,12 +150,18 @@ class LoginPageState extends State<LoginPage> {
 
     Widget getLoginInfo() {
       if (_loggingIn) {
-        return SizedBox(
-            width: 15.0,
-            height: 15.0,
-            child: CircularProgressIndicator(
-                value: null,
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.blue)));
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            SizedBox(
+                width: 15.0,
+                height: 15.0,
+                child: CircularProgressIndicator(
+                    value: null,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.blue))
+            )
+          ],
+        );
       } else {
         return Container(
             height: 15,
@@ -172,24 +178,38 @@ class LoginPageState extends State<LoginPage> {
       backgroundColor: Colors.white,
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 50.0),
           child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
-              logo,
-              SizedBox(height: 48.0),
-              email,
-              SizedBox(height: 15.0),
-              password,
-              SizedBox(height: 24.0),
-              AnimationButton(buttonText: "Login",callback: () {
-                print("onPressed");
-                _login(_email, _password);
-              }),
-              SizedBox(height: 8.0),
-              forgotLabel,
-              getLoginInfo()
+              Flexible(
+                flex: 1,
+                child: ListView(
+                  children: <Widget>[
+                    logo,
+                    SizedBox(height: 10.0),
+                    email,
+                    SizedBox(height: 8.0),
+                    password,
+                    SizedBox(height: 24.0),
+                  ],
+                ),
+              ),
+              Flexible(
+                flex: 1,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    AnimationButton(buttonText: "Login",callback: () {
+                      print("onPressed");
+                      _login(_email, _password);
+                    }),
+                    forgotLabel,
+                    getLoginInfo()
+                  ],
+                ),
+              )
             ],
           ),
         ),
@@ -276,12 +296,9 @@ class LoginPageState extends State<LoginPage> {
     String userName;
     String password;
 
-    Widget dialogContent = Container(
+    Widget dialogContent = SingleChildScrollView(
       padding: EdgeInsets.all(4.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
+      child: ListBody(
         children: <Widget>[
           Container(
             padding: const EdgeInsets.only(
@@ -299,7 +316,7 @@ class LoginPageState extends State<LoginPage> {
           ),
           Container(
             padding: const EdgeInsets.only(
-                left: 8.0, right: 8.0, top: 4.0, bottom: 0.0),
+                left: 8.0, right: 8.0, top: 4.0, bottom: 4.0),
             child: new TextField(
                 obscureText: true,
                 onChanged: (value) {
@@ -335,6 +352,7 @@ class LoginPageState extends State<LoginPage> {
         FlatButton(
           onPressed: () {
             Navigator.pop(context);
+            _signIn();
           },
           child: Text("Cancel"),
         ),
