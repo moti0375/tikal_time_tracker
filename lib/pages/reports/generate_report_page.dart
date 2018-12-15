@@ -253,7 +253,7 @@ class GenerateReportState extends State<GenerateReportPage> implements ReportsVi
             children: <Widget>[
               TimeTrackerPageTitle(),
               Expanded(
-                flex: 3,
+                flex: 4,
                 child: ListView(
                   padding:
                       EdgeInsets.symmetric(vertical: 8.0, horizontal: 0.0),
@@ -268,11 +268,13 @@ class GenerateReportState extends State<GenerateReportPage> implements ReportsVi
                 ),
               ),
               Flexible(
-                child:  ListView(
-                  children: <Widget>[
-                    generateButton,
-                  ],
-                ),
+                child: SingleChildScrollView(
+                  child:ListBody(
+                    children: <Widget>[
+                      generateButton,
+                    ],
+                  ),
+                )
               )
             ],
           ),

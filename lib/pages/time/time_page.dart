@@ -129,10 +129,13 @@ class TimePageState extends State<TimePage> with TickerProviderStateMixin
             margin: EdgeInsets.all(8.0),
             width: 24.0,
             height: 24.0,
-            child: Hero(
-              tag: 'hero',
-              child: Image.asset(
-                'assets/logo_no_background.png',
+            child: InkWell(
+              onTap: showAboutScreen,
+              child: Hero(
+                tag: 'hero',
+                child: Image.asset(
+                  'assets/logo_no_background.png',
+                ),
               ),
             ),
           ),

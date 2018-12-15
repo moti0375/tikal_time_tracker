@@ -179,39 +179,27 @@ class LoginPageState extends State<LoginPage> {
       body: Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 50.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              Flexible(
-                flex: 1,
-                child: ListView(
-                  children: <Widget>[
-                    logo,
-                    SizedBox(height: 10.0),
-                    email,
-                    SizedBox(height: 8.0),
-                    password,
-                    SizedBox(height: 24.0),
-                  ],
-                ),
-              ),
-              Flexible(
-                flex: 1,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    AnimationButton(buttonText: "Login",callback: () {
-                      print("onPressed");
-                      _login(_email, _password);
-                    }),
-                    forgotLabel,
-                    getLoginInfo()
-                  ],
-                ),
-              )
-            ],
-          ),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                logo,
+                SizedBox(height: 8.0),
+                email,
+                SizedBox(height: 8.0),
+                password,
+                SizedBox(height: 8.0),
+                AnimationButton(buttonText: "Login",callback: () {
+                  print("onPressed");
+                  _login(_email, _password);
+                }),
+                forgotLabel,
+                getLoginInfo()
+              ],
+            ),
+          )
+          ,
         ),
       ),
     );

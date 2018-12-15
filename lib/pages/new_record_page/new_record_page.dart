@@ -292,17 +292,19 @@ class NewRecordPageState extends State<NewRecordPage>
     Row _buildButtonsRow(){
       List<Widget> children;
       MainAxisAlignment alignment;
+      MainAxisSize mainAxisSize;
       if(widget.flow == NewRecordFlow.update_record){
         children = [_saveButton, _deleteButton];
-        alignment = MainAxisAlignment.spaceBetween;
+        alignment = MainAxisAlignment.spaceAround;
       }else{
         children =  [_saveButton];
         alignment = MainAxisAlignment.center;
+
       }
 
       return Row(
         mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: alignment,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: children,
       );
     }
@@ -337,6 +339,7 @@ class NewRecordPageState extends State<NewRecordPage>
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 16.0),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               Flexible(
                 flex: 4,
@@ -363,7 +366,8 @@ class NewRecordPageState extends State<NewRecordPage>
                         flex: 1,
                           child: _buildButtonsRow())
                     ],
-                  ))
+                  )
+              )
             ],
           ),
         ),
