@@ -52,6 +52,14 @@ class Strings{
   static const delete_button_text = "Delete";
   static const note_hint = "Note:";
 
+  //Send email page
+  static const send_email_page_title = "Send Email";
+  static const from_title = "From: ";
+  static const from_hint = "Anuko Time Tracker";
+  static const cc_title = "CC: ";
+  static const subject_title = "Subject(*): ";
+  static const comment_title = "Comment: ";
+  static const send_button_text = "Send";
 
 
 }

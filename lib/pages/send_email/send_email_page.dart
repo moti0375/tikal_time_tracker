@@ -4,6 +4,7 @@ import 'package:tikal_time_tracker/network/requests/send_email_form.dart';
 import 'package:tikal_time_tracker/data/repository/time_records_repository.dart';
 import 'package:tikal_time_tracker/pages/send_email/send_email_contract.dart';
 import 'package:tikal_time_tracker/pages/send_email/send_email_presenter.dart';
+import 'package:tikal_time_tracker/resources/strings.dart';
 
 class SendEmailPage extends StatefulWidget {
   @override
@@ -40,7 +41,7 @@ class SendEmailPageState extends State<SendEmailPage> implements SendMailContrac
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Expanded(
-                child: Text("From: ",
+                child: Text(Strings.from_title,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         fontSize: 20.0, fontWeight: FontWeight.bold))),
@@ -51,7 +52,7 @@ class SendEmailPageState extends State<SendEmailPage> implements SendMailContrac
                 child: TextField(
                   enabled: false,
                   decoration: InputDecoration(
-                      hintText: "Anuko Time Tracker",
+                      hintText: Strings.from_hint,
                       contentPadding:
                           EdgeInsets.symmetric(vertical: 10.0, horizontal: 5.0),
                       border: OutlineInputBorder(
@@ -107,7 +108,7 @@ class SendEmailPageState extends State<SendEmailPage> implements SendMailContrac
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Expanded(
-                child: Text("CC: ",
+                child: Text(Strings.cc_title,
                     textAlign: TextAlign.center,
                     maxLines: 1,
                     style: TextStyle(
@@ -141,7 +142,7 @@ class SendEmailPageState extends State<SendEmailPage> implements SendMailContrac
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Expanded(
-                child: Text("Subject(*): ",
+                child: Text(Strings.subject_title,
                     textAlign: TextAlign.center,
                     maxLines: 1,
                     style: TextStyle(
@@ -175,7 +176,7 @@ class SendEmailPageState extends State<SendEmailPage> implements SendMailContrac
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Flexible(
-                child: Text("Comment: ",
+                child: Text(Strings.comment_title,
                     maxLines: 1,
                     textAlign: TextAlign.center,
                     style: TextStyle(
@@ -225,13 +226,13 @@ class SendEmailPageState extends State<SendEmailPage> implements SendMailContrac
               presenter.onSendMailButtonClicked();
             },
             color: Colors.orangeAccent ,
-            child: Text("Send", style: TextStyle(color: Colors.white)),
+            child: Text(Strings.send_button_text, style: TextStyle(color: Colors.white)),
           )),
     );
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Send Email"),
+        title: Text(Strings.send_email_page_title),
       ),
       backgroundColor: Colors.white,
       body: Container(
