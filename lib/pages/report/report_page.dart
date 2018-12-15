@@ -6,17 +6,18 @@ import 'package:tikal_time_tracker/ui/time_record_list_adapter.dart';
 import 'package:tikal_time_tracker/utils/action_choice.dart';
 import 'package:tikal_time_tracker/utils/page_transition.dart';
 import 'package:tikal_time_tracker/pages/send_email/send_email_page.dart';
+import 'package:tikal_time_tracker/resources/strings.dart';
 
 class ReportPage extends StatelessWidget implements ListAdapterClickListener {
   final Report report;
 
-  List<Choice> choices = const <Choice>[
+  final List<Choice> choices = const <Choice>[
     const Choice(
-        action: Action.SendEmail, title: "Send Email", icon: Icons.email)
+        action: Action.SendEmail, title: Strings.action_send_email, icon: Icons.email)
   ];
 
   ReportPage({this.report}) {
-    print("Total: ${report.getTotalString()}");
+   // print("Total: ${report.getTotalString()}");
   }
 
 
@@ -24,7 +25,7 @@ class ReportPage extends StatelessWidget implements ListAdapterClickListener {
   Widget build(BuildContext context) {
     void _select(Choice choice) {
       if (choice.action == Action.SendEmail) {
-        print("Navigate to SendEmail page");
+      //  print("Navigate to SendEmail page");
         Navigator.of(context)
             .push(new PageTransition(
             widget: SendEmailPage())
@@ -58,7 +59,7 @@ class ReportPage extends StatelessWidget implements ListAdapterClickListener {
     }
 
     return Scaffold(
-      appBar: _buildAppBar(title: "Report"),
+      appBar: _buildAppBar(title: Strings.report_page_title),
       body: Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -125,7 +126,7 @@ class ReportPage extends StatelessWidget implements ListAdapterClickListener {
                       .last}",
                   textAlign: TextAlign.start,
                 ),
-                Text("Total: ${report.getTotalString()}",
+                Text("${Strings.total} ${report.getTotalString()}",
                     textAlign: TextAlign.end)
               ],
             ),
@@ -137,11 +138,9 @@ class ReportPage extends StatelessWidget implements ListAdapterClickListener {
 
   @override
   onListItemClicked(TimeRecord item) {
-    print("Item Clicked: $item");
   }
 
   @override
   onListItemLongClick(TimeRecord item) {
-    print("Item LongClicked: $item");
   }
 }

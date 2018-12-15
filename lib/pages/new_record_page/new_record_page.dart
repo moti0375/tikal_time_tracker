@@ -10,6 +10,7 @@ import 'package:tikal_time_tracker/ui/date_picker_widget.dart';
 import 'package:tikal_time_tracker/pages/new_record_page/new_record_contract.dart';
 import 'package:tikal_time_tracker/pages/new_record_page/new_record_presenter.dart';
 import 'package:tikal_time_tracker/ui/time_picker.dart';
+import 'package:tikal_time_tracker/resources/strings.dart';
 
 // ignore: must_be_immutable
 class NewRecordPage extends StatefulWidget {
@@ -74,7 +75,7 @@ class NewRecordPageState extends State<NewRecordPage>
 
   @override
   initNewRecord() {
-    print("_initNewRecord:");
+//    print("_initNewRecord:");
     startTimeController = new TextEditingController(
       text: "",
     );
@@ -88,7 +89,7 @@ class NewRecordPageState extends State<NewRecordPage>
 
   @override
   initUpdateRecord() {
-    print("_initUpdateRecord: date: ${widget.timeRecord.date.toString()}");
+//    print("_initUpdateRecord: date: ${widget.timeRecord.date.toString()}");
     _selectedDate = widget.timeRecord.date;
     _startTime = widget.timeRecord.start;
     _finishTime = widget.timeRecord.finish;
@@ -106,7 +107,7 @@ class NewRecordPageState extends State<NewRecordPage>
   @override
   void showSelectedProject(Project value) {
     setState(() {
-      print("_onProjectSelected");
+//      print("_onProjectSelected");
       _selectedProject = value;
     });
   }
@@ -154,7 +155,7 @@ class NewRecordPageState extends State<NewRecordPage>
               hint: Container(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  "Select a Project",
+                  Strings.drop_down_project_title,
                   style: TextStyle(fontSize: 24.0, color: Colors.black26),
                 ),
               ),
@@ -184,7 +185,7 @@ class NewRecordPageState extends State<NewRecordPage>
               hint: Container(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  "Select a Task",
+                  Strings.drop_down_task_title,
                   style: TextStyle(fontSize: 24.0, color: Colors.black26),
                 ),
               ),
@@ -215,7 +216,7 @@ class NewRecordPageState extends State<NewRecordPage>
     });
 
     Widget datePicker = TimeTrackerDatePicker(initializedDateTime: _selectedDate, onSubmittedCallback: (date){
-      print("datePicker: callback ${date.toString()}");
+//      print("datePicker: callback ${date.toString()}");
       presenter.dateSelected(date);
     });
 
@@ -230,7 +231,7 @@ class NewRecordPageState extends State<NewRecordPage>
                     enabled: false,
                     controller: durationInputController,
                     decoration: InputDecoration(
-                        hintText: "Duration",
+                        hintText: Strings.duration_hint,
                         contentPadding:
                             EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
                         border: OutlineInputBorder(
@@ -264,7 +265,7 @@ class NewRecordPageState extends State<NewRecordPage>
           color: isButtonEnabled
               ? Colors.orangeAccent
               : Colors.grey,
-          child: Text("Save",
+          child: Text(Strings.save_button_text,
               style: TextStyle(color: Colors.white)),
         ),
       ),
@@ -284,7 +285,7 @@ class NewRecordPageState extends State<NewRecordPage>
             presenter.deleteButtonClicked();
           },
           color: Colors.orangeAccent,
-          child: Text("Delete", style: TextStyle(color: Colors.white)),
+          child: Text(Strings.delete_button_text, style: TextStyle(color: Colors.white)),
         ),
       ),
     );
@@ -325,15 +326,15 @@ class NewRecordPageState extends State<NewRecordPage>
                       BorderRadius.circular(10.0)),
                   contentPadding: EdgeInsets.fromLTRB(
                       10.0, 10.0, 10.0, 10.0),
-                  hintText: "Note:")
+                  hintText: Strings.note_hint)
           )
       );
 
     return Scaffold(
       appBar: new AppBar(
         title: new Text(widget.flow == NewRecordFlow.update_record
-            ? "Edit a Record"
-            : "New Time Record"),
+            ? Strings.edit_record_page_title
+            : Strings.new_record_page_title),
       ),
       body: SafeArea(
         child: Container(
@@ -380,7 +381,7 @@ class NewRecordPageState extends State<NewRecordPage>
   _createEmptyDropDown() {
     _tasks.add(_selectedTask);
     return _tasks.map((Task item) {
-      print("item: $item");
+      //print("item: $item");
       return new DropdownMenuItem<Task>(
         value: item,
         child: new Text(

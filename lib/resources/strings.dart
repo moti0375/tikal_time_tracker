@@ -39,6 +39,21 @@ class Strings{
   static const end_date = "End Date";
   static const generate_button_text = "Generate";
 
+  //Report page
+  static const report_page_title = "Report";
+  static const action_send_email = "Send Email";
+  static const total = "Total:";
+
+  //New Record page
+  static const new_record_page_title = "New Time Record";
+  static const edit_record_page_title = "Edit a Record";
+  static const duration_hint = "Duration";
+  static const save_button_text = "Save";
+  static const delete_button_text = "Delete";
+  static const note_hint = "Note:";
+
+
+
 }
 
 class Values{
