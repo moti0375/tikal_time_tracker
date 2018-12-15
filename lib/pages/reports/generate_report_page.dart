@@ -11,6 +11,7 @@ import 'package:tikal_time_tracker/pages/login_page.dart';
 import 'package:tikal_time_tracker/ui/page_title.dart';
 import 'package:tikal_time_tracker/pages/reports/reports_contract.dart';
 import 'package:tikal_time_tracker/pages/reports/reports_presenter.dart';
+import 'package:tikal_time_tracker/resources/strings.dart';
 
 class GenerateReportPage extends StatefulWidget {
   @override
@@ -24,11 +25,11 @@ class GenerateReportState extends State<GenerateReportPage> implements ReportsVi
   Project _selectedProject;
   List<Task> _tasks = User.me.tasks;
   List<Period> _predefiendPeriod = [
-    Period(name: "This Month", value: 3),
-    Period(name: "Previuos Month", value: 7),
-    Period(name: "This Week", value: 2),
-    Period(name: "Today", value: 1),
-    Period(name: "Yesterday", value: 8),
+    Period(name: Strings.item_this_month, value: 3),
+    Period(name: Strings.item_previous_month, value: 7),
+    Period(name: Strings.item_this_week, value: 2),
+    Period(name: Strings.item_today, value: 1),
+    Period(name: Strings.item_yesterday, value: 8),
   ];
   Task _selectedTask;
   Period _selectedPeriod;
@@ -64,7 +65,7 @@ class GenerateReportState extends State<GenerateReportPage> implements ReportsVi
               hint: Container(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  "Select a Project",
+                  Strings.drop_down_project_title,
                   style: TextStyle(fontSize: 24.0, color: Colors.black26),
                 ),
               ),
@@ -95,7 +96,7 @@ class GenerateReportState extends State<GenerateReportPage> implements ReportsVi
               hint: Container(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  "Select a Task",
+                  Strings.drop_down_task_title,
                   style: TextStyle(fontSize: 24.0, color: Colors.black26),
                 ),
               ),
@@ -125,7 +126,7 @@ class GenerateReportState extends State<GenerateReportPage> implements ReportsVi
               hint: Container(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  "Select Time Period",
+                  Strings.drop_down_period_title,
                   style: TextStyle(fontSize: 24.0, color: Colors.black26),
                 ),
               ),
@@ -165,7 +166,7 @@ class GenerateReportState extends State<GenerateReportPage> implements ReportsVi
             padding: const EdgeInsets.all(8.0),
             child: GestureDetector(
               onTap: () {
-                print("onTap dateInput");
+//                print("onTap dateInput");
                 _showStartDatePicker();
               },
               child: Icon(Icons.date_range),
@@ -175,7 +176,7 @@ class GenerateReportState extends State<GenerateReportPage> implements ReportsVi
             child: new Flexible(
                   child: new TextField(
                       decoration: InputDecoration(
-                          hintText: "Start Date",
+                          hintText: Strings.start_date,
                           contentPadding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20.0))),
@@ -205,7 +206,7 @@ class GenerateReportState extends State<GenerateReportPage> implements ReportsVi
             child: new Flexible(
                 child: new TextField(
                     decoration: InputDecoration(
-                        hintText: "End Date",
+                        hintText: Strings.end_date,
                         contentPadding:
                             EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
                         border: OutlineInputBorder(
@@ -234,14 +235,14 @@ class GenerateReportState extends State<GenerateReportPage> implements ReportsVi
               }
             },
             color: isButtonEnabled ? Colors.orangeAccent : Colors.grey,
-            child: Text("Generate", style: TextStyle(color: Colors.white)),
+            child: Text(Strings.generate_button_text, style: TextStyle(color: Colors.white)),
           )),
     );
 
     return Scaffold(
         resizeToAvoidBottomPadding: false,
         appBar: AppBar(
-          title: Text("Reports"),
+          title: Text(Strings.reports_page_title),
           elevation: 1.0,
         ),
         backgroundColor: Colors.white,
@@ -301,22 +302,22 @@ class GenerateReportState extends State<GenerateReportPage> implements ReportsVi
     setState(() {
       _selectedPeriod = value;
       switch (value.name) {
-        case "This Month":
+        case Strings.item_this_month:
           _onSelectThisMonth();
           break;
-        case "Previuos Month":
+        case Strings.item_previous_month:
           _onSelectPreviousMonth();
           break;
-        case "This Week":
+        case Strings.item_this_week:
           _onSelectThisWeek();
           break;
-        case "Previuos Week":
+        case Strings.item_previous_week:
           _onSelectedPrevWeek();
           break;
-        case "Today":
+        case Strings.item_today:
           _onTodaySelected();
           break;
-        case "Yesterday":
+        case Strings.item_yesterday:
           _onYesterdaySelected();
           break;
       }
@@ -374,10 +375,8 @@ class GenerateReportState extends State<GenerateReportPage> implements ReportsVi
   void _setButtonState() {
     setState(() {
       if (_startDate != null && _endDate != null) {
-        print("setButtonState: Button enabled");
         isButtonEnabled = true;
       } else {
-        print("setButtonState: Button diabled");
         isButtonEnabled = false;
       }
     });
@@ -439,7 +438,6 @@ class GenerateReportState extends State<GenerateReportPage> implements ReportsVi
   }
 
   void _handleGenerateButtonClicked() {
-    print("_handleGenerateButtonClicked");
     presenter.onClickGenerateButton(_selectedProject, _selectedTask, _startDate, _endDate, _selectedPeriod);
   }
 

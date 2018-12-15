@@ -12,6 +12,7 @@ import 'package:tikal_time_tracker/pages/time/time_presenter.dart';
 import 'package:tikal_time_tracker/pages/time/time_contract.dart';
 import 'package:tikal_time_tracker/pages/about_screen/about_screen.dart';
 import 'package:tikal_time_tracker/utils/page_transition.dart';
+import 'package:tikal_time_tracker/resources/strings.dart';
 
 class TimePage extends StatefulWidget {
   @override
@@ -40,7 +41,7 @@ class TimePageState extends State<TimePage> with TickerProviderStateMixin
   @override
   void initState() {
     super.initState();
-    print("TimePage: initState");
+   // print("TimePage: initState");
     presenter = TimePresenter(repository: this.repository);
     presenter.subscribe(this);
     var now = DateTime.now();
@@ -53,8 +54,8 @@ class TimePageState extends State<TimePage> with TickerProviderStateMixin
   @override
   Widget build(BuildContext context) {
     PlaceholderContent placeholderContent = PlaceholderContent(
-        title: "No Work Today",
-        subtitle: "Tap to add report",
+        title: Strings.no_work_title,
+        subtitle: Strings.no_work_subtitle,
         onPressed: () {
           presenter.listItemClicked(null);
         });
@@ -69,7 +70,7 @@ class TimePageState extends State<TimePage> with TickerProviderStateMixin
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       backgroundColor: Colors.black12,
-      appBar: _buildAppBar(title: "Tikal Time Tracker"),
+      appBar: _buildAppBar(title: Strings.app_name),
       floatingActionButton: new FloatingActionButton(
           onPressed: () {
             presenter.listItemClicked(null);
@@ -167,7 +168,6 @@ class TimePageState extends State<TimePage> with TickerProviderStateMixin
             padding: const EdgeInsets.all(8.0),
             child: GestureDetector(
               onTap: () {
-                print("onTap dateInput");
                 _showDateDialog();
               },
               child: Icon(Icons.date_range),
@@ -201,7 +201,7 @@ class TimePageState extends State<TimePage> with TickerProviderStateMixin
                 timeRecord: null,
                 flow: NewRecordFlow.new_record))
     ).then((value) {
-      print("got value from page");
+//      print("got value from page");
       if (value != null) {
         if (value is TimeRecord) {
           _onDateSelected(value.date);
@@ -213,7 +213,7 @@ class TimePageState extends State<TimePage> with TickerProviderStateMixin
   }
 
   _navigateToEditScreen(TimeRecord item) {
-    print("_navigateToEditScreen: ");
+//    print("_navigateToEditScreen: ");
     Navigator.of(context)
         .push(new PageTransition(
             widget:new NewRecordPage(
@@ -222,7 +222,7 @@ class TimePageState extends State<TimePage> with TickerProviderStateMixin
                 timeRecord: item,
                 flow: NewRecordFlow.update_record)))
         .then((value) {
-      print("got value from page");
+//      print("got value from page");
       if (value != null) {
         if (value is TimeRecord) {
           _onDateSelected(value.date);
@@ -234,7 +234,7 @@ class TimePageState extends State<TimePage> with TickerProviderStateMixin
   }
 
   _showDateDialog() {
-    print("_showDateDialog");
+//    print("_showDateDialog");
     showDatePicker(
             context: context,
             initialDate: _selectedDate != null ? _selectedDate : DateTime.now(),
@@ -256,8 +256,8 @@ class TimePageState extends State<TimePage> with TickerProviderStateMixin
 
   void _refreshList(List<TimeRecord> records) {
     setState(() {
-      print(
-          "records for $_selectedDate : ${records.toString()}:${records.length}");
+//      print(
+//          "records for $_selectedDate : ${records.toString()}:${records.length}");
       _records = records;
     });
   }
@@ -265,13 +265,11 @@ class TimePageState extends State<TimePage> with TickerProviderStateMixin
 
   @override
   onListItemClicked(TimeRecord item) {
-    print("onListItemClicked: $item");
     presenter.listItemClicked(item);
   }
 
   @override
   onListItemLongClick(TimeRecord item) {
-    print("onListItemLongClick: $item");
   }
 
   @override

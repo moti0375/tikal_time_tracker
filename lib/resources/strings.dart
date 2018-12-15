@@ -21,7 +21,23 @@ class Strings{
   static const reports_page_title = "Reports";
   static const users_page_title = "Users";
 
+  //Time page
+  static const no_work_title = "No Work Today";
+  static const no_work_subtitle = "Tap to add repor";
 
+  //Generate Report page
+  static const item_this_month = "This Month";
+  static const item_previous_month = "Previous Month";
+  static const item_this_week = "This Week";
+  static const item_previous_week = "Previous Week";
+  static const item_today = "Today";
+  static const item_yesterday = "Yesterday";
+  static const drop_down_task_title = "Select a Task";
+  static const drop_down_project_title = "Select a Project";
+  static const drop_down_period_title = "Select a Period";
+  static const start_date = "Start Date";
+  static const end_date = "End Date";
+  static const generate_button_text = "Generate";
 
 }
 
