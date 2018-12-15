@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tikal_time_tracker/utils/page_transition.dart';
 import 'package:tikal_time_tracker/pages/reset_password/reset_password_page.dart';
 import 'package:ktoast/ktoast.dart';
+import 'package:tikal_time_tracker/resources/strings.dart';
 
 class LoginPage extends StatefulWidget {
   static final String TAG = "LoginPage";
@@ -91,7 +92,7 @@ class LoginPageState extends State<LoginPage> {
       textInputAction: TextInputAction.next,
       keyboardType: TextInputType.emailAddress,
       decoration: InputDecoration(
-          hintText: 'Email',
+          hintText: Strings.email_hint,
           contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
           border:
               OutlineInputBorder(borderRadius: BorderRadius.circular(30.0))),
@@ -105,7 +106,7 @@ class LoginPageState extends State<LoginPage> {
       controller: passwordController,
       obscureText: true,
       decoration: InputDecoration(
-          hintText: 'password',
+          hintText: Strings.password_hint,
           contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
           border:
               OutlineInputBorder(borderRadius: BorderRadius.circular(30.0))),
@@ -137,13 +138,13 @@ class LoginPageState extends State<LoginPage> {
             onPressed: () {
               _navigateToResetPassword(_email);
             },
-            child: Text("Forgot Password", style: TextStyle(color: Colors.black45))
+            child: Text(Strings.forgot_password, style: TextStyle(color: Colors.black45))
         ),
         FlatButton(
             onPressed: () {
               _showSignOutDialog();
             },
-            child: Text("Sign out", style: TextStyle(color: Colors.black45))
+            child: Text(Strings.sign_out, style: TextStyle(color: Colors.black45))
         ),
       ],
     );
@@ -190,8 +191,7 @@ class LoginPageState extends State<LoginPage> {
                 SizedBox(height: 8.0),
                 password,
                 SizedBox(height: 8.0),
-                AnimationButton(buttonText: "Login",callback: () {
-                  print("onPressed");
+                AnimationButton(buttonText: Strings.login_button_text,callback: () {
                   _login(_email, _password);
                 }),
                 forgotLabel,
@@ -203,11 +203,6 @@ class LoginPageState extends State<LoginPage> {
         ),
       ),
     );
-  }
-
-  _createUserAndNavigate() {
-//    User.init("Moti Bartov", "User", "Tikal", <Project>[tikal, lemui, gm]);
-    print("Button Clicked");
   }
 
   void _navigateToTime() {
@@ -235,18 +230,18 @@ class LoginPageState extends State<LoginPage> {
 //      });
 
       if (response.toString().isEmpty) {
-        print("navigating to Time");
+//        print("navigating to Time");
         widget.preferences.setLoginUserName(_email);
         widget.preferences.setLoginPassword(_password);
         _navigateToTime();
       } else if (response.toString().contains("Incorrect login or password")) {
-        _updateError("Incorrect login or password");
+        _updateError(Strings.incorrect_credentials);
       }
     });
   }
 
   void _updateError(String error) {
-    print("updateError: $error");
+   // print("updateError: $error");
     setState(() {
       _loggingIn = false;
       loginError = error;
@@ -254,7 +249,7 @@ class LoginPageState extends State<LoginPage> {
   }
 
   void _onClickSignIn(String userName, String password) {
-    print("_onClickSignIn: $userName:$password");
+   // print("_onClickSignIn: $userName:$password");
     widget.preferences.setSingInUserName(userName);
     widget.preferences.setSingInPassword(password);
     _signIn();
@@ -264,7 +259,7 @@ class LoginPageState extends State<LoginPage> {
     String username = widget.preferences.getSingInUserName();
     String password = widget.preferences.getSingInPassword();
 
-    print("_signIn: $username:$password");
+   // print("_signIn: $username:$password");
 
     repository.updateCredentials(
         new Credentials(signInUserName: username, signInPassword: password));
@@ -296,7 +291,7 @@ class LoginPageState extends State<LoginPage> {
                   userName = value;
                 },
                 decoration: InputDecoration(
-                    hintText: "username",
+                    hintText: Strings.username_hint,
                     contentPadding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10.0))),
@@ -311,7 +306,7 @@ class LoginPageState extends State<LoginPage> {
                   password = value;
                 },
                 decoration: InputDecoration(
-                    hintText: "password",
+                    hintText: Strings.password_hint,
                     contentPadding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10.0))),
@@ -332,7 +327,7 @@ class LoginPageState extends State<LoginPage> {
               'assets/logo.png',
             ),
           ),
-          Text("Sign In")
+          Text(Strings.sign_in)
         ],
       ),
       content: dialogContent,
@@ -342,7 +337,7 @@ class LoginPageState extends State<LoginPage> {
             Navigator.pop(context);
             _signIn();
           },
-          child: Text("Cancel"),
+          child: Text(Strings.cancel),
         ),
         FlatButton(
           onPressed: () {
@@ -350,7 +345,7 @@ class LoginPageState extends State<LoginPage> {
             _onClickSignIn(userName, password);
             Navigator.pop(context);
           },
-          child: Text("OK"),
+          child: Text(Strings.ok),
         )
       ],
     );
@@ -379,8 +374,8 @@ class LoginPageState extends State<LoginPage> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Text("Are you sure?"),
-                  Text("This will erase your credentials")
+                  Text(Strings.sign_out_approval_title),
+                  Text(Strings.sign_out_approval_subtitle)
                 ],
               ),
             ),
@@ -400,7 +395,7 @@ class LoginPageState extends State<LoginPage> {
               'assets/logo.png',
             ),
           ),
-          Text("Sign Out")
+          Text(Strings.sign_out)
         ],
       ),
       content: dialogContent,
@@ -410,7 +405,7 @@ class LoginPageState extends State<LoginPage> {
             Navigator.pop(context);
             _signIn();
           },
-          child: Text("Cancel"),
+          child: Text(Strings.cancel),
         ),
         FlatButton(
           onPressed: () {
@@ -418,7 +413,7 @@ class LoginPageState extends State<LoginPage> {
             Navigator.pop(context);
             _signIn();
           },
-          child: Text("OK"),
+          child: Text(Strings.ok),
         )
       ],
     );
