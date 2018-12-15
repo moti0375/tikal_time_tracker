@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tikal_time_tracker/pages/time/time_page.dart';
 import 'package:tikal_time_tracker/pages/users/users_page.dart';
 import 'package:tikal_time_tracker/pages/reports/generate_report_page.dart';
+import 'package:tikal_time_tracker/resources/strings.dart';
 
 enum Tab{
   Time,
@@ -19,11 +20,11 @@ class BottomNavigation extends StatefulWidget{
 String tabName({Tab tab}){
   switch(tab){
     case Tab.Time:
-      return "Time";
+      return Strings.time_page_title;
     case Tab.Reports:
-      return "Reports";
+      return Strings.reports_page_title;
     case Tab.Users:
-      return "Users";
+      return Strings.users_page_title;
   }
   return null;
 }

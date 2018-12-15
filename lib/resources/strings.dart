@@ -15,6 +15,14 @@ class Strings{
   static const sign_out_approval_title = "Are you sure?";
   static const sign_out_approval_subtitle = "This will erase your credentials";
 
+
+  //Bottom Navigation Tabs page
+  static const time_page_title = "Time";
+  static const reports_page_title = "Reports";
+  static const users_page_title = "Users";
+
+
+
 }
 
 class Values{
