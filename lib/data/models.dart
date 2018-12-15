@@ -30,7 +30,7 @@ class TimeRecord{
       DateTime f  = DateTime(date.year, date.month, date.day, finish.hour, finish.minute);
       duration = _calculateDuration(start: s, finish: f);
     }
-    print("TimeRecord: ${date.millisecondsSinceEpoch}");
+//    print("TimeRecord: ${date.millisecondsSinceEpoch}");
   }
 
 
@@ -133,9 +133,9 @@ class Report{
 
   _calculateTotal(){
     if(this.report.isNotEmpty){
-      print("Calcultate total.. ${this.report.toString()}");
+//      print("Calcultate total.. ${this.report.toString()}");
       this.report.forEach((r){
-        print("Calcultate total.. ${r.duration.inMinutes}");
+//        print("Calcultate total.. ${r.duration.inMinutes}");
         total = total +  r.duration.inMinutes;
       });
     }else{

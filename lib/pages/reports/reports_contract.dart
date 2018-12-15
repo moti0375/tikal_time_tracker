@@ -10,4 +10,5 @@ class ReportsPresenterContract{
 
 class ReportsViewContract{
   void showReport(List<TimeRecord> items){}
+  void logOut(){}
 }

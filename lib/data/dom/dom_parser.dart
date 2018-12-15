@@ -292,7 +292,7 @@ class DomParser {
   }
 
   List<TimeRecord> parseReportPage(String domStr, Role role) {
-     print("parseReportPage: $domStr");
+//     print("parseReportPage: $domStr");
     DateFormat dateFormat = DateFormat('yyyy-MM-dd');
     String formStart = "<form name=\"reportForm\" method=\"post\">";
     String formEnd = "</form>";
@@ -320,7 +320,7 @@ class DomParser {
         return cell.substring(cell.indexOf(">") + 1);
       }).toList();
 
-      print("parseReportPage: ${cells.toString()}");
+//      print("parseReportPage: cells ${cells.toString()}");
 
       DateTime dateTime = dateFormat.parse(cells[0]);
       Project project = null;

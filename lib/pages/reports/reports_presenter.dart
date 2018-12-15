@@ -55,7 +55,11 @@ class ReportsPresenter implements ReportsPresenterContract {
       _getReport(request);
     }, onError: (e){
       debugPrint("$TAG: _generateReport: There was an error ${e.toString()}");
-
+      if(e is RangeError){
+      }else{
+        print(e);
+        view.logOut();
+      }
     });
   }
 
