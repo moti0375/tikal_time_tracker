@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:tikal_time_tracker/resources/strings.dart';
 
 class AboutScreen extends StatelessWidget{
 
@@ -57,12 +58,12 @@ class AboutScreen extends StatelessWidget{
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
                     logo,
-                    Text("Tikal Time Tracker",
+                    Text(Strings.app_name,
                       textAlign: TextAlign.center,
                       maxLines: 1,
                         style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),),
-                    getTextRow("Version: 1.0"),
-                    getTextRow("Developed with Google's Flutter cross platform framework"),
+                    getTextRow("${Strings.version_text} ${Values.app_version}"),
+                    getTextRow(Strings.about_text),
                   ],
                 ),
               ),
@@ -71,10 +72,10 @@ class AboutScreen extends StatelessWidget{
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
-                    getTextRow("Moti Bartov, Tikal Mobile Group"),
+                    getTextRow(Strings.developer_text),
                     InkWell(
                         onTap: _launchUrl,
-                        child: Text("motib@tikalk.com", style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline),)
+                        child: Text(Strings.developer_email, style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline),)
                     ),
                     Container(
                       padding: EdgeInsets.only(top: 5.0),
@@ -97,7 +98,7 @@ class AboutScreen extends StatelessWidget{
   }
 
   void _launchUrl() async{
-    const url = 'mailto:motib@tikalk.com?subject=Time%20Tracker%20Issue&body=Hi%20Moti';
+    const url = 'mailto:${Strings.developer_email}?subject=${Strings.mail_subject}&body=${Strings.mail_body}';
     if (await canLaunch(url)) {
       print("can launch");
       await launch(url);

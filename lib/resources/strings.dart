@@ -61,6 +61,15 @@ class Strings{
   static const comment_title = "Comment: ";
   static const send_button_text = "Send";
 
+  //About screen
+  static const version_text = "Version ";
+  static const about_text = "Developed with Google's Flutter cross platform framework";
+  static const developer_text = "Moti Bartov, Tikal Mobile Group";
+  static const developer_email = "motib@tikalk.com";
+  static const mail_subject = "Time%20Tracker%20Issue";
+  static const mail_body = "Hi%20Moti";
+
+
 
 }
 
