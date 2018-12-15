@@ -3,6 +3,7 @@ import 'package:tikal_time_tracker/ui/animation_button.dart';
 import 'package:tikal_time_tracker/pages/reset_password/reset_password_presenter.dart';
 import 'package:tikal_time_tracker/data/repository/time_records_repository.dart';
 import 'package:tikal_time_tracker/pages/reset_password/reset_password_contract.dart';
+import 'package:tikal_time_tracker/resources/strings.dart';
 
 class ResetPasswordPage extends StatefulWidget {
   String emailAddress;
@@ -49,7 +50,7 @@ class ResetPasswordState extends State<ResetPasswordPage> implements ResetPasswo
           textInputAction: TextInputAction.next,
           keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(
-              hintText: 'Email',
+              hintText: Strings.email_hint,
               contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
               border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30.0))),
@@ -62,7 +63,7 @@ class ResetPasswordState extends State<ResetPasswordPage> implements ResetPasswo
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              Text("Password Resetting", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20))
+              Text(Strings.reset_password_page_title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20))
             ],
           ),
           Container(
@@ -73,7 +74,7 @@ class ResetPasswordState extends State<ResetPasswordPage> implements ResetPasswo
       ),
     );
 
-    final resetPasswordButton = AnimationButton(buttonText: "Reset password",callback: () {
+    final resetPasswordButton = AnimationButton(buttonText: Strings.reset_password_button_text,callback: () {
       _presenter.onResetPasswordButtonClicked(widget.emailAddress);
     });
 

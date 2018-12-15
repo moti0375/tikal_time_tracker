@@ -5,7 +5,7 @@ class Strings{
   static const email_hint = "Email";
   static const password_hint = "password";
   static const username_hint = "username";
-  static const forgot_password = "Forgot password";
+  static const forgot_password = "Forgot Password";
   static const login_button_text = "Login";
   static const sign_in = "Sign In";
   static const sign_out = "Sign Out";
@@ -69,6 +69,9 @@ class Strings{
   static const mail_subject = "Time%20Tracker%20Issue";
   static const mail_body = "Hi%20Moti";
 
+  //Reset password screen
+  static const reset_password_page_title = "Password Resetting";
+  static const reset_password_button_text = "Reset password ";
 
 
 }
