@@ -44,7 +44,7 @@ class LoginPageState extends State<LoginPage> {
         _email = widget.preferences.getLoginUserName();
         _password = widget.preferences.getLoginPassword();
       });
-      print("initState: $_email:$_password");
+//      print("initState: $_email:$_password");
     });
   }
 
