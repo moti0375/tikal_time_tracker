@@ -7,9 +7,12 @@ import 'package:tikal_time_tracker/utils/action_choice.dart';
 import 'package:tikal_time_tracker/utils/page_transition.dart';
 import 'package:tikal_time_tracker/pages/send_email/send_email_page.dart';
 import 'package:tikal_time_tracker/resources/strings.dart';
+import 'package:tikal_time_tracker/analytics/analytics.dart';
+import 'package:tikal_time_tracker/analytics/events/reports_event.dart';
 
 class ReportPage extends StatelessWidget implements ListAdapterClickListener {
   final Report report;
+  final Analytics analytics = Analytics();
 
   final List<Choice> choices = const <Choice>[
     const Choice(
@@ -17,7 +20,8 @@ class ReportPage extends StatelessWidget implements ListAdapterClickListener {
   ];
 
   ReportPage({this.report}) {
-   // print("Total: ${report.getTotalString()}");
+    analytics.logEvent(ReportsEvent.impression(EVENT_NAME.REPORT_GENERATED_SUCCESS).open());
+    // print("Total: ${report.getTotalString()}");
   }
 
 
@@ -25,7 +29,9 @@ class ReportPage extends StatelessWidget implements ListAdapterClickListener {
   Widget build(BuildContext context) {
     void _select(Choice choice) {
       if (choice.action == Action.SendEmail) {
-      //  print("Navigate to SendEmail page");
+        analytics.logEvent(ReportsEvent.click(EVENT_NAME.ACTION_SEND_MAIL));
+
+        //  print("Navigate to SendEmail page");
         Navigator.of(context)
             .push(new PageTransition(
             widget: SendEmailPage())

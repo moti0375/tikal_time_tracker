@@ -12,6 +12,8 @@ import 'package:tikal_time_tracker/ui/page_title.dart';
 import 'package:tikal_time_tracker/pages/reports/reports_contract.dart';
 import 'package:tikal_time_tracker/pages/reports/reports_presenter.dart';
 import 'package:tikal_time_tracker/resources/strings.dart';
+import 'package:tikal_time_tracker/analytics/analytics.dart';
+import 'package:tikal_time_tracker/analytics/events/reports_event.dart';
 
 class GenerateReportPage extends StatefulWidget {
   @override
@@ -22,6 +24,7 @@ class GenerateReportPage extends StatefulWidget {
 }
 
 class GenerateReportState extends State<GenerateReportPage> implements ReportsViewContract{
+  Analytics analytics = Analytics();
   Project _selectedProject;
   List<Task> _tasks = User.me.tasks;
   List<Period> _predefiendPeriod = [
@@ -43,12 +46,12 @@ class GenerateReportState extends State<GenerateReportPage> implements ReportsVi
   TimeRecordsRepository repository = TimeRecordsRepository();
   ReportsPresenter presenter;
 
-
   @override
   void initState() {
     super.initState();
     presenter = new ReportsPresenter(repository: repository);
     presenter.subscribe(this);
+    analytics.logEvent(ReportsEvent.impression(EVENT_NAME.REPORTS_SCREEN).open());
   }
 
   @override
@@ -145,18 +148,6 @@ class GenerateReportState extends State<GenerateReportPage> implements ReportsVi
               }),
         ),
     );
-
-    final _startDatePicker = TimeTrackerDatePicker(initializedDateTime: _startDate, hint: "Start Date", onSubmittedCallback: (date){
-      setState(() {
-        _startDate = date;
-      });
-    });
-
-    final _endDatePicker = TimeTrackerDatePicker(initializedDateTime: _endDate, hint: "End Date", onSubmittedCallback: (date){
-      setState(() {
-        _endDate = date;
-      });
-    });
 
     final startDateInput = Container(
       padding: EdgeInsets.only(left: 0.0, right: 0.0, top: 4.0),
@@ -438,11 +429,13 @@ class GenerateReportState extends State<GenerateReportPage> implements ReportsVi
   }
 
   void _handleGenerateButtonClicked() {
+    analytics.logEvent(ReportsEvent.click(EVENT_NAME.GENERATE_REPORT_CLICKED));
     presenter.onClickGenerateButton(_selectedProject, _selectedTask, _startDate, _endDate, _selectedPeriod);
   }
 
   @override
   void showReport(List<TimeRecord> items) {
+    analytics.logEvent(ReportsEvent.impression(EVENT_NAME.REPORT_GENERATED_SUCCESS).view());
     Navigator.of(context).push(new MaterialPageRoute(
         builder: (BuildContext context) => new ReportPage(
             report: Report(
@@ -459,6 +452,7 @@ class GenerateReportState extends State<GenerateReportPage> implements ReportsVi
   }
 
   _logout() {
+    analytics.logEvent(ReportsEvent.impression(EVENT_NAME.FAILED_TO_GENERATE_REPORT).view().setDetails("Logout"));
     Navigator.of(context).pushReplacement(new MaterialPageRoute(
         builder: (BuildContext context) => new LoginPage()));
   }
