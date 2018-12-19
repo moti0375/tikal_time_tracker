@@ -77,5 +77,5 @@ class Strings{
 }
 
 class Values{
-  static const app_version = 1.0;
+  static const app_version = 1.1;
 }
