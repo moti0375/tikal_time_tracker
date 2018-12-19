@@ -11,6 +11,8 @@ import 'package:tikal_time_tracker/pages/new_record_page/new_record_contract.dar
 import 'package:tikal_time_tracker/pages/new_record_page/new_record_presenter.dart';
 import 'package:tikal_time_tracker/ui/time_picker.dart';
 import 'package:tikal_time_tracker/resources/strings.dart';
+import 'package:tikal_time_tracker/analytics/analytics.dart';
+import 'package:tikal_time_tracker/analytics/events/new_record_event.dart';
 
 // ignore: must_be_immutable
 class NewRecordPage extends StatefulWidget {
@@ -30,6 +32,7 @@ class NewRecordPage extends StatefulWidget {
 
 class NewRecordPageState extends State<NewRecordPage>
     implements NewRecordViewContract {
+  Analytics analytics = Analytics();
   Project _selectedProject;
   TimeOfDay _startTime;
   TimeOfDay _finishTime;
@@ -61,6 +64,8 @@ class NewRecordPageState extends State<NewRecordPage>
         flow: widget.flow);
     presenter.subscribe(this);
     _selectedDate = widget.dateTime;
+    analytics.logEvent(NewRecordeEvent.impression(EVENT_NAME.NEW_TIME_PAGE_OPENED).view());
+
   }
 
   @override
@@ -70,11 +75,14 @@ class NewRecordPageState extends State<NewRecordPage>
 
   @override
   void showSaveRecordSuccess(TimeRecord timeRecord) {
+    analytics.logEvent(NewRecordeEvent.impression(EVENT_NAME.RECORD_SAVED_SUCCESS).view());
     Navigator.of(context).pop(timeRecord);
   }
 
   @override
   initNewRecord() {
+    analytics.logEvent(NewRecordeEvent.impression(EVENT_NAME.CREATE_NEW_RECORD).view());
+
 //    print("_initNewRecord:");
     startTimeController = new TextEditingController(
       text: "",
@@ -89,6 +97,7 @@ class NewRecordPageState extends State<NewRecordPage>
 
   @override
   initUpdateRecord() {
+    analytics.logEvent(NewRecordeEvent.impression(EVENT_NAME.EDIT_RECORD).view());
 //    print("_initUpdateRecord: date: ${widget.timeRecord.date.toString()}");
     _selectedDate = widget.timeRecord.date;
     _startTime = widget.timeRecord.start;
@@ -259,6 +268,7 @@ class NewRecordPageState extends State<NewRecordPage>
           height: 42.0,
           onPressed: () {
             if (isButtonEnabled) {
+              analytics.logEvent(NewRecordeEvent.click(EVENT_NAME.SAVE_RECORD_CLICKED));
               presenter.saveButtonClicked();
             }
           },
@@ -283,6 +293,7 @@ class NewRecordPageState extends State<NewRecordPage>
           height: 42.0,
           onPressed: () {
             presenter.deleteButtonClicked();
+            analytics.logEvent(NewRecordeEvent.click(EVENT_NAME.DELETE_RECORD_CLICKED));
           },
           color: Colors.orangeAccent,
           child: Text(Strings.delete_button_text, style: TextStyle(color: Colors.white)),

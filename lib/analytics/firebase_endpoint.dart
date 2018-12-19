@@ -19,7 +19,4 @@ class FirebaseEndpoint implements Endpoint{
       print("$TAG: There was an error $e");
     });
   }
-
-
-
 }
