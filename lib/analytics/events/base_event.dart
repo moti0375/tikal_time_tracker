@@ -6,6 +6,7 @@ class BaseEvent extends Event{
 
   BaseEvent(String name){
     super.name = name;
+    bundle = Map();
   }
 
    BaseEvent open(){

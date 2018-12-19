@@ -1,7 +1,6 @@
 import 'package:tikal_time_tracker/analytics/events/base_event.dart';
 class LoginEvent extends BaseEvent{
   LoginEvent(String name) : super(name){
-    bundle = new Map();
     bundle["name"] = name;
   }
 

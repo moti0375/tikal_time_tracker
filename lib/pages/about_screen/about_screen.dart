@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:tikal_time_tracker/resources/strings.dart';
+import 'package:tikal_time_tracker/analytics/analytics.dart';
+import 'package:tikal_time_tracker/analytics/events/base_event.dart';
 
 class AboutScreen extends StatelessWidget{
 
+  Analytics analytics = Analytics();
   @override
   Widget build(BuildContext context) {
 
+    analytics.logEvent(BaseEvent("about_screen").open());
     Widget getTextRow(String text){
       return Container(
         padding: EdgeInsets.symmetric(vertical: 4.0),
