@@ -237,8 +237,10 @@ class LoginPageState extends State<LoginPage> {
 //        print("navigating to Time");
         widget.preferences.setLoginUserName(_email);
         widget.preferences.setLoginPassword(_password);
+        analytics.logEvent(LoginEvent.impression(EVENT_NAME.LOGIN_OK).view());
         _navigateToTime();
       } else if (response.toString().contains("Incorrect login or password")) {
+        analytics.logEvent(LoginEvent.impression(EVENT_NAME.LOGIN_FAILED).setDetails("Incorrect username or password").view());
         _updateError(Strings.incorrect_credentials);
       }
     });
