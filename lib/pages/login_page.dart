@@ -9,6 +9,8 @@ import 'package:tikal_time_tracker/ui/animation_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tikal_time_tracker/utils/page_transition.dart';
 import 'package:tikal_time_tracker/pages/reset_password/reset_password_page.dart';
+import 'package:tikal_time_tracker/analytics/analytics.dart';
+import 'package:tikal_time_tracker/analytics/events/login_event.dart';
 import 'package:ktoast/ktoast.dart';
 import 'package:tikal_time_tracker/resources/strings.dart';
 
@@ -29,6 +31,7 @@ class LoginPageState extends State<LoginPage> {
   TimeRecordsRepository repository = TimeRecordsRepository.init(
       new Credentials(signInUserName: "", signInPassword: ""));
 
+  Analytics analytics = new Analytics();
   String _email;
   String _password;
   bool _loggingIn = false;
@@ -192,6 +195,7 @@ class LoginPageState extends State<LoginPage> {
                 password,
                 SizedBox(height: 8.0),
                 AnimationButton(buttonText: Strings.login_button_text,callback: () {
+                  analytics.logEvent(LoginEvent.click(EVENT_NAME.LOGIN_CLICKED).view());
                   _login(_email, _password);
                 }),
                 forgotLabel,
@@ -249,6 +253,7 @@ class LoginPageState extends State<LoginPage> {
   }
 
   void _onClickSignIn(String userName, String password) {
+    analytics.logEvent(LoginEvent.click(EVENT_NAME.SIGN_IN_CLICKED).view());
    // print("_onClickSignIn: $userName:$password");
     widget.preferences.setSingInUserName(userName);
     widget.preferences.setSingInPassword(password);
