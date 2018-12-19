@@ -5,6 +5,8 @@ import 'package:tikal_time_tracker/data/repository/time_records_repository.dart'
 import 'package:tikal_time_tracker/pages/send_email/send_email_contract.dart';
 import 'package:tikal_time_tracker/pages/send_email/send_email_presenter.dart';
 import 'package:tikal_time_tracker/resources/strings.dart';
+import 'package:tikal_time_tracker/analytics/analytics.dart';
+import 'package:tikal_time_tracker/analytics/events/email_event.dart';
 
 class SendEmailPage extends StatefulWidget {
   @override
@@ -15,6 +17,7 @@ class SendEmailPage extends StatefulWidget {
 
 class SendEmailPageState extends State<SendEmailPage> implements SendMailContractView{
 
+  Analytics analytics = Analytics();
   SendMailContractPresenter presenter;
   String status = "";
   TextEditingController toInputTextController;
@@ -27,7 +30,8 @@ class SendEmailPageState extends State<SendEmailPage> implements SendMailContrac
     super.initState();
     presenter = SendEmailPresenter(repository: TimeRecordsRepository());
     presenter.subscribe(this);
-    setState(() {});
+    analytics.logEvent(EmailEvent.impression(EVENT_NAME.EMAIL_SCREEN).open());
+
   }
 
   @override
@@ -223,6 +227,7 @@ class SendEmailPageState extends State<SendEmailPage> implements SendMailContrac
               setState(() {
                 status = "";
               });
+              analytics.logEvent(EmailEvent.click(EVENT_NAME.SEND_MAIL_CLICKED));
               presenter.onSendMailButtonClicked();
             },
             color: Colors.orangeAccent ,
@@ -278,6 +283,7 @@ class SendEmailPageState extends State<SendEmailPage> implements SendMailContrac
 
   @override
   void showPageDetails(SendEmailForm form) {
+    analytics.logEvent(EmailEvent.impression(EVENT_NAME.MAIL_FORM_LOADED).view());
     setState(() {
       toInputTextController = TextEditingController(text: form.to);
       ccInputTextController = TextEditingController(text: form.cc);
@@ -290,6 +296,7 @@ class SendEmailPageState extends State<SendEmailPage> implements SendMailContrac
 
   @override
   void showSentStatus(String status) {
+    analytics.logEvent(EmailEvent.impression(EVENT_NAME.MAIL_SENT).view().setDetails("status: $status"));
     setState(() {
       this.status = status;
     });
