@@ -13,6 +13,8 @@ import 'package:tikal_time_tracker/pages/time/time_contract.dart';
 import 'package:tikal_time_tracker/pages/about_screen/about_screen.dart';
 import 'package:tikal_time_tracker/utils/page_transition.dart';
 import 'package:tikal_time_tracker/resources/strings.dart';
+import 'package:tikal_time_tracker/analytics/analytics.dart';
+import 'package:tikal_time_tracker/analytics/events/time_event.dart';
 
 class TimePage extends StatefulWidget {
   @override
@@ -24,6 +26,7 @@ class TimePage extends StatefulWidget {
 class TimePageState extends State<TimePage> with TickerProviderStateMixin
     implements ListAdapterClickListener, TimeContractView {
 
+  Analytics analytics = new Analytics();
   List<Choice> choices = const <Choice>[
     const Choice(
         action: Action.Logout, title: "Logout", icon: Icons.transit_enterexit),
@@ -49,6 +52,7 @@ class TimePageState extends State<TimePage> with TickerProviderStateMixin
     dateInputController = new TextEditingController(
         text: "${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}");
     presenter.loadTimeForDate(_selectedDate);
+    analytics.logEvent(TimeEvent.impression(EVENT_NAME.TIME_PAGE_OPENED).view());
   }
 
   @override
@@ -57,12 +61,14 @@ class TimePageState extends State<TimePage> with TickerProviderStateMixin
         title: Strings.no_work_title,
         subtitle: Strings.no_work_subtitle,
         onPressed: () {
+          analytics.logEvent(TimeEvent.click(EVENT_NAME.NEW_RECORD_SCREEN_CLICKED));
           presenter.listItemClicked(null);
         });
 
     Widget _datePicker = TimeTrackerDatePicker(
         initializedDateTime: _selectedDate,
         onSubmittedCallback: (date) {
+          analytics.logEvent(TimeEvent.click(EVENT_NAME.DATE_PICKER_USED));
           _selectedDate = date;
           presenter.loadTimeForDate(_selectedDate);
         });
@@ -73,6 +79,7 @@ class TimePageState extends State<TimePage> with TickerProviderStateMixin
       appBar: _buildAppBar(title: Strings.app_name),
       floatingActionButton: new FloatingActionButton(
           onPressed: () {
+            analytics.logEvent(TimeEvent.click(EVENT_NAME.NEW_RECORD_FAB_CLICKED));
             presenter.listItemClicked(null);
           },
           child: Icon(Icons.add)),
@@ -110,9 +117,11 @@ class TimePageState extends State<TimePage> with TickerProviderStateMixin
     setState(() {
       if (choice.action == Action.Logout) {
         presenter.onLogoutClicked();
+        analytics.logEvent(TimeEvent.click(EVENT_NAME.ACTION_LOGOUT));
       }
       if(choice.action == Action.About){
         presenter.onAboutClicked();
+        analytics.logEvent(TimeEvent.click(EVENT_NAME.ACTION_ABOUT));
       }
     });
   }
@@ -131,7 +140,10 @@ class TimePageState extends State<TimePage> with TickerProviderStateMixin
             width: 24.0,
             height: 24.0,
             child: InkWell(
-              onTap: showAboutScreen,
+              onTap: (){
+                analytics.logEvent(TimeEvent.click(EVENT_NAME.ACTION_ABOUT).setDetails("Action Icon"));
+                showAboutScreen();
+              },
               child: Hero(
                 tag: 'hero',
                 child: Image.asset(
@@ -283,6 +295,8 @@ class TimePageState extends State<TimePage> with TickerProviderStateMixin
 
   @override
   void timeLoadFinished(List<TimeRecord> timeRecord) {
+
+    analytics.logEvent(TimeEvent.impression(EVENT_NAME.TIME_PAGE_LOADED).setDetails( "${timeRecord != null ? timeRecord.length : 0} :records").view());
     setState(() {
       this._records = timeRecord;
     });
