@@ -16,9 +16,8 @@ class ResetPasswordPage extends StatefulWidget {
   }
 }
 
-class ResetPasswordState extends State<ResetPasswordPage> implements ResetPasswordBaseView{
-
-
+class ResetPasswordState extends State<ResetPasswordPage>
+    implements ResetPasswordBaseView {
   ResetPasswordPresenter _presenter;
   String _statusText = "";
 
@@ -63,7 +62,8 @@ class ResetPasswordState extends State<ResetPasswordPage> implements ResetPasswo
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              Text(Strings.reset_password_page_title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20))
+              Text(Strings.reset_password_page_title,
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20))
             ],
           ),
           Container(
@@ -74,16 +74,27 @@ class ResetPasswordState extends State<ResetPasswordPage> implements ResetPasswo
       ),
     );
 
-    final resetPasswordButton = AnimationButton(buttonText: Strings.reset_password_button_text,callback: () {
-      _presenter.onResetPasswordButtonClicked(widget.emailAddress);
-    });
+    final resetPasswordButton = AnimationButton(
+        buttonText: Strings.reset_password_button_text,
+        callback: () {
+          _presenter.onResetPasswordButtonClicked(widget.emailAddress);
+        });
 
     final statusField = Container(
       padding: EdgeInsets.symmetric(vertical: 8.0),
-      child: Text(_statusText, style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold, color: Colors.red), textAlign: TextAlign.start,),
+      child: Text(
+        _statusText,
+        style: TextStyle(
+            fontSize: 16.0, fontWeight: FontWeight.bold, color: Colors.red),
+        textAlign: TextAlign.start,
+      ),
     );
 
     return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+        ),
         body: Center(
             child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -99,12 +110,10 @@ class ResetPasswordState extends State<ResetPasswordPage> implements ResetPasswo
   }
 
   @override
-  void handleError() {
-  }
+  void handleError() {}
 
   @override
-  void logOut() {
-  }
+  void logOut() {}
 
   @override
   void showResultStatus(String status) {

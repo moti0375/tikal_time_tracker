@@ -188,16 +188,22 @@ class DomParser {
       cells = cells.map((it) {
         return it.substring(it.indexOf(">") + 1);
       }).toList();
-//     debugPrint("cells: ${cells.toString()}, size: ${cells.length}");
+     debugPrint("cells: ${cells.toString()}, size: ${cells.length}");
 
       Task task = User.me.tasks.firstWhere((it) {
 //        print("firstWhere: ${it.name}:${cells[1]}");
         return it.name == cells[1];
       });
 
-      TimeOfDay start = TimeOfDay.fromDateTime(timeFormat.parse(cells[2]));
-      TimeOfDay finish = null;
-
+      TimeOfDay start;
+      try{
+        start = TimeOfDay.fromDateTime(timeFormat.parse(cells[2]));
+      }catch(e){
+        if (e is FormatException) {
+          start = null;
+        }
+      }
+      TimeOfDay finish;
       try {
         finish = TimeOfDay.fromDateTime(timeFormat.parse(cells[3]));
       } catch (e) {
