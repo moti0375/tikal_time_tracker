@@ -26,7 +26,7 @@ class GenerateReportPage extends StatefulWidget {
 class GenerateReportState extends State<GenerateReportPage> implements ReportsViewContract{
   Analytics analytics = Analytics();
   Project _selectedProject;
-  List<Task> _tasks = User.me.tasks;
+  List<Task> _tasks = new List.from(User.me.tasks);
   List<Period> _predefiendPeriod = [
     Period(name: Strings.item_this_month, value: 3),
     Period(name: Strings.item_previous_month, value: 7),
