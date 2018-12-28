@@ -44,7 +44,8 @@ class NewRecordPageState extends State<NewRecordPage>
   TextEditingController dateInputController;
   TextEditingController durationInputController;
   TextEditingController commentInputController;
-  bool isButtonEnabled = false;
+  FocusNode commentFocusNode;
+  bool isSaveButtonEnabled = false;
   TimeRecordsRepository repository = new TimeRecordsRepository();
   NewRecordPresenterContract presenter;
 
@@ -64,8 +65,8 @@ class NewRecordPageState extends State<NewRecordPage>
         flow: widget.flow);
     presenter.subscribe(this);
     _selectedDate = widget.dateTime;
+    commentFocusNode = FocusNode();
     analytics.logEvent(NewRecordeEvent.impression(EVENT_NAME.NEW_TIME_PAGE_OPENED).view());
-
   }
 
   @override
@@ -107,10 +108,13 @@ class NewRecordPageState extends State<NewRecordPage>
     presenter.taskSelected(widget.timeRecord.task);
     presenter.commentEntered(widget.timeRecord.comment);
     commentInputController = TextEditingController(text: widget.timeRecord.comment);
+    commentInputController.addListener((){
+      _comment = commentInputController.text;
+      presenter.commentEntered(commentInputController.text);
+    });
     presenter.dateSelected(_selectedDate);
     presenter.startTimeSelected(_startTime);
     presenter.endTimeSelected(_finishTime);
-
   }
 
   @override
@@ -147,7 +151,7 @@ class NewRecordPageState extends State<NewRecordPage>
   @override
   void setButtonState(bool enabled) {
     setState(() {
-      isButtonEnabled = enabled;
+      isSaveButtonEnabled = enabled;
     });
   }
 
@@ -215,14 +219,22 @@ class NewRecordPageState extends State<NewRecordPage>
               }),
         ));
 
+    final finishTimePicker = TimeTrackerTimePicker(initialTimeValue: _finishTime, hint: "Finish Time", callback: (TimeOfDay time){
+      presenter.endTimeSelected(time);
+    }, onSubmitCallback: (){
+      print("finishTimePicker submitted");
+      FocusScope.of(context).requestFocus(commentFocusNode);
+    },);
+
 
     final startTimePicker = TimeTrackerTimePicker(initialTimeValue: _startTime, hint: "Start Time", callback: (TimeOfDay time){
       presenter.startTimeSelected(time);
-    });
+    }, onSubmitCallback: (){
+      print("startTimePicker submitted");
+      finishTimePicker.requestFocus(context);
+    },);
 
-    final finishTimePicker = TimeTrackerTimePicker(initialTimeValue: _finishTime, hint: "Finish Time", callback: (TimeOfDay time){
-      presenter.endTimeSelected(time);
-    });
+
 
     Widget datePicker = TimeTrackerDatePicker(initializedDateTime: _selectedDate, onSubmittedCallback: (date){
 //      print("datePicker: callback ${date.toString()}");
@@ -259,7 +271,7 @@ class NewRecordPageState extends State<NewRecordPage>
           vertical: 16.0, horizontal: 16.0),
       child: Material(
         borderRadius: BorderRadius.circular(10.0),
-        shadowColor: isButtonEnabled
+        shadowColor: isSaveButtonEnabled
             ? Colors.orangeAccent.shade100
             : Colors.grey.shade100,
         elevation: 2.0,
@@ -267,12 +279,12 @@ class NewRecordPageState extends State<NewRecordPage>
           minWidth: 100.0,
           height: 42.0,
           onPressed: () {
-            if (isButtonEnabled) {
+            if (isSaveButtonEnabled) {
               analytics.logEvent(NewRecordeEvent.click(EVENT_NAME.SAVE_RECORD_CLICKED));
               presenter.saveButtonClicked();
             }
           },
-          color: isButtonEnabled
+          color: isSaveButtonEnabled
               ? Colors.orangeAccent
               : Colors.grey,
           child: Text(Strings.save_button_text,
@@ -321,15 +333,17 @@ class NewRecordPageState extends State<NewRecordPage>
       );
     }
 
-
     Widget _commentField = Container(
           padding: EdgeInsets.only(left: 4.0, right: 4.0, top: 8.0),
-          child: TextField(
-              maxLines: 4,
-              onChanged: (value) {
-                _comment = value;
-                presenter.commentEntered(value);
+          child: TextFormField(
+            textInputAction: TextInputAction.done,
+            focusNode: commentFocusNode,
+              onFieldSubmitted: (comment){
+                if(isSaveButtonEnabled){
+                  presenter.saveButtonClicked();
+                }
               },
+              maxLines: 4,
               controller: commentInputController,
               decoration: InputDecoration(
                   border: OutlineInputBorder(

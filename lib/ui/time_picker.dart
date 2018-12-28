@@ -6,20 +6,26 @@ import 'package:intl/intl.dart';
 
 class TimeTrackerTimePicker extends StatefulWidget {
 
-  var callback = (TimeOfDay time) {};
-  String hint;
-  TimeOfDay initialTimeValue;
-  RegExp timePattern;
-  RegExp simpleTimePattern;
-  DateFormat timeFormatter = DateFormat('H:m');
-  DateFormat simpleTimeFormatter = DateFormat('H');
+  final callback;
+  final onSubmitCallback;
+  final String hint;
+  final TimeOfDay initialTimeValue;
+  final RegExp timePattern = RegExp("^([01]?[0-9]|2[0-3]):[0-5][0-9]\$");
+  final RegExp simpleTimePattern = RegExp("^([01]?[0-9]|2[0-3])\$");
+  final DateFormat timeFormatter = DateFormat('H:m');
+  final DateFormat simpleTimeFormatter = DateFormat('H');
 
+  final FocusNode focusNode = FocusNode();
 
-  TimeTrackerTimePicker({this.initialTimeValue, this.hint, this.callback}) {
-    timePattern = RegExp("^([01]?[0-9]|2[0-3]):[0-5][0-9]\$");
-    simpleTimePattern = RegExp("^([01]?[0-9]|2[0-3])\$");
+  TimeTrackerTimePicker({this.initialTimeValue, this.hint, this.callback, this.onSubmitCallback});
+
+  void requestFocus(BuildContext  context){
+    FocusScope.of(context).requestFocus(focusNode);
   }
 
+  void revokeFocus(){
+    focusNode.unfocus();
+  }
 
   @override
   State<StatefulWidget> createState() {
@@ -29,26 +35,23 @@ class TimeTrackerTimePicker extends StatefulWidget {
 
 
 class TimePickerState extends State<TimeTrackerTimePicker> {
-  TextEditingController startTimeController;
+  TextEditingController pickerController;
   TimeOfDay _pickedTime;
-  FocusNode focusNode;
   String buffer;
 
   @override
   void initState() {
     super.initState();
-    focusNode = FocusNode();
-    focusNode.addListener(() {
-      if (!focusNode.hasFocus) {
+    widget.focusNode.addListener(() {
+      if (!widget.focusNode.hasFocus) {
         submitValidator(buffer);
       }
     });
     if (widget.initialTimeValue != null) {
       print("Initial time not null");
       _pickedTime = widget.initialTimeValue;
-      startTimeController = TextEditingController(
+      pickerController = TextEditingController(
           text: Utils.buildTimeStringFromTime(_pickedTime));
-
       // _onTimeSelected(widget.initialTimeValue);
     }
   }
@@ -56,7 +59,7 @@ class TimePickerState extends State<TimeTrackerTimePicker> {
   @override
   void dispose() {
     super.dispose();
-    focusNode.dispose();
+    widget.focusNode.dispose();
   }
 
   @override
@@ -77,13 +80,10 @@ class TimePickerState extends State<TimeTrackerTimePicker> {
           ),
           Container(
             child: new Flexible(
-                child: new TextField(
-                    onSubmitted: submitValidator,
-                    onChanged: (value){
-                      buffer = value;
-                      typeValidator(value);
-                    },
-                    focusNode: focusNode,
+                child: new TextFormField(
+                    textInputAction: TextInputAction.next,
+                    onFieldSubmitted: submitValidator,
+                    focusNode: widget.focusNode,
                     decoration: InputDecoration(
                         hintText: widget.hint != null ? widget.hint : "",
                         contentPadding:
@@ -91,7 +91,7 @@ class TimePickerState extends State<TimeTrackerTimePicker> {
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20.0))),
                     maxLines: 1,
-                    controller: startTimeController)),
+                    controller: pickerController)),
           ),
         ],
       ),
@@ -117,6 +117,8 @@ class TimePickerState extends State<TimeTrackerTimePicker> {
   }
 
   void submitValidator(String value){
+    widget.focusNode.unfocus();
+    widget.onSubmitCallback();
     print("submitValidator: $value");
     TimeOfDay time = _validator(value);
     if(time != null){
@@ -160,9 +162,21 @@ class TimePickerState extends State<TimeTrackerTimePicker> {
     widget.callback(time);
     setState(() {
       _pickedTime = time;
-      startTimeController =
+      _setPickerController(_pickedTime);
+    });
+  }
+
+  void _setPickerController(TimeOfDay time){
+    if(time != null){
+      pickerController =
           TextEditingController(
-              text: Utils.buildTimeStringFromTime(_pickedTime));
+              text: Utils.buildTimeStringFromTime(time));
+    }else{
+      pickerController = TextEditingController();
+    }
+    pickerController.addListener((){
+      buffer = pickerController.text;
+      typeValidator(buffer);
     });
   }
 }
