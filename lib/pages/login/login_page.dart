@@ -11,6 +11,7 @@ import 'package:tikal_time_tracker/utils/page_transition.dart';
 import 'package:tikal_time_tracker/pages/reset_password/reset_password_page.dart';
 import 'package:tikal_time_tracker/analytics/analytics.dart';
 import 'package:tikal_time_tracker/analytics/events/login_event.dart';
+import 'package:tikal_time_tracker/pages/login/singup_dialog_contnet.dart';
 import 'package:ktoast/ktoast.dart';
 import 'package:tikal_time_tracker/resources/strings.dart';
 
@@ -273,45 +274,8 @@ class LoginPageState extends State<LoginPage> {
   }
 
   Future<Null> _showSignInDialog() async {
-    String userName;
-    String password;
-
-    Widget dialogContent = SingleChildScrollView(
-      padding: EdgeInsets.all(4.0),
-      child: ListBody(
-        children: <Widget>[
-          Container(
-            padding: const EdgeInsets.only(
-                left: 8.0, right: 8.0, top: 0.0, bottom: 4.0),
-            child: new TextField(
-                onChanged: (value) {
-                  userName = value;
-                },
-                decoration: InputDecoration(
-                    hintText: Strings.username_hint,
-                    contentPadding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0))),
-                maxLines: 1),
-          ),
-          Container(
-            padding: const EdgeInsets.only(
-                left: 8.0, right: 8.0, top: 4.0, bottom: 4.0),
-            child: new TextField(
-                obscureText: true,
-                onChanged: (value) {
-                  password = value;
-                },
-                decoration: InputDecoration(
-                    hintText: Strings.password_hint,
-                    contentPadding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0))),
-                maxLines: 1),
-          ),
-        ],
-      ),
-    );
+    String signInUserName;
+    String signInPassword;
 
     AlertDialog dialog = AlertDialog(
       title: Row(
@@ -327,7 +291,18 @@ class LoginPageState extends State<LoginPage> {
           Text(Strings.sign_in)
         ],
       ),
-      content: dialogContent,
+      content: SignupContnet(onUsernameChanged:(username){
+        print("Signin onUsernameChanged: $username");
+        signInUserName = username;
+      },onPasswordChanged: (password){
+        signInPassword = password;
+        print("Signin onPasswordChanged: $password");
+      },onSubmitClickListener: (username, password){
+        signInUserName = username;
+        signInPassword = password;
+        _onClickSignIn(signInUserName, signInPassword);
+        Navigator.pop(context);
+      },),
       actions: <Widget>[
         FlatButton(
           onPressed: () {
@@ -338,8 +313,8 @@ class LoginPageState extends State<LoginPage> {
         ),
         FlatButton(
           onPressed: () {
-            print("Logging in for: $userName : $password");
-            _onClickSignIn(userName, password);
+            print("Logging in for: $signInUserName : $signInPassword");
+            _onClickSignIn(signInUserName, signInPassword);
             Navigator.pop(context);
           },
           child: Text(Strings.ok),

@@ -7,7 +7,7 @@ import 'package:tikal_time_tracker/data/task.dart';
 import 'package:tikal_time_tracker/data/repository/time_records_repository.dart';
 import 'package:tikal_time_tracker/pages/report/report_page.dart';
 import 'package:tikal_time_tracker/ui/date_picker_widget.dart';
-import 'package:tikal_time_tracker/pages/login_page.dart';
+import 'package:tikal_time_tracker/pages/login/login_page.dart';
 import 'package:tikal_time_tracker/ui/page_title.dart';
 import 'package:tikal_time_tracker/pages/reports/reports_contract.dart';
 import 'package:tikal_time_tracker/pages/reports/reports_presenter.dart';

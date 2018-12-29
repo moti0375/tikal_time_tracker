@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tikal_time_tracker/pages/login_page.dart';
+import 'package:tikal_time_tracker/pages/login/login_page.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:tikal_time_tracker/analytics/analytics.dart';

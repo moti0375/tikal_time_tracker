@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tikal_time_tracker/data/models.dart';
 import 'package:tikal_time_tracker/data/user.dart';
 import 'package:tikal_time_tracker/data/repository/time_records_repository.dart';
-import 'package:tikal_time_tracker/pages/login_page.dart';
+import 'package:tikal_time_tracker/pages/login/login_page.dart';
 import 'package:tikal_time_tracker/ui/time_record_list_adapter.dart';
 import 'package:tikal_time_tracker/pages/new_record_page/new_record_page.dart';
 import 'package:tikal_time_tracker/pages/reports/place_holder_content.dart';
@@ -296,7 +296,7 @@ class TimePageState extends State<TimePage> with TickerProviderStateMixin
   @override
   void timeLoadFinished(List<TimeRecord> timeRecord) {
 
-    analytics.logEvent(TimeEvent.impression(EVENT_NAME.TIME_PAGE_LOADED).setDetails( "${timeRecord != null ? timeRecord.length : 0} :records").view());
+//    analytics.logEvent(TimeEvent.impression(EVENT_NAME.TIME_PAGE_LOADED).setDetails( "${timeRecord != null ? timeRecord.length : 0} :records").view());
     setState(() {
       this._records = timeRecord;
     });
