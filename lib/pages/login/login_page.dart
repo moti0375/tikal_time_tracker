@@ -37,8 +37,10 @@ class LoginPageState extends State<LoginPage> {
   String _password;
   bool _loggingIn = false;
   String loginError = "";
+  bool obscureText = true;
 
   FocusNode passwordFocusNode;
+
   @override
   void initState() {
     super.initState();
@@ -81,8 +83,7 @@ class LoginPageState extends State<LoginPage> {
           backgroundColor: Colors.transparent,
           radius: 48.0,
           child: Image.asset('assets/logo_no_background.png'),
-        )
-    );
+        ));
 
 //    if(_email != null && _email.isNotEmpty){
 //      emailController.value = TextEditingValue(text: _email);
@@ -109,20 +110,32 @@ class LoginPageState extends State<LoginPage> {
 //      passwordController.value = TextEditingValue(text: _password);
 //    }
 
-    final password = TextFormField(
-      focusNode: passwordFocusNode,
-      textInputAction: TextInputAction.done,
-      controller: passwordController,
-      onFieldSubmitted: (password){
-        _login(_email, _password);
-      },
-      obscureText: true,
-      decoration: InputDecoration(
-          hintText: Strings.password_hint,
-          contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-          border:
-              OutlineInputBorder(borderRadius: BorderRadius.circular(30.0))),
+    final password = Stack(
+      alignment: const Alignment(0.9, 0),
+      children: <Widget>[
+        TextFormField(
+          focusNode: passwordFocusNode,
+          textInputAction: TextInputAction.done,
+          controller: passwordController,
+          onFieldSubmitted: (password) {
+            _login(_email, _password);
+          },
+          obscureText: obscureText,
+          decoration: InputDecoration(
+              hintText: Strings.password_hint,
+              contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0))),
+        ),
+        InkWell(
+            child: new Icon(
+                obscureText == true ? Icons.visibility : Icons.visibility_off),
+            onTap: () {
+              _toggleObscureText();
+            }),
+      ],
     );
+
 
     final forgotLabel = Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -132,14 +145,14 @@ class LoginPageState extends State<LoginPage> {
             onPressed: () {
               _navigateToResetPassword(_email);
             },
-            child: Text(Strings.forgot_password, style: TextStyle(color: Colors.black45))
-        ),
+            child: Text(Strings.forgot_password,
+                style: TextStyle(color: Colors.black45))),
         FlatButton(
             onPressed: () {
               _showSignOutDialog();
             },
-            child: Text(Strings.sign_out, style: TextStyle(color: Colors.black45))
-        ),
+            child: Text(Strings.sign_out,
+                style: TextStyle(color: Colors.black45))),
       ],
     );
 
@@ -153,8 +166,7 @@ class LoginPageState extends State<LoginPage> {
                 height: 15.0,
                 child: CircularProgressIndicator(
                     value: null,
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.blue))
-            )
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.blue)))
           ],
         );
       } else {
@@ -185,16 +197,18 @@ class LoginPageState extends State<LoginPage> {
                 SizedBox(height: 8.0),
                 password,
                 SizedBox(height: 8.0),
-                AnimationButton(buttonText: Strings.login_button_text,callback: () {
-                  analytics.logEvent(LoginEvent.click(EVENT_NAME.LOGIN_CLICKED).view());
-                  _login(_email, _password);
-                }),
+                AnimationButton(
+                    buttonText: Strings.login_button_text,
+                    callback: () {
+                      analytics.logEvent(
+                          LoginEvent.click(EVENT_NAME.LOGIN_CLICKED).view());
+                      _login(_email, _password);
+                    }),
                 forgotLabel,
                 getLoginInfo()
               ],
             ),
-          )
-          ,
+          ),
         ),
       ),
     );
@@ -204,12 +218,14 @@ class LoginPageState extends State<LoginPage> {
     repository.timePage().then((response) {
 //      debugPrint("_navigateToTime response: $response");
       User.init(response);
-      Navigator.of(context).pushReplacement(PageTransition(widget: BottomNavigation()));
+      Navigator.of(context)
+          .pushReplacement(PageTransition(widget: BottomNavigation()));
     });
   }
 
   void _navigateToResetPassword(String email) {
-    Navigator.of(context).push(PageTransition(widget: ResetPasswordPage(emailAddress: email)));
+    Navigator.of(context)
+        .push(PageTransition(widget: ResetPasswordPage(emailAddress: email)));
   }
 
   void _login(String email, String password) {
@@ -231,14 +247,16 @@ class LoginPageState extends State<LoginPage> {
         analytics.logEvent(LoginEvent.impression(EVENT_NAME.LOGIN_OK).view());
         _navigateToTime();
       } else if (response.toString().contains("Incorrect login or password")) {
-        analytics.logEvent(LoginEvent.impression(EVENT_NAME.LOGIN_FAILED).setDetails("Incorrect username or password").view());
+        analytics.logEvent(LoginEvent.impression(EVENT_NAME.LOGIN_FAILED)
+            .setDetails("Incorrect username or password")
+            .view());
         _updateError(Strings.incorrect_credentials);
       }
     });
   }
 
   void _updateError(String error) {
-   // print("updateError: $error");
+    // print("updateError: $error");
     setState(() {
       _loggingIn = false;
       loginError = error;
@@ -247,7 +265,7 @@ class LoginPageState extends State<LoginPage> {
 
   void _onClickSignIn(String userName, String password) {
     analytics.logEvent(LoginEvent.click(EVENT_NAME.SIGN_IN_CLICKED).view());
-   // print("_onClickSignIn: $userName:$password");
+    // print("_onClickSignIn: $userName:$password");
     widget.preferences.setSingInUserName(userName);
     widget.preferences.setSingInPassword(password);
     _signIn();
@@ -257,7 +275,7 @@ class LoginPageState extends State<LoginPage> {
     String username = widget.preferences.getSingInUserName();
     String password = widget.preferences.getSingInPassword();
 
-   // print("_signIn: $username:$password");
+    // print("_signIn: $username:$password");
 
     repository.updateCredentials(
         new Credentials(signInUserName: username, signInPassword: password));
@@ -291,18 +309,22 @@ class LoginPageState extends State<LoginPage> {
           Text(Strings.sign_in)
         ],
       ),
-      content: SignupContnet(onUsernameChanged:(username){
-        print("Signin onUsernameChanged: $username");
-        signInUserName = username;
-      },onPasswordChanged: (password){
-        signInPassword = password;
-        print("Signin onPasswordChanged: $password");
-      },onSubmitClickListener: (username, password){
-        signInUserName = username;
-        signInPassword = password;
-        _onClickSignIn(signInUserName, signInPassword);
-        Navigator.pop(context);
-      },),
+      content: SignupContnet(
+        onUsernameChanged: (username) {
+          print("Signin onUsernameChanged: $username");
+          signInUserName = username;
+        },
+        onPasswordChanged: (password) {
+          signInPassword = password;
+          print("Signin onPasswordChanged: $password");
+        },
+        onSubmitClickListener: (username, password) {
+          signInUserName = username;
+          signInPassword = password;
+          _onClickSignIn(signInUserName, signInPassword);
+          Navigator.pop(context);
+        },
+      ),
       actions: <Widget>[
         FlatButton(
           onPressed: () {
@@ -408,12 +430,18 @@ class LoginPageState extends State<LoginPage> {
     return Preferences.init(preferences);
   }
 
-  void _signOut(){
+  void _signOut() {
     setState(() {
       _email = "";
       _password = "";
     });
     widget.preferences.signOut();
     User.signOut();
+  }
+
+  void _toggleObscureText() {
+    setState(() {
+      obscureText = !obscureText;
+    });
   }
 }

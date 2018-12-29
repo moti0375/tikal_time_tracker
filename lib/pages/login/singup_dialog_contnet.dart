@@ -87,7 +87,7 @@ class SignupContentState extends State<SignupContnet>{
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10.0))),
                     maxLines: 1),
-                InkWell(child: new Icon(obscureText == true ? Icons.lock_open : Icons.lock),
+                InkWell(child: new Icon(obscureText == true ? Icons.visibility : Icons.visibility_off),
                   onTap: (){
                     _toggleObscureText();
                   },),
