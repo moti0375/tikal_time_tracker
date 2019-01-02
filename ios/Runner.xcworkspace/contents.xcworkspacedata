@@ -2,9 +2,12 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:/Users/motibartov/Work/Android/workspace/private/tikal_time_tracker/ios/TikalTimeTracker.xcodeproj">
+      location = "group:/Users/motibartov/Work/Android/workspace/private/tikal_time_tracker/ios/Runner.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:Pods/Pods.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Runner.xcodeproj">
    </FileRef>
 </Workspace>
