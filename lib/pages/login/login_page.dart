@@ -205,7 +205,8 @@ class LoginPageState extends State<LoginPage> {
                       _login(_email, _password);
                     }),
                 forgotLabel,
-                getLoginInfo()
+                getLoginInfo(),
+                SizedBox(height: 8.0),
               ],
             ),
           ),
@@ -248,10 +249,12 @@ class LoginPageState extends State<LoginPage> {
         _navigateToTime();
       } else if (response.toString().contains("Incorrect login or password")) {
         analytics.logEvent(LoginEvent.impression(EVENT_NAME.LOGIN_FAILED)
-            .setDetails("Incorrect username or password")
+            .setDetails(Strings.incorrect_credentials)
             .view());
         _updateError(Strings.incorrect_credentials);
       }
+    }, onError: (){
+      _updateError(Strings.login_failure);
     });
   }
 

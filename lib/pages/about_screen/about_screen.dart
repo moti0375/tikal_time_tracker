@@ -66,7 +66,7 @@ class AboutScreen extends StatelessWidget{
                       textAlign: TextAlign.center,
                       maxLines: 1,
                         style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),),
-                    getTextRow("${Strings.version_text} ${Values.app_version}"),
+                    getTextRow("${Strings.version_text} ${Strings.app_version}"),
                     getTextRow(Strings.about_text),
                   ],
                 ),

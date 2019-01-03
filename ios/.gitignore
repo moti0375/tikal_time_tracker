@@ -41,6 +41,8 @@ Icon?
 /Flutter/Generated.xcconfig
 /Runner/GoogleService-Info.plist
 /ServiceDefinitions.json
+/Runner.xcodeproj/project.pbxproj
+Podsfile.lock
 
 Pods/
 .symlinks/

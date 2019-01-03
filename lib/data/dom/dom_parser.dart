@@ -47,17 +47,19 @@ class DomParser {
 
 //    debugPrint("_extractTasks: $domStr");
 
+    List<Task> tasksForProj = List<Task>();
     projects.forEach((p) {
       print("getUserFromDom: p = ${p.name}:${tasksForProjects[p.value]}");
-      List<Task> tasksForProj = tasksForProjects[p.value].map((t) {
+        tasksForProjects[p.value].forEach((t) {
         Task task = tasks.firstWhere((e) {
           print("firstWhere: $t -> ${e.value}:${e.name}");
           return (e.value == t);
-        });
-        return task;
-      }).toList();
-      print(
-          "getUserFromDom: tasksForProj ${p.name} : ${tasksForProj.toString()}");
+        }, orElse: () => null);
+        if(task != null){
+          tasksForProj.add(task);
+        }
+      });
+      print("getUserFromDom: tasksForProj ${p.name} : ${tasksForProj.toString()}");
       p.tasks = tasksForProj;
     });
 

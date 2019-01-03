@@ -10,6 +10,7 @@ class Strings{
   static const sign_in = "Sign In";
   static const sign_out = "Sign Out";
   static const incorrect_credentials = "Incorrect login or password";
+  static const login_failure = "There was an error";
   static const cancel = "Cancel";
   static const ok = "OK";
   static const sign_out_approval_title = "Are you sure?";
@@ -23,7 +24,7 @@ class Strings{
 
   //Time page
   static const no_work_title = "No Work Today";
-  static const no_work_subtitle = "Tap to add repor";
+  static const no_work_subtitle = "Tap to add report";
 
   //Generate Report page
   static const item_this_month = "This Month";
@@ -72,10 +73,11 @@ class Strings{
   //Reset password screen
   static const reset_password_page_title = "Password Resetting";
   static const reset_password_button_text = "Reset password ";
+  static const app_version = "1.2.1";
+
 
 
 }
 
 class Values{
-  static const app_version = 1.2;
 }
