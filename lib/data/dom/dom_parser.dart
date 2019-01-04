@@ -47,8 +47,8 @@ class DomParser {
 
 //    debugPrint("_extractTasks: $domStr");
 
-    List<Task> tasksForProj = List<Task>();
     projects.forEach((p) {
+      List<Task> tasksForProj = List<Task>();
       print("getUserFromDom: p = ${p.name}:${tasksForProjects[p.value]}");
         tasksForProjects[p.value].forEach((t) {
         Task task = tasks.firstWhere((e) {
