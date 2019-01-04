@@ -15,16 +15,14 @@ class TimeTrackerTimePicker extends StatefulWidget {
   final DateFormat timeFormatter = DateFormat('H:m');
   final DateFormat simpleTimeFormatter = DateFormat('H');
 
-  final FocusNode focusNode = FocusNode();
 
   TimeTrackerTimePicker({this.initialTimeValue, this.hint, this.callback, this.onSubmitCallback});
 
   void requestFocus(BuildContext  context){
-    FocusScope.of(context).requestFocus(focusNode);
+
   }
 
   void revokeFocus(){
-    focusNode.unfocus();
   }
 
   @override
@@ -38,14 +36,16 @@ class TimePickerState extends State<TimeTrackerTimePicker> {
   TextEditingController pickerController;
   TimeOfDay _pickedTime;
   String buffer;
+  FocusNode focusNode;
 
   @override
   void initState() {
     super.initState();
+    focusNode = FocusNode();
     print("TimePicker init state");
-    widget.focusNode.addListener(() {
-      print("TimePickerFocus: ${widget.focusNode.hasFocus}");
-      if (!widget.focusNode.hasFocus) {
+    focusNode.addListener(() {
+      print("TimePickerFocus: ${focusNode.hasFocus}");
+      if (!focusNode.hasFocus) {
         submitValidator(buffer);
       }
     });
@@ -59,7 +59,8 @@ class TimePickerState extends State<TimeTrackerTimePicker> {
   @override
   void dispose() {
     super.dispose();
-//    widget.focusNode.dispose();
+    print("dispose");
+    focusNode.dispose();
   }
 
   @override
@@ -72,7 +73,7 @@ class TimePickerState extends State<TimeTrackerTimePicker> {
             padding: const EdgeInsets.all(8.0),
             child: GestureDetector(
               onTap: () {
-                print("onTap TimePicker");
+//                print("onTap TimePicker");
                 _showStartTimeDialog(context);
               },
               child: Icon(Icons.access_time),
@@ -82,8 +83,8 @@ class TimePickerState extends State<TimeTrackerTimePicker> {
             child: new Flexible(
                 child: new TextFormField(
                     textInputAction: TextInputAction.next,
-                    focusNode: widget.focusNode,
-                    onFieldSubmitted: submitValidator,
+                    focusNode: focusNode,
+                    onFieldSubmitted: onSubmitButtonClicked,
                     decoration: InputDecoration(
                         hintText: widget.hint != null ? widget.hint : "",
                         contentPadding:
@@ -110,17 +111,21 @@ class TimePickerState extends State<TimeTrackerTimePicker> {
   }
 
   void typeValidator(String value){
-    print("Type validator: $value");
+//    print("Type validator: $value");
     TimeOfDay time = _validator(value);
     if(time != null){
       widget.callback(time);
     }
   }
 
+  void onSubmitButtonClicked(String value){
+    focusNode.unfocus();
+    submitValidator(value);
+  }
+
   void submitValidator(String value){
-    //widget.focusNode.unfocus();
     widget.onSubmitCallback();
-    print("submitValidator: $value");
+//    print("submitValidator: $value");
     TimeOfDay time = _validator(value);
     if(time != null){
       _onTimeSelected(time);
@@ -135,17 +140,17 @@ class TimePickerState extends State<TimeTrackerTimePicker> {
     Match match = widget.timePattern.firstMatch(value);
 
     if (simpleMatch != null) {
-      print("_validator: simpleMatch ${simpleMatch.toString()}");
+//      print("_validator: simpleMatch ${simpleMatch.toString()}");
       TimeOfDay time = TimeOfDay.fromDateTime(
           widget.simpleTimeFormatter.parse(value));
       return time;
     } else if (match != null) {
-      print("_validator: ${match.toString()}");
+//      print("_validator: ${match.toString()}");
       TimeOfDay time = TimeOfDay.fromDateTime(
           widget.timeFormatter.parse(value));
       return time;
     } else {
-      print("_validator: no match");
+//      print("_validator: no match");
       return null;
     }
   }
