@@ -111,10 +111,12 @@ class TimePickerState extends State<TimeTrackerTimePicker> {
   }
 
   void typeValidator(String value){
-//    print("Type validator: $value");
+    print("Type validator: $value");
     TimeOfDay time = _validator(value);
     if(time != null){
       widget.callback(time);
+    }else{
+      widget.callback(null);
     }
   }
 
@@ -125,7 +127,7 @@ class TimePickerState extends State<TimeTrackerTimePicker> {
 
   void submitValidator(String value){
     widget.onSubmitCallback();
-//    print("submitValidator: $value");
+    print("submitValidator: $value");
     TimeOfDay time = _validator(value);
     if(time != null){
       _onTimeSelected(time);
@@ -168,7 +170,8 @@ class TimePickerState extends State<TimeTrackerTimePicker> {
     widget.callback(time);
     setState(() {
       _pickedTime = time;
-      _setPickerController(_pickedTime);
+      TextEditingValue value = TextEditingValue(text: Utils.buildTimeStringFromTime(time));
+      pickerController.value = value;
     });
   }
 

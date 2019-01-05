@@ -223,7 +223,7 @@ class NewRecordPageState extends State<NewRecordPage>
       presenter.endTimeSelected(time);
     }, onSubmitCallback: (){
       print("finishTimePicker submitted");
-//      FocusScope.of(context).requestFocus(commentFocusNode);
+      FocusScope.of(context).requestFocus(commentFocusNode);
     },);
 
 
@@ -231,7 +231,7 @@ class NewRecordPageState extends State<NewRecordPage>
       presenter.startTimeSelected(time);
     }, onSubmitCallback: (){
       print("startTimePicker submitted");
-//      finishTimePicker.requestFocus(context);
+      finishTimePicker.requestFocus(context);
     },);
 
 
