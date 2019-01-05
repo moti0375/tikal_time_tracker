@@ -48,7 +48,7 @@ class FormInputItem extends StatelessWidget{
           ),
         ],
       ),
-    );;
+    );
   }
 
   void _onTextChanged(String text){
@@ -66,9 +66,4 @@ class FormInputItem extends StatelessWidget{
     return enabled;
   }
 
-  @override
-  State<StatefulWidget> createState() {
-    // TODO: implement createState
-    return null;
-  }
 }

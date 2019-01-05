@@ -7,7 +7,7 @@ class TimeTrackerDatePicker extends StatefulWidget{
   DateTime initializedDateTime;
   DatePickerOnPickedListener onPickedListener;
   String hint;
-  var onSubmittedCallback = (DateTime d){};
+  var onSubmittedCallback = (DateTime d)=>{};
   RegExp datePattern = RegExp("^[0-3]?[0-9]/[0-1]?[0-9]/[2]?[0]?[0-9]{2}\$");
   DateFormat dateFormat = DateFormat("d/M/y");
   String dateString;

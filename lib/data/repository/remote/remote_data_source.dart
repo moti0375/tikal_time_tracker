@@ -1,10 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'dart:io';
-import 'package:http/http.dart';
 import 'package:tikal_time_tracker/data/member.dart';
 import 'package:tikal_time_tracker/data/models.dart';
-import 'package:tikal_time_tracker/data/member.dart';
 import 'package:tikal_time_tracker/network/requests/send_email_form.dart';
 import 'package:tikal_time_tracker/network/time_tracker_api.dart';
 import 'package:tikal_time_tracker/network/requests/reports_form.dart';
@@ -51,7 +48,7 @@ class RemoteDateSource implements TimeDateSource {
 
   @override
   Future<int> deleteTimeRecordForDate(DateTime dateTime) {
-    // TODO: implement deleteTimeRecordForDate
+    return null;
   }
 
   @override
@@ -66,7 +63,7 @@ class RemoteDateSource implements TimeDateSource {
   @override
   Future<List<TimeRecord>> getRecordsBetweenDates(
       DateTime startDate, DateTime endDate) {
-    // TODO: implement getRecordsBetweenDates
+    return null;
   }
 
   @override

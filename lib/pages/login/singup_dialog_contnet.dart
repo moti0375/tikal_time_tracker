@@ -97,7 +97,6 @@ class SignupContentState extends State<SignupContnet>{
         ],
       ),
     );
-    ;
   }
 
   void _toggleObscureText() {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../data/models.dart';
+import 'package:tikal_time_tracker/data/models.dart';
+import 'package:tikal_time_tracker/utils/utils.dart';
 
 
 
@@ -54,7 +55,7 @@ class TimeRecordListAdapter extends StatelessWidget{
                 padding:
                 EdgeInsets.symmetric(horizontal: 1.0, vertical: 0.0),
                 child: Text(
-                    item.start == null ? "No Start" : "${item.start.hour}:${item.start.minute} - " + (item.finish == null ? "No End" : "${item.finish.hour}:${item.finish.minute}"),
+                    item.start == null ? "No Start" : "${Utils.buildTimeStringFromTime(item.start)} - " + (item.finish == null ? "No End" : "${Utils.buildTimeStringFromTime(item.finish)}"),
                     style: TextStyle(fontSize: 12.0))),
             Padding(
                 padding:

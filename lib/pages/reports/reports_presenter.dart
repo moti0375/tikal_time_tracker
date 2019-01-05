@@ -37,7 +37,7 @@ class ReportsPresenter implements ReportsPresenterContract {
       if(response is List<Member>){
         this.members = response;
         print("_loadReportsPage: ${this.members.toString()}");
-        List<MemberListItem> items = response.map((member){
+        response.map((member){
 //          print("_loadReportsPage: ${member.toString()}");
           return MemberListItem(member: member);
         }).toList();

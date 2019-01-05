@@ -12,7 +12,6 @@ import 'package:tikal_time_tracker/pages/reset_password/reset_password_page.dart
 import 'package:tikal_time_tracker/analytics/analytics.dart';
 import 'package:tikal_time_tracker/analytics/events/login_event.dart';
 import 'package:tikal_time_tracker/pages/login/singup_dialog_contnet.dart';
-import 'package:ktoast/ktoast.dart';
 import 'package:tikal_time_tracker/resources/strings.dart';
 
 class LoginPage extends StatefulWidget {
@@ -27,7 +26,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class LoginPageState extends State<LoginPage> {
-  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   TimeRecordsRepository repository = TimeRecordsRepository.init(
       new Credentials(signInUserName: "", signInPassword: ""));
@@ -421,11 +419,6 @@ class LoginPageState extends State<LoginPage> {
         builder: (BuildContext context) {
           return dialog;
         });
-  }
-
-  Widget _buildDialogContent() {
-    TextEditingController usernameInputController = TextEditingController();
-    TextEditingController passwordInputController = TextEditingController();
   }
 
   Future<Preferences> initPrefs() async {

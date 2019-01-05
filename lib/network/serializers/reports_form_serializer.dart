@@ -1,8 +1,6 @@
 import 'package:jaguar_serializer/src/serializer/serializer.dart';
 import 'package:tikal_time_tracker/network/requests/reports_form.dart';
-import 'dart:convert';
 import 'package:intl/intl.dart';
-import 'package:flutter/material.dart';
 
 
 class ReportsFormSerializer extends Serializer<ReportForm>{

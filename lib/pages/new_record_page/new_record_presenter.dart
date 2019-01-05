@@ -40,7 +40,7 @@ class NewRecordPresenter implements NewRecordPresenterContract {
 
   @override
   void commentEntered(String comment) {
-    print("commentEntered: ${comment}");
+    print("commentEntered: $comment");
     this.timeRecord.comment = comment;
   }
 
@@ -159,7 +159,7 @@ class NewRecordPresenter implements NewRecordPresenterContract {
   _handleDeleteButton(){
     print("About to delete record: ${this.timeRecord.toString()}");
     repository.deleteTime(this.timeRecord).then((response){
-      print("Success: ${response}");
+      print("Success: $response");
       view.showSaveRecordSuccess(this.timeRecord);
     }, onError: (e){
       print("_handleDeleteButton: There was an error");

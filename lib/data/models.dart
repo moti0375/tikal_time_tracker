@@ -14,9 +14,7 @@ class TimeRecord{
   String comment;
   String userName;
 
-  TimeRecord.empty(){
-
-  }
+  TimeRecord.empty();
 
   TimeRecord({this.id, this.project, this.task, this.start, this.finish,
       this.date, this.comment, this.duration, this.userName}){

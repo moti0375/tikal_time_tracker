@@ -3,7 +3,6 @@ import 'package:tikal_time_tracker/ui/page_title.dart';
 import 'package:tikal_time_tracker/data/project.dart';
 import 'package:tikal_time_tracker/data/task.dart';
 import 'package:tikal_time_tracker/data/models.dart';
-import 'dart:async';
 import 'package:tikal_time_tracker/data/repository/time_records_repository.dart';
 import 'package:tikal_time_tracker/utils/utils.dart';
 import 'package:tikal_time_tracker/ui/date_picker_widget.dart';
@@ -38,7 +37,6 @@ class NewRecordPageState extends State<NewRecordPage>
   TimeOfDay _finishTime;
   Duration _duration;
   DateTime _selectedDate;
-  String _comment;
   TextEditingController startTimeController;
   TextEditingController finishTimeController;
   TextEditingController dateInputController;
@@ -59,13 +57,10 @@ class NewRecordPageState extends State<NewRecordPage>
     super.initState();
     print("initState: flow ${widget.flow}");
     _projects.addAll(widget.projects);
-    presenter = NewRecordPresenter(
-        repository: repository,
-        timeRecord: widget.timeRecord,
-        flow: widget.flow);
-    presenter.subscribe(this);
     _selectedDate = widget.dateTime;
-    commentFocusNode = FocusNode();
+    _setCommentController();
+    _setFocusNodes();
+    _setPresenter();
     analytics.logEvent(NewRecordeEvent.impression(EVENT_NAME.NEW_TIME_PAGE_OPENED).view());
   }
 
@@ -107,14 +102,14 @@ class NewRecordPageState extends State<NewRecordPage>
     presenter.projectSelected(widget.timeRecord.project);
     presenter.taskSelected(widget.timeRecord.task);
     presenter.commentEntered(widget.timeRecord.comment);
-    commentInputController = TextEditingController(text: widget.timeRecord.comment);
-    commentInputController.addListener((){
-      _comment = commentInputController.text;
-      presenter.commentEntered(commentInputController.text);
-    });
     presenter.dateSelected(_selectedDate);
     presenter.startTimeSelected(_startTime);
     presenter.endTimeSelected(_finishTime);
+
+    setState(() {
+      TextEditingValue textEditingValue = TextEditingValue(text: widget.timeRecord.comment);
+      commentInputController.value = textEditingValue;
+    });
   }
 
   @override
@@ -153,6 +148,30 @@ class NewRecordPageState extends State<NewRecordPage>
     setState(() {
       isSaveButtonEnabled = enabled;
     });
+  }
+
+  _setCommentController(){
+    commentInputController = TextEditingController();
+    commentInputController.addListener((){
+      presenter.commentEntered(commentInputController.text);
+    });
+  }
+
+  _setFocusNodes(){
+    commentFocusNode = FocusNode();
+    commentFocusNode.addListener((){
+      if(commentFocusNode.hasFocus && commentInputController.text.isEmpty){
+        commentInputController.clear();
+      }
+    });
+  }
+
+  _setPresenter(){
+    presenter = NewRecordPresenter(
+        repository: repository,
+        timeRecord: widget.timeRecord,
+        flow: widget.flow);
+    presenter.subscribe(this);
   }
 
   @override
@@ -315,14 +334,10 @@ class NewRecordPageState extends State<NewRecordPage>
 
     Row _buildButtonsRow(){
       List<Widget> children;
-      MainAxisAlignment alignment;
-      MainAxisSize mainAxisSize;
       if(widget.flow == NewRecordFlow.update_record){
         children = [_saveButton, _deleteButton];
-        alignment = MainAxisAlignment.spaceAround;
       }else{
         children =  [_saveButton];
-        alignment = MainAxisAlignment.center;
 
       }
 

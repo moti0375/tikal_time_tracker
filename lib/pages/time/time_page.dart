@@ -171,36 +171,6 @@ class TimePageState extends State<TimePage> with TickerProviderStateMixin
     );
   }
 
-  Widget _setDatePicker() {
-    return Container(
-      padding: EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
-      child: new Row(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: GestureDetector(
-              onTap: () {
-                _showDateDialog();
-              },
-              child: Icon(Icons.date_range),
-            ),
-          ),
-          Container(
-            child: new Flexible(
-                child: new TextField(
-              decoration: InputDecoration(
-                  hintText: "Date",
-                  contentPadding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20.0))),
-              maxLines: 1,
-              controller: dateInputController,
-            )),
-          ),
-        ],
-      ),
-    );
-  }
 
   _navigateToNextScreen() {
     final projects = User.me.projects;
@@ -245,18 +215,6 @@ class TimePageState extends State<TimePage> with TickerProviderStateMixin
     });
   }
 
-  _showDateDialog() {
-//    print("_showDateDialog");
-    showDatePicker(
-            context: context,
-            initialDate: _selectedDate != null ? _selectedDate : DateTime.now(),
-            firstDate: DateTime(_selectedDate.year - 1, 1))
-        .then((picked) {
-      setState(() {
-        _onDateSelected(picked);
-      });
-    });
-  }
 
   _onDateSelected(DateTime selectedDate) {
     _selectedDate = DateTime(
@@ -265,15 +223,6 @@ class TimePageState extends State<TimePage> with TickerProviderStateMixin
         text: "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}");
     presenter.loadTimeForDate(selectedDate);
   }
-
-  void _refreshList(List<TimeRecord> records) {
-    setState(() {
-//      print(
-//          "records for $_selectedDate : ${records.toString()}:${records.length}");
-      _records = records;
-    });
-  }
-
 
   @override
   onListItemClicked(TimeRecord item) {

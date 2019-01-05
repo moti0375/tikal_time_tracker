@@ -1,7 +1,3 @@
-import 'package:html/dom.dart' as DomText;
-import 'package:html/dom.dart' show Document;
-import 'package:html/dom.dart' as DomElement;
-import 'package:html/parser.dart' show parse;
 import 'package:tikal_time_tracker/data/user.dart';
 import 'package:tikal_time_tracker/data/project.dart';
 import 'package:tikal_time_tracker/data/task.dart';
@@ -11,13 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:tikal_time_tracker/network/requests/send_email_form.dart';
 
-
-import 'dart:convert';
-
 class DomParser {
   static const String TAG = "DomParser";
 
-  DomParser() {}
+  DomParser();
 
   DateFormat timeFormat = DateFormat('H:m');
 
@@ -331,9 +324,9 @@ class DomParser {
 //      print("parseReportPage: cells ${cells.toString()}");
 
       DateTime dateTime = dateFormat.parse(cells[0]);
-      Project project = null;
-      Task task = null;
-      String userName = null;
+      Project project ;
+      Task task;
+      String userName;
 
       int cellsOffset = 0;
       switch (role) {
@@ -360,7 +353,7 @@ class DomParser {
           }
       }
 
-      TimeOfDay start = null;
+      TimeOfDay start;
 
       try {
         start =
@@ -371,7 +364,7 @@ class DomParser {
         }
       }
 
-      TimeOfDay finish = null;
+      TimeOfDay finish;
 
       try {
         finish =

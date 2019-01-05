@@ -15,7 +15,6 @@ class Utils {
     String tt_login = ",tt_login";
     DateFormat dateFormat = DateFormat('EEE, d-MMM-y H:m:s');
 
-
     List<ClientCookie> cookies = List<ClientCookie>();
     if(cookiesString.contains(tt_login)){
       String sessionCookieStr = cookiesString.substring(0,cookiesString.indexOf(tt_login));

@@ -1,7 +1,5 @@
 import 'package:jaguar_serializer/src/serializer/serializer.dart';
-import 'dart:convert';
 import 'package:tikal_time_tracker/network/requests/send_email_form.dart';
-import 'package:intl/intl.dart';
 
 class SendEmailSerializer extends Serializer<SendEmailForm> {
 

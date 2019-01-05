@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:tikal_time_tracker/data/member.dart';
-import 'package:tikal_time_tracker/data/user.dart';
 import 'package:tikal_time_tracker/pages/users/users_presenter.dart';
 import 'package:tikal_time_tracker/pages/users/users_contract.dart';
 import 'package:tikal_time_tracker/pages/users/users_list_adapter.dart';

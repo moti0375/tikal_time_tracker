@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:tikal_time_tracker/data/member.dart';
-import 'package:tikal_time_tracker/network/requests/login_request.dart';
 import 'package:tikal_time_tracker/network/credentials.dart';
 import 'package:tikal_time_tracker/network/requests/reports_form.dart';
 import 'package:tikal_time_tracker/network/requests/reset_password_form.dart';

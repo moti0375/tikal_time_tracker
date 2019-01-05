@@ -1,4 +1,3 @@
-import 'package:tikal_time_tracker/data/member.dart';
 import 'package:tikal_time_tracker/data/models.dart';
 class Member{
   final String name;

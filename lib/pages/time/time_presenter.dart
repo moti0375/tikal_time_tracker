@@ -8,9 +8,7 @@ class TimePresenter implements TimeContractPresenter{
   TimeContractView view;
   TimeRecordsRepository repository;
   List<TimeRecord> records;
-  TimePresenter({this.repository}){
-
-  }
+  TimePresenter({this.repository});
   @override
   void subscribe(BaseView view) {
     this.view = view;
@@ -18,11 +16,6 @@ class TimePresenter implements TimeContractPresenter{
 
   @override
   void unsubscribe() {
-  }
-
-  @override
-  void newRecordClicked() {
-    // TODO: implement newRecordClicked
   }
 
   @override

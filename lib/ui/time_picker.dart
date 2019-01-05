@@ -12,11 +12,19 @@ class TimeTrackerTimePicker extends StatefulWidget {
   final TimeOfDay initialTimeValue;
   final RegExp timePattern = RegExp("^([01]?[0-9]|2[0-3]):[0-5][0-9]\$");
   final RegExp simpleTimePattern = RegExp("^([01]?[0-9]|2[0-3])\$");
-  final DateFormat timeFormatter = DateFormat('H:m');
+  final DateFormat timeFormatter = DateFormat('H:mm');
   final DateFormat simpleTimeFormatter = DateFormat('H');
 
+  final List<DateFormat> timeFormats = List<DateFormat>();
+  final List<RegExp> timePatterns = List<RegExp>();
 
-  TimeTrackerTimePicker({this.initialTimeValue, this.hint, this.callback, this.onSubmitCallback});
+  TimeTrackerTimePicker({this.initialTimeValue, this.hint, this.callback, this.onSubmitCallback}){
+   timeFormats.add(timeFormatter);
+   timeFormats.add(simpleTimeFormatter);
+
+   timePatterns.add(timePattern);
+   timePatterns.add(simpleTimePattern);
+  }
 
   void requestFocus(BuildContext  context){
 
@@ -49,8 +57,10 @@ class TimePickerState extends State<TimeTrackerTimePicker> {
         submitValidator(buffer);
       }
     });
+
+    _setPickerController(_pickedTime);
     if (widget.initialTimeValue != null) {
-      print("Initial time not null");
+      print("Initial time not null: ${widget.initialTimeValue}");
       _pickedTime = widget.initialTimeValue;
     }
     _setPickerController(_pickedTime);
@@ -61,6 +71,14 @@ class TimePickerState extends State<TimeTrackerTimePicker> {
     super.dispose();
     print("dispose");
     focusNode.dispose();
+  }
+
+  void _setPickerController(TimeOfDay time){
+    pickerController = TextEditingController(text: time != null ? Utils.buildTimeStringFromTime(time) : "");
+    pickerController.addListener((){
+      buffer = pickerController.text;
+      typeValidator(buffer);
+    });
   }
 
   @override
@@ -111,8 +129,9 @@ class TimePickerState extends State<TimeTrackerTimePicker> {
   }
 
   void typeValidator(String value){
-    print("Type validator: $value");
     TimeOfDay time = _validator(value);
+    print("Type validator: $value, Time: ${time.toString()}");
+
     if(time != null){
       widget.callback(time);
     }else{
@@ -137,7 +156,27 @@ class TimePickerState extends State<TimeTrackerTimePicker> {
   }
 
   TimeOfDay _validator(String value) {
-    print("validating: $value");
+
+    RegExp validExp = widget.timePatterns.firstWhere((tester){
+       return tester.firstMatch(value) != null ;
+    },orElse: (){
+      return null;
+    });
+
+    if(validExp != null){
+      for(final formatter in widget.timeFormats){
+        try{
+          TimeOfDay timeOfDay = TimeOfDay.fromDateTime(formatter.parse(value));
+          print("Parsing success: ${timeOfDay.toString()}" );
+          return timeOfDay;
+        }catch(e){
+          print("Parsing faild: ${e.toString()}");
+        }
+      }
+    }
+
+    return null;
+/*
     var simpleMatch = widget.simpleTimePattern.firstMatch(value);
     Match match = widget.timePattern.firstMatch(value);
 
@@ -155,15 +194,7 @@ class TimePickerState extends State<TimeTrackerTimePicker> {
 //      print("_validator: no match");
       return null;
     }
-  }
-
-
-  void _handleSimpleTimeMatch() {
-
-  }
-
-  void _handleTimeMatch() {
-
+    */
   }
 
   void _onTimeSelected(TimeOfDay time) {
@@ -175,17 +206,4 @@ class TimePickerState extends State<TimeTrackerTimePicker> {
     });
   }
 
-  void _setPickerController(TimeOfDay time){
-    if(time != null){
-      pickerController =
-          TextEditingController(
-              text: Utils.buildTimeStringFromTime(time));
-    }else{
-      pickerController = TextEditingController();
-    }
-    pickerController.addListener((){
-      buffer = pickerController.text;
-      typeValidator(buffer);
-    });
-  }
 }

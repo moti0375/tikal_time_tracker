@@ -44,7 +44,6 @@ class UsersListAdapter extends StatelessWidget{
   }
 
   Widget _buildListView(List<Member> items) {
-    DateTime day;
 
     Color evenColor = Colors.white;
     Color oddColor = Colors.grey[200];

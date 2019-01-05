@@ -10,7 +10,7 @@ class FormSerializer extends Serializer<LoginForm>{
   @override
   Map<String, String> toMap(LoginForm model) {
     print("form serializer: toSap: ${model.toString()}");
-    Map<String, String> map = Map<String, String>();;
+    Map<String, String> map = Map<String, String>();
     map["login"] = model.Login;
     map["password"] = model.Password;
     return map;
