@@ -151,6 +151,20 @@ class Report{
   String toString() {
     return 'Report{startDate: $startDate, endTime: $endDate, report: $report, project: $project, task: $task}';
   }
+}
 
+class TimeReport {
+  List<TimeRecord> timeReport;
+  Duration dayTotal;
+  Duration weekTotal;
+  Duration monthTotal;
+  Duration remainTotal;
+
+  TimeReport({this.timeReport, this.dayTotal, this.weekTotal, this.monthTotal, this.remainTotal});
+
+  @override
+  String toString() {
+    return 'TimeReport{timeReport: $timeReport, dayTotal: $dayTotal, weekTotal: $weekTotal, monthTotal: $monthTotal, remainTotal: $remainTotal}';
+  }
 }
 

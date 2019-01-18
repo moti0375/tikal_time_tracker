@@ -7,7 +7,7 @@ class TimePresenter implements TimeContractPresenter{
 
   TimeContractView view;
   TimeRecordsRepository repository;
-  List<TimeRecord> records;
+  TimeReport records;
   TimePresenter({this.repository});
   @override
   void subscribe(BaseView view) {
@@ -35,7 +35,7 @@ class TimePresenter implements TimeContractPresenter{
     }, onError: (e){
       print("PagePresenter There was an error: $e");
       if(e is RangeError){
-        this.records = new List<TimeRecord>();
+        this.records = new TimeReport(timeReport: new List<TimeRecord>());
         view.timeLoadFinished(this.records);
       }else{
         print(e);

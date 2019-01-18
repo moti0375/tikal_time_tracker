@@ -52,7 +52,7 @@ class RemoteDateSource implements TimeDateSource {
   }
 
   @override
-  Future<List<TimeRecord>> getAllTimeForDate(DateTime date) {
+  Future<TimeReport> getAllTimeForDate(DateTime date) {
     String month = date.month < 10 ? "0${date.month}" : "${date.month}";
     String day = date.day < 10 ? "0${date.day}" : "${date.day}";
     return api.timeForDate("${date.year}-$month-$day").then((response){

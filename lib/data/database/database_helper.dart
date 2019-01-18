@@ -49,7 +49,7 @@ class TimeRecordDatabaseOpenHelper {
     return null;
   }
 
-  Future<List<TimeRecord>> getTimeRecordForDate(DateTime date) async {
+  Future<TimeReport> getTimeRecordForDate(DateTime date) async {
     if(db == null){
       print("db is null");
     }
@@ -67,7 +67,8 @@ class TimeRecordDatabaseOpenHelper {
       maps.forEach((element) =>
        records.add(TimeRecord.fromMap(element)));
 
-      return records;
+      TimeReport report = new TimeReport(timeReport: records);
+      return report;
     }
     return null;
   }

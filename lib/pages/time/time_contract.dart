@@ -10,7 +10,7 @@ class TimeContractPresenter extends BasePresenter{
 
 class TimeContractView extends BaseView{
     void openNewRecordPage(TimeRecord item){}
-    void timeLoadFinished(List<TimeRecord> timeRecord){}
+    void timeLoadFinished(TimeReport timeRecord){}
     void logOut(){}
     void showAboutScreen(){}
 }

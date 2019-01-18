@@ -46,7 +46,7 @@ class LocalDataSource implements TimeDateSource {
   }
 
   @override
-  Future<List<TimeRecord>> getAllTimeForDate(DateTime date) {
+  Future<TimeReport> getAllTimeForDate(DateTime date) {
     return databaseOpenHelper.getTimeRecordForDate(date);
   }
 

@@ -8,6 +8,9 @@ class Utils {
   }
 
   static String buildTimeStringFromDuration(Duration duration) {
+    if(duration == null){
+      duration = new Duration(hours: 0, minutes: 0);
+    }
     return "${duration.inHours}:${duration.inMinutes % 60 < 10 ? "0${duration.inMinutes % 60}" : duration.inMinutes % 60}";
   }
 

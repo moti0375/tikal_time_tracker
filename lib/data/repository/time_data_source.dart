@@ -7,7 +7,7 @@ import 'package:tikal_time_tracker/network/requests/send_email_form.dart';
 import 'package:tikal_time_tracker/network/requests/reset_password_form.dart';
 
 class TimeDateSource{
- Future<List<TimeRecord>> getAllTimeForDate(DateTime date){return null;}
+ Future<TimeReport> getAllTimeForDate(DateTime date){return null;}
  Future<dynamic> addTime(TimeRecord time){return null;}
  Future<dynamic> updateTime(TimeRecord time){return null;}
  Future<List<TimeRecord>> getRecordsBetweenDates(DateTime startDate, DateTime endDate){return null;}

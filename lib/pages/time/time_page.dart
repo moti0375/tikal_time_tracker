@@ -15,6 +15,7 @@ import 'package:tikal_time_tracker/utils/page_transition.dart';
 import 'package:tikal_time_tracker/resources/strings.dart';
 import 'package:tikal_time_tracker/analytics/analytics.dart';
 import 'package:tikal_time_tracker/analytics/events/time_event.dart';
+import 'package:tikal_time_tracker/utils/utils.dart';
 
 class TimePage extends StatefulWidget {
   @override
@@ -23,9 +24,9 @@ class TimePage extends StatefulWidget {
   }
 }
 
-class TimePageState extends State<TimePage> with TickerProviderStateMixin
+class TimePageState extends State<TimePage>
+    with TickerProviderStateMixin
     implements ListAdapterClickListener, TimeContractView {
-
   Analytics analytics = new Analytics();
   List<Choice> choices = const <Choice>[
     const Choice(
@@ -35,24 +36,42 @@ class TimePageState extends State<TimePage> with TickerProviderStateMixin
 
   DateTime _selectedDate;
   TextEditingController dateInputController =
-      new TextEditingController(text: "");
+  new TextEditingController(text: "");
 
   TimeRecordsRepository repository = TimeRecordsRepository();
   List<TimeRecord> _records;
+  Duration _dayTotal;
+  Duration _weekTotal;
+  Duration _monthTotal;
+  Duration _remainQouta;
   TimePresenter presenter;
 
   @override
   void initState() {
     super.initState();
-   // print("TimePage: initState");
+    // print("TimePage: initState");
     presenter = TimePresenter(repository: this.repository);
     presenter.subscribe(this);
     var now = DateTime.now();
-    _selectedDate = DateTime(now.year, now.month, now.day, 0, 0, 0, 0, 0);
+    _selectedDate = DateTime(
+        now.year,
+        now.month,
+        now.day,
+        0,
+        0,
+        0,
+        0,
+        0);
     dateInputController = new TextEditingController(
-        text: "${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}");
+        text:
+        "${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}");
     presenter.loadTimeForDate(_selectedDate);
-    analytics.logEvent(TimeEvent.impression(EVENT_NAME.TIME_PAGE_OPENED).view());
+    _dayTotal = Duration(hours: 0, minutes: 0);
+    _weekTotal = Duration(hours: 0, minutes: 0);
+    _monthTotal = Duration(hours: 0, minutes: 0);
+    _remainQouta = Duration(hours: 0, minutes: 0);
+    analytics
+        .logEvent(TimeEvent.impression(EVENT_NAME.TIME_PAGE_OPENED).view());
   }
 
   @override
@@ -61,7 +80,8 @@ class TimePageState extends State<TimePage> with TickerProviderStateMixin
         title: Strings.no_work_title,
         subtitle: Strings.no_work_subtitle,
         onPressed: () {
-          analytics.logEvent(TimeEvent.click(EVENT_NAME.NEW_RECORD_SCREEN_CLICKED));
+          analytics
+              .logEvent(TimeEvent.click(EVENT_NAME.NEW_RECORD_SCREEN_CLICKED));
           presenter.listItemClicked(null);
         });
 
@@ -73,13 +93,48 @@ class TimePageState extends State<TimePage> with TickerProviderStateMixin
           presenter.loadTimeForDate(_selectedDate);
         });
 
+    Widget summaryRow() {
+      return Column(
+        children: <Widget>[
+          SizedBox(height: 10.0),
+          Container(
+            height: 1.5,
+            color: Colors.black26,
+          ),
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text(
+                "Week Total: ${Utils.buildTimeStringFromDuration(this._weekTotal)}",
+                textAlign: TextAlign.start,
+              ),
+              Text("${Strings.day_total} ${Utils.buildTimeStringFromDuration(this._dayTotal)}", textAlign: TextAlign.end, style: TextStyle(color: _dayTotal.inHours < 9 ? Colors.red : Colors.black))
+            ],
+          ),
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text(
+                "Month Total: ${Utils.buildTimeStringFromDuration(this._monthTotal)}",
+                textAlign: TextAlign.start,
+              ),
+              Text("Remaining Quota: ${Utils.buildTimeStringFromDuration(this._remainQouta)}", textAlign: TextAlign.end, style: TextStyle(color: Colors.red),)
+            ],
+          )
+        ],
+      );
+    }
+
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       backgroundColor: Colors.black12,
       appBar: _buildAppBar(title: Strings.app_name),
       floatingActionButton: new FloatingActionButton(
           onPressed: () {
-            analytics.logEvent(TimeEvent.click(EVENT_NAME.NEW_RECORD_FAB_CLICKED));
+            analytics
+                .logEvent(TimeEvent.click(EVENT_NAME.NEW_RECORD_FAB_CLICKED));
             presenter.listItemClicked(null);
           },
           child: Icon(Icons.add)),
@@ -96,17 +151,35 @@ class TimePageState extends State<TimePage> with TickerProviderStateMixin
               color: Colors.black26,
             ),
             Container(
-              padding: EdgeInsets.only(bottom: 2.0),
-              child: Text("${User.me.name}, ${User.me.role.toString().split(".").last}, ${User.me.company}"),
-            ),
+                padding: EdgeInsets.only(bottom: 2.0),
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text(
+                      "${User.me.name}, ${User.me.company}, ${User.me.role
+                          .toString()
+                          .split(".")
+                          .last}",
+                      textAlign: TextAlign.start,
+                    )
+                  ],
+                )),
             Expanded(
               child: (_records == null || _records.isEmpty)
                   ? placeholderContent
-                  : TimeRecordListAdapter(
+                  : Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  TimeRecordListAdapter(
                       items: _records,
                       intermittently: true,
                       adapterClickListener: this),
-            )
+                  summaryRow()
+                ],
+              ),
+            ),
           ],
         ),
       ),
@@ -119,7 +192,7 @@ class TimePageState extends State<TimePage> with TickerProviderStateMixin
         presenter.onLogoutClicked();
         analytics.logEvent(TimeEvent.click(EVENT_NAME.ACTION_LOGOUT));
       }
-      if(choice.action == Action.About){
+      if (choice.action == Action.About) {
         presenter.onAboutClicked();
         analytics.logEvent(TimeEvent.click(EVENT_NAME.ACTION_ABOUT));
       }
@@ -133,28 +206,27 @@ class TimePageState extends State<TimePage> with TickerProviderStateMixin
 
   AppBar _buildAppBar({String title}) {
     return AppBar(
-      title: Row(
-        children: [
-          Container(
-            margin: EdgeInsets.all(8.0),
-            width: 24.0,
-            height: 24.0,
-            child: InkWell(
-              onTap: (){
-                analytics.logEvent(TimeEvent.click(EVENT_NAME.ACTION_ABOUT).setDetails("Action Icon"));
-                showAboutScreen();
-              },
-              child: Hero(
-                tag: 'hero',
-                child: Image.asset(
-                  'assets/logo_no_background.png',
-                ),
+      title: Row(children: [
+        Container(
+          margin: EdgeInsets.all(8.0),
+          width: 24.0,
+          height: 24.0,
+          child: InkWell(
+            onTap: () {
+              analytics.logEvent(TimeEvent.click(EVENT_NAME.ACTION_ABOUT)
+                  .setDetails("Action Icon"));
+              showAboutScreen();
+            },
+            child: Hero(
+              tag: 'hero',
+              child: Image.asset(
+                'assets/logo_no_background.png',
               ),
             ),
           ),
-          Text(title)
-        ]
-      ),
+        ),
+        Text(title)
+      ]),
       actions: <Widget>[
         PopupMenuButton<Choice>(
           onSelected: _select,
@@ -171,18 +243,17 @@ class TimePageState extends State<TimePage> with TickerProviderStateMixin
     );
   }
 
-
   _navigateToNextScreen() {
     final projects = User.me.projects;
     print("_navigateToNextScreen: " + projects.toString());
     Navigator.of(context)
         .push(new PageTransition(
-            widget: new NewRecordPage(
-                projects: projects,
-                dateTime: _selectedDate,
-                timeRecord: null,
-                flow: NewRecordFlow.new_record))
-    ).then((value) {
+        widget: new NewRecordPage(
+            projects: projects,
+            dateTime: _selectedDate,
+            timeRecord: null,
+            flow: NewRecordFlow.new_record)))
+        .then((value) {
 //      print("got value from page");
       if (value != null) {
         if (value is TimeRecord) {
@@ -198,11 +269,11 @@ class TimePageState extends State<TimePage> with TickerProviderStateMixin
 //    print("_navigateToEditScreen: ");
     Navigator.of(context)
         .push(new PageTransition(
-            widget:new NewRecordPage(
-                projects: User.me.projects,
-                dateTime: _selectedDate,
-                timeRecord: item,
-                flow: NewRecordFlow.update_record)))
+        widget: new NewRecordPage(
+            projects: User.me.projects,
+            dateTime: _selectedDate,
+            timeRecord: item,
+            flow: NewRecordFlow.update_record)))
         .then((value) {
 //      print("got value from page");
       if (value != null) {
@@ -215,10 +286,16 @@ class TimePageState extends State<TimePage> with TickerProviderStateMixin
     });
   }
 
-
   _onDateSelected(DateTime selectedDate) {
     _selectedDate = DateTime(
-        selectedDate.year, selectedDate.month, selectedDate.day, 0, 0, 0, 0, 0);
+        selectedDate.year,
+        selectedDate.month,
+        selectedDate.day,
+        0,
+        0,
+        0,
+        0,
+        0);
     dateInputController = new TextEditingController(
         text: "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}");
     presenter.loadTimeForDate(selectedDate);
@@ -230,8 +307,7 @@ class TimePageState extends State<TimePage> with TickerProviderStateMixin
   }
 
   @override
-  onListItemLongClick(TimeRecord item) {
-  }
+  onListItemLongClick(TimeRecord item) {}
 
   @override
   void openNewRecordPage(TimeRecord item) {
@@ -243,11 +319,14 @@ class TimePageState extends State<TimePage> with TickerProviderStateMixin
   }
 
   @override
-  void timeLoadFinished(List<TimeRecord> timeRecord) {
-
+  void timeLoadFinished(TimeReport timeReport) {
 //    analytics.logEvent(TimeEvent.impression(EVENT_NAME.TIME_PAGE_LOADED).setDetails( "${timeRecord != null ? timeRecord.length : 0} :records").view());
     setState(() {
-      this._records = timeRecord;
+      this._records = timeReport.timeReport;
+      this._dayTotal = timeReport.dayTotal;
+      this._weekTotal = timeReport.weekTotal;
+      this._monthTotal = timeReport.monthTotal;
+      this._remainQouta = timeReport.remainTotal;
     });
   }
 
@@ -262,11 +341,6 @@ class TimePageState extends State<TimePage> with TickerProviderStateMixin
   }
 
   void _navigateToAboutScreen() {
-    Navigator.of(context)
-        .push(new PageTransition(
-        widget:new AboutScreen())
-    );
+    Navigator.of(context).push(new PageTransition(widget: new AboutScreen()));
   }
 }
-
-

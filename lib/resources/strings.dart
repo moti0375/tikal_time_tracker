@@ -25,6 +25,7 @@ class Strings{
   //Time page
   static const no_work_title = "No Work Today";
   static const no_work_subtitle = "Tap to add report";
+  static const day_total = "Day Total:";
 
   //Generate Report page
   static const item_this_month = "This Month";

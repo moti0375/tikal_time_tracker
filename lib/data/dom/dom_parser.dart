@@ -155,7 +155,7 @@ class DomParser {
     return projectsAndTasks;
   }
 
-  List<TimeRecord> parseTimePage(String timeDomStr) {
+  TimeReport parseTimePage(String timeDomStr) {
     String start =
         "<table border=\"0\" cellpadding=\"3\" cellspacing=\"1\" width=\"100%\">";
     String stop = "</table>";
@@ -183,7 +183,7 @@ class DomParser {
       cells = cells.map((it) {
         return it.substring(it.indexOf(">") + 1);
       }).toList();
-     debugPrint("cells: ${cells.toString()}, size: ${cells.length}");
+//     debugPrint("cells: ${cells.toString()}, size: ${cells.length}");
 
       Task task = User.me.tasks.firstWhere((it) {
 //        print("firstWhere: ${it.name}:${cells[1]}");
@@ -211,7 +211,7 @@ class DomParser {
       int trackerId = int.parse(cells[6]
           .substring(cells[6].indexOf("id=") + 3, cells[6].indexOf("\">"))
           .trim());
-      print("trackerId: $trackerId");
+//      print("trackerId: $trackerId");
 
       Project project = User.me.projects.firstWhere((it) {
         return it.name == cells[0];
@@ -226,7 +226,15 @@ class DomParser {
           finish: finish,
           comment: cells[5].trim().replaceAll("&nbsp;", ""));
     }).toList();
-    return result;
+
+
+    Duration dayTotal = parseTotalValue(timeDomStr, "Day total:");
+    Duration weekTotal = parseTotalValue(timeDomStr, "Week total:");
+    Duration monthTotal = parseTotalValue(timeDomStr, "Month total:");
+    Duration remainTotal = parseRemainQuote(timeDomStr, "Remaining quota:");
+
+    TimeReport report = TimeReport(timeReport: result, dayTotal: dayTotal, weekTotal: weekTotal, monthTotal: monthTotal, remainTotal: remainTotal);
+    return report;
   }
 
   DateTime _extractDateTime(String domStr) {
@@ -535,5 +543,44 @@ class DomParser {
     } else{
       return "Failed to sent report";
     }
+  }
+
+  Duration parseTotalValue(String response, String needle){
+    Duration dayTotal;
+    String buffer = response;
+    if(response.contains(needle)){
+      buffer  = response.substring(response.indexOf(needle) + needle.length);
+      buffer = buffer.substring(0, buffer.indexOf("<")).trim();
+      var totalArray  = buffer.split(":");
+      String totalHour = totalArray[0];
+      String totalMinutes = totalArray[1];
+      dayTotal = new Duration(hours: int.parse(totalHour), minutes: int.parse(totalMinutes));
+    } else {
+      dayTotal = Duration(hours: 0, minutes: 0);
+    }
+
+    print("$needle: ${dayTotal.toString()}");
+    return dayTotal;
+  }
+
+  Duration parseRemainQuote(String response, String needle){
+    Duration dayTotal;
+    String buffer = response;
+    if(response.contains(needle)){
+      buffer  = response.substring(response.indexOf(needle) + needle.length);
+      if(buffer.contains("red;\">")){
+        buffer = buffer.substring(buffer.indexOf("red;\">") + "red;\">".length);
+      }
+      buffer = buffer.substring(0, buffer.indexOf("<")).trim();
+      var totalArray  = buffer.split(":");
+      String totalHour = totalArray[0];
+      String totalMinutes = totalArray[1];
+      dayTotal = new Duration(hours: int.parse(totalHour), minutes: int.parse(totalMinutes));
+    } else {
+      dayTotal = Duration(hours: 0, minutes: 0);
+    }
+
+    print("$needle: ${dayTotal.toString()}");
+    return dayTotal;
   }
 }
