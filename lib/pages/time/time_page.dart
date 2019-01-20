@@ -106,7 +106,7 @@ class TimePageState extends State<TimePage>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Text(
-                "Week Total: ${Utils.buildTimeStringFromDuration(this._weekTotal)}",
+                "${Strings.week_total} ${Utils.buildTimeStringFromDuration(this._weekTotal)}",
                 textAlign: TextAlign.start,
               ),
               Text("${Strings.day_total} ${Utils.buildTimeStringFromDuration(this._dayTotal)}", textAlign: TextAlign.end, style: TextStyle(color: _dayTotal.inHours < 9 ? Colors.red : Colors.black))
@@ -117,10 +117,10 @@ class TimePageState extends State<TimePage>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Text(
-                "Month Total: ${Utils.buildTimeStringFromDuration(this._monthTotal)}",
+                "${Strings.month_total} ${Utils.buildTimeStringFromDuration(this._monthTotal)}",
                 textAlign: TextAlign.start,
               ),
-              Text("Remaining Quota: ${Utils.buildTimeStringFromDuration(this._remainQouta)}", textAlign: TextAlign.end, style: TextStyle(color: Colors.red),)
+              Text("${Strings.remaining_quota} ${Utils.buildTimeStringFromDuration(this._remainQouta)}", textAlign: TextAlign.end, style: TextStyle(color: Colors.red),)
             ],
           )
         ],

@@ -26,6 +26,9 @@ class Strings{
   static const no_work_title = "No Work Today";
   static const no_work_subtitle = "Tap to add report";
   static const day_total = "Day Total:";
+  static const week_total = "Week Total:";
+  static const month_total = "Month Total:";
+  static const remaining_quota = "Remaining Quota:";
 
   //Generate Report page
   static const item_this_month = "This Month";
@@ -74,7 +77,7 @@ class Strings{
   //Reset password screen
   static const reset_password_page_title = "Password Resetting";
   static const reset_password_button_text = "Reset password ";
-  static const app_version = "1.2.2";
+  static const app_version = "1.3";
 
 
 
