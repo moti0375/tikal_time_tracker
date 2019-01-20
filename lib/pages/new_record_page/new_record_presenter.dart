@@ -129,7 +129,7 @@ class NewRecordPresenter implements NewRecordPresenterContract {
         date.year, date.month, date.day, finishTime.hour, finishTime.minute);
 
     Duration d = f.difference(s);
-    print("${d.inHours}:${d.inSeconds % 60}");
+//    print("$TAG: Duration: ${d.inHours}:${d.inSeconds % 60}");
     view.showDuration(d);
     return d;
   }
@@ -137,10 +137,10 @@ class NewRecordPresenter implements NewRecordPresenterContract {
 
   _updateButtonState(){
     if (timeRecord.date != null && timeRecord.start != null && timeRecord.project != null && timeRecord.task != null) {
-      print("setButtonState: Button enabled");
+//      print("setButtonState: Button enabled");
       formOk = true;
     } else {
-      print("setButtonState: Button diabled");
+//      print("setButtonState: Button diabled");
       formOk = false;
     }
     view.setButtonState(formOk);

@@ -43,6 +43,8 @@ class NewRecordPageState extends State<NewRecordPage>
   TextEditingController durationInputController;
   TextEditingController commentInputController;
   FocusNode commentFocusNode;
+  FocusNode startPickerNode;
+  FocusNode endPickerNode;
   bool isSaveButtonEnabled = false;
   TimeRecordsRepository repository = new TimeRecordsRepository();
   NewRecordPresenterContract presenter;
@@ -164,6 +166,16 @@ class NewRecordPageState extends State<NewRecordPage>
         commentInputController.clear();
       }
     });
+    startPickerNode = FocusNode();
+    endPickerNode = FocusNode();
+    endPickerNode.addListener((){
+      if(!endPickerNode.hasFocus){
+        print("no focus anymore..");
+        endPickerNode.unfocus();
+     //   FocusScope.of(context).requestFocus(null);
+//        endPickerNode.dispose();
+      }
+    });
   }
 
   _setPresenter(){
@@ -238,18 +250,18 @@ class NewRecordPageState extends State<NewRecordPage>
               }),
         ));
 
-    final finishTimePicker = TimeTrackerTimePicker(initialTimeValue: _finishTime, hint: "Finish Time", callback: (TimeOfDay time){
+    final finishTimePicker = TimeTrackerTimePicker(pickerName: "finishTimePicker: ", initialTimeValue: _finishTime, hint: "Finish Time", focusNode: endPickerNode, callback: (TimeOfDay time){
       presenter.endTimeSelected(time);
     }, onSubmitCallback: (){
-      print("finishTimePicker submitted");
+//      print("finishTimePicker submitted");
       FocusScope.of(context).requestFocus(commentFocusNode);
     },);
 
 
-    final startTimePicker = TimeTrackerTimePicker(initialTimeValue: _startTime, hint: "Start Time", callback: (TimeOfDay time){
+    final startTimePicker = TimeTrackerTimePicker(pickerName: "startTimePicker: ", initialTimeValue: _startTime, hint: "Start Time", focusNode: startPickerNode, callback: (TimeOfDay time){
       presenter.startTimeSelected(time);
     }, onSubmitCallback: (){
-      print("startTimePicker submitted");
+//      print("startTimePicker submitted");
       finishTimePicker.requestFocus(context);
     },);
 

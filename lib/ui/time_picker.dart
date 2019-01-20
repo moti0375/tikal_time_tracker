@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 
 class TimeTrackerTimePicker extends StatefulWidget {
 
+  final String pickerName;
   final callback;
   final onSubmitCallback;
   final String hint;
@@ -17,8 +18,9 @@ class TimeTrackerTimePicker extends StatefulWidget {
 
   final List<DateFormat> timeFormats = List<DateFormat>();
   final List<RegExp> timePatterns = List<RegExp>();
+  final FocusNode focusNode;
 
-  TimeTrackerTimePicker({this.initialTimeValue, this.hint, this.callback, this.onSubmitCallback}){
+  TimeTrackerTimePicker({this.pickerName, this.initialTimeValue, this.hint, this.callback, this.focusNode, this.onSubmitCallback}){
    timeFormats.add(timeFormatter);
    timeFormats.add(simpleTimeFormatter);
 
@@ -27,10 +29,12 @@ class TimeTrackerTimePicker extends StatefulWidget {
   }
 
   void requestFocus(BuildContext  context){
-
+    print("${this.pickerName} requestFocus...");
+    FocusScope.of(context).requestFocus(focusNode);
   }
 
   void revokeFocus(){
+
   }
 
   @override
@@ -44,23 +48,20 @@ class TimePickerState extends State<TimeTrackerTimePicker> {
   TextEditingController pickerController;
   TimeOfDay _pickedTime;
   String buffer;
-  FocusNode focusNode;
 
   @override
   void initState() {
     super.initState();
-    focusNode = FocusNode();
-    print("TimePicker init state");
-    focusNode.addListener(() {
-      print("TimePickerFocus: ${focusNode.hasFocus}");
-      if (!focusNode.hasFocus) {
-        submitValidator(buffer);
+    widget.focusNode.addListener(() {
+      if (!widget.focusNode.hasFocus) {
+        print("${widget.pickerName} has remove focus, calling submitValidator");
+        entryValidator(buffer);
       }
     });
 
     _setPickerController(_pickedTime);
     if (widget.initialTimeValue != null) {
-      print("Initial time not null: ${widget.initialTimeValue}");
+//      print("Initial time not null: ${widget.initialTimeValue}");
       _pickedTime = widget.initialTimeValue;
     }
     _setPickerController(_pickedTime);
@@ -70,7 +71,7 @@ class TimePickerState extends State<TimeTrackerTimePicker> {
   void dispose() {
     super.dispose();
     print("dispose");
-    focusNode.dispose();
+    widget.focusNode.dispose();
   }
 
   void _setPickerController(TimeOfDay time){
@@ -101,7 +102,7 @@ class TimePickerState extends State<TimeTrackerTimePicker> {
             child: new Flexible(
                 child: new TextFormField(
                     textInputAction: TextInputAction.next,
-                    focusNode: focusNode,
+                    focusNode: widget.focusNode,
                     onFieldSubmitted: onSubmitButtonClicked,
                     decoration: InputDecoration(
                         hintText: widget.hint != null ? widget.hint : "",
@@ -130,7 +131,7 @@ class TimePickerState extends State<TimeTrackerTimePicker> {
 
   void typeValidator(String value){
     TimeOfDay time = _validator(value);
-    print("Type validator: $value, Time: ${time.toString()}");
+//    print("Type validator: $value, Time: ${time.toString()}");
 
     if(time != null){
       widget.callback(time);
@@ -140,19 +141,23 @@ class TimePickerState extends State<TimeTrackerTimePicker> {
   }
 
   void onSubmitButtonClicked(String value){
-    focusNode.unfocus();
+    widget.focusNode.unfocus();
     submitValidator(value);
   }
 
-  void submitValidator(String value){
-    widget.onSubmitCallback();
-    print("submitValidator: $value");
+  void entryValidator(String value){
     TimeOfDay time = _validator(value);
     if(time != null){
       _onTimeSelected(time);
     }else{
       widget.callback(null);
     }
+  }
+
+  void submitValidator(String value){
+    widget.onSubmitCallback();
+//    print("submitValidator: $value");
+   entryValidator(value);
   }
 
   TimeOfDay _validator(String value) {
@@ -167,7 +172,7 @@ class TimePickerState extends State<TimeTrackerTimePicker> {
       for(final formatter in widget.timeFormats){
         try{
           TimeOfDay timeOfDay = TimeOfDay.fromDateTime(formatter.parse(value));
-          print("Parsing success: ${timeOfDay.toString()}" );
+//          print("Parsing success: ${timeOfDay.toString()}" );
           return timeOfDay;
         }catch(e){
           print("Parsing faild: ${e.toString()}");
