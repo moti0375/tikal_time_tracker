@@ -158,13 +158,14 @@ class TimeReport {
   Duration dayTotal;
   Duration weekTotal;
   Duration monthTotal;
-  Duration remainTotal;
+  Duration quota;
+  bool overQuota = false;
 
-  TimeReport({this.timeReport, this.dayTotal, this.weekTotal, this.monthTotal, this.remainTotal});
+  TimeReport({this.timeReport, this.dayTotal, this.weekTotal, this.monthTotal, this.quota, this.overQuota});
 
   @override
   String toString() {
-    return 'TimeReport{timeReport: $timeReport, dayTotal: $dayTotal, weekTotal: $weekTotal, monthTotal: $monthTotal, remainTotal: $remainTotal}';
+    return 'TimeReport{timeReport: $timeReport, dayTotal: $dayTotal, weekTotal: $weekTotal, monthTotal: $monthTotal, remainTotal: $quota}';
   }
 }
 

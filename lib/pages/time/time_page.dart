@@ -39,11 +39,7 @@ class TimePageState extends State<TimePage>
   new TextEditingController(text: "");
 
   TimeRecordsRepository repository = TimeRecordsRepository();
-  List<TimeRecord> _records;
-  Duration _dayTotal;
-  Duration _weekTotal;
-  Duration _monthTotal;
-  Duration _remainQouta;
+  TimeReport _timeReport;
   TimePresenter presenter;
 
   @override
@@ -66,10 +62,6 @@ class TimePageState extends State<TimePage>
         text:
         "${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}");
     presenter.loadTimeForDate(_selectedDate);
-    _dayTotal = Duration(hours: 0, minutes: 0);
-    _weekTotal = Duration(hours: 0, minutes: 0);
-    _monthTotal = Duration(hours: 0, minutes: 0);
-    _remainQouta = Duration(hours: 0, minutes: 0);
     analytics
         .logEvent(TimeEvent.impression(EVENT_NAME.TIME_PAGE_OPENED).view());
   }
@@ -93,6 +85,12 @@ class TimePageState extends State<TimePage>
           presenter.loadTimeForDate(_selectedDate);
         });
 
+    Widget buildQuotaWidget(TimeReport report){
+      String title = report.overQuota ? Strings.over_quota : Strings.remaining_quota;
+      Color textColor = report.overQuota ? Colors.green : Colors.red;
+      return Text("$title ${Utils.buildTimeStringFromDuration(report.quota)}", style: TextStyle(color: textColor));
+    }
+
     Widget summaryRow() {
       return Column(
         children: <Widget>[
@@ -106,10 +104,10 @@ class TimePageState extends State<TimePage>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Text(
-                "${Strings.week_total} ${Utils.buildTimeStringFromDuration(this._weekTotal)}",
+                "${Strings.week_total} ${Utils.buildTimeStringFromDuration(this._timeReport.weekTotal)}",
                 textAlign: TextAlign.start,
               ),
-              Text("${Strings.day_total} ${Utils.buildTimeStringFromDuration(this._dayTotal)}", textAlign: TextAlign.end, style: TextStyle(color: _dayTotal.inHours < 9 ? Colors.red : Colors.black))
+              Text("${Strings.day_total} ${Utils.buildTimeStringFromDuration(this._timeReport.dayTotal)}", textAlign: TextAlign.end, style: TextStyle(color: this._timeReport.dayTotal.inHours < 9 ? Colors.red : Colors.black))
             ],
           ),
           Row(
@@ -117,15 +115,17 @@ class TimePageState extends State<TimePage>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Text(
-                "${Strings.month_total} ${Utils.buildTimeStringFromDuration(this._monthTotal)}",
+                "${Strings.month_total} ${Utils.buildTimeStringFromDuration(this._timeReport.monthTotal)}",
                 textAlign: TextAlign.start,
               ),
-              Text("${Strings.remaining_quota} ${Utils.buildTimeStringFromDuration(this._remainQouta)}", textAlign: TextAlign.end, style: TextStyle(color: Colors.red),)
+              buildQuotaWidget(_timeReport)
             ],
           )
         ],
       );
     }
+
+
 
     return Scaffold(
       resizeToAvoidBottomPadding: false,
@@ -166,14 +166,14 @@ class TimePageState extends State<TimePage>
                   ],
                 )),
             Expanded(
-              child: (_records == null || _records.isEmpty)
+              child: (_timeReport == null || _timeReport.timeReport == null || _timeReport.timeReport.isEmpty)
                   ? placeholderContent
                   : Column(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   TimeRecordListAdapter(
-                      items: _records,
+                      items: _timeReport.timeReport,
                       intermittently: true,
                       adapterClickListener: this),
                   summaryRow()
@@ -322,11 +322,7 @@ class TimePageState extends State<TimePage>
   void timeLoadFinished(TimeReport timeReport) {
 //    analytics.logEvent(TimeEvent.impression(EVENT_NAME.TIME_PAGE_LOADED).setDetails( "${timeRecord != null ? timeRecord.length : 0} :records").view());
     setState(() {
-      this._records = timeReport.timeReport;
-      this._dayTotal = timeReport.dayTotal;
-      this._weekTotal = timeReport.weekTotal;
-      this._monthTotal = timeReport.monthTotal;
-      this._remainQouta = timeReport.remainTotal;
+      this._timeReport = timeReport;
     });
   }
 

@@ -231,9 +231,21 @@ class DomParser {
     Duration dayTotal = parseTotalValue(timeDomStr, "Day total:");
     Duration weekTotal = parseTotalValue(timeDomStr, "Week total:");
     Duration monthTotal = parseTotalValue(timeDomStr, "Month total:");
-    Duration remainTotal = parseRemainQuote(timeDomStr, "Remaining quota:");
 
-    TimeReport report = TimeReport(timeReport: result, dayTotal: dayTotal, weekTotal: weekTotal, monthTotal: monthTotal, remainTotal: remainTotal);
+    String remainQuotaNeedle = "Remaining quota:";
+    String overQuotaNeedle = "Over quota:";
+    bool overQuota = false;
+
+    Duration remainTotal;
+
+    if(timeDomStr.contains(overQuotaNeedle)){
+      overQuota = true;
+      remainTotal = parseOverQuota(timeDomStr, overQuotaNeedle);
+    }else{
+      remainTotal = parseRemainQuote(timeDomStr, remainQuotaNeedle);
+    }
+
+    TimeReport report = TimeReport(timeReport: result, dayTotal: dayTotal, weekTotal: weekTotal, monthTotal: monthTotal, quota: remainTotal, overQuota: overQuota);
     return report;
   }
 
@@ -570,6 +582,27 @@ class DomParser {
       buffer  = response.substring(response.indexOf(needle) + needle.length);
       if(buffer.contains("red;\">")){
         buffer = buffer.substring(buffer.indexOf("red;\">") + "red;\">".length);
+      }
+      buffer = buffer.substring(0, buffer.indexOf("<")).trim();
+      var totalArray  = buffer.split(":");
+      String totalHour = totalArray[0];
+      String totalMinutes = totalArray[1];
+      dayTotal = new Duration(hours: int.parse(totalHour), minutes: int.parse(totalMinutes));
+    } else {
+      dayTotal = Duration(hours: 0, minutes: 0);
+    }
+
+    print("$needle: ${dayTotal.toString()}");
+    return dayTotal;
+  }
+
+  Duration parseOverQuota(String response, String needle){
+    Duration dayTotal;
+    String buffer = response;
+    if(response.contains(needle)){
+      buffer  = response.substring(response.indexOf(needle) + needle.length);
+      if(buffer.contains("green;\">")){
+        buffer = buffer.substring(buffer.indexOf("green;\">") + "green;\">".length);
       }
       buffer = buffer.substring(0, buffer.indexOf("<")).trim();
       var totalArray  = buffer.split(":");
