@@ -106,11 +106,11 @@ class TimePickerState extends State<TimeTrackerTimePicker> {
                     focusNode: widget.focusNode,
                     onFieldSubmitted: onSubmitButtonClicked,
                     decoration: InputDecoration(
-                        hintText: widget.hint != null ? widget.hint : "",
+                        labelText: widget.hint != null ? widget.hint : "",
+                        hintText: "HH:MM",
                         contentPadding:
-                        EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20.0))),
+                        EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 12.0),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0))),
                     maxLines: 1,
                     controller: pickerController)),
           ),
