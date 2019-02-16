@@ -102,6 +102,7 @@ class TimePickerState extends State<TimeTrackerTimePicker> {
             child: new Flexible(
                 child: new TextFormField(
                     textInputAction: TextInputAction.next,
+                    keyboardType: TextInputType.datetime,
                     focusNode: widget.focusNode,
                     onFieldSubmitted: onSubmitButtonClicked,
                     decoration: InputDecoration(
