@@ -78,7 +78,7 @@ class Strings{
   //Reset password screen
   static const reset_password_page_title = "Password Resetting";
   static const reset_password_button_text = "Reset password ";
-  static const app_version = "1.3.1";
+  static const app_version = "1.3.2";
 
 
 
