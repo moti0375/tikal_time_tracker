@@ -102,7 +102,6 @@ class TimePickerState extends State<TimeTrackerTimePicker> {
             child: new Flexible(
                 child: new TextFormField(
                     textInputAction: TextInputAction.next,
-                    keyboardType: TextInputType.datetime,
                     focusNode: widget.focusNode,
                     onFieldSubmitted: onSubmitButtonClicked,
                     decoration: InputDecoration(
@@ -110,7 +109,10 @@ class TimePickerState extends State<TimeTrackerTimePicker> {
                         hintText: "HH:MM",
                         contentPadding:
                         EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 12.0),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0))),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.0)
+                        )
+                    ),
                     maxLines: 1,
                     controller: pickerController)),
           ),

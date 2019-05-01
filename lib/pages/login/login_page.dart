@@ -251,7 +251,7 @@ class LoginPageState extends State<LoginPage> {
             .view());
         _updateError(Strings.incorrect_credentials);
       }
-    }, onError: (){
+    }, onError: (e){
       _updateError(Strings.login_failure);
     });
   }
