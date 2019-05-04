@@ -212,29 +212,32 @@ class TimePageState extends State<TimePage>
 
   PreferredSizeWidget _buildAppBar({String title}) {
     return PlatformAppbar(
-      title: Row(children: [
-        Container(
-          margin: EdgeInsets.all(8.0),
-          width: 24.0,
-          height: 24.0,
-          child: GestureDetector(
-            onTap: () {
-              analytics.logEvent(TimeEvent.click(EVENT_NAME.ACTION_ABOUT)
-                  .setDetails("Action Icon"));
-              showAboutScreen();
-            },
-            child: Hero(
-              tag: 'hero',
-              child: Image.asset(
-                'assets/logo_no_background.png',
+      title: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              margin: EdgeInsets.all(4.0),
+              width: 24.0,
+              height: 24.0,
+              child: GestureDetector(
+                onTap: () {
+                  analytics.logEvent(TimeEvent.click(EVENT_NAME.ACTION_ABOUT)
+                      .setDetails("Action Icon"));
+                  showAboutScreen();
+                },
+                child: Hero(
+                  tag: 'hero',
+                  child: Image.asset(
+                    'assets/logo_no_background.png',
+                  ),
+                ),
               ),
             ),
-          ),
-        ),
-        Text(title)
-      ]),
+            Text(title)
+          ]),
       actions: choices,
-      onPressed: (Choice c){
+      onPressed: (Choice c) {
         print("Selected: ${c.title}");
         _select(c);
       },
