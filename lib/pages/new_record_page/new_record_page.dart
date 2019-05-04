@@ -63,7 +63,8 @@ class NewRecordPageState extends State<NewRecordPage>
     _setCommentController();
     _setFocusNodes();
     _setPresenter();
-    analytics.logEvent(NewRecordeEvent.impression(EVENT_NAME.NEW_TIME_PAGE_OPENED).view());
+    analytics.logEvent(
+        NewRecordeEvent.impression(EVENT_NAME.NEW_TIME_PAGE_OPENED).view());
   }
 
   @override
@@ -73,13 +74,15 @@ class NewRecordPageState extends State<NewRecordPage>
 
   @override
   void showSaveRecordSuccess(TimeRecord timeRecord) {
-    analytics.logEvent(NewRecordeEvent.impression(EVENT_NAME.RECORD_SAVED_SUCCESS).view());
+    analytics.logEvent(
+        NewRecordeEvent.impression(EVENT_NAME.RECORD_SAVED_SUCCESS).view());
     Navigator.of(context).pop(timeRecord);
   }
 
   @override
   initNewRecord() {
-    analytics.logEvent(NewRecordeEvent.impression(EVENT_NAME.CREATE_NEW_RECORD).view());
+    analytics.logEvent(
+        NewRecordeEvent.impression(EVENT_NAME.CREATE_NEW_RECORD).view());
 
 //    print("_initNewRecord:");
     startTimeController = new TextEditingController(
@@ -95,7 +98,8 @@ class NewRecordPageState extends State<NewRecordPage>
 
   @override
   initUpdateRecord() {
-    analytics.logEvent(NewRecordeEvent.impression(EVENT_NAME.EDIT_RECORD).view());
+    analytics
+        .logEvent(NewRecordeEvent.impression(EVENT_NAME.EDIT_RECORD).view());
 //    print("_initUpdateRecord: date: ${widget.timeRecord.date.toString()}");
     _selectedDate = widget.timeRecord.date;
     _startTime = widget.timeRecord.start;
@@ -109,7 +113,8 @@ class NewRecordPageState extends State<NewRecordPage>
     presenter.endTimeSelected(_finishTime);
 
     setState(() {
-      TextEditingValue textEditingValue = TextEditingValue(text: widget.timeRecord.comment);
+      TextEditingValue textEditingValue =
+          TextEditingValue(text: widget.timeRecord.comment);
       commentInputController.value = textEditingValue;
     });
   }
@@ -141,7 +146,9 @@ class NewRecordPageState extends State<NewRecordPage>
     setState(() {
       _duration = duration;
       durationInputController = TextEditingController(
-          text: _duration == null ? "" : Utils.buildTimeStringFromDuration(_duration));
+          text: _duration == null
+              ? ""
+              : Utils.buildTimeStringFromDuration(_duration));
     });
   }
 
@@ -152,33 +159,33 @@ class NewRecordPageState extends State<NewRecordPage>
     });
   }
 
-  _setCommentController(){
+  _setCommentController() {
     commentInputController = TextEditingController();
-    commentInputController.addListener((){
+    commentInputController.addListener(() {
       presenter.commentEntered(commentInputController.text);
     });
   }
 
-  _setFocusNodes(){
+  _setFocusNodes() {
     commentFocusNode = FocusNode();
-    commentFocusNode.addListener((){
-      if(commentFocusNode.hasFocus && commentInputController.text.isEmpty){
+    commentFocusNode.addListener(() {
+      if (commentFocusNode.hasFocus && commentInputController.text.isEmpty) {
         commentInputController.clear();
       }
     });
     startPickerNode = FocusNode();
     endPickerNode = FocusNode();
-    endPickerNode.addListener((){
-      if(!endPickerNode.hasFocus){
+    endPickerNode.addListener(() {
+      if (!endPickerNode.hasFocus) {
         print("no focus anymore..");
         endPickerNode.unfocus();
-     //   FocusScope.of(context).requestFocus(null);
+        //   FocusScope.of(context).requestFocus(null);
 //        endPickerNode.dispose();
       }
     });
   }
 
-  _setPresenter(){
+  _setPresenter() {
     presenter = NewRecordPresenter(
         repository: repository,
         timeRecord: widget.timeRecord,
@@ -250,28 +257,40 @@ class NewRecordPageState extends State<NewRecordPage>
               }),
         ));
 
-    final finishTimePicker = TimeTrackerTimePicker(pickerName: "finishTimePicker: ", initialTimeValue: _finishTime, hint: "Finish Time", focusNode: endPickerNode, callback: (TimeOfDay time){
-      presenter.endTimeSelected(time);
-    }, onSubmitCallback: (){
+    final finishTimePicker = TimeTrackerTimePicker(
+      pickerName: "finishTimePicker: ",
+      initialTimeValue: _finishTime,
+      hint: "Finish Time",
+      focusNode: endPickerNode,
+      callback: (TimeOfDay time) {
+        presenter.endTimeSelected(time);
+      },
+      onSubmitCallback: () {
 //      print("finishTimePicker submitted");
-      FocusScope.of(context).requestFocus(commentFocusNode);
-    },);
+        FocusScope.of(context).requestFocus(commentFocusNode);
+      },
+    );
 
-
-    final startTimePicker = TimeTrackerTimePicker(pickerName: "startTimePicker: ", initialTimeValue: _startTime, hint: "Start Time", focusNode: startPickerNode, callback: (TimeOfDay time){
-      presenter.startTimeSelected(time);
-    }, onSubmitCallback: (){
+    final startTimePicker = TimeTrackerTimePicker(
+      pickerName: "startTimePicker: ",
+      initialTimeValue: _startTime,
+      hint: "Start Time",
+      focusNode: startPickerNode,
+      callback: (TimeOfDay time) {
+        presenter.startTimeSelected(time);
+      },
+      onSubmitCallback: () {
 //      print("startTimePicker submitted");
-      finishTimePicker.requestFocus(context);
-    },);
+        finishTimePicker.requestFocus(context);
+      },
+    );
 
-
-
-    Widget datePicker = TimeTrackerDatePicker(initializedDateTime: _selectedDate, onSubmittedCallback: (date){
+    Widget datePicker = TimeTrackerDatePicker(
+        initializedDateTime: _selectedDate,
+        onSubmittedCallback: (date) {
 //      print("datePicker: callback ${date.toString()}");
-      presenter.dateSelected(date);
-    });
-
+          presenter.dateSelected(date);
+        });
 
     final durationInput = Container(
       padding: EdgeInsets.only(left: 4.0, right: 4.0, top: 8.0),
@@ -294,63 +313,53 @@ class NewRecordPageState extends State<NewRecordPage>
       ),
     );
 
-
-
-
     Widget _saveButton = Padding(
-      padding: EdgeInsets.symmetric(
-          vertical: 16.0, horizontal: 16.0),
-      child: Material(
-        borderRadius: BorderRadius.circular(10.0),
-        shadowColor: isSaveButtonEnabled
-            ? Colors.orangeAccent.shade100
-            : Colors.grey.shade100,
-        elevation: 2.0,
-        child: MaterialButton(
-          minWidth: 100.0,
-          height: 42.0,
-          onPressed: () {
-            if (isSaveButtonEnabled) {
-              analytics.logEvent(NewRecordeEvent.click(EVENT_NAME.SAVE_RECORD_CLICKED));
-              presenter.saveButtonClicked();
-            }
-          },
-          color: isSaveButtonEnabled
-              ? Colors.orangeAccent
-              : Colors.grey,
-          child: Text(Strings.save_button_text,
-              style: TextStyle(color: Colors.white)),
-        ),
+      padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+      child: RaisedButton(
+        onPressed: () {
+          if (isSaveButtonEnabled) {
+            analytics.logEvent(
+                NewRecordeEvent.click(EVENT_NAME.SAVE_RECORD_CLICKED));
+            presenter.saveButtonClicked();
+          }
+        },
+        color: isSaveButtonEnabled ? Colors.orangeAccent : Colors.grey,
+        child: Text(Strings.save_button_text,
+            style: TextStyle(color: Colors.white)),
       ),
     );
 
     Widget _deleteButton = Padding(
-      padding: EdgeInsets.symmetric(
-          vertical: 16.0, horizontal: 16.0),
-      child: Material(
-        borderRadius: BorderRadius.circular(10.0),
-        shadowColor: Colors.orangeAccent.shade100,
-        elevation: 2.0,
-        child: MaterialButton(
-          minWidth: 100.0,
-          height: 42.0,
-          onPressed: () {
-            presenter.deleteButtonClicked();
-            analytics.logEvent(NewRecordeEvent.click(EVENT_NAME.DELETE_RECORD_CLICKED));
-          },
-          color: Colors.orangeAccent,
-          child: Text(Strings.delete_button_text, style: TextStyle(color: Colors.white)),
-        ),
+      padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+      child: RaisedButton(
+        onPressed: () {
+          presenter.deleteButtonClicked();
+          analytics.logEvent(
+              NewRecordeEvent.click(EVENT_NAME.DELETE_RECORD_CLICKED));
+        },
+        color: Colors.orangeAccent,
+        child: Text(Strings.delete_button_text,
+            style: TextStyle(color: Colors.white)),
       ),
     );
 
-    Row _buildButtonsRow(){
+    Row _buildButtonsRow() {
       List<Widget> children;
-      if(widget.flow == NewRecordFlow.update_record){
-        children = [_saveButton, _deleteButton];
-      }else{
-        children =  [_saveButton];
-
+      if (widget.flow == NewRecordFlow.update_record) {
+        children = [
+          Expanded(
+            child: _saveButton,
+          ),
+          Expanded(
+            child: _deleteButton,
+          )
+        ];
+      } else {
+        children = [
+          Expanded(
+            child: _saveButton,
+          )
+        ];
       }
 
       return Row(
@@ -361,26 +370,22 @@ class NewRecordPageState extends State<NewRecordPage>
     }
 
     Widget _commentField = Container(
-          padding: EdgeInsets.only(left: 4.0, right: 4.0, top: 8.0),
-          child: TextFormField(
+        padding: EdgeInsets.only(left: 4.0, right: 4.0, top: 8.0),
+        child: TextFormField(
             textInputAction: TextInputAction.done,
             focusNode: commentFocusNode,
-              onFieldSubmitted: (comment){
-                if(isSaveButtonEnabled){
-                  presenter.saveButtonClicked();
-                }
-              },
-              maxLines: 4,
-              controller: commentInputController,
-              decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                      borderRadius:
-                      BorderRadius.circular(10.0)),
-                  contentPadding: EdgeInsets.fromLTRB(
-                      10.0, 10.0, 10.0, 10.0),
-                  hintText: Strings.note_hint)
-          )
-      );
+            onFieldSubmitted: (comment) {
+              if (isSaveButtonEnabled) {
+                presenter.saveButtonClicked();
+              }
+            },
+            maxLines: 4,
+            controller: commentInputController,
+            decoration: InputDecoration(
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0)),
+                contentPadding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
+                hintText: Strings.note_hint)));
 
     return Scaffold(
       appBar: new AppBar(
@@ -415,20 +420,15 @@ class NewRecordPageState extends State<NewRecordPage>
                     mainAxisAlignment: MainAxisAlignment.end,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
-                      Expanded(
-                        flex: 1,
-                          child: _buildButtonsRow())
+                      Expanded(flex: 1, child: _buildButtonsRow())
                     ],
-                  )
-              )
+                  ))
             ],
           ),
         ),
       ),
     );
   }
-
-
 
   _createEmptyDropDown() {
     _tasks.add(_selectedTask);

@@ -210,23 +210,15 @@ class GenerateReportState extends State<GenerateReportPage> implements ReportsVi
 
     var generateButton = Container(
       padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-      child: Material(
-          borderRadius: BorderRadius.circular(10.0),
-          shadowColor: isButtonEnabled
-              ? Colors.orangeAccent.shade100
-              : Colors.grey.shade100,
-          elevation: 2.0,
-          child: MaterialButton(
-            minWidth: 200.0,
-            height: 42.0,
-            onPressed: () {
-              if (isButtonEnabled) {
-                _handleGenerateButtonClicked();
-              }
-            },
-            color: isButtonEnabled ? Colors.orangeAccent : Colors.grey,
-            child: Text(Strings.generate_button_text, style: TextStyle(color: Colors.white)),
-          )),
+      child: RaisedButton(
+        onPressed: () {
+          if (isButtonEnabled) {
+            _handleGenerateButtonClicked();
+          }
+        },
+        color: isButtonEnabled ? Colors.orangeAccent : Colors.grey,
+        child: Text(Strings.generate_button_text, style: TextStyle(color: Colors.white)),
+      ),
     );
 
     return Scaffold(
