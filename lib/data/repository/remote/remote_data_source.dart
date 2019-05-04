@@ -67,7 +67,7 @@ class RemoteDateSource implements TimeDateSource {
   }
 
   @override
-  Future<dynamic> singIn(String userName, String password) {
+  Future<dynamic> singIn(String userName, String password) async {
 //    api.setCredentials(userName, password);
     return api.signIn();
   }

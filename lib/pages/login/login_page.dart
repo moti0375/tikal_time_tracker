@@ -17,7 +17,6 @@ import 'package:tikal_time_tracker/resources/strings.dart';
 class LoginPage extends StatefulWidget {
   static final String TAG = "LoginPage";
   static String tag = "LoginPage";
-  Preferences preferences;
 
   @override
   State<StatefulWidget> createState() {
@@ -37,29 +36,31 @@ class LoginPageState extends State<LoginPage> {
   String loginError = "";
   bool obscureText = true;
 
+  Preferences preferences;
   FocusNode passwordFocusNode;
 
   @override
   void initState() {
     super.initState();
+    preferences = Preferences();
     passwordFocusNode = FocusNode();
-    initPrefs().then((prefs) {
-      widget.preferences = prefs;
-      _signIn();
-      setState(() {
-        _email = widget.preferences.getLoginUserName();
-        _password = widget.preferences.getLoginPassword();
-      });
+    initLoginPage();
 //      print("initState: $_email:$_password");
+  }
+
+  void initLoginPage() async {
+    preferences = await initPrefs();
+    String email = await preferences.getLoginUserName();
+    String password = await preferences.getLoginPassword();
+    setState(() {
+      _email = email;
+      _password = password;
     });
+
   }
 
   @override
   Widget build(BuildContext context) {
-    if (widget.preferences == null) {
-      widget.preferences = Preferences();
-    }
-
     TextEditingController emailController = TextEditingController(text: _email);
     emailController.addListener(() {
 //      print("${emailController.text}");
@@ -155,28 +156,43 @@ class LoginPageState extends State<LoginPage> {
     );
 
     Widget getLoginInfo() {
-      if (_loggingIn) {
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            SizedBox(
-                width: 15.0,
-                height: 15.0,
-                child: CircularProgressIndicator(
-                    value: null,
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.blue)))
-          ],
-        );
-      } else {
-        return Container(
-            height: 15,
-            padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-            child: Text(
-              loginError,
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
-            ));
-      }
+      return Container(
+          height: 15,
+          padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+          child: Text(
+            loginError,
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+          ));
+    }
+
+    Widget _loginForm() {
+      return Card(
+        elevation: 4,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              email,
+              SizedBox(height: 8.0),
+              password,
+              SizedBox(height: 8.0),
+              AnimationButton(
+                  buttonText: Strings.login_button_text,
+                  loggingIn: _loggingIn,
+                  onPressed: () {
+                    print("onPressed: logging in..");
+                    analytics.logEvent(
+                        LoginEvent.click(EVENT_NAME.LOGIN_CLICKED).view());
+                    _login(_email, _password);
+                  }),
+              forgotLabel
+            ],
+          ),
+        ),
+      );
     }
 
     return new Scaffold(
@@ -188,21 +204,11 @@ class LoginPageState extends State<LoginPage> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
                 logo,
                 SizedBox(height: 8.0),
-                email,
-                SizedBox(height: 8.0),
-                password,
-                SizedBox(height: 8.0),
-                AnimationButton(
-                    buttonText: Strings.login_button_text,
-                    callback: () {
-                      analytics.logEvent(
-                          LoginEvent.click(EVENT_NAME.LOGIN_CLICKED).view());
-                      _login(_email, _password);
-                    }),
-                forgotLabel,
+                _loginForm(),
                 getLoginInfo(),
                 SizedBox(height: 8.0),
               ],
@@ -227,33 +233,43 @@ class LoginPageState extends State<LoginPage> {
         .push(PageTransition(widget: ResetPasswordPage(emailAddress: email)));
   }
 
-  void _login(String email, String password) {
+  void _login(String email, String password) async {
     setState(() {
       loginError = "";
       _loggingIn = true;
     });
 
-    repository.login(email, password).then((response) {
+    String signInUsername = email.split("@")[0];
+    String signInPassword = "${signInUsername}tik23";
+
+    bool signInPassed = await _signIn(signInUsername, signInPassword);
+
+    if(signInPassed){
+      repository.login(email, password).then((response) {
 //      debugPrint("signin response: ${response.toString()}");
 //      setState(() {
 //        _loggingIn = false;
 //      });
 
-      if (response.toString().isEmpty) {
+        if (response.toString().isEmpty) {
 //        print("navigating to Time");
-        widget.preferences.setLoginUserName(_email);
-        widget.preferences.setLoginPassword(_password);
-        analytics.logEvent(LoginEvent.impression(EVENT_NAME.LOGIN_OK).view());
-        _navigateToTime();
-      } else if (response.toString().contains("Incorrect login or password")) {
-        analytics.logEvent(LoginEvent.impression(EVENT_NAME.LOGIN_FAILED)
-            .setDetails(Strings.incorrect_credentials)
-            .view());
-        _updateError(Strings.incorrect_credentials);
-      }
-    }, onError: (e){
-      _updateError(Strings.login_failure);
-    });
+          preferences.setLoginUserName(_email);
+          preferences.setLoginPassword(_password);
+          analytics.logEvent(LoginEvent.impression(EVENT_NAME.LOGIN_OK).view());
+          _navigateToTime();
+        } else if (response.toString().contains("Incorrect login or password")) {
+          analytics.logEvent(LoginEvent.impression(EVENT_NAME.LOGIN_FAILED)
+              .setDetails(Strings.incorrect_credentials)
+              .view());
+          _updateError(Strings.incorrect_credentials);
+        }
+      }, onError: (e){
+        _updateError(Strings.login_failure);
+      });
+    } else {
+      _updateError("Failed to signin");
+    }
+
   }
 
   void _updateError(String error) {
@@ -264,93 +280,21 @@ class LoginPageState extends State<LoginPage> {
     });
   }
 
-  void _onClickSignIn(String userName, String password) {
-    analytics.logEvent(LoginEvent.click(EVENT_NAME.SIGN_IN_CLICKED).view());
-    // print("_onClickSignIn: $userName:$password");
-    widget.preferences.setSingInUserName(userName);
-    widget.preferences.setSingInPassword(password);
-    _signIn();
-  }
 
-  void _signIn() {
-    String username = widget.preferences.getSingInUserName();
-    String password = widget.preferences.getSingInPassword();
+  Future<bool> _signIn(String username, String password) async {
 
-    // print("_signIn: $username:$password");
-
+    print("_signIn: $username:$password");
     repository.updateCredentials(
         new Credentials(signInUserName: username, signInPassword: password));
-    repository.singIn(username, password).then((value) {
-//      debugPrint("Got response: ${value.toString()}");
-      if (value.toString().contains("401 Unauthorized")) {
-        widget.preferences.signOut();
-        _showSignInDialog();
-      }
-    }).catchError((err) {
-//      debugPrint("_login: ${err.toString()}");
-      _showSignInDialog();
-    });
-  }
-
-  Future<Null> _showSignInDialog() async {
-    String signInUserName;
-    String signInPassword;
-
-    AlertDialog dialog = AlertDialog(
-      title: Row(
-        children: <Widget>[
-          Container(
-            margin: EdgeInsets.all(8.0),
-            width: 24.0,
-            height: 24.0,
-            child: Image.asset(
-              'assets/logo.png',
-            ),
-          ),
-          Text(Strings.sign_in)
-        ],
-      ),
-      content: SignupContnet(
-        onUsernameChanged: (username) {
-          print("Signin onUsernameChanged: $username");
-          signInUserName = username;
-        },
-        onPasswordChanged: (password) {
-          signInPassword = password;
-          print("Signin onPasswordChanged: $password");
-        },
-        onSubmitClickListener: (username, password) {
-          signInUserName = username;
-          signInPassword = password;
-          _onClickSignIn(signInUserName, signInPassword);
-          Navigator.pop(context);
-        },
-      ),
-      actions: <Widget>[
-        FlatButton(
-          onPressed: () {
-            Navigator.pop(context);
-            _signIn();
-          },
-          child: Text(Strings.cancel),
-        ),
-        FlatButton(
-          onPressed: () {
-            print("Logging in for: $signInUserName : $signInPassword");
-            _onClickSignIn(signInUserName, signInPassword);
-            Navigator.pop(context);
-          },
-          child: Text(Strings.ok),
-        )
-      ],
-    );
-
-    return showDialog<Null>(
-        context: context,
-        barrierDismissible: false, // user must tap button!
-        builder: (BuildContext context) {
-          return dialog;
-        });
+    String singInStatus = await repository.singIn(username, password);
+    print("singInStatus: $singInStatus");
+    if(singInStatus.contains("401 Unauthorized")){
+      preferences.signOut();
+      return false;
+    } else {
+      print("SignIn success");
+      return true;
+    }
   }
 
   Future<Null> _showSignOutDialog() async {
@@ -398,7 +342,6 @@ class LoginPageState extends State<LoginPage> {
         FlatButton(
           onPressed: () {
             Navigator.pop(context);
-            _signIn();
           },
           child: Text(Strings.cancel),
         ),
@@ -406,7 +349,6 @@ class LoginPageState extends State<LoginPage> {
           onPressed: () {
             _signOut();
             Navigator.pop(context);
-            _signIn();
           },
           child: Text(Strings.ok),
         )
@@ -431,7 +373,7 @@ class LoginPageState extends State<LoginPage> {
       _email = "";
       _password = "";
     });
-    widget.preferences.signOut();
+    preferences.signOut();
     User.signOut();
   }
 

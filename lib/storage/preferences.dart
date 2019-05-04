@@ -43,11 +43,11 @@ class Preferences{
     return prefs.getString(SING_IN_PASSWORD);
   }
 
-  void setLoginUserName(String username){
+  void setLoginUserName(String username)  {
     prefs.setString(LOGIN_IN_USER_NAME, username);
   }
 
-  String getLoginUserName(){
+  Future<String> getLoginUserName() async {
    return prefs.getString(LOGIN_IN_USER_NAME);
   }
 
@@ -55,15 +55,15 @@ class Preferences{
     prefs.setString(LOGIN_IN_PASSWORD, password);
   }
 
-  String getLoginPassword(){
+  Future<String> getLoginPassword() async {
     return prefs.getString(LOGIN_IN_PASSWORD);
   }
 
-  void signOut(){
-    prefs.remove(SING_IN_USER_NAME);
-    prefs.remove(SING_IN_PASSWORD);
-    prefs.remove(LOGIN_IN_PASSWORD);
-    prefs.remove(LOGIN_IN_USER_NAME);
+  Future<void> signOut() async {
+    await prefs.remove(SING_IN_USER_NAME);
+    await prefs.remove(SING_IN_PASSWORD);
+    await prefs.remove(LOGIN_IN_PASSWORD);
+    await prefs.remove(LOGIN_IN_USER_NAME);
   }
 
 }

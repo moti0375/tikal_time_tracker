@@ -76,7 +76,7 @@ class ResetPasswordState extends State<ResetPasswordPage>
 
     final resetPasswordButton = AnimationButton(
         buttonText: Strings.reset_password_button_text,
-        callback: () {
+        onPressed: () {
           _presenter.onResetPasswordButtonClicked(widget.emailAddress);
         });
 

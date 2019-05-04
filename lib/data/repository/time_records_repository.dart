@@ -67,7 +67,7 @@ class TimeRecordsRepository implements TimeDateSource{
   }
 
   @override
-  Future<dynamic> singIn(String userName, String password) {
+  Future<dynamic> singIn(String userName, String password) async {
     return remoteDateSource.singIn(userName, password);
   }
 
