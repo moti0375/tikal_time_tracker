@@ -3,6 +3,7 @@ import 'package:tikal_time_tracker/data/models.dart';
 import 'package:tikal_time_tracker/data/user.dart';
 import 'package:tikal_time_tracker/data/repository/time_records_repository.dart';
 import 'package:tikal_time_tracker/pages/login/login_page.dart';
+import 'package:tikal_time_tracker/ui/platform_appbar.dart';
 import 'package:tikal_time_tracker/ui/time_record_list_adapter.dart';
 import 'package:tikal_time_tracker/pages/new_record_page/new_record_page.dart';
 import 'package:tikal_time_tracker/pages/reports/place_holder_content.dart';
@@ -204,43 +205,75 @@ class TimePageState extends State<TimePage>
         builder: (BuildContext context) => new LoginPage()));
   }
 
-  AppBar _buildAppBar({String title}) {
-    return AppBar(
-      title: Row(children: [
-        Container(
-          margin: EdgeInsets.all(8.0),
-          width: 24.0,
-          height: 24.0,
-          child: InkWell(
-            onTap: () {
-              analytics.logEvent(TimeEvent.click(EVENT_NAME.ACTION_ABOUT)
-                  .setDetails("Action Icon"));
-              showAboutScreen();
-            },
-            child: Hero(
-              tag: 'hero',
-              child: Image.asset(
-                'assets/logo_no_background.png',
-              ),
+  PreferredSizeWidget _buildAppBar({String title}) {
+    return PlatformAppbar(title: Row(children: [
+      Container(
+        margin: EdgeInsets.all(8.0),
+        width: 24.0,
+        height: 24.0,
+        child: InkWell(
+          onTap: () {
+            analytics.logEvent(TimeEvent.click(EVENT_NAME.ACTION_ABOUT)
+                .setDetails("Action Icon"));
+            showAboutScreen();
+          },
+          child: Hero(
+            tag: 'hero',
+            child: Image.asset(
+              'assets/logo_no_background.png',
             ),
           ),
         ),
-        Text(title)
-      ]),
-      actions: <Widget>[
-        PopupMenuButton<Choice>(
-          onSelected: _select,
-          itemBuilder: (BuildContext context) {
-            return choices.map((Choice c) {
-              return PopupMenuItem<Choice>(
-                value: c,
-                child: Text(c.title),
-              );
-            }).toList();
-          },
-        )
-      ],
-    );
+      ),
+      Text(title)
+    ]),
+    actions:         PopupMenuButton<Choice>(
+      onSelected: _select,
+      itemBuilder: (BuildContext context) {
+        return choices.map((Choice c) {
+          return PopupMenuItem<Choice>(
+            value: c,
+            child: Text(c.title),
+          );
+        }).toList();
+      },
+    ),).build(context);
+//    return AppBar(
+//      title: Row(children: [
+//        Container(
+//          margin: EdgeInsets.all(8.0),
+//          width: 24.0,
+//          height: 24.0,
+//          child: InkWell(
+//            onTap: () {
+//              analytics.logEvent(TimeEvent.click(EVENT_NAME.ACTION_ABOUT)
+//                  .setDetails("Action Icon"));
+//              showAboutScreen();
+//            },
+//            child: Hero(
+//              tag: 'hero',
+//              child: Image.asset(
+//                'assets/logo_no_background.png',
+//              ),
+//            ),
+//          ),
+//        ),
+//        Text(title)
+//      ]),
+//      actions: <Widget>[
+//        PopupMenuButton<Choice>(
+//          onSelected: _select,
+//          itemBuilder: (BuildContext context) {
+//            return choices.map((Choice c) {
+//              return PopupMenuItem<Choice>(
+//                value: c,
+//                child: Text(c.title),
+//              );
+//            }).toList();
+//          },
+//        )
+//      ],
+//    );
   }
 
   _navigateToNextScreen() {
