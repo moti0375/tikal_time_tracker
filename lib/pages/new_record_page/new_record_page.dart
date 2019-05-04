@@ -4,6 +4,7 @@ import 'package:tikal_time_tracker/data/project.dart';
 import 'package:tikal_time_tracker/data/task.dart';
 import 'package:tikal_time_tracker/data/models.dart';
 import 'package:tikal_time_tracker/data/repository/time_records_repository.dart';
+import 'package:tikal_time_tracker/ui/platform_appbar.dart';
 import 'package:tikal_time_tracker/utils/utils.dart';
 import 'package:tikal_time_tracker/ui/date_picker_widget.dart';
 import 'package:tikal_time_tracker/pages/new_record_page/new_record_contract.dart';
@@ -388,11 +389,11 @@ class NewRecordPageState extends State<NewRecordPage>
                 hintText: Strings.note_hint)));
 
     return Scaffold(
-      appBar: new AppBar(
+      appBar:  PlatformAppbar(
         title: new Text(widget.flow == NewRecordFlow.update_record
             ? Strings.edit_record_page_title
             : Strings.new_record_page_title),
-      ),
+      ).build(context),
       body: SafeArea(
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 16.0),

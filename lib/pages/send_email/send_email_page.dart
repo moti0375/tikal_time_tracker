@@ -7,6 +7,7 @@ import 'package:tikal_time_tracker/pages/send_email/send_email_presenter.dart';
 import 'package:tikal_time_tracker/resources/strings.dart';
 import 'package:tikal_time_tracker/analytics/analytics.dart';
 import 'package:tikal_time_tracker/analytics/events/email_event.dart';
+import 'package:tikal_time_tracker/ui/platform_appbar.dart';
 
 class SendEmailPage extends StatefulWidget {
   @override
@@ -236,9 +237,9 @@ class SendEmailPageState extends State<SendEmailPage> implements SendMailContrac
     );
 
     return Scaffold(
-      appBar: AppBar(
+      appBar: PlatformAppbar(
         title: Text(Strings.send_email_page_title),
-      ),
+      ).build(context),
       backgroundColor: Colors.white,
       body: Container(
         padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),

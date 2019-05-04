@@ -23,9 +23,10 @@ class PlatformAppbar extends PlatformWidget{
     // TODO: implement buildMaterialWidget
     return AppBar(
       title: title,
-      actions: <Widget>[
+      actions: actions != null ? <Widget>[
         actions
-      ],
+      ] : <Widget>[],
+      elevation: 1,
     );
   }
 

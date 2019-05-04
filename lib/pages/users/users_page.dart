@@ -7,6 +7,7 @@ import 'package:tikal_time_tracker/ui/page_title.dart';
 import 'package:tikal_time_tracker/data/repository/time_records_repository.dart';
 import 'package:tikal_time_tracker/analytics/analytics.dart';
 import 'package:tikal_time_tracker/analytics/events/users_event.dart';
+import 'package:tikal_time_tracker/ui/platform_appbar.dart';
 
 class UsersPage extends StatefulWidget{
 
@@ -34,10 +35,9 @@ class UsersPageState extends State<UsersPage> implements MembersViewContract{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: PlatformAppbar(
         title: Text("Users"),
-        elevation: 1.0,
-      ),
+      ).build(context),
       body: _buildBody(),
       backgroundColor: Colors.black12,
     );

@@ -238,42 +238,6 @@ class TimePageState extends State<TimePage>
         }).toList();
       },
     ),).build(context);
-//    return AppBar(
-//      title: Row(children: [
-//        Container(
-//          margin: EdgeInsets.all(8.0),
-//          width: 24.0,
-//          height: 24.0,
-//          child: InkWell(
-//            onTap: () {
-//              analytics.logEvent(TimeEvent.click(EVENT_NAME.ACTION_ABOUT)
-//                  .setDetails("Action Icon"));
-//              showAboutScreen();
-//            },
-//            child: Hero(
-//              tag: 'hero',
-//              child: Image.asset(
-//                'assets/logo_no_background.png',
-//              ),
-//            ),
-//          ),
-//        ),
-//        Text(title)
-//      ]),
-//      actions: <Widget>[
-//        PopupMenuButton<Choice>(
-//          onSelected: _select,
-//          itemBuilder: (BuildContext context) {
-//            return choices.map((Choice c) {
-//              return PopupMenuItem<Choice>(
-//                value: c,
-//                child: Text(c.title),
-//              );
-//            }).toList();
-//          },
-//        )
-//      ],
-//    );
   }
 
   _navigateToNextScreen() {
