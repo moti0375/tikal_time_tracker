@@ -12,12 +12,11 @@ class FirebaseEndpoint implements Endpoint{
 
   @override
   void logEvent(Event event) async {
-    print("$TAG: logEvent: ${event.toString()}");
     if(firebaseAnalytics == null){
       initialize();
     }
     firebaseAnalytics.logEvent(name: event.name, parameters: event.bundle).then((_){
-      print("$TAG: logEvent: success ");
+      print("$TAG: logEvent: ${event.name} success ");
     }, onError: (e){
       print("$TAG: There was an error $e");
     });

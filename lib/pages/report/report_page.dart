@@ -42,20 +42,8 @@ class ReportPage extends StatelessWidget implements ListAdapterClickListener {
     Widget _buildAppBar({String title}) {
       return PlatformAppbar(
         title: Text(title),
-        actions: PopupMenuButton<Choice>(
-          onSelected: _select,
-          itemBuilder: (BuildContext context) {
-            return choices.map((Choice c) {
-              return PopupMenuItem<Choice>(
-                value: c,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[Icon(c.icon), Text(c.title)],
-                ),
-              );
-            }).toList();
-          },
-        ),
+        actions: choices,
+        onPressed: _select,
       ).build(context);
     }
 

@@ -70,7 +70,6 @@ class TimePickerState extends State<TimeTrackerTimePicker> {
   @override
   void dispose() {
     super.dispose();
-    print("dispose");
     widget.focusNode.dispose();
   }
 

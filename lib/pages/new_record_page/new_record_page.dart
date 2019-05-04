@@ -83,7 +83,7 @@ class NewRecordPageState extends State<NewRecordPage>
   @override
   initNewRecord() {
     analytics.logEvent(
-        NewRecordeEvent.impression(EVENT_NAME.CREATE_NEW_RECORD).view());
+        NewRecordeEvent.impression(EVENT_NAME.CREATING_NEW_RECORD).view());
 
 //    print("_initNewRecord:");
     startTimeController = new TextEditingController(
@@ -100,7 +100,7 @@ class NewRecordPageState extends State<NewRecordPage>
   @override
   initUpdateRecord() {
     analytics
-        .logEvent(NewRecordeEvent.impression(EVENT_NAME.EDIT_RECORD).view());
+        .logEvent(NewRecordeEvent.impression(EVENT_NAME.EDITING_RECORD).view());
 //    print("_initUpdateRecord: date: ${widget.timeRecord.date.toString()}");
     _selectedDate = widget.timeRecord.date;
     _startTime = widget.timeRecord.start;
@@ -389,8 +389,8 @@ class NewRecordPageState extends State<NewRecordPage>
                 hintText: Strings.note_hint)));
 
     return Scaffold(
-      appBar:  PlatformAppbar(
-        title: new Text(widget.flow == NewRecordFlow.update_record
+      appBar: PlatformAppbar(
+        title: Text(widget.flow == NewRecordFlow.update_record
             ? Strings.edit_record_page_title
             : Strings.new_record_page_title),
       ).build(context),
