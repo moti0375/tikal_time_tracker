@@ -175,6 +175,7 @@ class LoginPageState extends State<LoginPage> {
             mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
+              SizedBox(height: 8.0),
               email,
               SizedBox(height: 8.0),
               password,
