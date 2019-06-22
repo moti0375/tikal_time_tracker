@@ -7,6 +7,7 @@ import 'package:tikal_time_tracker/network/credentials.dart';
 import 'package:tikal_time_tracker/storage/preferences.dart';
 import 'package:tikal_time_tracker/ui/animation_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tikal_time_tracker/ui/platform_alert_dialog.dart';
 import 'package:tikal_time_tracker/utils/page_transition.dart';
 import 'package:tikal_time_tracker/pages/reset_password/reset_password_page.dart';
 import 'package:tikal_time_tracker/analytics/analytics.dart';
@@ -298,46 +299,11 @@ class LoginPageState extends State<LoginPage> {
     }
   }
 
-  Future<Null> _showSignOutDialog() async {
-    Widget dialogContent = Container(
-      padding: EdgeInsets.all(4.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Container(
-            padding: const EdgeInsets.only(
-                left: 8.0, right: 8.0, top: 0.0, bottom: 4.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                Text(Strings.sign_out_approval_title),
-                Text(Strings.sign_out_approval_subtitle)
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-
-    AlertDialog dialog = AlertDialog(
-      title: Row(
-        children: <Widget>[
-          Container(
-            margin: EdgeInsets.all(8.0),
-            width: 24.0,
-            height: 24.0,
-            child: Image.asset(
-              'assets/logo.png',
-            ),
-          ),
-          Text(Strings.sign_out)
-        ],
-      ),
-      content: dialogContent,
+  void _showSignOutDialog()  {
+    PlatformAlertDialog dialog = PlatformAlertDialog(
+      title: Strings.sign_out_approval_title,
+      content: Strings.sign_out_approval_subtitle,
+      defaultActionText: "OK",
       actions: <Widget>[
         FlatButton(
           onPressed: () {
@@ -355,12 +321,7 @@ class LoginPageState extends State<LoginPage> {
       ],
     );
 
-    return showDialog<Null>(
-        context: context,
-        barrierDismissible: false, // user must tap button!
-        builder: (BuildContext context) {
-          return dialog;
-        });
+    dialog.show(context);
   }
 
   Future<Preferences> initPrefs() async {
