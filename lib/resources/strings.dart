@@ -57,6 +57,10 @@ class Strings{
   static const save_button_text = "Save";
   static const delete_button_text = "Delete";
   static const note_hint = "Note:";
+  static const delete_approve_text = "Yes";
+  static const delete_cancel_text = "No";
+  static const delete_alert_title = "Delete a record";
+  static const delete_alert_subtitle = "Are you sure you want to delete this record?";
 
   //Send email page
   static const send_email_page_title = "Send Email";

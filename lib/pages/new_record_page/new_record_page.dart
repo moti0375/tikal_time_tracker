@@ -4,6 +4,7 @@ import 'package:tikal_time_tracker/data/project.dart';
 import 'package:tikal_time_tracker/data/task.dart';
 import 'package:tikal_time_tracker/data/models.dart';
 import 'package:tikal_time_tracker/data/repository/time_records_repository.dart';
+import 'package:tikal_time_tracker/ui/platform_alert_dialog.dart';
 import 'package:tikal_time_tracker/ui/platform_appbar.dart';
 import 'package:tikal_time_tracker/utils/utils.dart';
 import 'package:tikal_time_tracker/ui/date_picker_widget.dart';
@@ -334,7 +335,7 @@ class NewRecordPageState extends State<NewRecordPage>
       padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
       child: RaisedButton(
         onPressed: () {
-          presenter.deleteButtonClicked();
+          _showDeleteAlertDialog();
           analytics.logEvent(
               NewRecordeEvent.click(EVENT_NAME.DELETE_RECORD_CLICKED));
         },
@@ -443,6 +444,31 @@ class NewRecordPageState extends State<NewRecordPage>
         ),
       );
     }).toList();
+  }
+
+  void _showDeleteAlertDialog() {
+    PlatformAlertDialog dialog = PlatformAlertDialog(
+      title: Strings.delete_alert_title,
+      content: Strings.delete_alert_subtitle,
+      defaultActionText: "OK",
+      actions: <Widget>[
+        FlatButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Text(Strings.delete_cancel_text),
+        ),
+        FlatButton(
+          onPressed: () {
+            Navigator.pop(context);
+            presenter.deleteButtonClicked();
+          },
+          child: Text(Strings.delete_approve_text),
+        )
+      ],
+    );
+
+    dialog.show(context);
   }
 }
 
