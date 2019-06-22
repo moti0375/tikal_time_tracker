@@ -11,7 +11,6 @@ import 'package:tikal_time_tracker/utils/page_transition.dart';
 import 'package:tikal_time_tracker/pages/reset_password/reset_password_page.dart';
 import 'package:tikal_time_tracker/analytics/analytics.dart';
 import 'package:tikal_time_tracker/analytics/events/login_event.dart';
-import 'package:tikal_time_tracker/pages/login/singup_dialog_contnet.dart';
 import 'package:tikal_time_tracker/resources/strings.dart';
 
 class LoginPage extends StatefulWidget {
