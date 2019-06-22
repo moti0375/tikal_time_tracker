@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:tikal_time_tracker/resources/strings.dart';
 
-class SignupContnet extends StatefulWidget {
-  var onUsernameChanged;
-  var onPasswordChanged;
-  var onSubmitClickListener;
+class SignupContent extends StatefulWidget {
+  final  onUsernameChanged;
+  final  onPasswordChanged;
+  final  onSubmitClickListener;
 
-  SignupContnet({this.onUsernameChanged, this.onPasswordChanged, this.onSubmitClickListener});
+  SignupContent(
+      {this.onUsernameChanged,
+      this.onPasswordChanged,
+      this.onSubmitClickListener});
 
   @override
   State<StatefulWidget> createState() {
@@ -14,7 +17,7 @@ class SignupContnet extends StatefulWidget {
   }
 }
 
-class SignupContentState extends State<SignupContnet>{
+class SignupContentState extends State<SignupContent> {
   String userName;
   String password;
   TextEditingController usernameInputController = TextEditingController();
@@ -53,7 +56,7 @@ class SignupContentState extends State<SignupContnet>{
             child: new TextFormField(
                 textInputAction: TextInputAction.next,
                 focusNode: usernameFocusNode,
-                onFieldSubmitted: (inputUsername){
+                onFieldSubmitted: (inputUsername) {
                   widget.onUsernameChanged(userName);
                   FocusScope.of(context).requestFocus(passwordFocusNode);
                 },
@@ -73,8 +76,10 @@ class SignupContentState extends State<SignupContnet>{
               children: <Widget>[
                 new TextFormField(
                     textInputAction: TextInputAction.done,
-                    onFieldSubmitted: (inputPassword){
-                      if(widget.onSubmitClickListener != null && password.isNotEmpty && userName.isNotEmpty){
+                    onFieldSubmitted: (inputPassword) {
+                      if (widget.onSubmitClickListener != null &&
+                          password.isNotEmpty &&
+                          userName.isNotEmpty) {
                         widget.onSubmitClickListener(userName, this.password);
                       }
                     },
@@ -82,15 +87,22 @@ class SignupContentState extends State<SignupContnet>{
                     controller: passwordInputController,
                     obscureText: obscureText,
                     decoration: InputDecoration(
-                        hintText: Strings.password_hint,
-                        contentPadding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0))),
+                      hintText: Strings.password_hint,
+                      contentPadding:
+                          EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
                     maxLines: 1),
-                InkWell(child: new Icon(obscureText == true ? Icons.visibility : Icons.visibility_off),
-                  onTap: (){
+                InkWell(
+                  child: new Icon(obscureText == true
+                      ? Icons.visibility
+                      : Icons.visibility_off),
+                  onTap: () {
                     _toggleObscureText();
-                  },),
+                  },
+                ),
               ],
             ),
           ),
@@ -104,5 +116,4 @@ class SignupContentState extends State<SignupContnet>{
       obscureText = !obscureText;
     });
   }
-
 }

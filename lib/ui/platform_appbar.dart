@@ -72,6 +72,7 @@ class PlatformAppbar extends PlatformWidget {
   Widget _buildCupertinoTrailing(BuildContext context, List<Choice> actions) {
     if (actions.length == 1) {
       return CupertinoButton(
+        padding: EdgeInsets.all(8),
         child: Text(actions[0].title),
         onPressed: () {
           if(onPressed != null){
@@ -81,6 +82,7 @@ class PlatformAppbar extends PlatformWidget {
       );
     } else {
       return CupertinoButton(
+         padding: EdgeInsets.all(8),
           child: Text("Menu"),
           onPressed: () {
             _showSheet(context);

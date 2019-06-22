@@ -226,11 +226,8 @@ class TimePageState extends State<TimePage>
                       .setDetails("Action Icon"));
                   showAboutScreen();
                 },
-                child: Hero(
-                  tag: 'hero',
-                  child: Image.asset(
-                    'assets/logo_no_background.png',
-                  ),
+                child: Image.asset(
+                  'assets/logo_no_background.png',
                 ),
               ),
             ),

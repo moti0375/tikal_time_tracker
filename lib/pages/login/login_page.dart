@@ -184,6 +184,7 @@ class LoginPageState extends State<LoginPage> {
                   buttonText: Strings.login_button_text,
                   loggingIn: _loggingIn,
                   onPressed: () {
+//                    Navigator.of(context).pop(); // Close keyboard
                     print("onPressed: logging in..");
                     analytics.logEvent(
                         LoginEvent.click(EVENT_NAME.LOGIN_CLICKED).view());
@@ -309,15 +310,14 @@ class LoginPageState extends State<LoginPage> {
           Container(
             padding: const EdgeInsets.only(
                 left: 8.0, right: 8.0, top: 0.0, bottom: 4.0),
-            child: new Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Text(Strings.sign_out_approval_title),
-                  Text(Strings.sign_out_approval_subtitle)
-                ],
-              ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Text(Strings.sign_out_approval_title),
+                Text(Strings.sign_out_approval_subtitle)
+              ],
             ),
           ),
         ],
