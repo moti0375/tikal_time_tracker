@@ -156,9 +156,8 @@ class LoginPageState extends State<LoginPage> {
     );
 
     Widget getLoginInfo() {
-      return Container(
+      return SizedBox(
           height: 15,
-          padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
           child: Text(
             loginError,
             textAlign: TextAlign.center,
@@ -179,6 +178,8 @@ class LoginPageState extends State<LoginPage> {
               email,
               SizedBox(height: 8.0),
               password,
+              SizedBox(height: 8.0),
+              getLoginInfo(),
               SizedBox(height: 8.0),
               AnimationButton(
                   buttonText: Strings.login_button_text,
@@ -211,7 +212,6 @@ class LoginPageState extends State<LoginPage> {
                 logo,
                 SizedBox(height: 8.0),
                 _loginForm(),
-                getLoginInfo(),
                 SizedBox(height: 8.0),
               ],
             ),
