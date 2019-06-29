@@ -2,7 +2,7 @@ import 'reports_contract.dart';
 import 'package:tikal_time_tracker/data/repository/time_records_repository.dart';
 import 'package:tikal_time_tracker/data/project.dart';
 import 'package:tikal_time_tracker/data/task.dart';
-import 'package:tikal_time_tracker/data/user.dart';
+import 'package:tikal_time_tracker/services/auth/user.dart';
 import 'package:tikal_time_tracker/pages/users/member_list_item.dart';
 import 'package:tikal_time_tracker/data/member.dart';
 import 'package:tikal_time_tracker/network/requests/reports_form.dart';

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tikal_time_tracker/pages/reports/place_holder_content.dart';
 import 'package:tikal_time_tracker/data/models.dart';
-import 'package:tikal_time_tracker/data/user.dart';
+import 'package:tikal_time_tracker/services/auth/user.dart';
 import 'package:tikal_time_tracker/ui/platform_appbar.dart';
 import 'package:tikal_time_tracker/ui/time_record_list_adapter.dart';
 import 'package:tikal_time_tracker/utils/action_choice.dart';

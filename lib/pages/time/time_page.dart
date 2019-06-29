@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:tikal_time_tracker/data/models.dart';
-import 'package:tikal_time_tracker/data/user.dart';
+import 'package:tikal_time_tracker/services/auth/auth.dart';
+import 'package:tikal_time_tracker/services/auth/user.dart';
 import 'package:tikal_time_tracker/data/repository/time_records_repository.dart';
 import 'package:tikal_time_tracker/pages/login/login_page.dart';
 import 'package:tikal_time_tracker/ui/platform_appbar.dart';
@@ -205,9 +207,12 @@ class TimePageState extends State<TimePage>
     });
   }
 
-  _logout() {
-    Navigator.of(context).pushReplacement(new MaterialPageRoute(
-        builder: (BuildContext context) => new LoginPage()));
+  _logout() async {
+
+    BaseAuth auth = Provider.of<BaseAuth>(context);
+    await auth.logout();
+//    Navigator.of(context).pushReplacement(new MaterialPageRoute(
+//        builder: (BuildContext context) => new LoginPage()));
   }
 
   PreferredSizeWidget _buildAppBar({String title}) {

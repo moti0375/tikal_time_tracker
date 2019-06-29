@@ -17,10 +17,11 @@ class User {
 
   DomParser parser = DomParser();
 
-  static void init(String dom) {
+  static User init(String dom)  {
     if (_me == null) {
       User._internal(dom);
     }
+    return _me;
 //    print("User: init ${me.toString()}");
   }
 

@@ -1,4 +1,4 @@
-import 'package:tikal_time_tracker/data/user.dart';
+import 'package:tikal_time_tracker/services/auth/user.dart';
 import 'package:tikal_time_tracker/data/project.dart';
 import 'package:tikal_time_tracker/data/task.dart';
 import 'package:tikal_time_tracker/data/models.dart';

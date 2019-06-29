@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../data/user.dart';
+import 'package:tikal_time_tracker/services/auth/user.dart';
 
 class TimeTrackerPageTitle extends StatefulWidget{
   @override

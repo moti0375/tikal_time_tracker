@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:tikal_time_tracker/bottom_navigation.dart';
+import 'package:tikal_time_tracker/data/exceptions/failed_login_exception.dart';
 import 'package:tikal_time_tracker/data/repository/time_records_repository.dart';
-import 'package:tikal_time_tracker/data/user.dart';
+import 'package:tikal_time_tracker/services/auth/auth.dart';
+import 'package:tikal_time_tracker/services/auth/user.dart';
 import 'dart:async';
 import 'package:tikal_time_tracker/network/credentials.dart';
 import 'package:tikal_time_tracker/storage/preferences.dart';
@@ -117,7 +120,8 @@ class LoginPageState extends State<LoginPage> {
           textInputAction: TextInputAction.done,
           controller: passwordController,
           onFieldSubmitted: (password) {
-            _login(_email, _password);
+            //_login(_email, _password);
+            _loginAuth(context, _email, _password);
           },
           obscureText: obscureText,
           decoration: InputDecoration(
@@ -189,7 +193,7 @@ class LoginPageState extends State<LoginPage> {
                     print("onPressed: logging in..");
                     analytics.logEvent(
                         LoginEvent.click(EVENT_NAME.LOGIN_CLICKED).view());
-                    _login(_email, _password);
+                    _loginAuth(context, _email, _password);
                   }),
               forgotLabel
             ],
@@ -221,7 +225,7 @@ class LoginPageState extends State<LoginPage> {
     );
   }
 
-  void _navigateToTime() {
+  void _navigateToTabsScreen() {
     repository.timePage().then((response) {
 //      debugPrint("_navigateToTime response: $response");
       User.init(response);
@@ -235,43 +239,64 @@ class LoginPageState extends State<LoginPage> {
         .push(PageTransition(widget: ResetPasswordPage(emailAddress: email)));
   }
 
-  void _login(String email, String password) async {
-    setState(() {
-      loginError = "";
-      _loggingIn = true;
-    });
-
-    String signInUsername = email.split("@")[0];
-    String signInPassword = "${signInUsername}tik23";
-
-    bool signInPassed = await _signIn(signInUsername, signInPassword);
-
-    if(signInPassed){
-      repository.login(email, password).then((response) {
-//      debugPrint("signin response: ${response.toString()}");
-//      setState(() {
-//        _loggingIn = false;
+//  void _login(String email, String password) async {
+//    setState(() {
+//      loginError = "";
+//      _loggingIn = true;
+//    });
+//
+//    String signInUsername = email.split("@")[0];
+//    String signInPassword = "${signInUsername}tik23";
+//
+//    bool signInPassed = await _signIn(signInUsername, signInPassword);
+//
+//    if(signInPassed){
+//      repository.login(email, password).then((response) {
+////      debugPrint("signin response: ${response.toString()}");
+////      setState(() {
+////        _loggingIn = false;
+////      });
+//
+//        if (response.toString().isEmpty) {
+////        print("navigating to Time");
+//          preferences.setLoginUserName(_email);
+//          preferences.setLoginPassword(_password);
+//          analytics.logEvent(LoginEvent.impression(EVENT_NAME.LOGIN_OK).view());
+//          _navigateToTabsScreen();
+//        } else if (response.toString().contains("Incorrect login or password")) {
+//          analytics.logEvent(LoginEvent.impression(EVENT_NAME.LOGIN_FAILED)
+//              .setDetails(Strings.incorrect_credentials)
+//              .view());
+//          _updateError(Strings.incorrect_credentials);
+//        }
+//      }, onError: (e){
+//        _updateError(Strings.login_failure);
 //      });
+//    } else {
+//      _updateError("Failed to signin");
+//    }
+//
+//  }
 
-        if (response.toString().isEmpty) {
-//        print("navigating to Time");
-          preferences.setLoginUserName(_email);
-          preferences.setLoginPassword(_password);
-          analytics.logEvent(LoginEvent.impression(EVENT_NAME.LOGIN_OK).view());
-          _navigateToTime();
-        } else if (response.toString().contains("Incorrect login or password")) {
-          analytics.logEvent(LoginEvent.impression(EVENT_NAME.LOGIN_FAILED)
-              .setDetails(Strings.incorrect_credentials)
-              .view());
-          _updateError(Strings.incorrect_credentials);
-        }
-      }, onError: (e){
-        _updateError(Strings.login_failure);
-      });
-    } else {
-      _updateError("Failed to signin");
-    }
-
+  void _loginAuth(BuildContext context, String email, String password) async {
+    print("loginAuth: called");
+    BaseAuth auth = Provider.of<BaseAuth>(context);
+    auth.login(email, password).then((user){
+      if(user != null){
+        print("_loginAuth: User: ${user.name}");
+        preferences.setLoginUserName(_email);
+        preferences.setLoginPassword(_password);
+        analytics.logEvent(LoginEvent.impression(EVENT_NAME.LOGIN_OK).view());
+        _navigateToTabsScreen();
+      } else {
+        print("_loginAuth: user null");
+      }
+    }, onError: (e){
+      if(e is FailedLoginException){
+        print("_loginAuth: ${e.cause}");
+        _updateError(e.cause);
+      }
+    });
   }
 
   void _updateError(String error) {
@@ -283,21 +308,6 @@ class LoginPageState extends State<LoginPage> {
   }
 
 
-  Future<bool> _signIn(String username, String password) async {
-
-    print("_signIn: $username:$password");
-    repository.updateCredentials(
-        new Credentials(signInUserName: username, signInPassword: password));
-    String singInStatus = await repository.singIn(username, password);
-    print("singInStatus: $singInStatus");
-    if(singInStatus.contains("401 Unauthorized")){
-      preferences.signOut();
-      return false;
-    } else {
-      print("SignIn success");
-      return true;
-    }
-  }
 
   void _showSignOutDialog()  {
     PlatformAlertDialog dialog = PlatformAlertDialog(

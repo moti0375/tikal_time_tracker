@@ -6,16 +6,7 @@ import 'package:tikal_time_tracker/network/requests/send_email_form.dart';
 import 'package:tikal_time_tracker/network/time_tracker_api.dart';
 import 'package:tikal_time_tracker/network/requests/reports_form.dart';
 import 'package:tikal_time_tracker/network/requests/update_request.dart';
-import 'package:jaguar_retrofit/jaguar_retrofit.dart';
 import 'package:jaguar_serializer/jaguar_serializer.dart';
-import 'package:tikal_time_tracker/network/serializers/from_request_serializer.dart';
-import 'package:tikal_time_tracker/network/serializers/form_serializer.dart';
-import 'package:tikal_time_tracker/network/serializers/add_time_serializer.dart';
-import 'package:tikal_time_tracker/network/serializers/delete_request_serializer.dart';
-import 'package:tikal_time_tracker/network/serializers/reports_form_serializer.dart';
-import 'package:tikal_time_tracker/network/serializers/reset_password_serializer.dart';
-import 'package:tikal_time_tracker/network/serializers/send_email_form_serializer.dart';
-import 'package:tikal_time_tracker/network/serializers/update_time_serializer.dart';
 import 'package:tikal_time_tracker/network/requests/delete_request.dart';
 import 'package:tikal_time_tracker/network/requests/login_request.dart';
 import 'package:tikal_time_tracker/network/requests/reset_password_form.dart';
@@ -32,9 +23,7 @@ class RemoteDateSource implements TimeDateSource {
   Credentials credentials;
   DomParser parser = DomParser();
 
-  RemoteDateSource({this.credentials}) {
-    _setApi(credentials);
-  }
+  RemoteDateSource({this.api});
 
   @override
   Future<dynamic> addTime(TimeRecord time) {
@@ -66,43 +55,10 @@ class RemoteDateSource implements TimeDateSource {
     return null;
   }
 
-  @override
-  Future<dynamic> singIn(String userName, String password) async {
-//    api.setCredentials(userName, password);
-    return api.signIn();
-  }
 
   @override
   void updateCredentials(Credentials credentials) {
-    print("remoteDateSource: updateCredentials: ");
-    _setApi(credentials);
-  }
-
-  _setApi(Credentials credentials) {
-    print("remoteDateSource: _setApi: ");
-    serializers.add(FormRequestSerializer());
-    serializers.add(FormSerializer());
-    serializers.add(ReportsFormSerializer());
-    serializers.add(AddTimeSerializer());
-    serializers.add(UpdateTimeSerializer());
-    serializers.add(DeleteRequestSerializer());
-    serializers.add(ResetPasswordSerializer());
-    serializers.add(SendEmailSerializer());
-    api = TimeTrackerApi(
-        base: route("https://planet.tikalk.com").before((route) {
-          print("Metadata: ${route.metadataMap}");
-        }),
-        serializers: serializers, credentials: credentials);
-  }
-
-  @override
-  Future<dynamic> login(String email, String password) {
-
-    List<int> emailConvert = Utf8Encoder().convert(email);
-    List<int> passwordConvert = Utf8Encoder().convert(password);
-    print("encoded: ${Base64Encoder().convert(emailConvert)}");
-
-    return api.login(LoginForm(Login: email, Password: password));
+    api.updateAuthHeader(credentials);
   }
 
   @override
@@ -165,8 +121,6 @@ class RemoteDateSource implements TimeDateSource {
 
   @override
   Future resetPassword(ResetPasswordForm request) {
-    debugPrint("resetPassword: $login");
-
     return api.resetPasswordRequest(request).then((response){
       debugPrint("resetPasswordRequest response: $response");
       return parser.parseResetPasswordResponse(response.toString());

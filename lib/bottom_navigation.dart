@@ -1,8 +1,14 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tikal_time_tracker/pages/login/login_page.dart';
 import 'package:tikal_time_tracker/pages/time/time_page.dart';
 import 'package:tikal_time_tracker/pages/users/users_page.dart';
 import 'package:tikal_time_tracker/pages/reports/generate_report_page.dart';
 import 'package:tikal_time_tracker/resources/strings.dart';
+import 'package:tikal_time_tracker/services/auth/auth.dart';
+import 'package:tikal_time_tracker/services/auth/user.dart';
 
 enum Tab{
   Time,
@@ -53,6 +59,33 @@ class BottomNavigationState extends State<BottomNavigation>{
     });
   }
 
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    print("BottomNavigation: dispose");
+  }
+
+  @override
+  void didChangeDependencies()  {
+    super.didChangeDependencies();
+    BaseAuth auth = Provider.of<BaseAuth>(context);
+    auth.onAuthChanged..asBroadcastStream().listen((user){
+      if(user == null){
+        print("onAuthChanged: logout");
+        _logout();
+      }
+    });
+  }
+
+  _logout() {
+    Navigator.of(context).pushReplacement(new MaterialPageRoute(
+        builder: (BuildContext context) => new LoginPage()));
+  }
 
   @override
   Widget build(BuildContext context) {

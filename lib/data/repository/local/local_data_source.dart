@@ -60,19 +60,10 @@ class LocalDataSource implements TimeDateSource {
     return databaseOpenHelper.getRecordsBetweenDates(startDate, endDate);
   }
 
-  @override
-  Future<dynamic> singIn(String userName, String password) {
-    return null;
-  }
 
   @override
   void updateCredentials(Credentials credentials) {
     // TODO: implement updateCredentials
-  }
-
-  @override
-  Future<dynamic> login(String email, String password) {
-    return null;
   }
 
   @override

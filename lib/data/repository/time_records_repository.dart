@@ -8,6 +8,7 @@ import 'package:tikal_time_tracker/data/repository/local/local_data_source.dart'
 import 'package:tikal_time_tracker/data/repository/remote/remote_data_source.dart';
 import 'package:tikal_time_tracker/network/credentials.dart';
 import 'package:tikal_time_tracker/network/requests/send_email_form.dart';
+import 'package:tikal_time_tracker/network/time_tracker_api.dart';
 
 
 class TimeRecordsRepository implements TimeDateSource{
@@ -31,7 +32,7 @@ class TimeRecordsRepository implements TimeDateSource{
 
   TimeRecordsRepository._internal(this.credentials){
     print("$_TAG: _internal: ${this.credentials}");
-   remoteDateSource = RemoteDateSource(credentials: this.credentials);
+   remoteDateSource = RemoteDateSource(api: TimeTrackerApi.create());
   }
 
   factory TimeRecordsRepository(){
@@ -66,21 +67,13 @@ class TimeRecordsRepository implements TimeDateSource{
   return dateSource.getRecordsBetweenDates(startDate, endDate);
   }
 
-  @override
-  Future<dynamic> singIn(String userName, String password) async {
-    return remoteDateSource.singIn(userName, password);
-  }
 
   @override
   void updateCredentials(Credentials credentials) {
     print("repository: updateCredentials ");
-    remoteDateSource.updateCredentials(credentials);
+//    remoteDateSource.updateCredentials(credentials);
   }
 
-  @override
-  Future<dynamic> login(String email, String password) {
-    return remoteDateSource.login(email, password);
-  }
 
   @override
   Future timePage() {

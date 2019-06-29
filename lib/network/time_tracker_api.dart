@@ -1,8 +1,10 @@
 import 'package:jaguar_retrofit/jaguar_retrofit.dart';
+import 'package:jaguar_serializer/jaguar_serializer.dart';
 import 'package:jaguar_serializer/src/repo/repo.dart';
 import 'package:jaguar_resty/jaguar_resty.dart' as resty;
 import 'package:jaguar_resty/jaguar_resty.dart';
 import 'package:client_cookie/client_cookie.dart';
+import 'package:meta/meta.dart';
 import 'package:tikal_time_tracker/network/requests/login_request.dart';
 import 'package:tikal_time_tracker/network/requests/reports_form.dart';
 import 'package:tikal_time_tracker/network/requests/update_request.dart';
@@ -10,6 +12,14 @@ import 'package:tikal_time_tracker/network/requests/delete_request.dart';
 import 'package:tikal_time_tracker/network/requests/send_email_form.dart';
 import 'package:tikal_time_tracker/network/requests/reset_password_form.dart';
 import 'package:tikal_time_tracker/data/models.dart';
+import 'package:tikal_time_tracker/network/serializers/add_time_serializer.dart';
+import 'package:tikal_time_tracker/network/serializers/delete_request_serializer.dart';
+import 'package:tikal_time_tracker/network/serializers/form_serializer.dart';
+import 'package:tikal_time_tracker/network/serializers/from_request_serializer.dart';
+import 'package:tikal_time_tracker/network/serializers/reports_form_serializer.dart';
+import 'package:tikal_time_tracker/network/serializers/reset_password_serializer.dart';
+import 'package:tikal_time_tracker/network/serializers/send_email_form_serializer.dart';
+import 'package:tikal_time_tracker/network/serializers/update_time_serializer.dart';
 import 'dart:convert';
 import 'credentials.dart';
 import 'dart:async';
@@ -20,6 +30,9 @@ part  'time_tracker_api.jretro.dart';
 
 @GenApiClient(path: "timetracker")
 class TimeTrackerApi extends _$TimeTrackerApiClient implements ApiClient{
+  static const  String BASE_URL = "https://planet.tikalk.com";
+  static const  String _TAG = "TimeTrackerApi";
+
   @override
   resty.Route base;
   @override
@@ -27,12 +40,41 @@ class TimeTrackerApi extends _$TimeTrackerApiClient implements ApiClient{
 
   Credentials credentials;
 
-  TimeTrackerApi({this.base, this.serializers, this.credentials}){
+  static TimeTrackerApi _instance;
+  static TimeTrackerApi get instance => _instance;
+
+
+  static TimeTrackerApi create() {
+    if (_instance == null) {
+      _instance = TimeTrackerApi._create();
+    }
+    return _instance;
+  }
+
+  static TimeTrackerApi _create(){
+    JsonRepo serializers = JsonRepo();
+    serializers.add(FormRequestSerializer());
+    serializers.add(FormSerializer());
+    serializers.add(ReportsFormSerializer());
+    serializers.add(AddTimeSerializer());
+    serializers.add(UpdateTimeSerializer());
+    serializers.add(DeleteRequestSerializer());
+    serializers.add(ResetPasswordSerializer());
+    serializers.add(SendEmailSerializer());
+    return TimeTrackerApi._internal(
+        base: route(BASE_URL).before((route) {
+          print("Metadata: ${route.metadataMap}");
+        }),
+        serializers: serializers);
+  }
+
+  factory TimeTrackerApi(){
+    return _instance;
+  }
+
+  TimeTrackerApi._internal({@required this.base, @required this.serializers}){
     globalClient = Client();
     List<ClientCookie> cookies = List<ClientCookie>();
-    List<int> convert = Utf8Encoder().convert("${credentials.signInUserName}:${credentials.signInPassword}");
-    print("encoded: ${Base64Encoder().convert(convert)}");
-    this.base.authHeader("Basic", Base64Encoder().convert(convert));
     this.base.after((resty.StringResponse response){
 
 //      debugPrint("resty After: status: ${response.statusCode}, response headers: ${response.headers.toString()}");
@@ -53,6 +95,12 @@ class TimeTrackerApi extends _$TimeTrackerApiClient implements ApiClient{
     this.base.before((b){  //This is 'before 'interceptor
       b.cookies(cookies);
     });
+  }
+
+  void updateAuthHeader(Credentials credentials){
+    print("TimeTrackerApi: ${credentials.toString()}");
+    List<int> utf8Convert = Utf8Encoder().convert("${credentials.signInUserName}:${credentials.signInPassword}");
+    this.base.authHeader("Basic", Base64Encoder().convert(utf8Convert));
   }
 
   @GetReq(path: "login.php" )
