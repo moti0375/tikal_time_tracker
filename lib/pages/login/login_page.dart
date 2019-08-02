@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tikal_time_tracker/bottom_navigation.dart';
 import 'package:tikal_time_tracker/data/exceptions/failed_login_exception.dart';
@@ -279,8 +280,13 @@ class LoginPageState extends State<LoginPage> {
 //  }
 
   void _loginAuth(BuildContext context, String email, String password) async {
+    SystemChannels.textInput.invokeMethod('TextInput.hide');
     print("loginAuth: called");
     BaseAuth auth = Provider.of<BaseAuth>(context);
+    setState(() {
+      loginError = "";
+      _loggingIn = true;
+    });
     auth.login(email, password).then((user){
       if(user != null){
         print("_loginAuth: User: ${user.name}");

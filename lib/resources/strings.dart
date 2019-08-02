@@ -11,6 +11,7 @@ class Strings{
   static const sign_out = "Sign Out";
   static const incorrect_credentials = "Incorrect login or password";
   static const login_failure = "There was an error";
+  static const signin_error = "Signin Failed, Check your internet connection";
   static const cancel = "Cancel";
   static const ok = "OK";
   static const sign_out_approval_title = "Are you sure?";

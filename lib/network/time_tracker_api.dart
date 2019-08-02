@@ -98,7 +98,7 @@ class TimeTrackerApi extends _$TimeTrackerApiClient implements ApiClient{
   }
 
   void updateAuthHeader(Credentials credentials){
-    print("TimeTrackerApi: ${credentials.toString()}");
+    print("TimeTrackerApi: updateAuthHeader ${credentials.toString()}");
     List<int> utf8Convert = Utf8Encoder().convert("${credentials.signInUserName}:${credentials.signInPassword}");
     this.base.authHeader("Basic", Base64Encoder().convert(utf8Convert));
   }

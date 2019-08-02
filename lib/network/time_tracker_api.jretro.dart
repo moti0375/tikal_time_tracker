@@ -9,8 +9,11 @@ part of 'time_tracker_api.dart';
 abstract class _$TimeTrackerApiClient implements ApiClient {
   final String basePath = "timetracker";
   Future<dynamic> signIn() async {
+    print("_TimeTrackerApiClient: signIn");
     var req = base.get.path(basePath).path("login.php");
-    return serializers.from(await req.go().body);
+    var response = await req.go().body;
+    print("_TimeTrackerApiClient: req: $response");
+    return serializers.from(response);
   }
 
   Future<dynamic> login(LoginForm request) async {

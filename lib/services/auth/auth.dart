@@ -10,7 +10,7 @@ import 'package:tikal_time_tracker/services/auth/user.dart';
 abstract class BaseAuth{
   Stream<User> get onAuthChanged;
   Future<User> login(String userName, String password);
-  Future<void> singIn(String userName, String password);
+  Future<void> _singIn(String userName, String password);
   Future<void> logout();
   void dispose();
 }
@@ -19,6 +19,7 @@ abstract class BaseAuth{
 class AppAuth extends BaseAuth{
 
   final TimeTrackerApi api;
+  static const CONNECTION_TIMEOUT = 5000;
 
   AppAuth({this.api}){
     print("AppAuth: created");
@@ -29,7 +30,7 @@ class AppAuth extends BaseAuth{
   Future<User> login(String email, String password) async {
     print("AppAuth: login called");
 
-    bool signInPassed = await singIn(email, password);
+    bool signInPassed = await _singIn(email, password);
 
     if(signInPassed){
         String response = await api.login(LoginForm(Login: email, Password: password));
@@ -60,7 +61,7 @@ class AppAuth extends BaseAuth{
   Stream<User> get onAuthChanged => authStreamController.stream.asBroadcastStream();
 
   @override
-  Future<bool> singIn(String userName, String password) async {
+  Future<bool> _singIn(String userName, String password) async {
 
     print("AppAuth: _signIn: $userName:$password");
 
@@ -68,10 +69,13 @@ class AppAuth extends BaseAuth{
     String signInPassword = "${signInUsername}tik23";
 
     api.updateAuthHeader(Credentials(signInUserName: signInUsername, signInPassword: signInPassword));
-    String singInStatus = await api.signIn();
+    String singInStatus = await api.signIn().
+    timeout(Duration(milliseconds: CONNECTION_TIMEOUT), onTimeout: (){
+      print("There was a timeout:");
+    });
     print("singInStatus: $singInStatus");
-    if(singInStatus.contains("401 Unauthorized")){
-      return false;
+    if(singInStatus == null || singInStatus.contains("401 Unauthorized")){
+      throw FailedLoginException(cause: Strings.signin_error);
     } else {
       print("SignIn success");
       return true;
