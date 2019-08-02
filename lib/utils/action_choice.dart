@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-enum Action { Logout, Close, SendEmail, About }
+enum MenuAction { Logout, Close, SendEmail, About }
 
 class Choice {
-  final Action action;
+  final MenuAction action;
   final String title;
   final IconData icon;
 

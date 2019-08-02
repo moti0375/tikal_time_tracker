@@ -33,12 +33,12 @@ class TimePageState extends State<TimePage>
   Analytics analytics = new Analytics();
   List<Choice> choices = const <Choice>[
     const Choice(
-      action: Action.Logout,
+      action: MenuAction.Logout,
       title: "Logout",
       icon: null,
     ),
     const Choice(
-      action: Action.About,
+      action: MenuAction.About,
       title: "About",
       icon: null,
     )
@@ -196,11 +196,11 @@ class TimePageState extends State<TimePage>
 
   void _select(Choice choice) {
     setState(() {
-      if (choice.action == Action.Logout) {
+      if (choice.action == MenuAction.Logout) {
         presenter.onLogoutClicked();
         analytics.logEvent(TimeEvent.click(EVENT_NAME.ACTION_LOGOUT));
       }
-      if (choice.action == Action.About) {
+      if (choice.action == MenuAction.About) {
         presenter.onAboutClicked();
         analytics.logEvent(TimeEvent.click(EVENT_NAME.ACTION_ABOUT));
       }

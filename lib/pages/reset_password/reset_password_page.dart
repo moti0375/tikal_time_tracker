@@ -78,7 +78,7 @@ class ResetPasswordState extends State<ResetPasswordPage>
         buttonText: Strings.reset_password_button_text,
         onPressed: () {
           _presenter.onResetPasswordButtonClicked(widget.emailAddress);
-        });
+        }, loggingIn: false,);
 
     final statusField = Container(
       padding: EdgeInsets.symmetric(vertical: 8.0),
@@ -101,6 +101,7 @@ class ResetPasswordState extends State<ResetPasswordPage>
                 child: Column(
                     mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
                       title,
                       emailField,

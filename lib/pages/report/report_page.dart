@@ -17,7 +17,7 @@ class ReportPage extends StatelessWidget implements ListAdapterClickListener {
 
   final List<Choice> choices = const <Choice>[
     const Choice(
-        action: Action.SendEmail,
+        action: MenuAction.SendEmail,
         title: Strings.action_send_email,
         icon: Icons.email)
   ];
@@ -31,7 +31,7 @@ class ReportPage extends StatelessWidget implements ListAdapterClickListener {
   @override
   Widget build(BuildContext context) {
     void _select(Choice choice) {
-      if (choice.action == Action.SendEmail) {
+      if (choice.action == MenuAction.SendEmail) {
         analytics.logEvent(ReportsEvent.click(EVENT_NAME.ACTION_SEND_MAIL));
 
         //  print("Navigate to SendEmail page");
