@@ -1,4 +1,7 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/src/material/time.dart';
+import 'package:tikal_time_tracker/data/exceptions/failed_login_exception.dart';
 
 import 'package:tikal_time_tracker/data/project.dart';
 import 'package:tikal_time_tracker/data/task.dart';
@@ -104,10 +107,11 @@ class NewRecordPresenter implements NewRecordPresenterContract {
     if(flow == NewRecordFlow.new_record){
       print("_saveTimeRecord: about to save ${this.timeRecord.toString()}");
       repository.addTime(this.timeRecord).then((response){
-        print("Response: $response");
+        debugPrint("Response: $response");
         view.showSaveRecordSuccess(this.timeRecord);
-      },onError: (e){
-        print("There was an error: ${e.toString()}");
+      }, onError: (e){
+        print("There was an error: ${(e as AppException).cause}");
+        view.onError(e);
       });
     }
 
@@ -115,8 +119,10 @@ class NewRecordPresenter implements NewRecordPresenterContract {
       print("_saveTimeRecord: about to update ${this.timeRecord.toString()}");
       repository.updateTime(this.timeRecord).then((response){
         view.showSaveRecordSuccess(this.timeRecord);
-      },onError: (e){
-        print("There was an error: ${e.toString()}");
+      }, onError: (e){
+
+        print("There was an error: ${(e as AppException).cause}");
+        view.onError(e);
       });
     }
   }

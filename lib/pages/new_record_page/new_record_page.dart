@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:tikal_time_tracker/data/exceptions/failed_login_exception.dart';
 import 'package:tikal_time_tracker/ui/page_title.dart';
 import 'package:tikal_time_tracker/data/project.dart';
 import 'package:tikal_time_tracker/data/task.dart';
@@ -322,6 +324,7 @@ class NewRecordPageState extends State<NewRecordPage>
           if (isSaveButtonEnabled) {
             analytics.logEvent(
                 NewRecordeEvent.click(EVENT_NAME.SAVE_RECORD_CLICKED));
+            SystemChannels.textInput.invokeMethod('TextInput.hide');
             presenter.saveButtonClicked();
           }
         },
@@ -468,6 +471,25 @@ class NewRecordPageState extends State<NewRecordPage>
       ],
     );
 
+    dialog.show(context);
+  }
+
+  @override
+  void onError(Exception e) {
+    print("onError: ${e.toString()}");
+    analytics.logEvent(NewRecordeEvent.impression(EVENT_NAME.FAILED_TO_EDIT_OR_SAVE).setDetails(e.toString()).view());
+    PlatformAlertDialog dialog = PlatformAlertDialog(
+        title: "Edit Record Error",
+        content: e is AppException ? e.cause : "There was an error",
+        defaultActionText: "OK",
+        actions: <Widget>[
+          FlatButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text(Strings.ok),
+          ),
+        ]);
     dialog.show(context);
   }
 }

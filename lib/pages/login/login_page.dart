@@ -298,7 +298,7 @@ class LoginPageState extends State<LoginPage> {
         print("_loginAuth: user null");
       }
     }, onError: (e){
-      if(e is FailedLoginException){
+      if(e is AppException){
         print("_loginAuth: ${e.cause}");
         _updateError(e.cause);
       }

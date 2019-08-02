@@ -16,7 +16,7 @@ class NewRecordPresenterContract{
   void noteChanged(String note){}
 }
 
-class NewRecordViewContract{
+abstract class NewRecordViewContract{
   void initNewRecord(){}
   void initUpdateRecord(){}
   void showSelectedProject(Project project){}
@@ -26,4 +26,5 @@ class NewRecordViewContract{
   void showSaveRecordSuccess(TimeRecord timeRecord){}
   void showSaveRecordFailed(){}
   void setButtonState(bool enabled){}
+  void onError(Exception e);
 }

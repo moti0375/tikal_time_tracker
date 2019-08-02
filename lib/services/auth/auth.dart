@@ -41,9 +41,9 @@ class AppAuth extends BaseAuth{
           return User.init(userResponse);
         } else {
           if(response.contains("Incorrect login or password")){
-            throw FailedLoginException(cause: Strings.incorrect_credentials);
+            throw AppException(cause: Strings.incorrect_credentials);
           } else {
-            throw FailedLoginException(cause: Strings.login_failure);
+            throw AppException(cause: Strings.login_failure);
           }
         }
 
@@ -75,7 +75,7 @@ class AppAuth extends BaseAuth{
     });
     print("singInStatus: $singInStatus");
     if(singInStatus == null || singInStatus.contains("401 Unauthorized")){
-      throw FailedLoginException(cause: Strings.signin_error);
+      throw AppException(cause: Strings.signin_error);
     } else {
       print("SignIn success");
       return true;

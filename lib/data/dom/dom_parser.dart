@@ -1,3 +1,6 @@
+import 'package:flutter/services.dart';
+import 'package:tikal_time_tracker/data/exceptions/failed_login_exception.dart';
+import 'package:tikal_time_tracker/resources/strings.dart';
 import 'package:tikal_time_tracker/services/auth/user.dart';
 import 'package:tikal_time_tracker/data/project.dart';
 import 'package:tikal_time_tracker/data/task.dart';
@@ -245,7 +248,11 @@ class DomParser {
       remainTotal = parseRemainQuote(timeDomStr, remainQuotaNeedle);
     }
 
-    TimeReport report = TimeReport(timeReport: result, dayTotal: dayTotal, weekTotal: weekTotal, monthTotal: monthTotal, quota: remainTotal, overQuota: overQuota);
+    String message = null;
+    if(timeDomStr.contains("Time interval overlaps")){
+      message = Strings.interval_overlap;
+    }
+    TimeReport report = TimeReport(timeReport: result, dayTotal: dayTotal, weekTotal: weekTotal, monthTotal: monthTotal, quota: remainTotal, overQuota: overQuota, message: message);
     return report;
   }
 
@@ -424,6 +431,23 @@ class DomParser {
     } else {
       return "Failed to reset password";
     }
+  }
+
+
+  String parseSaveAndAddTimeResponse(String response){
+
+    final String errorTdStart = "<td class=\"error\">";
+    if(response.indexOf(errorTdStart) > 0){
+      String buffer = response.substring(response.indexOf(errorTdStart) + errorTdStart.length);
+      buffer = buffer.substring(0, buffer.indexOf("<br>"));
+      print("parseSaveAndAddTimeResponse: Error: ${buffer.trim()}");
+      if(buffer.isNotEmpty){
+        final e = AppException(cause: buffer.trim());
+        throw e;
+      }
+    }
+
+    return response;
   }
 
   List<Member> parseGenerateReportPage(String apiResponse) {
@@ -616,4 +640,6 @@ class DomParser {
     print("$needle: ${dayTotal.toString()}");
     return dayTotal;
   }
+
+
 }

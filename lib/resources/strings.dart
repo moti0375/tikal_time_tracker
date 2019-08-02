@@ -31,6 +31,7 @@ class Strings{
   static const month_total = "Month Total:";
   static const remaining_quota = "Remaining Quota:";
   static const over_quota = "Over Quota:";
+  static const interval_overlap = "Time interval overlaps with existing records.";
 
   //Generate Report page
   static const item_this_month = "This Month";

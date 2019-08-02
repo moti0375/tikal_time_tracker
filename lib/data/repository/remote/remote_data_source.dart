@@ -26,8 +26,10 @@ class RemoteDateSource implements TimeDateSource {
   RemoteDateSource({this.api});
 
   @override
-  Future<dynamic> addTime(TimeRecord time) {
-    return api.addTime(time);
+  Future<dynamic> addTime(TimeRecord time) async {
+    String apiResponse = await api.addTime(time);
+    apiResponse = parser.parseSaveAndAddTimeResponse(apiResponse);
+    return apiResponse;
   }
 
   @override

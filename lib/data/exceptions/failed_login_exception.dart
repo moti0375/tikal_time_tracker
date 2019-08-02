@@ -1,5 +1,5 @@
 
-class FailedLoginException implements Exception {
+class AppException implements Exception {
   final String cause;
-  FailedLoginException({this.cause});
+  AppException({this.cause});
 }

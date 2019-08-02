@@ -129,13 +129,26 @@ class TimePageState extends State<TimePage>
                 "${Strings.month_total} ${Utils.buildTimeStringFromDuration(this._timeReport.monthTotal)}",
                 textAlign: TextAlign.start,
               ),
-              buildQuotaWidget(_timeReport)
+              buildQuotaWidget(_timeReport),
             ],
-          )
+          ),
         ],
       );
     }
 
+
+    Widget _infoRow() {
+      return Container(
+        padding: EdgeInsets.only(top: 16),
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          children: <Widget>[
+            _timeReport.message != null ? Text(_timeReport.message , style: TextStyle(color: Colors.red),) : Container()
+          ],
+        ),
+      );
+    }
+    
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       backgroundColor: Colors.black12,
@@ -184,7 +197,8 @@ class TimePageState extends State<TimePage>
                             items: _timeReport.timeReport,
                             intermittently: true,
                             adapterClickListener: this),
-                        summaryRow()
+                        summaryRow(),
+                        _infoRow()
                       ],
                     ),
             ),
@@ -336,3 +350,5 @@ class TimePageState extends State<TimePage>
     Navigator.of(context).push(new PageTransition(widget: new AboutScreen()));
   }
 }
+
+
