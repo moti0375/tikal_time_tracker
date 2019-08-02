@@ -7,7 +7,7 @@ import 'package:intl/intl.dart';
 class TimeTrackerTimePicker extends StatefulWidget {
 
   final String pickerName;
-  final callback;
+  final Function(TimeOfDay) callback;
   final onSubmitCallback;
   final String hint;
   final TimeOfDay initialTimeValue;
@@ -105,7 +105,7 @@ class TimePickerState extends State<TimeTrackerTimePicker> {
                     onFieldSubmitted: onSubmitButtonClicked,
                     decoration: InputDecoration(
                         labelText: widget.hint != null ? widget.hint : "",
-                        hintText: "HH:MM",
+                        hintText: "HH:MM,HHMM,H",
                         contentPadding:
                         EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 12.0),
                         border: OutlineInputBorder(
@@ -172,11 +172,12 @@ class TimePickerState extends State<TimeTrackerTimePicker> {
 
     if(validExp != null){
       for(final formatter in widget.timeFormats){
+        print("attempt to parse: ${formatter.pattern}");
         try{
           TimeOfDay timeOfDay = TimeOfDay.fromDateTime(formatter.parse(value));
-//          print("Parsing success: ${timeOfDay.toString()}" );
+          print("Parsing success: ${timeOfDay.toString()}" );
           return timeOfDay;
-        }catch(e){
+        } on FormatException catch(e){
           print("Parsing faild: ${e.toString()}");
         }
       }
