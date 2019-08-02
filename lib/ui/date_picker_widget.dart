@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'dart:async';
 import 'package:intl/intl.dart';
 
 class TimeTrackerDatePicker extends StatefulWidget {
-  DateTime initializedDateTime;
-  DatePickerOnPickedListener onPickedListener;
-  String hint;
-  var onSubmittedCallback = (DateTime d) => {};
-  RegExp datePattern = RegExp("^[0-3]?[0-9]/[0-1]?[0-9]/[2]?[0]?[0-9]{2}\$");
-  DateFormat dateFormat = DateFormat("d/M/y");
-  String dateString;
+  final DateTime initializedDateTime;
+  final String hint;
+  final Function(DateTime dateTime) onSubmittedCallback;
+  final RegExp datePattern = RegExp("^[0-3]?[0-9]/[0-1]?[0-9]/[2]?[0]?[0-9]{2}\$");
+  final DateFormat dateFormat = DateFormat("d/M/y");
 
   TimeTrackerDatePicker(
       {this.initializedDateTime, this.onSubmittedCallback, this.hint});
@@ -89,6 +88,7 @@ class DatePickerState extends State<TimeTrackerDatePicker> {
       DateTime date = widget.dateFormat.parse(value);
       print("entered date: ${date.day}:${date.month}:${date.year}");
       _onDateSelected(date);
+      SystemChannels.textInput.invokeMethod('TextInput.hide');
     } else {
       _dateTime = null;
       widget.onSubmittedCallback(null);
