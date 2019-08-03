@@ -20,12 +20,13 @@ class TimeTrackerTimePicker extends StatefulWidget {
   final List<RegExp> timePatterns = List<RegExp>();
   final FocusNode focusNode;
 
-  TimeTrackerTimePicker({this.pickerName,
-    this.initialTimeValue,
-    this.hint,
-    this.callback,
-    this.focusNode,
-    this.onSubmitCallback}) {
+  TimeTrackerTimePicker(
+      {this.pickerName,
+      this.initialTimeValue,
+      this.hint,
+      this.callback,
+      this.focusNode,
+      this.onSubmitCallback}) {
     timeFormats.add(timeFormatter);
     timeFormats.add(simpleTimeFormatter);
 
@@ -95,7 +96,8 @@ class TimePickerState extends State<TimeTrackerTimePicker> {
             child: GestureDetector(
               onTap: () {
 //                print("onTap TimePicker");
-                Analytics.instance.logEvent(TimeEvent.click(EVENT_NAME.TIME_PICKER_ICON));
+                Analytics.instance
+                    .logEvent(TimeEvent.click(EVENT_NAME.TIME_PICKER_ICON));
                 _showStartTimeDialog(context);
               },
               child: Icon(Icons.access_time),
@@ -103,6 +105,7 @@ class TimePickerState extends State<TimeTrackerTimePicker> {
           ),
           Container(
             child: new Flexible(
+              flex: 4,
                 child: new TextFormField(
                     textInputAction: TextInputAction.next,
                     focusNode: widget.focusNode,
@@ -111,38 +114,28 @@ class TimePickerState extends State<TimeTrackerTimePicker> {
                         labelText: widget.hint != null ? widget.hint : "",
                         hintText: "HH:MM or 0.0h",
                         contentPadding:
-                        EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 12.0),
+                            EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 12.0),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10.0))),
                     maxLines: 1,
                     controller: pickerController)),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: SizedBox(
-              child: RaisedButton(
+          Flexible(
+            flex: 1,
+            child: RaisedButton(
                 child: Text(
                   "Now",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16.0,
-                  ),
+                  style: TextStyle(fontSize: 12.0),
                 ),
-                color: Theme
-                    .of(context)
-                    .primaryColor,
-                textColor: Theme
-                    .of(context)
-                    .textTheme
-                    .button
-                    .color,
-                onPressed: (){
-                   Analytics.instance.logEvent(TimeEvent.click(EVENT_NAME.TIME_PICKER_NOW));
+                textColor: Colors.white,
+                shape: CircleBorder(),
+                color: Theme.of(context).primaryColor,
+                onPressed: () {
+                  Analytics.instance
+                      .logEvent(TimeEvent.click(EVENT_NAME.TIME_PICKER_NOW));
                   _onTimeSelected(TimeOfDay.fromDateTime(DateTime.now()));
-                }
-              ),
-            ),
-          )
+                }),
+          ),
         ],
       ),
     );
@@ -237,7 +230,7 @@ class TimePickerState extends State<TimeTrackerTimePicker> {
     setState(() {
       _pickedTime = time;
       TextEditingValue value =
-      TextEditingValue(text: Utils.buildTimeStringFromTime(time));
+          TextEditingValue(text: Utils.buildTimeStringFromTime(time));
       pickerController.value = value;
     });
   }

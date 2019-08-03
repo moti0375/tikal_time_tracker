@@ -71,9 +71,12 @@ class DatePickerState extends State<TimeTrackerDatePicker> {
   }
 
   Future<Null> _showDatePicker(BuildContext context) async {
+
     final DateTime picked = await showDatePicker(
         context: context,
-        initialDate: _dateTime,
+        initialDate: _dateTime.weekday == 5 || _dateTime.weekday == 6 ? DateTime(DateTime.now().year, DateTime.now().month, 1) :  _dateTime ,
+        selectableDayPredicate: (DateTime val) =>
+        val.weekday == 5 || val.weekday == 6 ? false : true,
         firstDate: DateTime(DateTime.now().year - 1, 1),
         lastDate: DateTime(DateTime.now().year + 1, 12));
     if (picked != null) {
