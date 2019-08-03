@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tikal_time_tracker/analytics/analytics.dart';
 import 'package:tikal_time_tracker/analytics/events/time_event.dart';
+import 'package:tikal_time_tracker/services/auth/user.dart';
 import 'package:tikal_time_tracker/utils/utils.dart';
 import 'dart:async';
 import 'package:intl/intl.dart';
@@ -132,7 +133,7 @@ class TimePickerState extends State<TimeTrackerTimePicker> {
                 color: Theme.of(context).primaryColor,
                 onPressed: () {
                   Analytics.instance
-                      .logEvent(TimeEvent.click(EVENT_NAME.TIME_PICKER_NOW));
+                      .logEvent(TimeEvent.click(EVENT_NAME.TIME_PICKER_NOW).setUser(User.me.name));
                   _onTimeSelected(TimeOfDay.fromDateTime(DateTime.now()));
                 }),
           ),

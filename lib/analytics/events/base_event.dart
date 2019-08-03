@@ -3,6 +3,7 @@ class BaseEvent extends Event{
   String eventType;
   String action;
   String details;
+  String user;
 
   BaseEvent(String name){
     super.name = name;
@@ -24,6 +25,12 @@ class BaseEvent extends Event{
   BaseEvent setDetails(String details){
     this.details = details;
     bundle["details"] = details;
+    return this;
+  }
+
+  BaseEvent setUser(String user){
+    this.user = user;
+    bundle["user"] = user;
     return this;
   }
 }

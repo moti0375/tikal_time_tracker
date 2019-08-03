@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tikal_time_tracker/data/exceptions/failed_login_exception.dart';
+import 'package:tikal_time_tracker/services/auth/user.dart';
 import 'package:tikal_time_tracker/ui/page_title.dart';
 import 'package:tikal_time_tracker/data/project.dart';
 import 'package:tikal_time_tracker/data/task.dart';
@@ -35,7 +36,7 @@ class NewRecordPage extends StatefulWidget {
 
 class NewRecordPageState extends State<NewRecordPage>
     implements NewRecordViewContract {
-  Analytics analytics = Analytics();
+  Analytics analytics = Analytics.instance;
   Project _selectedProject;
   TimeOfDay _startTime;
   TimeOfDay _finishTime;
@@ -68,7 +69,8 @@ class NewRecordPageState extends State<NewRecordPage>
     _setFocusNodes();
     _setPresenter();
     analytics.logEvent(
-        NewRecordeEvent.impression(EVENT_NAME.NEW_TIME_PAGE_OPENED).view());
+        NewRecordeEvent.impression(EVENT_NAME.NEW_TIME_PAGE_OPENED).
+        setUser(User.me.name).view());
   }
 
   @override
@@ -79,14 +81,15 @@ class NewRecordPageState extends State<NewRecordPage>
   @override
   void showSaveRecordSuccess(TimeRecord timeRecord) {
     analytics.logEvent(
-        NewRecordeEvent.impression(EVENT_NAME.RECORD_SAVED_SUCCESS).view());
+        NewRecordeEvent.impression(EVENT_NAME.RECORD_SAVED_SUCCESS).
+        setUser(User.me.name).view());
     Navigator.of(context).pop(timeRecord);
   }
 
   @override
   initNewRecord() {
     analytics.logEvent(
-        NewRecordeEvent.impression(EVENT_NAME.CREATING_NEW_RECORD).view());
+        NewRecordeEvent.impression(EVENT_NAME.CREATING_NEW_RECORD).setUser(User.me.name).view());
 
 //    print("_initNewRecord:");
     startTimeController = new TextEditingController(
@@ -103,7 +106,8 @@ class NewRecordPageState extends State<NewRecordPage>
   @override
   initUpdateRecord() {
     analytics
-        .logEvent(NewRecordeEvent.impression(EVENT_NAME.EDITING_RECORD).view());
+        .logEvent(NewRecordeEvent.impression(EVENT_NAME.EDITING_RECORD).
+    setUser(User.me.name).view());
 //    print("_initUpdateRecord: date: ${widget.timeRecord.date.toString()}");
     _selectedDate = widget.timeRecord.date;
     _startTime = widget.timeRecord.start;
@@ -340,7 +344,8 @@ class NewRecordPageState extends State<NewRecordPage>
         onPressed: () {
           _showDeleteAlertDialog();
           analytics.logEvent(
-              NewRecordeEvent.click(EVENT_NAME.DELETE_RECORD_CLICKED));
+              NewRecordeEvent.click(EVENT_NAME.DELETE_RECORD_CLICKED).
+              setUser(User.me.name));
         },
         color: Colors.orangeAccent,
         child: Text(Strings.delete_button_text,
@@ -477,7 +482,10 @@ class NewRecordPageState extends State<NewRecordPage>
   @override
   void onError(Exception e) {
     print("onError: ${e.toString()}");
-    analytics.logEvent(NewRecordeEvent.impression(EVENT_NAME.FAILED_TO_EDIT_OR_SAVE).setDetails(e.toString()).view());
+    analytics.logEvent(NewRecordeEvent.impression(EVENT_NAME.FAILED_TO_EDIT_OR_SAVE).
+    setUser(User.me.name).
+    setDetails(e.toString()).view());
+
     PlatformAlertDialog dialog = PlatformAlertDialog(
         title: "Edit Record Error",
         content: e is AppException ? e.cause : "There was an error",

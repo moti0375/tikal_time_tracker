@@ -20,7 +20,7 @@ class SendEmailPage extends StatefulWidget {
 
 class SendEmailPageState extends State<SendEmailPage>
     implements SendMailContractView {
-  Analytics analytics = Analytics();
+  Analytics analytics = Analytics.instance;
   SendMailContractPresenter presenter;
   String status = "";
   TextEditingController toInputTextController;

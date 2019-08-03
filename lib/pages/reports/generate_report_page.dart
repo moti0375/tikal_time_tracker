@@ -24,10 +24,10 @@ class GenerateReportPage extends StatefulWidget {
 }
 
 class GenerateReportState extends State<GenerateReportPage> implements ReportsViewContract{
-  Analytics analytics = Analytics();
+  Analytics analytics = Analytics.instance;
   Project _selectedProject;
   List<Task> _tasks = new List.from(User.me.tasks);
-  List<Period> _predefiendPeriod = [
+  List<Period> _predefinedPeriod = [
     Period(name: Strings.item_this_month, value: 3),
     Period(name: Strings.item_previous_month, value: 7),
     Period(name: Strings.item_this_week, value: 2),
@@ -134,7 +134,7 @@ class GenerateReportState extends State<GenerateReportPage> implements ReportsVi
                 ),
               ),
               value: _selectedPeriod,
-              items: _predefiendPeriod.map((Period value) {
+              items: _predefinedPeriod.map((Period value) {
                 return new DropdownMenuItem<Period>(
                   value: value,
                   child: new Text(

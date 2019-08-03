@@ -34,7 +34,7 @@ class LoginPageState extends State<LoginPage> {
   TimeRecordsRepository repository = TimeRecordsRepository.init(
       new Credentials(signInUserName: "", signInPassword: ""));
 
-  Analytics analytics = new Analytics();
+  Analytics analytics = Analytics.instance;
   String _email;
   String _password;
   bool _loggingIn = false;
@@ -293,7 +293,7 @@ class LoginPageState extends State<LoginPage> {
         print("_loginAuth: User: ${user.name}");
         preferences.setLoginUserName(_email);
         preferences.setLoginPassword(_password);
-        analytics.logEvent(LoginEvent.impression(EVENT_NAME.LOGIN_OK).view());
+        analytics.logEvent(LoginEvent.impression(EVENT_NAME.LOGIN_OK).setUser(user.name).view());
         _navigateToTabsScreen();
       } else {
         print("_loginAuth: user null");

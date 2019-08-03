@@ -3,6 +3,7 @@ import 'package:tikal_time_tracker/data/member.dart';
 import 'package:tikal_time_tracker/pages/users/users_presenter.dart';
 import 'package:tikal_time_tracker/pages/users/users_contract.dart';
 import 'package:tikal_time_tracker/pages/users/users_list_adapter.dart';
+import 'package:tikal_time_tracker/services/auth/user.dart';
 import 'package:tikal_time_tracker/ui/page_title.dart';
 import 'package:tikal_time_tracker/data/repository/time_records_repository.dart';
 import 'package:tikal_time_tracker/analytics/analytics.dart';
@@ -21,7 +22,7 @@ class UsersPage extends StatefulWidget{
 
 class UsersPageState extends State<UsersPage> implements MembersViewContract{
 
-  Analytics analytics = Analytics();
+  Analytics analytics = Analytics.instance;
   UsersPresenter presenter = UsersPresenter(repository: TimeRecordsRepository());
   bool loading = false;
   List<Member> _users;
@@ -74,7 +75,7 @@ class UsersPageState extends State<UsersPage> implements MembersViewContract{
 
   @override
   void showMembers(List<Member> users) {
-    analytics.logEvent(UsersEvent.impression(EVENT_NAME.LOAD_USERS_SUCCESS).view());
+    analytics.logEvent(UsersEvent.impression(EVENT_NAME.LOAD_USERS_SUCCESS).setUser(User.me.name).view());
     setState(() {
       _users = users;
     });

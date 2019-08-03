@@ -30,7 +30,7 @@ class TimePage extends StatefulWidget {
 class TimePageState extends State<TimePage>
     with TickerProviderStateMixin
     implements ListAdapterClickListener, TimeContractView {
-  Analytics analytics = new Analytics();
+  Analytics analytics = Analytics.instance;
   List<Choice> choices = const <Choice>[
     const Choice(
       action: MenuAction.Logout,
@@ -64,8 +64,8 @@ class TimePageState extends State<TimePage>
         text:
             "${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}");
     presenter.loadTimeForDate(_selectedDate);
-    analytics
-        .logEvent(TimeEvent.impression(EVENT_NAME.TIME_PAGE_OPENED).view());
+    analytics.logEvent(TimeEvent.impression(EVENT_NAME.TIME_PAGE_OPENED).setUser(User.me.name).
+    view());
   }
 
   @override
@@ -75,8 +75,10 @@ class TimePageState extends State<TimePage>
         title: Strings.no_work_title,
         subtitle: Strings.no_work_subtitle,
         onPressed: () {
-          analytics
-              .logEvent(TimeEvent.click(EVENT_NAME.NEW_RECORD_SCREEN_CLICKED));
+          analytics.
+          logEvent(TimeEvent.click(EVENT_NAME.NEW_RECORD_SCREEN_CLICKED).
+          setUser(User.me.name));
+
           presenter.listItemClicked(null);
         });
 
@@ -155,8 +157,7 @@ class TimePageState extends State<TimePage>
       appBar: _buildAppBar(title: Strings.app_name),
       floatingActionButton: new FloatingActionButton(
           onPressed: () {
-            analytics
-                .logEvent(TimeEvent.click(EVENT_NAME.NEW_RECORD_FAB_CLICKED));
+            analytics.logEvent(TimeEvent.click(EVENT_NAME.NEW_RECORD_FAB_CLICKED).setUser(User.me.name));
             presenter.listItemClicked(null);
           },
           child: Icon(Icons.add)),
@@ -212,11 +213,11 @@ class TimePageState extends State<TimePage>
     setState(() {
       if (choice.action == MenuAction.Logout) {
         presenter.onLogoutClicked();
-        analytics.logEvent(TimeEvent.click(EVENT_NAME.ACTION_LOGOUT));
+        analytics.logEvent(TimeEvent.click(EVENT_NAME.ACTION_LOGOUT).setUser(User.me.name));
       }
       if (choice.action == MenuAction.About) {
         presenter.onAboutClicked();
-        analytics.logEvent(TimeEvent.click(EVENT_NAME.ACTION_ABOUT));
+        analytics.logEvent(TimeEvent.click(EVENT_NAME.ACTION_ABOUT).setUser(User.me.name));
       }
     });
   }
@@ -241,7 +242,7 @@ class TimePageState extends State<TimePage>
               height: 24.0,
               child: GestureDetector(
                 onTap: () {
-                  analytics.logEvent(TimeEvent.click(EVENT_NAME.ACTION_ABOUT)
+                  analytics.logEvent(TimeEvent.click(EVENT_NAME.ACTION_ABOUT).setUser(User.me.name)
                       .setDetails("Action Icon"));
                   showAboutScreen();
                 },
