@@ -98,7 +98,7 @@ class TimePickerState extends State<TimeTrackerTimePicker> {
               onTap: () {
 //                print("onTap TimePicker");
                 Analytics.instance
-                    .logEvent(TimeEvent.click(EVENT_NAME.TIME_PICKER_ICON));
+                    .logEvent(TimeEvent.click(EVENT_NAME.TIME_PICKER_ICON).setUser(User.me.name));
                 _showStartTimeDialog(context);
               },
               child: Icon(Icons.access_time),
@@ -133,7 +133,8 @@ class TimePickerState extends State<TimeTrackerTimePicker> {
                 color: Theme.of(context).primaryColor,
                 onPressed: () {
                   Analytics.instance
-                      .logEvent(TimeEvent.click(EVENT_NAME.TIME_PICKER_NOW).setUser(User.me.name));
+                      .logEvent(TimeEvent.click(EVENT_NAME.TIME_PICKER_NOW).
+                  setUser(User.me.name));
                   _onTimeSelected(TimeOfDay.fromDateTime(DateTime.now()));
                 }),
           ),

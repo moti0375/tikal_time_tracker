@@ -484,7 +484,7 @@ class NewRecordPageState extends State<NewRecordPage>
     print("onError: ${e.toString()}");
     analytics.logEvent(NewRecordeEvent.impression(EVENT_NAME.FAILED_TO_EDIT_OR_SAVE).
     setUser(User.me.name).
-    setDetails(e.toString()).view());
+    setDetails(e is AppException ? e.cause : e.toString()).view());
 
     PlatformAlertDialog dialog = PlatformAlertDialog(
         title: "Edit Record Error",
