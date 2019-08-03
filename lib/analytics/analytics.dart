@@ -2,7 +2,7 @@ import 'package:tikal_time_tracker/analytics/endpoint.dart';
 import 'package:tikal_time_tracker/analytics/events/event.dart';
 class Analytics{
   static const String TAG = "Analytics";
-  static Analytics _singleton;
+  static Analytics instance;
 
   static List<Endpoint> endpoints = List<Endpoint>();
 
@@ -12,22 +12,22 @@ class Analytics{
   }
 
   static Analytics init(){
-    if (_singleton == null){
+    if (instance == null){
       print("$TAG : init");
-      _singleton = Analytics._internal();
+      instance = Analytics._internal();
 
       endpoints.forEach((ep){
         ep.initialize();
       });
     }
-    return _singleton;
+    return instance;
   }
 
   Analytics._internal();
 
   factory Analytics(){
     print("$TAG: factory");
-    return _singleton;
+    return instance;
   }
 
   void logEvent(Event event){
