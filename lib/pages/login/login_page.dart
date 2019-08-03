@@ -17,6 +17,7 @@ import 'package:tikal_time_tracker/pages/reset_password/reset_password_page.dart
 import 'package:tikal_time_tracker/analytics/analytics.dart';
 import 'package:tikal_time_tracker/analytics/events/login_event.dart';
 import 'package:tikal_time_tracker/resources/strings.dart';
+import 'package:tikal_time_tracker/utils/utils.dart';
 
 class LoginPage extends StatefulWidget {
   static final String TAG = "LoginPage";
@@ -280,7 +281,7 @@ class LoginPageState extends State<LoginPage> {
 //  }
 
   void _loginAuth(BuildContext context, String email, String password) async {
-    SystemChannels.textInput.invokeMethod('TextInput.hide');
+    Utils.hideSoftKeyboard(context);
     print("loginAuth: called");
     BaseAuth auth = Provider.of<BaseAuth>(context);
     setState(() {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:client_cookie/client_cookie.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
 class Utils {
@@ -63,5 +64,9 @@ class Utils {
     });
 
     return cookie;
+  }
+
+  static hideSoftKeyboard(BuildContext context){
+    SystemChannels.textInput.invokeMethod('TextInput.hide');
   }
 }
