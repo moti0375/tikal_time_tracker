@@ -3,9 +3,7 @@ import 'package:tikal_time_tracker/utils/utils.dart';
 import 'dart:async';
 import 'package:intl/intl.dart';
 
-
 class TimeTrackerTimePicker extends StatefulWidget {
-
   final String pickerName;
   final Function(TimeOfDay) callback;
   final onSubmitCallback;
@@ -20,29 +18,32 @@ class TimeTrackerTimePicker extends StatefulWidget {
   final List<RegExp> timePatterns = List<RegExp>();
   final FocusNode focusNode;
 
-  TimeTrackerTimePicker({this.pickerName, this.initialTimeValue, this.hint, this.callback, this.focusNode, this.onSubmitCallback}){
-   timeFormats.add(timeFormatter);
-   timeFormats.add(simpleTimeFormatter);
+  TimeTrackerTimePicker(
+      {this.pickerName,
+      this.initialTimeValue,
+      this.hint,
+      this.callback,
+      this.focusNode,
+      this.onSubmitCallback}) {
+    timeFormats.add(timeFormatter);
+    timeFormats.add(simpleTimeFormatter);
 
-   timePatterns.add(timePattern);
-   timePatterns.add(simpleTimePattern);
+    timePatterns.add(timePattern);
+    timePatterns.add(simpleTimePattern);
   }
 
-  void requestFocus(BuildContext  context){
+  void requestFocus(BuildContext context) {
     print("${this.pickerName} requestFocus...");
     FocusScope.of(context).requestFocus(focusNode);
   }
 
-  void revokeFocus(){
-
-  }
+  void revokeFocus() {}
 
   @override
   State<StatefulWidget> createState() {
     return TimePickerState();
   }
 }
-
 
 class TimePickerState extends State<TimeTrackerTimePicker> {
   TextEditingController pickerController;
@@ -73,9 +74,10 @@ class TimePickerState extends State<TimeTrackerTimePicker> {
     widget.focusNode.dispose();
   }
 
-  void _setPickerController(TimeOfDay time){
-    pickerController = TextEditingController(text: time != null ? Utils.buildTimeStringFromTime(time) : "");
-    pickerController.addListener((){
+  void _setPickerController(TimeOfDay time) {
+    pickerController = TextEditingController(
+        text: time != null ? Utils.buildTimeStringFromTime(time) : "");
+    pickerController.addListener(() {
       buffer = pickerController.text;
       typeValidator(buffer);
     });
@@ -105,16 +107,32 @@ class TimePickerState extends State<TimeTrackerTimePicker> {
                     onFieldSubmitted: onSubmitButtonClicked,
                     decoration: InputDecoration(
                         labelText: widget.hint != null ? widget.hint : "",
-                        hintText: "HH:MM,HHMM,H",
+                        hintText: "HH:MM or 0.0h",
                         contentPadding:
-                        EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 12.0),
+                            EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 12.0),
                         border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0)
-                        )
-                    ),
+                            borderRadius: BorderRadius.circular(10.0))),
                     maxLines: 1,
                     controller: pickerController)),
           ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: SizedBox(
+              child: RaisedButton(
+                child: Text(
+                  "Now",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16.0,
+                  ),
+                ),
+                color: Theme.of(context).primaryColor,
+                textColor: Theme.of(context).textTheme.button.color,
+                onPressed: () =>
+                    _onTimeSelected(TimeOfDay.fromDateTime(DateTime.now())),
+              ),
+            ),
+          )
         ],
       ),
     );
@@ -131,53 +149,52 @@ class TimePickerState extends State<TimeTrackerTimePicker> {
     }
   }
 
-  void typeValidator(String value){
+  void typeValidator(String value) {
     TimeOfDay time = _validator(value);
 //    print("Type validator: $value, Time: ${time.toString()}");
 
-    if(time != null){
+    if (time != null) {
       widget.callback(time);
-    }else{
+    } else {
       widget.callback(null);
     }
   }
 
-  void onSubmitButtonClicked(String value){
+  void onSubmitButtonClicked(String value) {
     widget.focusNode.unfocus();
     submitValidator(value);
   }
 
-  void entryValidator(String value){
+  void entryValidator(String value) {
     TimeOfDay time = _validator(value);
-    if(time != null){
+    if (time != null) {
       _onTimeSelected(time);
-    }else{
+    } else {
       widget.callback(null);
     }
   }
 
-  void submitValidator(String value){
+  void submitValidator(String value) {
     widget.onSubmitCallback();
 //    print("submitValidator: $value");
-   entryValidator(value);
+    entryValidator(value);
   }
 
   TimeOfDay _validator(String value) {
-
-    RegExp validExp = widget.timePatterns.firstWhere((tester){
-       return tester.firstMatch(value) != null ;
-    },orElse: (){
+    RegExp validExp = widget.timePatterns.firstWhere((tester) {
+      return tester.firstMatch(value) != null;
+    }, orElse: () {
       return null;
     });
 
-    if(validExp != null){
-      for(final formatter in widget.timeFormats){
+    if (validExp != null) {
+      for (final formatter in widget.timeFormats) {
         print("attempt to parse: ${formatter.pattern}");
-        try{
+        try {
           TimeOfDay timeOfDay = TimeOfDay.fromDateTime(formatter.parse(value));
-          print("Parsing success: ${timeOfDay.toString()}" );
+          print("Parsing success: ${timeOfDay.toString()}");
           return timeOfDay;
-        } on FormatException catch(e){
+        } on FormatException catch (e) {
           print("Parsing faild: ${e.toString()}");
         }
       }
@@ -209,9 +226,9 @@ class TimePickerState extends State<TimeTrackerTimePicker> {
     widget.callback(time);
     setState(() {
       _pickedTime = time;
-      TextEditingValue value = TextEditingValue(text: Utils.buildTimeStringFromTime(time));
+      TextEditingValue value =
+          TextEditingValue(text: Utils.buildTimeStringFromTime(time));
       pickerController.value = value;
     });
   }
-
 }
