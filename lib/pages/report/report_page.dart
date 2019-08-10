@@ -74,6 +74,7 @@ class ReportPage extends StatelessWidget implements ListAdapterClickListener {
             items: report.report,
             adapterClickListener: this,
             intermittently: false,
+            dismissibleItems: false,
           ));
     }
   }
@@ -124,4 +125,8 @@ class ReportPage extends StatelessWidget implements ListAdapterClickListener {
 
   @override
   onListItemLongClick(TimeRecord item) {}
+
+  @override
+  void onListItemDismissed(TimeRecord item) {
+  }
 }

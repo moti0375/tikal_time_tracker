@@ -58,4 +58,11 @@ class TimePresenter implements TimeContractPresenter{
   void onAboutClicked() {
     view.showAboutScreen();
   }
+
+  @override
+  void onItemDismissed(TimeRecord item) {
+    repository.deleteTime(item).then((value){
+      view.refresh();
+    });
+  }
 }

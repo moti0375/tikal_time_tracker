@@ -197,6 +197,7 @@ class TimePageState extends State<TimePage>
                         TimeRecordListAdapter(
                             items: _timeReport.timeReport,
                             intermittently: true,
+                            dismissibleItems: true,
                             adapterClickListener: this),
                         summaryRow(),
                         _infoRow()
@@ -349,6 +350,16 @@ class TimePageState extends State<TimePage>
 
   void _navigateToAboutScreen() {
     Navigator.of(context).push(new PageTransition(widget: new AboutScreen()));
+  }
+
+  @override
+  void onListItemDismissed(TimeRecord item) {
+    presenter.onItemDismissed(item);
+  }
+
+  @override
+  void refresh() {
+    presenter.loadTimeForDate(_selectedDate);
   }
 }
 
