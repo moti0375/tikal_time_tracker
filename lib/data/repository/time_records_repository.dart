@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:tikal_time_tracker/data/member.dart';
+import 'package:tikal_time_tracker/data/repository/repository.dart';
 import 'package:tikal_time_tracker/network/requests/reports_form.dart';
 import 'package:tikal_time_tracker/network/requests/reset_password_form.dart';
 import 'package:tikal_time_tracker/data/models.dart';
@@ -11,7 +12,7 @@ import 'package:tikal_time_tracker/network/requests/send_email_form.dart';
 import 'package:tikal_time_tracker/network/time_tracker_api.dart';
 
 
-class TimeRecordsRepository implements TimeDateSource{
+class TimeRecordsRepository implements TimeDateSource, Repository{
 
   static final String _TAG = "TimeRecordsRepository";
   Credentials credentials;
@@ -124,6 +125,12 @@ class TimeRecordsRepository implements TimeDateSource{
   @override
   Future<SendEmailForm> sendEmailPage() {
     return remoteDateSource.sendEmailPage();
+  }
+
+  @override
+  Stream<List<Member>> getAllUsers(Role role) async* {
+    List<Member> allMembers = await remoteDateSource.getAllMembers(role);
+    yield allMembers;
   }
 
 }

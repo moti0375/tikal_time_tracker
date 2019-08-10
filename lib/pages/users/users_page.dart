@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tikal_time_tracker/data/member.dart';
-import 'package:tikal_time_tracker/pages/users/users_presenter.dart';
-import 'package:tikal_time_tracker/pages/users/users_contract.dart';
+import 'package:tikal_time_tracker/pages/users/users_block.dart';
 import 'package:tikal_time_tracker/pages/users/users_list_adapter.dart';
 import 'package:tikal_time_tracker/services/auth/user.dart';
 import 'package:tikal_time_tracker/ui/page_title.dart';
@@ -10,43 +9,29 @@ import 'package:tikal_time_tracker/analytics/analytics.dart';
 import 'package:tikal_time_tracker/analytics/events/users_event.dart';
 import 'package:tikal_time_tracker/ui/platform_appbar.dart';
 
-class UsersPage extends StatefulWidget{
+class UsersPage extends StatelessWidget{
 
-  @override
-  State<StatefulWidget> createState() {
-   // print("U
-    //users: ${User.me.name}, Projects: ${User.me.projects}");
-    return UsersPageState();
-  }
-}
+ final analytics = Analytics.instance;
+ final bloc = UsersBloc(repository: TimeRecordsRepository());
 
-class UsersPageState extends State<UsersPage> implements MembersViewContract{
-
-  Analytics analytics = Analytics.instance;
-  UsersPresenter presenter = UsersPresenter(repository: TimeRecordsRepository());
-  bool loading = false;
-  List<Member> _users;
-  @override
-  void initState() {
-    super.initState();
-    presenter.subscribe(this);
-    analytics.logEvent(UsersEvent.impression(EVENT_NAME.USERS_SCREEN).open());
-  }
-
-  @override
   Widget build(BuildContext context) {
+    analytics.logEvent(UsersEvent.impression(EVENT_NAME.USERS_SCREEN).open());
+
     return Scaffold(
       appBar: PlatformAppbar(
         title: Text("Users"),
       ).build(context),
-      body: _buildBody(),
+      body: StreamBuilder<List<Member>>(
+        stream: bloc.loadUsers(),
+        builder: (context, snapshot) => _buildBody(context, snapshot),
+      ),
       backgroundColor: Colors.black12,
     );
   }
 
-  Widget _buildBody(){
-
-    if(loading){
+  Widget _buildBody(BuildContext context, AsyncSnapshot snapshot){
+    print("Users: _buildBody connection state: ${snapshot.connectionState}");
+    if(!snapshot.hasData){
       return Center(
         child: SizedBox(
             height: 36.0,
@@ -55,7 +40,8 @@ class UsersPageState extends State<UsersPage> implements MembersViewContract{
                 value: null,
                 valueColor: AlwaysStoppedAnimation<Color>(Colors.blue)))
       );
-    }else{
+    } else {
+      analytics.logEvent(UsersEvent.impression(EVENT_NAME.LOAD_USERS_SUCCESS).setUser(User.me.name).view());
       return Container(
         padding: const EdgeInsets.only(top: 0.0, left: 16.0, right: 16.0),
         child: Column(
@@ -65,26 +51,11 @@ class UsersPageState extends State<UsersPage> implements MembersViewContract{
           children: <Widget>[
            TimeTrackerPageTitle(),
             Expanded(
-              child:  UsersListAdapter(items: _users),
+              child:  UsersListAdapter(items: snapshot.data),
             )
           ],
         ),
       );
     }
-  }
-
-  @override
-  void showMembers(List<Member> users) {
-    analytics.logEvent(UsersEvent.impression(EVENT_NAME.LOAD_USERS_SUCCESS).setUser(User.me.name).view());
-    setState(() {
-      _users = users;
-    });
-  }
-
-  @override
-  void setLoadingIndicator(bool loading) {
-    setState(() {
-      this.loading = loading;
-    });
   }
 }
