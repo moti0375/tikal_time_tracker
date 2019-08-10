@@ -276,6 +276,7 @@ class DomParser {
     String start =
         "<table cellspacing=\"1\" cellpadding=\"3\" border=\"0\" width=\"100%\">";
     String end = "</table>";
+    String span = "</span>";
 
     String buffer = domStr.substring(domStr.indexOf(start) + start.length);
     buffer = buffer.substring(0, buffer.indexOf(end));
@@ -294,6 +295,9 @@ class DomParser {
       }).toList();
 
       cells.removeLast();
+      //First cell (user name) should be stripped explicitly
+      cells[0] = cells[0].substring(cells[0].indexOf(span)+span.length).trim();
+//      print("parseUsersPage: buffer:  $cells");
       if(myRole != Role.User){
         return createMemberForManager(cells);
       }
