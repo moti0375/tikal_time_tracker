@@ -1,68 +1,38 @@
-import '../../pages/mvp_base.dart';
-import 'time_contract.dart';
+import 'dart:async';
+
 import '../../data/repository/time_records_repository.dart';
 import '../../data/models.dart';
 
-class TimePresenter implements TimeContractPresenter{
+class TimePageBloc  {
 
-  TimeContractView view;
   TimeRecordsRepository repository;
-  TimeReport records;
-  TimePresenter({this.repository});
-  @override
-  void subscribe(BaseView view) {
-    this.view = view;
-  }
+  TimePageBloc({this.repository});
+  DateTime currentDate;
+  StreamController<TimeReport> timeStreamController = StreamController.broadcast();
+  Stream<TimeReport> get timeReportStream => timeStreamController.stream.asBroadcastStream();
 
-  @override
-  void unsubscribe() {
-  }
-
-  @override
-  void setProgressView(bool visible) {
-    // TODO: implement setProgressView
-  }
-
-  @override
-  void loadTimeForDate(DateTime date) {
-    _loadTime(date);
-  }
-
-  _loadTime(DateTime date){
+  Future<void> loadTime(DateTime date) async {
+    print("loadTime: ${date.toIso8601String()}");
+    this.currentDate = date;
     repository.getAllTimeForDate(date).then((records) {
-        this.records = records;
-        view.timeLoadFinished(this.records);
+      timeStreamController.add(records);
     }, onError: (e){
       print("PagePresenter There was an error: $e");
       if(e is RangeError){
-        this.records = new TimeReport(timeReport: new List<TimeRecord>());
-        view.timeLoadFinished(this.records);
+        timeStreamController.addError(e);
       }else{
         print(e);
-        view.logOut();
       }
     });
   }
 
-  @override
-  void listItemClicked(TimeRecord item) {
-    view.openNewRecordPage(item);
+  void dismiss(){
+    timeStreamController.close();
   }
 
-  @override
-  void onLogoutClicked() {
-    view.logOut();
-  }
-
-  @override
-  void onAboutClicked() {
-    view.showAboutScreen();
-  }
-
-  @override
   void onItemDismissed(TimeRecord item) {
     repository.deleteTime(item).then((value){
-      view.refresh();
+      loadTime(currentDate);
     });
   }
 }

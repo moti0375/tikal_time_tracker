@@ -133,4 +133,9 @@ class TimeRecordsRepository implements TimeDateSource, Repository{
     yield allMembers;
   }
 
+  @override
+  Stream<TimeReport> getTimeRecords(DateTime date) async* {
+    yield await remoteDateSource.getAllTimeForDate(date);
+  }
+
 }

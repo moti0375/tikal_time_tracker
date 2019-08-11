@@ -7,12 +7,18 @@ class TimeRecordListAdapter extends StatelessWidget {
   final ListAdapterClickListener adapterClickListener;
   final bool intermittently;
   final bool dismissibleItems;
+  final Function(TimeRecord) onItemClickListener;
+  final Function(TimeRecord) onItemDismissed;
+  final Function(TimeRecord) onItemLongClick;
 
   TimeRecordListAdapter(
       {this.items,
       this.adapterClickListener,
       this.intermittently,
-      this.dismissibleItems = false});
+      this.dismissibleItems = false,
+      this.onItemClickListener,
+      this.onItemDismissed,
+      this.onItemLongClick});
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +43,7 @@ class TimeRecordListAdapter extends StatelessWidget {
       ),
       direction: DismissDirection.endToStart,
       onDismissed: (direction) {
-        adapterClickListener.onListItemDismissed(item);
+        onItemDismissed ?? onItemDismissed(item);
       },
       child: _tileItem(item),
     );
@@ -47,10 +53,12 @@ class TimeRecordListAdapter extends StatelessWidget {
     return ListTile(
       dense: true,
       onTap: () {
-        adapterClickListener.onListItemClicked(item);
+        adapterClickListener ?? adapterClickListener.onListItemClicked(item);
+        onItemClickListener ?? onItemClickListener(item);
       },
       onLongPress: () {
-        adapterClickListener.onListItemLongClick(item);
+        adapterClickListener ?? adapterClickListener.onListItemLongClick(item);
+        onItemLongClick ?? onItemLongClick(item);
       },
       leading: Icon(Icons.work, color: Colors.lightBlueAccent),
       title: Row(
@@ -157,10 +165,8 @@ class TimeRecordListAdapter extends StatelessWidget {
   }
 }
 
-class ListAdapterClickListener {
-  void onListItemClicked(TimeRecord item) {}
-
-  void onListItemLongClick(TimeRecord item) {}
-
-  void onListItemDismissed(TimeRecord item) {}
+abstract class ListAdapterClickListener {
+  void onListItemClicked(TimeRecord item);
+  void onListItemLongClick(TimeRecord item);
+  void onListItemDismissed(TimeRecord item);
 }

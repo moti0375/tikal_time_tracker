@@ -21,17 +21,8 @@ import 'package:tikal_time_tracker/analytics/events/time_event.dart';
 import 'package:tikal_time_tracker/utils/utils.dart';
 
 class TimePage extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() {
-    return new TimePageState();
-  }
-}
-
-class TimePageState extends State<TimePage>
-    with TickerProviderStateMixin
-    implements ListAdapterClickListener, TimeContractView {
-  Analytics analytics = Analytics.instance;
-  List<Choice> choices = const <Choice>[
+  final Analytics analytics = Analytics.instance;
+  final List<Choice> choices = const <Choice>[
     const Choice(
       action: MenuAction.Logout,
       title: "Logout",
@@ -43,62 +34,59 @@ class TimePageState extends State<TimePage>
       icon: null,
     )
   ];
+  final TimePageBloc bloc = TimePageBloc(repository: TimeRecordsRepository());
 
-  DateTime _selectedDate;
-  TextEditingController dateInputController =
-      new TextEditingController(text: "");
+  @override
+  _TimePageState createState() => _TimePageState();
+}
 
-  TimeRecordsRepository repository = TimeRecordsRepository();
-  TimeReport _timeReport;
-  TimePresenter presenter;
+class _TimePageState extends State<TimePage> {
+
+  final DateTime _selectedDate = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, 0, 0, 0, 0, 0);
+
+  final TextEditingController dateInputController = new TextEditingController(
+      text: "");
 
   @override
   void initState() {
+    // TODO: implement initState
     super.initState();
-    // print("TimePage: initState");
-    presenter = TimePresenter(repository: this.repository);
-    presenter.subscribe(this);
-    var now = DateTime.now();
-    _selectedDate = DateTime(now.year, now.month, now.day, 0, 0, 0, 0, 0);
-    dateInputController = new TextEditingController(
-        text:
-            "${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}");
-    presenter.loadTimeForDate(_selectedDate);
-    analytics.logEvent(TimeEvent.impression(EVENT_NAME.TIME_PAGE_OPENED).setUser(User.me.name).
-    view());
+    widget.bloc.loadTime(_selectedDate);
   }
 
   @override
   Widget build(BuildContext context) {
+    widget.analytics.logEvent(
+        TimeEvent.impression(EVENT_NAME.TIME_PAGE_OPENED).setUser(User.me.name).
+        view());
+
     print("build: TimePage");
     PlaceholderContent placeholderContent = PlaceholderContent(
         title: Strings.no_work_title,
         subtitle: Strings.no_work_subtitle,
         onPressed: () {
-          analytics.
+          widget.analytics.
           logEvent(TimeEvent.click(EVENT_NAME.NEW_RECORD_SCREEN_CLICKED).
           setUser(User.me.name));
-
-          presenter.listItemClicked(null);
+          _openNewRecordPage(null, context);
         });
 
     Widget _datePicker = TimeTrackerDatePicker(
         initializedDateTime: _selectedDate,
         onSubmittedCallback: (date) {
-          analytics.logEvent(TimeEvent.click(EVENT_NAME.DATE_PICKER_USED));
-          _selectedDate = date;
-          presenter.loadTimeForDate(_selectedDate);
+          widget.analytics.logEvent(TimeEvent.click(EVENT_NAME.DATE_PICKER_USED));
+          _onDateSelected(date);
         });
 
     Widget buildQuotaWidget(TimeReport report) {
       String title =
-          report.overQuota ? Strings.over_quota : Strings.remaining_quota;
+      report.overQuota ? Strings.over_quota : Strings.remaining_quota;
       Color textColor = report.overQuota ? Colors.green : Colors.red;
       return Text("$title ${Utils.buildTimeStringFromDuration(report.quota)}",
           style: TextStyle(color: textColor));
     }
 
-    Widget summaryRow() {
+    Widget summaryRow(AsyncSnapshot<TimeReport> snapshot) {
       return Column(
         children: <Widget>[
           SizedBox(height: 10.0),
@@ -111,14 +99,16 @@ class TimePageState extends State<TimePage>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Text(
-                "${Strings.week_total} ${Utils.buildTimeStringFromDuration(this._timeReport.weekTotal)}",
+                "${Strings.week_total} ${Utils.buildTimeStringFromDuration(
+                    snapshot.data.weekTotal)}",
                 textAlign: TextAlign.start,
               ),
               Text(
-                  "${Strings.day_total} ${Utils.buildTimeStringFromDuration(this._timeReport.dayTotal)}",
+                  "${Strings.day_total} ${Utils.buildTimeStringFromDuration(
+                      snapshot.data.dayTotal)}",
                   textAlign: TextAlign.end,
                   style: TextStyle(
-                      color: this._timeReport.dayTotal.inHours < 9
+                      color: snapshot.data.dayTotal.inHours < 9
                           ? Colors.red
                           : Colors.black))
             ],
@@ -128,10 +118,11 @@ class TimePageState extends State<TimePage>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Text(
-                "${Strings.month_total} ${Utils.buildTimeStringFromDuration(this._timeReport.monthTotal)}",
+                "${Strings.month_total} ${Utils.buildTimeStringFromDuration(
+                    snapshot.data.monthTotal)}",
                 textAlign: TextAlign.start,
               ),
-              buildQuotaWidget(_timeReport),
+              buildQuotaWidget(snapshot.data),
             ],
           ),
         ],
@@ -139,29 +130,62 @@ class TimePageState extends State<TimePage>
     }
 
 
-    Widget _infoRow() {
+    Widget _infoRow(AsyncSnapshot<TimeReport> snapshot) {
       return Container(
         padding: EdgeInsets.only(top: 16),
         child: Row(
           mainAxisSize: MainAxisSize.max,
           children: <Widget>[
-            _timeReport.message != null ? Text(_timeReport.message , style: TextStyle(color: Colors.red),) : Container()
+            snapshot.data.message != null
+                ? Text(
+              snapshot.data.message, style: TextStyle(color: Colors.red),)
+                : Container()
           ],
         ),
       );
     }
-    
-    return Scaffold(
-      resizeToAvoidBottomPadding: false,
-      backgroundColor: Colors.black12,
-      appBar: _buildAppBar(title: Strings.app_name),
-      floatingActionButton: new FloatingActionButton(
-          onPressed: () {
-            analytics.logEvent(TimeEvent.click(EVENT_NAME.NEW_RECORD_FAB_CLICKED).setUser(User.me.name));
-            presenter.listItemClicked(null);
-          },
-          child: Icon(Icons.add)),
-      body: Container(
+
+    Widget _buildBody(AsyncSnapshot<TimeReport> snapshot, BuildContext context) {
+      print("_buildBody: ${snapshot.connectionState}");
+      if (snapshot.hasError) {
+        print("_buildBody: ${snapshot.error}");
+        if (snapshot.error is RangeError) {
+          return placeholderContent;
+        }
+        _logout(context);
+        return placeholderContent;
+      } else if (snapshot.hasData) {
+        print("_buildBody: done with data");
+        return Expanded(
+          child: (snapshot.data.timeReport.isEmpty)
+              ? placeholderContent
+              : Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              TimeRecordListAdapter(
+                items: snapshot.data.timeReport,
+                intermittently: true,
+                dismissibleItems: true,
+                onItemClickListener: (item) {
+                  _navigateToEditScreen(item, context);
+                },
+                onItemDismissed: (item) {
+                  widget.bloc.onItemDismissed(item);
+                },),
+              summaryRow(snapshot),
+              _infoRow(snapshot)
+            ],
+          ),
+        );
+      } else {
+        print("_buildBody: other");
+        return placeholderContent;
+      }
+    }
+
+    Container _buildContent(AsyncSnapshot snapshot) {
+      return Container(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisSize: MainAxisSize.max,
@@ -180,119 +204,112 @@ class TimePageState extends State<TimePage>
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Text(
-                      "${User.me.name}, ${User.me.company}, ${User.me.role.toString().split(".").last}",
+                      "${User.me.name}, ${User.me.company}, ${User.me.role
+                          .toString()
+                          .split(".")
+                          .last}",
                       textAlign: TextAlign.start,
                     )
                   ],
                 )),
-            Expanded(
-              child: (_timeReport == null ||
-                      _timeReport.timeReport == null ||
-                      _timeReport.timeReport.isEmpty)
-                  ? placeholderContent
-                  : Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        TimeRecordListAdapter(
-                            items: _timeReport.timeReport,
-                            intermittently: true,
-                            dismissibleItems: true,
-                            adapterClickListener: this),
-                        summaryRow(),
-                        _infoRow()
-                      ],
-                    ),
-            ),
+            _buildBody(snapshot, context),
           ],
         ),
+      );
+    }
+
+    PreferredSizeWidget _buildAppBar({String title, BuildContext context}) {
+      return PlatformAppbar(
+        title: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                margin: EdgeInsets.all(4.0),
+                width: 24.0,
+                height: 24.0,
+                child: GestureDetector(
+                  onTap: () {
+                    widget.analytics.logEvent(
+                        TimeEvent.click(EVENT_NAME.ACTION_ABOUT).setUser(
+                            User.me.name)
+                            .setDetails("Action Icon"));
+                    _navigateToAboutScreen(context);
+                  },
+                  child: Image.asset(
+                    'assets/logo_no_background.png',
+                  ),
+                ),
+              ),
+              Text(title)
+            ]),
+        actions: widget.choices,
+        onPressed: (Choice c) {
+          print("Selected: ${c.title}");
+          _select(c, context);
+        },
+      ).build(context);
+    }
+
+
+    return Scaffold(
+      resizeToAvoidBottomPadding: false,
+      backgroundColor: Colors.black12,
+      appBar: _buildAppBar(title: Strings.app_name),
+      floatingActionButton: new FloatingActionButton(
+          onPressed: () {
+            widget.analytics.logEvent(
+                TimeEvent.click(EVENT_NAME.NEW_RECORD_FAB_CLICKED).setUser(
+                    User.me.name));
+            _openNewRecordPage(null, context);
+          },
+          child: Icon(Icons.add)),
+      body: StreamBuilder<TimeReport>(
+          stream: widget.bloc.timeReportStream,
+          builder: (context, snapshot) {
+            return _buildContent(snapshot);
+          }
       ),
     );
   }
 
-  void _select(Choice choice) {
-    setState(() {
-      if (choice.action == MenuAction.Logout) {
-        presenter.onLogoutClicked();
-        analytics.logEvent(TimeEvent.click(EVENT_NAME.ACTION_LOGOUT).setUser(User.me.name));
-      }
-      if (choice.action == MenuAction.About) {
-        presenter.onAboutClicked();
-        analytics.logEvent(TimeEvent.click(EVENT_NAME.ACTION_ABOUT).setUser(User.me.name));
-      }
-    });
+  void timeLoadFinished(TimeReport timeReport) {
+//    analytics.logEvent(TimeEvent.impression(EVENT_NAME.TIME_PAGE_LOADED).setDetails( "${timeRecord != null ? timeRecord.length : 0} :records").view());
   }
 
-  _logout() async {
+  void _navigateToAboutScreen(BuildContext context) {
+    Navigator.of(context).push(new PageTransition(widget: new AboutScreen()));
+  }
 
+  _logout(BuildContext context) async {
     BaseAuth auth = Provider.of<BaseAuth>(context);
     await auth.logout();
 //    Navigator.of(context).pushReplacement(new MaterialPageRoute(
 //        builder: (BuildContext context) => new LoginPage()));
   }
 
-  PreferredSizeWidget _buildAppBar({String title}) {
-    return PlatformAppbar(
-      title: Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              margin: EdgeInsets.all(4.0),
-              width: 24.0,
-              height: 24.0,
-              child: GestureDetector(
-                onTap: () {
-                  analytics.logEvent(TimeEvent.click(EVENT_NAME.ACTION_ABOUT).setUser(User.me.name)
-                      .setDetails("Action Icon"));
-                  showAboutScreen();
-                },
-                child: Image.asset(
-                  'assets/logo_no_background.png',
-                ),
-              ),
-            ),
-            Text(title)
-          ]),
-      actions: choices,
-      onPressed: (Choice c) {
-        print("Selected: ${c.title}");
-        _select(c);
-      },
-    ).build(context);
+  void _select(Choice choice, BuildContext context) {
+    if (choice.action == MenuAction.Logout) {
+      _logout(context);
+      widget.analytics.logEvent(
+          TimeEvent.click(EVENT_NAME.ACTION_LOGOUT).setUser(User.me.name));
+    }
+    if (choice.action == MenuAction.About) {
+      _navigateToAboutScreen(context);
+      widget.analytics.logEvent(
+          TimeEvent.click(EVENT_NAME.ACTION_ABOUT).setUser(User.me.name));
+    }
   }
 
-  _navigateToNextScreen() {
-    final projects = User.me.projects;
-    print("_navigateToNextScreen: " + projects.toString());
-    Navigator.of(context)
-        .push(new PageTransition(
-            widget: new NewRecordPage(
-                projects: projects,
-                dateTime: _selectedDate,
-                timeRecord: null,
-                flow: NewRecordFlow.new_record)))
-        .then((value) {
-//      print("got value from page");
-      if (value != null) {
-        if (value is TimeRecord) {
-          _onDateSelected(value.date);
-        }
-      } else {
-        presenter.loadTimeForDate(_selectedDate);
-      }
-    });
-  }
-
-  _navigateToEditScreen(TimeRecord item) {
+  _navigateToEditScreen(TimeRecord item, BuildContext context) {
 //    print("_navigateToEditScreen: ");
     Navigator.of(context)
         .push(new PageTransition(
-            widget: new NewRecordPage(
-                projects: User.me.projects,
-                dateTime: _selectedDate,
-                timeRecord: item,
-                flow: NewRecordFlow.update_record)))
+        widget: new NewRecordPage(
+            projects: User.me.projects,
+            dateTime: _selectedDate,
+            timeRecord: item,
+            flow: NewRecordFlow.update_record)))
         .then((value) {
 //      print("got value from page");
       if (value != null) {
@@ -300,66 +317,46 @@ class TimePageState extends State<TimePage>
           _onDateSelected(value.date);
         }
       } else {
-        presenter.loadTimeForDate(_selectedDate);
+        widget.bloc.loadTime(_selectedDate);
       }
     });
   }
 
   _onDateSelected(DateTime selectedDate) {
-    _selectedDate = DateTime(
-        selectedDate.year, selectedDate.month, selectedDate.day, 0, 0, 0, 0, 0);
-    dateInputController = new TextEditingController(
-        text: "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}");
-    presenter.loadTimeForDate(selectedDate);
+    setState(() {
+      dateInputController.text = "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}";
+    });
+    widget.bloc.loadTime(selectedDate);
   }
 
-  @override
-  onListItemClicked(TimeRecord item) {
-    presenter.listItemClicked(item);
-  }
-
-  @override
-  onListItemLongClick(TimeRecord item) {}
-
-  @override
-  void openNewRecordPage(TimeRecord item) {
+  void _openNewRecordPage(TimeRecord item, BuildContext context) {
     if (item != null) {
-      _navigateToEditScreen(item);
+      _navigateToEditScreen(item, context);
     } else {
-      _navigateToNextScreen();
+      _navigateToNextScreen(context);
     }
   }
 
-  @override
-  void timeLoadFinished(TimeReport timeReport) {
-//    analytics.logEvent(TimeEvent.impression(EVENT_NAME.TIME_PAGE_LOADED).setDetails( "${timeRecord != null ? timeRecord.length : 0} :records").view());
-    setState(() {
-      this._timeReport = timeReport;
+  _navigateToNextScreen(BuildContext context) {
+    final projects = User.me.projects;
+    print("_navigateToNextScreen: " + projects.toString());
+    Navigator.of(context)
+        .push(new PageTransition(
+        widget: new NewRecordPage(
+            projects: projects,
+            dateTime: _selectedDate,
+            timeRecord: null,
+            flow: NewRecordFlow.new_record)))
+        .then((value) {
+//      print("got value from page");
+      if (value != null) {
+        if (value is TimeRecord) {
+          _onDateSelected(value.date);
+        }
+      } else {
+        widget.bloc.loadTime(_selectedDate);
+      }
     });
-  }
-
-  @override
-  void logOut() {
-    _logout();
-  }
-
-  @override
-  void showAboutScreen() {
-    _navigateToAboutScreen();
-  }
-
-  void _navigateToAboutScreen() {
-    Navigator.of(context).push(new PageTransition(widget: new AboutScreen()));
-  }
-
-  @override
-  void onListItemDismissed(TimeRecord item) {
-    presenter.onItemDismissed(item);
-  }
-
-  @override
-  void refresh() {
-    presenter.loadTimeForDate(_selectedDate);
   }
 }
 
