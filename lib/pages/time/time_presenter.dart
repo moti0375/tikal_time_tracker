@@ -12,7 +12,6 @@ class TimePageBloc  {
   Stream<TimeReport> get timeReportStream => timeStreamController.stream.asBroadcastStream();
 
   Future<void> loadTime(DateTime date) async {
-    print("loadTime: ${date.toIso8601String()}");
     this.currentDate = date;
     repository.getAllTimeForDate(date).then((records) {
       timeStreamController.add(records);
@@ -31,7 +30,10 @@ class TimePageBloc  {
   }
 
   void onItemDismissed(TimeRecord item) {
+    print("onItemDismissed: ${item.toString()}");
+
     repository.deleteTime(item).then((value){
+      print("onItemDismissed: ");
       loadTime(currentDate);
     });
   }

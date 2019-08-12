@@ -7,7 +7,7 @@ class TimeRecordListAdapter extends StatelessWidget {
   final ListAdapterClickListener adapterClickListener;
   final bool intermittently;
   final bool dismissibleItems;
-  final Function(TimeRecord) onItemClickListener;
+  final Function(TimeRecord) onItemClick;
   final Function(TimeRecord) onItemDismissed;
   final Function(TimeRecord) onItemLongClick;
 
@@ -16,7 +16,7 @@ class TimeRecordListAdapter extends StatelessWidget {
       this.adapterClickListener,
       this.intermittently,
       this.dismissibleItems = false,
-      this.onItemClickListener,
+      this.onItemClick,
       this.onItemDismissed,
       this.onItemLongClick});
 
@@ -43,7 +43,9 @@ class TimeRecordListAdapter extends StatelessWidget {
       ),
       direction: DismissDirection.endToStart,
       onDismissed: (direction) {
-        onItemDismissed ?? onItemDismissed(item);
+        if(onItemDismissed != null){
+          onItemDismissed(item);
+        }
       },
       child: _tileItem(item),
     );
@@ -53,12 +55,17 @@ class TimeRecordListAdapter extends StatelessWidget {
     return ListTile(
       dense: true,
       onTap: () {
-        adapterClickListener ?? adapterClickListener.onListItemClicked(item);
-        onItemClickListener ?? onItemClickListener(item);
+       // adapterClickListener ?? adapterClickListener.onListItemClicked(item);
+        print("_tileItem: onTap");
+        if(onItemClick != null){
+         onItemClick(item);
+        }
       },
       onLongPress: () {
-        adapterClickListener ?? adapterClickListener.onListItemLongClick(item);
-        onItemLongClick ?? onItemLongClick(item);
+      //  adapterClickListener ?? adapterClickListener.onListItemLongClick(item);
+        if(onItemLongClick != null){
+          onItemLongClick(item);
+        }
       },
       leading: Icon(Icons.work, color: Colors.lightBlueAccent),
       title: Row(

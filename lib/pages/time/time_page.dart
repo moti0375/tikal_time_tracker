@@ -167,10 +167,12 @@ class _TimePageState extends State<TimePage> {
                 items: snapshot.data.timeReport,
                 intermittently: true,
                 dismissibleItems: true,
-                onItemClickListener: (item) {
+                onItemClick: (item) {
+                  print("onItemClickListener: ");
                   _navigateToEditScreen(item, context);
                 },
                 onItemDismissed: (item) {
+                  print("onItemDismissed: ");
                   widget.bloc.onItemDismissed(item);
                 },),
               summaryRow(snapshot),
