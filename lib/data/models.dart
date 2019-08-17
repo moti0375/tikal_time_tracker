@@ -154,6 +154,7 @@ class Report{
 }
 
 class TimeReport {
+  DateTime date;
   List<TimeRecord> timeReport;
   Duration dayTotal;
   Duration weekTotal;
@@ -162,7 +163,7 @@ class TimeReport {
   bool overQuota = false;
   String message;
 
-  TimeReport({this.timeReport, this.dayTotal, this.weekTotal, this.monthTotal, this.quota, this.overQuota, this.message});
+  TimeReport({this.timeReport, this.dayTotal, this.weekTotal, this.monthTotal, this.quota, this.overQuota, this.message, this.date});
 
   @override
   String toString() {

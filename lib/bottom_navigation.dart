@@ -2,29 +2,31 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tikal_time_tracker/data/repository/time_records_repository.dart';
 import 'package:tikal_time_tracker/pages/login/login_page.dart';
 import 'package:tikal_time_tracker/pages/time/time_page.dart';
+import 'package:tikal_time_tracker/pages/time/time_page_bloc.dart';
 import 'package:tikal_time_tracker/pages/users/users_page.dart';
 import 'package:tikal_time_tracker/pages/reports/generate_report_page.dart';
 import 'package:tikal_time_tracker/resources/strings.dart';
 import 'package:tikal_time_tracker/services/auth/auth.dart';
 import 'package:tikal_time_tracker/services/auth/user.dart';
 
-enum Tab{
+enum Tab {
   Time,
   Reports,
   Users,
 }
 
-class BottomNavigation extends StatefulWidget{
+class BottomNavigation extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
     return BottomNavigationState();
   }
 }
 
-String tabName({Tab tab}){
-  switch(tab){
+String tabName({Tab tab}) {
+  switch (tab) {
     case Tab.Time:
       return Strings.time_page_title;
     case Tab.Reports:
@@ -35,12 +37,11 @@ String tabName({Tab tab}){
   return null;
 }
 
-class BottomNavigationState extends State<BottomNavigation>{
-
+class BottomNavigationState extends State<BottomNavigation> {
   Tab currentTab = Tab.Time;
 
-  _onSelectedTab(int index){
-    switch(index){
+  _onSelectedTab(int index) {
+    switch (index) {
       case 0:
         _updateCurrentTab(Tab.Time);
         break;
@@ -53,7 +54,7 @@ class BottomNavigationState extends State<BottomNavigation>{
     }
   }
 
-  _updateCurrentTab(Tab tab){
+  _updateCurrentTab(Tab tab) {
     setState(() {
       currentTab = tab;
     });
@@ -71,15 +72,16 @@ class BottomNavigationState extends State<BottomNavigation>{
   }
 
   @override
-  void didChangeDependencies()  {
+  void didChangeDependencies() {
     super.didChangeDependencies();
     BaseAuth auth = Provider.of<BaseAuth>(context);
-    auth.onAuthChanged..asBroadcastStream().listen((user){
-      if(user == null){
-        print("onAuthChanged: logout");
-        _logout();
-      }
-    });
+    auth.onAuthChanged
+      ..asBroadcastStream().listen((user) {
+        if (user == null) {
+          print("onAuthChanged: logout");
+          _logout();
+        }
+      });
   }
 
   _logout() {
@@ -90,15 +92,13 @@ class BottomNavigationState extends State<BottomNavigation>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _buildBody(),
-      bottomNavigationBar: _buildBottomNavigation()
-    );
+        body: _buildBody(), bottomNavigationBar: _buildBottomNavigation());
   }
 
   Widget _buildBody() {
-    switch(currentTab){
+    switch (currentTab) {
       case Tab.Time:
-        return TimePage();
+        return _buildTimePage();
       case Tab.Reports:
         return GenerateReportPage();
       case Tab.Users:
@@ -107,26 +107,41 @@ class BottomNavigationState extends State<BottomNavigation>{
     return Container();
   }
 
+  Widget _buildTimePage() {
+    return StatefulProvider<TimePageBloc>(
+      valueBuilder: (context) =>
+          TimePageBloc(repository: TimeRecordsRepository()),
+      child: Consumer<TimePageBloc>(
+        builder: (context, bloc) => TimePage(
+          bloc: bloc,
+        ),
+      ),
+      onDispose: (context, bloc) => bloc.dispose(),
+    );
+  }
+
   Widget _buildBottomNavigation() {
     return BottomNavigationBar(
       type: BottomNavigationBarType.fixed,
-      items: [_buildItem(icon: Icons.access_time, tab: Tab.Time),
-              _buildItem(icon: Icons.line_weight, tab: Tab.Reports),
-              _buildItem(icon: Icons.contacts, tab: Tab.Users)],
+      items: [
+        _buildItem(icon: Icons.access_time, tab: Tab.Time),
+        _buildItem(icon: Icons.line_weight, tab: Tab.Reports),
+        _buildItem(icon: Icons.contacts, tab: Tab.Users)
+      ],
       onTap: _onSelectedTab,
     );
   }
 
   BottomNavigationBarItem _buildItem({IconData icon, Tab tab}) {
     return BottomNavigationBarItem(
-      icon: Icon(icon, color: _colorTabMatching(item: tab)),
-      title: Text(tabName(tab: tab), style: TextStyle(color: _colorTabMatching(item: tab)),)
-    );
+        icon: Icon(icon, color: _colorTabMatching(item: tab)),
+        title: Text(
+          tabName(tab: tab),
+          style: TextStyle(color: _colorTabMatching(item: tab)),
+        ));
   }
-
 
   Color _colorTabMatching({Tab item}) {
     return currentTab == item ? Theme.of(context).primaryColor : Colors.grey;
   }
-
 }

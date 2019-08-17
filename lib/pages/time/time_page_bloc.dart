@@ -6,17 +6,21 @@ import '../../data/models.dart';
 class TimePageBloc  {
 
   TimeRecordsRepository repository;
-  TimePageBloc({this.repository});
-  DateTime currentDate;
+  DateTime currentDate = DateTime.now();
+
+  TimePageBloc({this.repository}){
+   dateSelected(currentDate) ;
+  }
+
   StreamController<TimeReport> timeStreamController = StreamController.broadcast();
   Stream<TimeReport> get timeReportStream => timeStreamController.stream.asBroadcastStream();
 
-  Future<void> loadTime(DateTime date) async {
+  Future<void> _loadTime(DateTime date) async {
     this.currentDate = date;
     repository.getAllTimeForDate(date).then((records) {
       timeStreamController.add(records);
     }, onError: (e){
-      print("PagePresenter There was an error: $e");
+      print("TimePageBloc There was an error: $e");
       if(e is RangeError){
         timeStreamController.addError(e);
       }else{
@@ -25,7 +29,8 @@ class TimePageBloc  {
     });
   }
 
-  void dismiss(){
+  void dispose(){
+    print("TimePageBloc: dispose");
     timeStreamController.close();
   }
 
@@ -34,7 +39,12 @@ class TimePageBloc  {
 
     repository.deleteTime(item).then((value){
       print("onItemDismissed: ");
-      loadTime(currentDate);
+      _loadTime(currentDate);
     });
+  }
+
+  void dateSelected(DateTime date){
+    currentDate = date;
+    _loadTime(date);
   }
 }
