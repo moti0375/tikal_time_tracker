@@ -181,12 +181,16 @@ class DomParser {
     List<String> rows = buffer.trim().split("<tr");
     rows.removeAt(0);
     rows.removeAt(0);
+    //debugPrint("$TAG rows: ${rows.toString()}, size: ${rows.length}");
 
-    rows = rows.map((r) {
-      return r.substring(r.indexOf(">") + 1, r.indexOf("</tr>"));
-    }).toList();
-
-//    debugPrint("rows: ${rows.toString()}, size: ${rows.length}");
+    try{
+      rows = rows.map((r) {
+        return r.substring(r.indexOf(">") + 1, r.indexOf("</tr>"));
+      }).toList();
+    } on RangeError catch(e){
+      print("There was a RangeError, return empty report: ${e.message}");
+      return TimeReport(date: date, timeReport: List<TimeRecord>());
+    }
 
     List<TimeRecord> result = rows.map((row) {
       List<String> cells = row.split("</td>");
