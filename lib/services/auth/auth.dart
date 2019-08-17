@@ -73,7 +73,7 @@ class AppAuth extends BaseAuth{
     timeout(Duration(milliseconds: CONNECTION_TIMEOUT), onTimeout: (){
       print("There was a timeout:");
     });
-    print("singInStatus: $singInStatus");
+//    print("singInStatus: $singInStatus");
     if(singInStatus == null || singInStatus.contains("401 Unauthorized")){
       throw AppException(cause: Strings.signin_error);
     } else {

@@ -38,7 +38,7 @@ class User {
   User({this.name, this.role, this.company, this.projects, this.tasks});
 
   factory User.builder(String name, Role role, String company, List<Project> projects, List<Task> tasks){
-    print("User.builder: projects: ${projects.toString()}, ${tasks.toString()}");
+//    print("User.builder: projects: ${projects.toString()}, ${tasks.toString()}");
     return new User(name: name, role: role, company: company, projects: projects, tasks: tasks);
   }
 

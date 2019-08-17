@@ -18,17 +18,25 @@ class DomParser {
   DateFormat timeFormat = DateFormat('H:m');
 
   User getUserFromDom(String domStr) {
+
     String pageTitle = domStr.substring(
         domStr.indexOf("<!-- page title and user details -->"),
         domStr.indexOf("<!-- end of page title and user details -->"));
-    print("$TAG: pageTitle: $pageTitle");
+//    print("$TAG: pageTitle: $pageTitle");
+    String trtd = "<tr><td>";
+    String trtdEnd = "</td></tr>";
+    String dash = " - ";
+    String comma = ", ";
     String userDetails = pageTitle.substring(
-        pageTitle.indexOf("<tr><td>") + 8, pageTitle.indexOf('</table>') - 19);
-    String name = userDetails.substring(0, userDetails.indexOf(" - "));
+        pageTitle.indexOf(trtd) + trtd.length);
+    userDetails = userDetails.substring(0, userDetails.indexOf(trtdEnd));
+    print("UserDetails: $userDetails");
+
+    String name = userDetails.substring(0, userDetails.indexOf(dash));
     String roleStr = userDetails.substring(
-        userDetails.indexOf(" - ") + 3, userDetails.indexOf(", "));
+        userDetails.indexOf(dash) + dash.length, userDetails.indexOf(comma));
     Role role = _getRoleFromRoleString(roleStr);
-    String company = userDetails.substring(userDetails.indexOf(", ") + 1);
+    String company = userDetails.substring(userDetails.indexOf(comma) + 1);
     print("$TAG: name: $name, role: $role, company: $company");
     List<Task> tasks = _extractTasks(domStr);
     List<Project> projects = _extractProjectsForUser(domStr, tasks);
@@ -45,21 +53,21 @@ class DomParser {
 
     projects.forEach((p) {
       List<Task> tasksForProj = List<Task>();
-      print("getUserFromDom: p = ${p.name}:${tasksForProjects[p.value]}");
+//      print("getUserFromDom: p = ${p.name}:${tasksForProjects[p.value]}");
         tasksForProjects[p.value].forEach((t) {
         Task task = tasks.firstWhere((e) {
-          print("firstWhere: $t -> ${e.value}:${e.name}");
+//          print("firstWhere: $t -> ${e.value}:${e.name}");
           return (e.value == t);
         }, orElse: () => null);
         if(task != null){
           tasksForProj.add(task);
         }
       });
-      print("getUserFromDom: tasksForProj ${p.name} : ${tasksForProj.toString()}");
+//      print("getUserFromDom: tasksForProj ${p.name} : ${tasksForProj.toString()}");
       p.tasks = tasksForProj;
     });
 
-    print("getUserFromDom: ${projects.toString()}");
+//    print("getUserFromDom: ${projects.toString()}");
     return projects;
   }
 
@@ -78,7 +86,7 @@ class DomParser {
       return it.substring(0, it.indexOf("\");"));
     }).toList();
 
-    print("_extractProjects: ${projects.toString()}");
+   // print("_extractProjects: ${projects.toString()}");
 
     List<Project> result = projects.map((projectStr) {
       String container = projectStr.replaceAll("\"", "");
@@ -91,7 +99,7 @@ class DomParser {
 
       return Project(name: name, value: val);
     }).toList();
-    print("_extractProjects result: ${result.toString()}");
+  //  print("_extractProjects result: ${result.toString()}");
     return result;
   }
 
@@ -116,7 +124,7 @@ class DomParser {
           .trim();
       return Task(name: name, value: value);
     }).toList();
-    print("_extractTasks: ${tasks.toString()}");
+//    print("_extractTasks: ${tasks.toString()}");
     return tasks;
   }
 
@@ -154,7 +162,7 @@ class DomParser {
       projectsAndTasks[prjVal] = tasks;
     });
 
-    print("_extractTasksForProjects ${projectsAndTasks.toString()}");
+//    print("_extractTasksForProjects ${projectsAndTasks.toString()}");
     return projectsAndTasks;
   }
 
