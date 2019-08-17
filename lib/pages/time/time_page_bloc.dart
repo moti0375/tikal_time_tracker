@@ -1,10 +1,16 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:tikal_time_tracker/bloc_base/bloc_base_event.dart';
 import 'package:tikal_time_tracker/data/exceptions/failed_login_exception.dart';
 
 import '../../data/repository/time_records_repository.dart';
 import '../../data/models.dart';
+
+class DateSelectedEvent extends BlocBaseEvent{
+  final DateTime selectedDate;
+  DateSelectedEvent({@required this.selectedDate});
+}
 
 class TimePageBloc  {
 
