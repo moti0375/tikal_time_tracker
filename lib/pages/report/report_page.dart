@@ -3,7 +3,7 @@ import 'package:tikal_time_tracker/pages/reports/place_holder_content.dart';
 import 'package:tikal_time_tracker/data/models.dart';
 import 'package:tikal_time_tracker/services/auth/user.dart';
 import 'package:tikal_time_tracker/ui/platform_appbar.dart';
-import 'package:tikal_time_tracker/ui/time_record_list_adapter.dart';
+import 'package:tikal_time_tracker/ui/time_record_list_builder.dart';
 import 'package:tikal_time_tracker/utils/action_choice.dart';
 import 'package:tikal_time_tracker/utils/page_transition.dart';
 import 'package:tikal_time_tracker/pages/send_email/send_email_page.dart';
@@ -11,7 +11,7 @@ import 'package:tikal_time_tracker/resources/strings.dart';
 import 'package:tikal_time_tracker/analytics/analytics.dart';
 import 'package:tikal_time_tracker/analytics/events/reports_event.dart';
 
-class ReportPage extends StatelessWidget implements ListAdapterClickListener {
+class ReportPage extends StatelessWidget {
   final Report report;
   final Analytics analytics = Analytics.instance;
 
@@ -70,9 +70,8 @@ class ReportPage extends StatelessWidget implements ListAdapterClickListener {
     } else {
       return Container(
           padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-          child: TimeRecordListAdapter(
+          child: TimeRecordListViewBuilder(
             items: report.report,
-            adapterClickListener: this,
             intermittently: false,
             dismissibleItems: false,
           ));
@@ -118,15 +117,5 @@ class ReportPage extends StatelessWidget implements ListAdapterClickListener {
         ],
       ),
     );
-  }
-
-  @override
-  onListItemClicked(TimeRecord item) {}
-
-  @override
-  onListItemLongClick(TimeRecord item) {}
-
-  @override
-  void onListItemDismissed(TimeRecord item) {
   }
 }

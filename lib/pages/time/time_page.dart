@@ -4,7 +4,7 @@ import 'package:tikal_time_tracker/data/models.dart';
 import 'package:tikal_time_tracker/services/auth/auth.dart';
 import 'package:tikal_time_tracker/services/auth/user.dart';
 import 'package:tikal_time_tracker/ui/platform_appbar.dart';
-import 'package:tikal_time_tracker/ui/time_record_list_adapter.dart';
+import 'package:tikal_time_tracker/ui/time_record_list_builder.dart';
 import 'package:tikal_time_tracker/pages/new_record_page/new_record_page.dart';
 import 'package:tikal_time_tracker/pages/reports/place_holder_content.dart';
 import 'package:tikal_time_tracker/ui/date_picker_widget.dart';
@@ -185,7 +185,7 @@ class _TimePageState extends State<TimePage> {
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                TimeRecordListAdapter(
+                TimeRecordListViewBuilder(
                   items: snapshot.data.timeReport,
                   intermittently: true,
                   dismissibleItems: true,

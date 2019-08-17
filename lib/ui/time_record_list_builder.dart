@@ -3,18 +3,16 @@ import 'package:tikal_time_tracker/data/models.dart';
 import 'package:tikal_time_tracker/ui/time_list_tile.dart';
 import 'package:tikal_time_tracker/utils/utils.dart';
 
-class TimeRecordListAdapter extends StatelessWidget {
+class TimeRecordListViewBuilder extends StatelessWidget {
   final List<TimeRecord> items;
-  final ListAdapterClickListener adapterClickListener;
   final bool intermittently;
   final bool dismissibleItems;
   final Function(TimeRecord) onItemClick;
   final Function(TimeRecord) onItemDismissed;
   final Function(TimeRecord) onItemLongClick;
 
-  TimeRecordListAdapter(
+  TimeRecordListViewBuilder(
       {this.items,
-      this.adapterClickListener,
       this.intermittently,
       this.dismissibleItems = false,
       this.onItemClick,
@@ -55,8 +53,8 @@ class TimeRecordListAdapter extends StatelessWidget {
   TimeListTile _buildTile(TimeRecord item) {
     return TimeListTile(
       timeRecord: item,
-      onTap: () => onItemClick(item),
-      onLongClick: () => onItemLongClick(item),
+      onTap: onItemClick != null ? () => onItemClick(item) : null,
+      onLongClick: onItemLongClick != null ? () => onItemLongClick(item) : null,
     );
   }
 
@@ -94,10 +92,3 @@ class TimeRecordListAdapter extends StatelessWidget {
   }
 }
 
-abstract class ListAdapterClickListener {
-  void onListItemClicked(TimeRecord item);
-
-  void onListItemLongClick(TimeRecord item);
-
-  void onListItemDismissed(TimeRecord item);
-}
