@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tikal_time_tracker/bloc_base/bloc_base_event.dart';
 import 'package:tikal_time_tracker/data/models.dart';
 import 'package:tikal_time_tracker/services/auth/auth.dart';
 import 'package:tikal_time_tracker/services/auth/user.dart';
-import 'package:tikal_time_tracker/data/repository/time_records_repository.dart';
-import 'package:tikal_time_tracker/pages/login/login_page.dart';
 import 'package:tikal_time_tracker/ui/platform_appbar.dart';
 import 'package:tikal_time_tracker/ui/time_record_list_adapter.dart';
 import 'package:tikal_time_tracker/pages/new_record_page/new_record_page.dart';
@@ -12,7 +11,6 @@ import 'package:tikal_time_tracker/pages/reports/place_holder_content.dart';
 import 'package:tikal_time_tracker/ui/date_picker_widget.dart';
 import 'package:tikal_time_tracker/utils/action_choice.dart';
 import 'package:tikal_time_tracker/pages/time/time_page_bloc.dart';
-import 'package:tikal_time_tracker/pages/time/time_contract.dart';
 import 'package:tikal_time_tracker/pages/about_screen/about_screen.dart';
 import 'package:tikal_time_tracker/utils/page_transition.dart';
 import 'package:tikal_time_tracker/resources/strings.dart';
@@ -20,8 +18,18 @@ import 'package:tikal_time_tracker/analytics/analytics.dart';
 import 'package:tikal_time_tracker/analytics/events/time_event.dart';
 import 'package:tikal_time_tracker/utils/utils.dart';
 
-class TimePage extends StatelessWidget {
+class TimePage extends StatefulWidget {
+  final TimePageBloc bloc;
+
+  TimePage({@required this.bloc});
+
+  @override
+  _TimePageState createState() => _TimePageState();
+}
+
+class _TimePageState extends State<TimePage> {
   final Analytics analytics = Analytics.instance;
+
   final List<Choice> choices = const <Choice>[
     const Choice(
       action: MenuAction.Logout,
@@ -34,9 +42,12 @@ class TimePage extends StatelessWidget {
       icon: null,
     )
   ];
-  final TimePageBloc bloc;
 
-  TimePage({@required this.bloc});
+  @override
+  void initState() {
+    super.initState();
+    widget.bloc.dateSelected(DateSelectedEvent(selectedDate: DateTime.now()));
+  }
 
   final TextEditingController dateInputController =
       new TextEditingController(text: "");
@@ -62,9 +73,8 @@ class TimePage extends StatelessWidget {
           },
           child: Icon(Icons.add)),
       body: StreamBuilder<TimeReport>(
-          initialData:
-              TimeReport(date: DateTime.now(), timeReport: List<TimeRecord>()),
-          stream: bloc.timeReportStream,
+          initialData: TimeReport(date: DateTime.now(), timeReport: List<TimeRecord>()),
+          stream: widget.bloc.timeReportStream,
           builder: (context, snapshot) {
             return _buildContent(snapshot, context);
           }),
@@ -135,7 +145,7 @@ class TimePage extends StatelessWidget {
 
   Widget _buildDatePicker(TimeReport model) {
     return TimeTrackerDatePicker(
-        initializedDateTime: bloc.currentDate,
+        initializedDateTime: widget.bloc.selectedDate,
         onSubmittedCallback: (date) {
           analytics.logEvent(TimeEvent.click(EVENT_NAME.DATE_PICKER_USED));
           _onDateSelected(date);
@@ -186,7 +196,7 @@ class TimePage extends StatelessWidget {
                   },
                   onItemDismissed: (item) {
                     print("onItemDismissed: ");
-                    bloc.onItemDismissed(item);
+                    widget.bloc.onItemDismissed(item);
                   },
                 ),
                 summaryRow(snapshot),
@@ -314,7 +324,7 @@ class TimePage extends StatelessWidget {
   _onDateSelected(DateTime selectedDate) {
     dateInputController.text =
         "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}";
-    bloc.dateSelected(selectedDate);
+    widget.bloc.dateSelected(DateSelectedEvent(selectedDate: selectedDate));
   }
 
   void _openNewRecordPage(TimeRecord item, BuildContext context) {
@@ -332,7 +342,7 @@ class TimePage extends StatelessWidget {
         .push(new PageTransition(
             widget: new NewRecordPage(
                 projects: projects,
-                dateTime: bloc.currentDate,
+                dateTime: widget.bloc.selectedDate,
                 timeRecord: null,
                 flow: NewRecordFlow.new_record)))
         .then((value) {
@@ -342,7 +352,7 @@ class TimePage extends StatelessWidget {
           _onDateSelected(value.date);
         }
       } else {
-        _onDateSelected(bloc.currentDate);
+        _onDateSelected(widget.bloc.selectedDate);
       }
     });
   }
