@@ -35,11 +35,7 @@ class TimePageBloc  {
       _timeControllerSink.add(records);
     }, onError: (e){
       print("TimePageBloc There was an error: $e");
-      if(e is RangeError){
-        _timeStreamController.addError(e);
-      }else{
-        print(e);
-      }
+      _timeStreamController.addError(e);
     });
   }
 
