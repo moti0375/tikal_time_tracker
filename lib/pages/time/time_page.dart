@@ -172,9 +172,6 @@ class _TimePageState extends State<TimePage> {
     print("_buildBody: ${snapshot.connectionState}");
     if (snapshot.hasError) {
       print("_buildBody: ${snapshot.error}");
-      if (snapshot.error is RangeError) {
-        return _buildPlaceHolder(context);
-      }
       _logout(context);
       return _buildPlaceHolder(context);
     } else if (snapshot.hasData) {
