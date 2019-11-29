@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
+import 'package:tikal_time_tracker/bloc_base/base_state.dart';
+import 'package:tikal_time_tracker/bloc_base/bloc_base_event.dart';
 import 'package:tikal_time_tracker/data/models.dart';
 import 'package:tikal_time_tracker/services/auth/auth.dart';
 import 'package:tikal_time_tracker/services/auth/user.dart';
@@ -16,11 +19,10 @@ import 'package:tikal_time_tracker/resources/strings.dart';
 import 'package:tikal_time_tracker/analytics/analytics.dart';
 import 'package:tikal_time_tracker/analytics/events/time_event.dart';
 import 'package:tikal_time_tracker/utils/utils.dart';
+import 'package:bloc/bloc.dart';
+
 
 class TimePage extends StatefulWidget {
-  final TimePageBloc bloc;
-
-  TimePage({@required this.bloc});
 
   @override
   _TimePageState createState() => _TimePageState();
@@ -28,7 +30,6 @@ class TimePage extends StatefulWidget {
 
 class _TimePageState extends State<TimePage> {
   final Analytics analytics = Analytics.instance;
-
   final List<Choice> choices = const <Choice>[
     const Choice(
       action: MenuAction.Logout,
@@ -45,7 +46,11 @@ class _TimePageState extends State<TimePage> {
   @override
   void initState() {
     super.initState();
-    widget.bloc.dateSelected(DateSelectedEvent(selectedDate: DateTime.now()));
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
   }
 
   final TextEditingController dateInputController =
@@ -53,6 +58,8 @@ class _TimePageState extends State<TimePage> {
 
   @override
   Widget build(BuildContext context) {
+    TimePageBloc _bloc = BlocProvider.of<TimePageBloc>(context);
+
     analytics.logEvent(TimeEvent.impression(EVENT_NAME.TIME_PAGE_OPENED)
         .setUser(User.me.name)
         .view());
@@ -71,11 +78,12 @@ class _TimePageState extends State<TimePage> {
             _openNewRecordPage(null, context);
           },
           child: Icon(Icons.add)),
-      body: StreamBuilder<TimeReport>(
-          initialData: TimeReport(date: DateTime.now(), timeReport: List<TimeRecord>()),
-          stream: widget.bloc.timeReportStream,
-          builder: (context, snapshot) {
-            return _buildContent(snapshot, context);
+      body: BlocBuilder<BlocBaseEvent, BaseState>(
+        bloc: _bloc,
+          builder: (context, outputState) {
+            if(outputState is LoadingCompleted){
+              return _buildContent(context, outputState);
+            } else return Placeholder();
           }),
     );
   }
@@ -142,9 +150,9 @@ class _TimePageState extends State<TimePage> {
 
   void onNewRecordScreenClicked() {}
 
-  Widget _buildDatePicker(TimeReport model) {
+  Widget _buildDatePicker(TimeReport model, BuildContext context) {
     return TimeTrackerDatePicker(
-        initializedDateTime: widget.bloc.selectedDate,
+        initializedDateTime: BlocProvider.of<TimePageBloc>(context).selectedDate,
         onSubmittedCallback: (date) {
           analytics.logEvent(TimeEvent.click(EVENT_NAME.DATE_PICKER_USED));
           _onDateSelected(date);
@@ -192,7 +200,7 @@ class _TimePageState extends State<TimePage> {
                   },
                   onItemDismissed: (item) {
                     print("onItemDismissed: ");
-                    widget.bloc.onItemDismissed(item);
+                    BlocProvider.of<TimePageBloc>(context).onItemDismissed(item);
                   },
                 ),
                 summaryRow(snapshot),
@@ -205,7 +213,7 @@ class _TimePageState extends State<TimePage> {
     }
   }
 
-  Container _buildContent(AsyncSnapshot snapshot, BuildContext context) {
+  Container _buildContent(BuildContext context, LoadingCompleted state, ) {
     return Container(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -213,7 +221,7 @@ class _TimePageState extends State<TimePage> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          _buildDatePicker(snapshot.data),
+          _buildDatePicker((state), context),
           Container(
             height: 1.5,
             color: Colors.black26,
@@ -230,7 +238,7 @@ class _TimePageState extends State<TimePage> {
                   )
                 ],
               )),
-          _buildBody(snapshot, context),
+          _buildBody(, context),
         ],
       ),
     );
@@ -320,7 +328,7 @@ class _TimePageState extends State<TimePage> {
   _onDateSelected(DateTime selectedDate) {
     dateInputController.text =
         "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}";
-    widget.bloc.dateSelected(DateSelectedEvent(selectedDate: selectedDate));
+    _bloc.dateSelected(DateSelectedEvent(selectedDate: selectedDate));
   }
 
   void _openNewRecordPage(TimeRecord item, BuildContext context) {
@@ -348,7 +356,7 @@ class _TimePageState extends State<TimePage> {
           _onDateSelected(value.date);
         }
       } else {
-        _onDateSelected(widget.bloc.selectedDate);
+        _onDateSelected(BlocProvider.of<TimePageBloc>(context).selectedDate);
       }
     });
   }

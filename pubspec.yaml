@@ -19,6 +19,8 @@ dependencies:
   firebase_core: ^0.2.5
   firebase_analytics: ^1.0.4
   provider: ^1.6.1
+  flutter_bloc: ^0.18.3
+
 
 dev_dependencies:
   jaguar_retrofit_gen:

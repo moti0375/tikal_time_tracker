@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:tikal_time_tracker/data/repository/time_records_repository.dart';
 import 'package:tikal_time_tracker/pages/login/login_page.dart';
@@ -10,7 +11,6 @@ import 'package:tikal_time_tracker/pages/users/users_page.dart';
 import 'package:tikal_time_tracker/pages/reports/generate_report_page.dart';
 import 'package:tikal_time_tracker/resources/strings.dart';
 import 'package:tikal_time_tracker/services/auth/auth.dart';
-import 'package:tikal_time_tracker/services/auth/user.dart';
 
 enum Tab {
   Time,
@@ -98,7 +98,7 @@ class BottomNavigationState extends State<BottomNavigation> {
   Widget _buildBody() {
     switch (currentTab) {
       case Tab.Time:
-        return _buildTimePage();
+        return _timePageWithBloc();
       case Tab.Reports:
         return GenerateReportPage();
       case Tab.Users:
@@ -107,16 +107,23 @@ class BottomNavigationState extends State<BottomNavigation> {
     return Container();
   }
 
-  Widget _buildTimePage() {
-    return StatefulProvider<TimePageBloc>(
-      valueBuilder: (context) =>
-          TimePageBloc(repository: TimeRecordsRepository()),
-      child: Consumer<TimePageBloc>(
-        builder: (context, bloc) => TimePage(
-          bloc: bloc,
-        ),
-      ),
-      onDispose: (context, bloc) => bloc.dispose(),
+//  Widget _buildTimePage() {
+//    return StatefulProvider<TimePageBloc>(
+//      valueBuilder: (context) =>
+//          TimePageBloc(repository: TimeRecordsRepository()),
+//      child: Consumer<TimePageBloc>(
+//        builder: (context, bloc) => TimePage(
+//          bloc: bloc,
+//        ),
+//      ),
+//      onDispose: (context, bloc) => bloc.dispose(),
+//    );
+//  }
+
+  Widget _timePageWithBloc(){
+    return BlocProvider<TimePageBloc>(
+      builder: (context) => TimePageBloc(repository: TimeRecordsRepository()),
+      child: TimePage(),
     );
   }
 
