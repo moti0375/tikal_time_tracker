@@ -20,9 +20,9 @@ import 'package:tikal_time_tracker/analytics/events/new_record_event.dart';
 
 // ignore: must_be_immutable
 class NewRecordPage extends StatefulWidget {
-  List<Project> projects;
-  DateTime dateTime;
-  TimeRecord timeRecord;
+  final List<Project> projects;
+  final DateTime dateTime;
+  final TimeRecord timeRecord;
 
   NewRecordFlow flow;
 
@@ -62,7 +62,7 @@ class NewRecordPageState extends State<NewRecordPage>
   @override
   void initState() {
     super.initState();
-    print("initState: flow ${widget.flow}");
+    print("initState: flow ${widget.flow}, ${widget.projects}");
     _projects.addAll(widget.projects);
     _selectedDate = widget.dateTime;
     _setCommentController();
@@ -113,7 +113,11 @@ class NewRecordPageState extends State<NewRecordPage>
     _startTime = widget.timeRecord.start;
     _finishTime = widget.timeRecord.finish;
 
-    presenter.projectSelected(widget.timeRecord.project);
+    print("initUpdateRecord: ${widget.timeRecord.project}");
+    var p = _projects.firstWhere((p){
+      return p.value == widget.timeRecord.project.value;
+    });
+    presenter.projectSelected(p);
     presenter.taskSelected(widget.timeRecord.task);
     presenter.commentEntered(widget.timeRecord.comment);
     presenter.dateSelected(_selectedDate);
@@ -130,7 +134,7 @@ class NewRecordPageState extends State<NewRecordPage>
   @override
   void showSelectedProject(Project value) {
     setState(() {
-//      print("_onProjectSelected");
+      print("_onProjectSelected: $value");
       _selectedProject = value;
     });
   }
@@ -203,6 +207,7 @@ class NewRecordPageState extends State<NewRecordPage>
 
   @override
   Widget build(BuildContext context) {
+    print("new_record_page build: $_selectedProject");
     final projectsDropDown = Container(
         margin: EdgeInsets.symmetric(vertical: 4.0),
         decoration: BoxDecoration(

@@ -51,6 +51,7 @@ class NewRecordPresenter implements NewRecordPresenterContract {
   void projectSelected(Project project) {
     this.timeRecord.project = project;
     _selectedProject = project;
+    print("projectSelected: $project" );
     _tasks.clear();
     _tasks.addAll(project.tasks);
     _selectedTask = null;

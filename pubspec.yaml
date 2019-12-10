@@ -18,7 +18,8 @@ dependencies:
   url_launcher: ^4.0.2
   firebase_core: ^0.2.5
   firebase_analytics: ^1.0.4
-  provider: ^1.6.1
+  provider: ^3.2.0
+  equatable: ^1.0.0
 
 dev_dependencies:
   jaguar_retrofit_gen:

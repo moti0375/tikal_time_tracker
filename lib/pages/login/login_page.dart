@@ -41,31 +41,31 @@ class LoginPageState extends State<LoginPage> {
   String loginError = "";
   bool obscureText = true;
 
-  Preferences preferences;
   FocusNode passwordFocusNode;
+  Preferences preferences;
 
   @override
   void initState() {
     super.initState();
-    preferences = Preferences();
     passwordFocusNode = FocusNode();
-    initLoginPage();
 //      print("initState: $_email:$_password");
   }
 
-  void initLoginPage() async {
-    preferences = await initPrefs();
+  @override
+  void didChangeDependencies() async {
+    super.didChangeDependencies();
+    preferences = Provider.of<Preferences>(context);
     String email = await preferences.getLoginUserName();
     String password = await preferences.getLoginPassword();
     setState(() {
       _email = email;
       _password = password;
     });
-
   }
 
   @override
   Widget build(BuildContext context) {
+
     TextEditingController emailController = TextEditingController(text: _email);
     emailController.addListener(() {
 //      print("${emailController.text}");
@@ -227,10 +227,9 @@ class LoginPageState extends State<LoginPage> {
     );
   }
 
-  void _navigateToTabsScreen() {
+  void _navigateToTabsScreen(BuildContext context) {
     repository.timePage().then((response) {
 //      debugPrint("_navigateToTime response: $response");
-      User.init(response);
       Navigator.of(context)
           .pushReplacement(PageTransition(widget: BottomNavigation()));
     });
@@ -240,45 +239,6 @@ class LoginPageState extends State<LoginPage> {
     Navigator.of(context)
         .push(PageTransition(widget: ResetPasswordPage(emailAddress: email)));
   }
-
-//  void _login(String email, String password) async {
-//    setState(() {
-//      loginError = "";
-//      _loggingIn = true;
-//    });
-//
-//    String signInUsername = email.split("@")[0];
-//    String signInPassword = "${signInUsername}tik23";
-//
-//    bool signInPassed = await _signIn(signInUsername, signInPassword);
-//
-//    if(signInPassed){
-//      repository.login(email, password).then((response) {
-////      debugPrint("signin response: ${response.toString()}");
-////      setState(() {
-////        _loggingIn = false;
-////      });
-//
-//        if (response.toString().isEmpty) {
-////        print("navigating to Time");
-//          preferences.setLoginUserName(_email);
-//          preferences.setLoginPassword(_password);
-//          analytics.logEvent(LoginEvent.impression(EVENT_NAME.LOGIN_OK).view());
-//          _navigateToTabsScreen();
-//        } else if (response.toString().contains("Incorrect login or password")) {
-//          analytics.logEvent(LoginEvent.impression(EVENT_NAME.LOGIN_FAILED)
-//              .setDetails(Strings.incorrect_credentials)
-//              .view());
-//          _updateError(Strings.incorrect_credentials);
-//        }
-//      }, onError: (e){
-//        _updateError(Strings.login_failure);
-//      });
-//    } else {
-//      _updateError("Failed to signin");
-//    }
-//
-//  }
 
   void _loginAuth(BuildContext context, String email, String password) async {
     Utils.hideSoftKeyboard(context);
@@ -294,7 +254,7 @@ class LoginPageState extends State<LoginPage> {
         preferences.setLoginUserName(_email);
         preferences.setLoginPassword(_password);
         analytics.logEvent(LoginEvent.impression(EVENT_NAME.LOGIN_OK).setUser(user.name).view());
-        _navigateToTabsScreen();
+        _navigateToTabsScreen(context);
       } else {
         print("_loginAuth: user null");
       }
@@ -313,8 +273,6 @@ class LoginPageState extends State<LoginPage> {
       loginError = error;
     });
   }
-
-
 
   void _showSignOutDialog()  {
     PlatformAlertDialog dialog = PlatformAlertDialog(
@@ -346,13 +304,13 @@ class LoginPageState extends State<LoginPage> {
     return Preferences.init(preferences);
   }
 
-  void _signOut() {
+  void _signOut() async {
     setState(() {
       _email = "";
       _password = "";
     });
     preferences.signOut();
-    User.signOut();
+    await Provider.of<BaseAuth>(context).logout();
   }
 
   void _toggleObscureText() {

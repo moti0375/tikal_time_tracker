@@ -27,7 +27,6 @@ class TimePage extends StatefulWidget {
 }
 
 class _TimePageState extends State<TimePage> {
-  final Analytics analytics = Analytics.instance;
 
   final List<Choice> choices = const <Choice>[
     const Choice(
@@ -53,11 +52,9 @@ class _TimePageState extends State<TimePage> {
 
   @override
   Widget build(BuildContext context) {
-    analytics.logEvent(TimeEvent.impression(EVENT_NAME.TIME_PAGE_OPENED)
-        .setUser(User.me.name)
-        .view());
+    User user = Provider.of<BaseAuth>(context).getCurrentUser();
 
-    print("build: TimePage");
+    print("build: TimePage: $user");
 
     return Scaffold(
       resizeToAvoidBottomPadding: false,
@@ -65,17 +62,14 @@ class _TimePageState extends State<TimePage> {
       appBar: _buildAppBar(title: Strings.app_name, context: context),
       floatingActionButton: new FloatingActionButton(
           onPressed: () {
-            analytics.logEvent(
-                TimeEvent.click(EVENT_NAME.NEW_RECORD_FAB_CLICKED)
-                    .setUser(User.me.name));
-            _openNewRecordPage(null, context);
+            widget.bloc.onAddFabClicked(context);
           },
           child: Icon(Icons.add)),
       body: StreamBuilder<TimeReport>(
           initialData: TimeReport(date: DateTime.now(), timeReport: List<TimeRecord>()),
           stream: widget.bloc.timeReportStream,
           builder: (context, snapshot) {
-            return _buildContent(snapshot, context);
+            return _buildContent(snapshot, context, user);
           }),
     );
   }
@@ -128,16 +122,11 @@ class _TimePageState extends State<TimePage> {
         style: TextStyle(color: textColor));
   }
 
-  PlaceholderContent _buildPlaceHolder(BuildContext context) {
+  PlaceholderContent _buildPlaceHolder(BuildContext context, User user) {
     return PlaceholderContent(
         title: Strings.no_work_title,
         subtitle: Strings.no_work_subtitle,
-        onPressed: () {
-          analytics.logEvent(
-              TimeEvent.click(EVENT_NAME.NEW_RECORD_SCREEN_CLICKED)
-                  .setUser(User.me.name));
-          _openNewRecordPage(null, context);
-        });
+        onPressed: () => widget.bloc.onAddEmptyScreenTap(context));
   }
 
   void onNewRecordScreenClicked() {}
@@ -146,8 +135,8 @@ class _TimePageState extends State<TimePage> {
     return TimeTrackerDatePicker(
         initializedDateTime: widget.bloc.selectedDate,
         onSubmittedCallback: (date) {
-          analytics.logEvent(TimeEvent.click(EVENT_NAME.DATE_PICKER_USED));
-          _onDateSelected(date);
+          dateInputController.text = "${date.day}/${date.month}/${date.year}";
+          widget.bloc.onDatePickerDateSelected(DateSelectedEvent(selectedDate: date));
         });
   }
 
@@ -168,16 +157,16 @@ class _TimePageState extends State<TimePage> {
     );
   }
 
-  Widget _buildBody(AsyncSnapshot<TimeReport> snapshot, BuildContext context) {
+  Widget _buildBody(AsyncSnapshot<TimeReport> snapshot, BuildContext context, User user) {
     print("_buildBody: ${snapshot.connectionState}");
     if (snapshot.hasError) {
       print("_buildBody: ${snapshot.error}");
       _logout(context);
-      return _buildPlaceHolder(context);
+      return _buildPlaceHolder(context, user);
     } else if (snapshot.hasData) {
       print("_buildBody: done with data");
       return (snapshot.data.timeReport.isEmpty)
-          ? _buildPlaceHolder(context)
+          ? _buildPlaceHolder(context, user)
           : Column(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.start,
@@ -188,7 +177,7 @@ class _TimePageState extends State<TimePage> {
                   dismissibleItems: true,
                   onItemClick: (item) {
                     print("onItemClickListener: ");
-                    _navigateToEditScreen(item, context);
+                    widget.bloc.navigateRecordEditPage(item, context);
                   },
                   onItemDismissed: (item) {
                     print("onItemDismissed: ");
@@ -201,11 +190,11 @@ class _TimePageState extends State<TimePage> {
             );
     } else {
       print("_buildBody: other");
-      return _buildPlaceHolder(context);
+      return _buildPlaceHolder(context, user);
     }
   }
 
-  Container _buildContent(AsyncSnapshot snapshot, BuildContext context) {
+  Container _buildContent(AsyncSnapshot snapshot, BuildContext context, User user) {
     return Container(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -225,12 +214,12 @@ class _TimePageState extends State<TimePage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Text(
-                    "${User.me.name}, ${User.me.company}, ${User.me.role.toString().split(".").last}",
+                    "${user.name}, ${user.company}, ${user.role.toString().split(".").last}",
                     textAlign: TextAlign.start,
                   )
                 ],
               )),
-          _buildBody(snapshot, context),
+          _buildBody(snapshot, context, user),
         ],
       ),
     );
@@ -248,10 +237,7 @@ class _TimePageState extends State<TimePage> {
               height: 24.0,
               child: GestureDetector(
                 onTap: () {
-                  analytics.logEvent(TimeEvent.click(EVENT_NAME.ACTION_ABOUT)
-                      .setUser(User.me.name)
-                      .setDetails("Action Icon"));
-                  _navigateToAboutScreen(context);
+                  widget.bloc.onAboutClicked(context);
                 },
                 child: Image.asset(
                   'assets/logo_no_background.png',
@@ -272,84 +258,20 @@ class _TimePageState extends State<TimePage> {
 //    analytics.logEvent(TimeEvent.impression(EVENT_NAME.TIME_PAGE_LOADED).setDetails( "${timeRecord != null ? timeRecord.length : 0} :records").view());
   }
 
-  void _navigateToAboutScreen(BuildContext context) {
-    Navigator.of(context).push(new PageTransition(widget: new AboutScreen()));
-  }
-
   _logout(BuildContext context) async {
     BaseAuth auth = Provider.of<BaseAuth>(context);
     await auth.logout();
-//    Navigator.of(context).pushReplacement(new MaterialPageRoute(
-//        builder: (BuildContext context) => new LoginPage()));
   }
 
   void _select(Choice choice, BuildContext context) {
     if (choice.action == MenuAction.Logout) {
-      _logout(context);
-      analytics.logEvent(
-          TimeEvent.click(EVENT_NAME.ACTION_LOGOUT).setUser(User.me.name));
+      widget.bloc.logout();
     }
     if (choice.action == MenuAction.About) {
-      _navigateToAboutScreen(context);
-      analytics.logEvent(
-          TimeEvent.click(EVENT_NAME.ACTION_ABOUT).setUser(User.me.name));
+      widget.bloc.onAboutClicked(context);
     }
-  }
-
-  _navigateToEditScreen(TimeRecord item, BuildContext context) {
-//    print("_navigateToEditScreen: ");
-    Navigator.of(context)
-        .push(new PageTransition(
-            widget: new NewRecordPage(
-                projects: User.me.projects,
-                dateTime: item.date,
-                timeRecord: item,
-                flow: NewRecordFlow.update_record)))
-        .then((value) {
-//      print("got value from page");
-      if (value != null) {
-        if (value is TimeRecord) {
-          _onDateSelected(value.date);
-        }
-      } else {
-        _onDateSelected(item.date);
-      }
-    });
   }
 
   _onDateSelected(DateTime selectedDate) {
-    dateInputController.text =
-        "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}";
-    widget.bloc.dateSelected(DateSelectedEvent(selectedDate: selectedDate));
-  }
-
-  void _openNewRecordPage(TimeRecord item, BuildContext context) {
-    if (item != null) {
-      _navigateToEditScreen(item, context);
-    } else {
-      _navigateToNextScreen(context);
-    }
-  }
-
-  _navigateToNextScreen(BuildContext context) {
-    final projects = User.me.projects;
-    print("_navigateToNextScreen: " + projects.toString());
-    Navigator.of(context)
-        .push(new PageTransition(
-            widget: new NewRecordPage(
-                projects: projects,
-                dateTime: widget.bloc.selectedDate,
-                timeRecord: null,
-                flow: NewRecordFlow.new_record)))
-        .then((value) {
-//      print("got value from page");
-      if (value != null) {
-        if (value is TimeRecord) {
-          _onDateSelected(value.date);
-        }
-      } else {
-        _onDateSelected(widget.bloc.selectedDate);
-      }
-    });
   }
 }

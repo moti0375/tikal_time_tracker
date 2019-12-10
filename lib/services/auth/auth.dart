@@ -1,27 +1,31 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:tikal_time_tracker/data/dom/dom_parser.dart';
 import 'package:tikal_time_tracker/data/exceptions/failed_login_exception.dart';
 import 'package:tikal_time_tracker/network/credentials.dart';
 import 'package:tikal_time_tracker/network/requests/login_request.dart';
 import 'package:tikal_time_tracker/network/time_tracker_api.dart';
 import 'package:tikal_time_tracker/resources/strings.dart';
 import 'package:tikal_time_tracker/services/auth/user.dart';
-abstract class BaseAuth{
+abstract class BaseAuth with ChangeNotifier{
   Stream<User> get onAuthChanged;
   Future<User> login(String userName, String password);
   Future<void> _singIn(String userName, String password);
   Future<void> logout();
+  User getCurrentUser();
   void dispose();
 }
 
 
 class AppAuth extends BaseAuth{
 
-  final TimeTrackerApi api;
+  final TimeTrackerApi _api;
   static const CONNECTION_TIMEOUT = 5000;
 
-  AppAuth({this.api}){
+  DomParser _parser;
+  User _user;
+  AppAuth(this._api, this._parser){
     print("AppAuth: created");
   }
 
@@ -33,12 +37,15 @@ class AppAuth extends BaseAuth{
     bool signInPassed = await _singIn(email, password);
 
     if(signInPassed){
-        String response = await api.login(LoginForm(Login: email, Password: password));
+        String response = await _api.login(LoginForm(Login: email, Password: password));
         debugPrint("AppAuth: response: ${response.toString()}");
-
-        if(response.isEmpty){       //This means login succeeded
-          String userResponse = await api.time();
-          return User.init(userResponse);
+        if(response.isEmpty){  //This means login succeeded
+          //It's time to create user, this is done by navigating to time page and parsing the user details.
+          String userResponse = await _api.time();
+          _user = _parser.getUserFromDom(userResponse);
+          print("Login User: $_user");
+          User.init(userResponse);
+          return _user;
         } else {
           if(response.contains("Incorrect login or password")){
             throw AppException(cause: Strings.incorrect_credentials);
@@ -54,6 +61,7 @@ class AppAuth extends BaseAuth{
   @override
   Future<void> logout() {
     authStreamController.add(null);
+    _user = null;
     return null;
   }
 
@@ -64,12 +72,11 @@ class AppAuth extends BaseAuth{
   Future<bool> _singIn(String userName, String password) async {
 
     print("AppAuth: _signIn: $userName:$password");
-
     String signInUsername = userName.split("@")[0];
     String signInPassword = "${signInUsername}tik23";
 
-    api.updateAuthHeader(Credentials(signInUserName: signInUsername, signInPassword: signInPassword));
-    String singInStatus = await api.signIn().
+    _api.updateAuthHeader(Credentials(signInUserName: signInUsername, signInPassword: signInPassword));
+    String singInStatus = await _api.signIn().
     timeout(Duration(milliseconds: CONNECTION_TIMEOUT), onTimeout: (){
       print("There was a timeout:");
     });
@@ -83,9 +90,14 @@ class AppAuth extends BaseAuth{
   }
 
   @override
-  void dispose(){
-    print("AppAuth: dispose");
+  void dispose() {
     authStreamController.close();
+    super.dispose();
+  }
+
+  @override
+  User getCurrentUser() {
+    return _user;
   }
 }
 

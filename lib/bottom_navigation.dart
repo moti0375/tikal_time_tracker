@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tikal_time_tracker/analytics/analytics.dart';
 import 'package:tikal_time_tracker/data/repository/time_records_repository.dart';
 import 'package:tikal_time_tracker/pages/login/login_page.dart';
 import 'package:tikal_time_tracker/pages/time/time_page.dart';
@@ -108,15 +109,17 @@ class BottomNavigationState extends State<BottomNavigation> {
   }
 
   Widget _buildTimePage() {
-    return StatefulProvider<TimePageBloc>(
-      valueBuilder: (context) =>
-          TimePageBloc(repository: TimeRecordsRepository()),
-      child: Consumer<TimePageBloc>(
-        builder: (context, bloc) => TimePage(
-          bloc: bloc,
+    return Consumer<BaseAuth>(
+      builder:(context, auth, _) => Provider<TimePageBloc>(
+        create: (context) =>
+            TimePageBloc(repository: TimeRecordsRepository(), auth: auth, analytics: Analytics.instance),
+        child: Consumer<TimePageBloc>(
+          builder: (context, bloc, _) => TimePage(
+            bloc: bloc,
+          ),
         ),
+        dispose: (context, bloc) => bloc.dispose(),
       ),
-      onDispose: (context, bloc) => bloc.dispose(),
     );
   }
 

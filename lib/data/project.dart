@@ -1,6 +1,9 @@
+import 'package:equatable/equatable.dart';
+
 import 'task.dart';
 
-class Project{
+// ignore: must_be_immutable
+class Project extends Equatable{
   String name;
   int value;
   List<Task> tasks;
@@ -11,4 +14,8 @@ class Project{
   String toString() {
     return 'Project{name: $name, value: $value, tasks: $tasks}';
   }
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [name, value, tasks];
 }
