@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tikal_time_tracker/services/auth/user.dart';
+import 'package:tikal_time_tracker/services/locator/locator.dart';
 
 class TimeTrackerPageTitle extends StatefulWidget{
   @override
@@ -13,6 +14,7 @@ class PageTitleState extends State<TimeTrackerPageTitle>{
 
   @override
   Widget build(BuildContext context) {
+    final user = locator<User>();
     return new Container(
       padding: const EdgeInsets.only(right: 16.0, left: 16.0, top: 8.0, bottom: 8.0),
       child: new Row(
@@ -25,7 +27,7 @@ class PageTitleState extends State<TimeTrackerPageTitle>{
                   children: <Widget>[
                     Container(
                       padding: EdgeInsets.only(bottom: 2.0),
-                      child: Text("${User.me.name}, ${User.me.role.toString().split(".").last}, ${User.me.company}"),
+                      child: Text("${user.name}, ${user.role.toString().split(".").last}, ${user.company}"),
                     )
                   ],
                 ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tikal_time_tracker/data/exceptions/failed_login_exception.dart';
 import 'package:tikal_time_tracker/services/auth/user.dart';
+import 'package:tikal_time_tracker/services/locator/locator.dart';
 import 'package:tikal_time_tracker/ui/page_title.dart';
 import 'package:tikal_time_tracker/data/project.dart';
 import 'package:tikal_time_tracker/data/task.dart';
@@ -107,7 +108,7 @@ class NewRecordPageState extends State<NewRecordPage>
   initUpdateRecord() {
     analytics
         .logEvent(NewRecordeEvent.impression(EVENT_NAME.EDITING_RECORD).
-    setUser(User.me.name).view());
+    setUser(locator<User>().name).view());
 //    print("_initUpdateRecord: date: ${widget.timeRecord.date.toString()}");
     _selectedDate = widget.timeRecord.date;
     _startTime = widget.timeRecord.start;

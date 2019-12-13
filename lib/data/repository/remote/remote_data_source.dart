@@ -13,6 +13,7 @@ import 'package:tikal_time_tracker/network/requests/reset_password_form.dart';
 import 'package:tikal_time_tracker/network/credentials.dart';
 import 'dart:convert';
 import 'package:tikal_time_tracker/data/dom/dom_parser.dart';
+import 'package:tikal_time_tracker/services/locator/locator.dart';
 
 
 import '../time_data_source.dart';
@@ -21,7 +22,7 @@ class RemoteDateSource implements TimeDateSource {
   TimeTrackerApi api;
   JsonRepo serializers = JsonRepo();
   Credentials credentials;
-  DomParser parser = DomParser();
+  DomParser parser = locator<DomParser>();
 
   RemoteDateSource({this.api});
 
@@ -69,10 +70,9 @@ class RemoteDateSource implements TimeDateSource {
   }
 
   @override
-  Future<List<Member>> getAllMembers(Role role) async {
-    return api.users().then((response){
-      return parser.parseUsersPage(response, role);
-    });
+  Stream<List<Member>> getAllMembers(Role role) async* {
+    String response = await api.users();
+    yield parser.parseUsersPage(response, role);
   }
 
   @override

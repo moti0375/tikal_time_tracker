@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:tikal_time_tracker/data/member.dart';
-import 'package:tikal_time_tracker/data/repository/repository.dart';
 import 'package:tikal_time_tracker/network/requests/reports_form.dart';
 import 'package:tikal_time_tracker/network/requests/reset_password_form.dart';
 import 'package:tikal_time_tracker/data/models.dart';
@@ -12,7 +11,7 @@ import 'package:tikal_time_tracker/network/requests/send_email_form.dart';
 import 'package:tikal_time_tracker/network/time_tracker_api.dart';
 
 
-class TimeRecordsRepository implements TimeDateSource, Repository{
+class TimeRecordsRepository implements TimeDateSource{
 
   static final String _TAG = "TimeRecordsRepository";
   Credentials credentials;
@@ -23,18 +22,15 @@ class TimeRecordsRepository implements TimeDateSource, Repository{
   static TimeRecordsRepository get instance => _instance;
 
 
-  static TimeRecordsRepository init(Credentials credentials) {
+  static TimeRecordsRepository init(TimeDateSource remoteDataSource, Credentials credentials) {
     if (_instance == null) {
       print("$_TAG : init: ${credentials.toString()}");
-      _instance = TimeRecordsRepository._internal(credentials);
+      _instance = TimeRecordsRepository._internal(remoteDataSource, credentials);
     }
     return _instance;
   }
 
-  TimeRecordsRepository._internal(this.credentials){
-    print("$_TAG: _internal: ${this.credentials}");
-   remoteDateSource = RemoteDateSource(api: TimeTrackerApi.create());
-  }
+  TimeRecordsRepository._internal(this.remoteDateSource, this.credentials);
 
   factory TimeRecordsRepository(){
     return _instance;
@@ -82,7 +78,7 @@ class TimeRecordsRepository implements TimeDateSource, Repository{
   }
 
   @override
-  Future<List<Member>> getAllMembers(Role role) {
+  Stream<List<Member>> getAllMembers(Role role) {
     return remoteDateSource.getAllMembers(role);
   }
 
@@ -125,17 +121,6 @@ class TimeRecordsRepository implements TimeDateSource, Repository{
   @override
   Future<SendEmailForm> sendEmailPage() {
     return remoteDateSource.sendEmailPage();
-  }
-
-  @override
-  Stream<List<Member>> getAllUsers(Role role) async* {
-    List<Member> allMembers = await remoteDateSource.getAllMembers(role);
-    yield allMembers;
-  }
-
-  @override
-  Stream<TimeReport> getTimeRecords(DateTime date) async* {
-    yield await remoteDateSource.getAllTimeForDate(date);
   }
 
 }

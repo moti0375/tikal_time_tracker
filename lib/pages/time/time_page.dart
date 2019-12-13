@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:tikal_time_tracker/data/models.dart';
 import 'package:tikal_time_tracker/services/auth/auth.dart';
 import 'package:tikal_time_tracker/services/auth/user.dart';
+import 'package:tikal_time_tracker/services/locator/locator.dart';
 import 'package:tikal_time_tracker/ui/platform_appbar.dart';
 import 'package:tikal_time_tracker/ui/time_record_list_builder.dart';
 import 'package:tikal_time_tracker/pages/new_record_page/new_record_page.dart';
@@ -52,7 +53,7 @@ class _TimePageState extends State<TimePage> {
 
   @override
   Widget build(BuildContext context) {
-    User user = Provider.of<BaseAuth>(context).getCurrentUser();
+    User user = locator<User>();
 
     print("build: TimePage: $user");
 

@@ -20,6 +20,7 @@ dependencies:
   firebase_analytics: ^1.0.4
   provider: ^3.2.0
   equatable: ^1.0.0
+  get_it: ^3.0.3
 
 dev_dependencies:
   jaguar_retrofit_gen:

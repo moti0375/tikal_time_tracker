@@ -7,8 +7,7 @@ class UsersBloc {
   TimeRecordsRepository repository;
 
   UsersBloc({this.repository});
-
   Stream<List<Member>> loadUsers() {
-    return repository.getAllUsers(User.me.role);
+     return repository.getAllMembers(User.me.role);
   }
 }

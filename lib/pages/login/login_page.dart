@@ -3,11 +3,13 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tikal_time_tracker/bottom_navigation.dart';
 import 'package:tikal_time_tracker/data/exceptions/failed_login_exception.dart';
+import 'package:tikal_time_tracker/data/repository/app_repository.dart';
 import 'package:tikal_time_tracker/data/repository/time_records_repository.dart';
 import 'package:tikal_time_tracker/services/auth/auth.dart';
 import 'package:tikal_time_tracker/services/auth/user.dart';
 import 'dart:async';
 import 'package:tikal_time_tracker/network/credentials.dart';
+import 'package:tikal_time_tracker/services/locator/locator.dart';
 import 'package:tikal_time_tracker/storage/preferences.dart';
 import 'package:tikal_time_tracker/ui/animation_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -31,8 +33,7 @@ class LoginPage extends StatefulWidget {
 
 class LoginPageState extends State<LoginPage> {
 
-  TimeRecordsRepository repository = TimeRecordsRepository.init(
-      new Credentials(signInUserName: "", signInPassword: ""));
+  AppRepository repository = locator<AppRepository>();
 
   Analytics analytics = Analytics.instance;
   String _email;
