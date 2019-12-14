@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:tikal_time_tracker/data/exceptions/failed_login_exception.dart';
+import 'package:tikal_time_tracker/services/auth/auth.dart';
 import 'package:tikal_time_tracker/services/auth/user.dart';
 import 'package:tikal_time_tracker/services/locator/locator.dart';
 import 'package:tikal_time_tracker/ui/page_title.dart';
@@ -35,8 +37,7 @@ class NewRecordPage extends StatefulWidget {
   }
 }
 
-class NewRecordPageState extends State<NewRecordPage>
-    implements NewRecordViewContract {
+class NewRecordPageState extends State<NewRecordPage> implements NewRecordViewContract {
   Analytics analytics = Analytics.instance;
   Project _selectedProject;
   TimeOfDay _startTime;
@@ -68,15 +69,18 @@ class NewRecordPageState extends State<NewRecordPage>
     _selectedDate = widget.dateTime;
     _setCommentController();
     _setFocusNodes();
-    _setPresenter();
     analytics.logEvent(
         NewRecordeEvent.impression(EVENT_NAME.NEW_TIME_PAGE_OPENED).
         setUser(User.me.name).view());
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _setPresenter();
+  }
+  @override
   void showSaveRecordFailed() {
-    // TODO: implement showSaveRecordFailed
   }
 
   @override
@@ -108,7 +112,7 @@ class NewRecordPageState extends State<NewRecordPage>
   initUpdateRecord() {
     analytics
         .logEvent(NewRecordeEvent.impression(EVENT_NAME.EDITING_RECORD).
-    setUser(locator<User>().name).view());
+    setUser(Provider.of<BaseAuth>(context).getCurrentUser().name).view());
 //    print("_initUpdateRecord: date: ${widget.timeRecord.date.toString()}");
     _selectedDate = widget.timeRecord.date;
     _startTime = widget.timeRecord.start;

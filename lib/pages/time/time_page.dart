@@ -53,7 +53,7 @@ class _TimePageState extends State<TimePage> {
 
   @override
   Widget build(BuildContext context) {
-    User user = locator<User>();
+    User user = Provider.of<BaseAuth>(context).getCurrentUser();
 
     print("build: TimePage: $user");
 
@@ -214,8 +214,7 @@ class _TimePageState extends State<TimePage> {
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Text(
-                    "${user.name}, ${user.company}, ${user.role.toString().split(".").last}",
+                  Text(user != null ? "${user.name}, ${user.company}, ${user.role.toString().split(".").last}" : "",
                     textAlign: TextAlign.start,
                   )
                 ],

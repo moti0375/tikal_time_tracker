@@ -21,10 +21,11 @@ abstract class BaseAuth with ChangeNotifier{
 }
 
 
-class AppAuth extends BaseAuth{
+class AppAuth extends BaseAuth {
 
   AppRepository _appRepository;
   User _user;
+  User get user => _user;
   AppAuth(this._appRepository);
 
   StreamController<User> authStreamController = StreamController.broadcast();
@@ -34,20 +35,19 @@ class AppAuth extends BaseAuth{
     User user = await  _appRepository.login(email, password);
     print("Login Success: $user");
     _user = user;
-    setUser(user);
     return user;
   }
 
   @override
-  Future<void> logout() {
+  Future<void> logout() async {
     authStreamController.add(null);
     _user = null;
-    locator.unregister<User>();
+    notifyListeners();
     return null;
   }
 
   @override
-  Stream<User> get onAuthChanged => authStreamController.stream.asBroadcastStream();
+  Stream<User> get onAuthChanged => authStreamController.stream;
 
   @override
   void dispose() {

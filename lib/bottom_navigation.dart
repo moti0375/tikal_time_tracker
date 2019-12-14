@@ -40,6 +40,7 @@ String tabName({Tab tab}) {
 
 class BottomNavigationState extends State<BottomNavigation> {
   Tab currentTab = Tab.Time;
+  StreamSubscription<User> listen;
 
   _onSelectedTab(int index) {
     switch (index) {
@@ -62,32 +63,29 @@ class BottomNavigationState extends State<BottomNavigation> {
   }
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   void dispose() {
     super.dispose();
-    print("BottomNavigation: dispose");
+    print("BototmVavigation dispose");
+    listen.cancel();
+    listen = null;
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     BaseAuth auth = Provider.of<BaseAuth>(context);
-    auth.onAuthChanged
-      ..asBroadcastStream().listen((user) {
+    if(listen == null){
+      listen = auth.onAuthChanged.listen((user) {
         if (user == null) {
           print("onAuthChanged: logout");
           _logout();
         }
       });
+    }
   }
 
   _logout() {
-    Navigator.of(context).pushReplacement(new MaterialPageRoute(
-        builder: (BuildContext context) => new LoginPage()));
+    Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => LoginPage.create()));
   }
 
   @override

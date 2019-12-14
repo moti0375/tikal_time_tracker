@@ -1,29 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:tikal_time_tracker/bottom_navigation.dart';
-import 'package:tikal_time_tracker/data/exceptions/failed_login_exception.dart';
 import 'package:tikal_time_tracker/data/repository/app_repository.dart';
-import 'package:tikal_time_tracker/data/repository/time_records_repository.dart';
+import 'package:tikal_time_tracker/pages/login/login_event.dart';
+import 'package:tikal_time_tracker/pages/login/login_page_bloc.dart';
+import 'package:tikal_time_tracker/pages/login/login_state.dart' as prefix0;
 import 'package:tikal_time_tracker/services/auth/auth.dart';
-import 'package:tikal_time_tracker/services/auth/user.dart';
-import 'dart:async';
-import 'package:tikal_time_tracker/network/credentials.dart';
 import 'package:tikal_time_tracker/services/locator/locator.dart';
 import 'package:tikal_time_tracker/storage/preferences.dart';
 import 'package:tikal_time_tracker/ui/animation_button.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tikal_time_tracker/ui/platform_alert_dialog.dart';
-import 'package:tikal_time_tracker/utils/page_transition.dart';
-import 'package:tikal_time_tracker/pages/reset_password/reset_password_page.dart';
 import 'package:tikal_time_tracker/analytics/analytics.dart';
-import 'package:tikal_time_tracker/analytics/events/login_event.dart';
 import 'package:tikal_time_tracker/resources/strings.dart';
-import 'package:tikal_time_tracker/utils/utils.dart';
+
+import 'login_state.dart';
 
 class LoginPage extends StatefulWidget {
+  static Widget create() {
+    return Consumer<BaseAuth>(
+      builder: (context, auth, _) => Provider<LoginPageBloc>(
+        create: (context) => LoginPageBloc(auth, locator<Preferences>(),
+            locator<AppRepository>(), locator<Analytics>()),
+        child: Consumer<LoginPageBloc>(
+          builder: (context, bloc, _) => LoginPage(bloc: bloc),
+        ),
+        dispose: (context, bloc) => bloc.dispose(),
+      ),
+    );
+  }
+
+  final LoginPageBloc bloc;
   static final String TAG = "LoginPage";
   static String tag = "LoginPage";
+
+  LoginPage({this.bloc});
 
   @override
   State<StatefulWidget> createState() {
@@ -32,18 +42,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class LoginPageState extends State<LoginPage> {
-
-  AppRepository repository = locator<AppRepository>();
-
-  Analytics analytics = Analytics.instance;
-  String _email;
-  String _password;
-  bool _loggingIn = false;
-  String loginError = "";
-  bool obscureText = true;
-
   FocusNode passwordFocusNode;
-  Preferences preferences;
 
   @override
   void initState() {
@@ -55,29 +54,70 @@ class LoginPageState extends State<LoginPage> {
   @override
   void didChangeDependencies() async {
     super.didChangeDependencies();
-    preferences = Provider.of<Preferences>(context);
-    String email = await preferences.getLoginUserName();
-    String password = await preferences.getLoginPassword();
-    setState(() {
-      _email = email;
-      _password = password;
-    });
+  }
+
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
+  Widget _buildEmailInputField() {
+    return TextFormField(
+      controller: emailController,
+      onFieldSubmitted: (value) {
+        print("onFieldSubmitted: $value");
+        widget.bloc.onNewEvent(UserName(userName: value));
+        FocusScope.of(context).requestFocus(passwordFocusNode);
+      },
+      onEditingComplete: () {},
+      textInputAction: TextInputAction.next,
+      keyboardType: TextInputType.emailAddress,
+      decoration: InputDecoration(
+          hintText: Strings.email_hint,
+          contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+          border:
+              OutlineInputBorder(borderRadius: BorderRadius.circular(30.0))),
+    );
+  }
+
+  Widget _buildPasswordInputField(prefix0.LogInModel state) {
+    return Stack(
+      alignment: const Alignment(0.9, 0),
+      children: <Widget>[
+        TextFormField(
+          focusNode: passwordFocusNode,
+          textInputAction: TextInputAction.done,
+          controller: passwordController,
+          onFieldSubmitted: (password) {
+            //_login(_email, _password);
+            widget.bloc.onNewEvent(Password(password: password));
+            widget.bloc.onNewEvent(LoginButtonClicked(context: context));
+//            _loginAuth(context, _email, _password);
+          },
+          obscureText: state.obscured,
+          decoration: InputDecoration(
+              hintText: Strings.password_hint,
+              contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0))),
+        ),
+        InkWell(
+            child: new Icon(
+                state.obscured == true ? Icons.visibility : Icons.visibility_off),
+            onTap: () => widget.bloc.onNewEvent(ToggleObscureMode())
+            ),
+      ],
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-
-    TextEditingController emailController = TextEditingController(text: _email);
     emailController.addListener(() {
 //      print("${emailController.text}");
-      _email = emailController.text;
+      widget.bloc.onNewEvent(UserName(userName: emailController.text));
     });
 
-    TextEditingController passwordController =
-        TextEditingController(text: _password);
     passwordController.addListener(() {
 //      print("${passwordController.text}");
-      _password = passwordController.text;
+      widget.bloc.onNewEvent(Password(password: passwordController.text));
     });
 
     print("${LoginPage.TAG}: build");
@@ -90,89 +130,42 @@ class LoginPageState extends State<LoginPage> {
           child: Image.asset('assets/logo_no_background.png'),
         ));
 
-//    if(_email != null && _email.isNotEmpty){
-//      emailController.value = TextEditingValue(text: _email);
-//    }
-
-    final email = TextFormField(
-      controller: emailController,
-      onFieldSubmitted: (value) {
-        print("onFieldSubmitted: $value");
-        _email = value;
-        FocusScope.of(context).requestFocus(passwordFocusNode);
-      },
-      onEditingComplete: () {},
-      textInputAction: TextInputAction.next,
-      keyboardType: TextInputType.emailAddress,
-      decoration: InputDecoration(
-          hintText: Strings.email_hint,
-          contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-          border:
-              OutlineInputBorder(borderRadius: BorderRadius.circular(30.0))),
-    );
-
-//    if(_password != null && _password.isNotEmpty){
-//      passwordController.value = TextEditingValue(text: _password);
-//    }
-
-    final password = Stack(
-      alignment: const Alignment(0.9, 0),
-      children: <Widget>[
-        TextFormField(
-          focusNode: passwordFocusNode,
-          textInputAction: TextInputAction.done,
-          controller: passwordController,
-          onFieldSubmitted: (password) {
-            //_login(_email, _password);
-            _loginAuth(context, _email, _password);
-          },
-          obscureText: obscureText,
-          decoration: InputDecoration(
-              hintText: Strings.password_hint,
-              contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-              border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30.0))),
-        ),
-        InkWell(
-            child: new Icon(
-                obscureText == true ? Icons.visibility : Icons.visibility_off),
-            onTap: () {
-              _toggleObscureText();
-            }),
-      ],
-    );
-
-
     final forgotLabel = Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       mainAxisSize: MainAxisSize.max,
       children: <Widget>[
         FlatButton(
-            onPressed: () {
-              _navigateToResetPassword(_email);
-            },
-            child: Text(Strings.forgot_password,
-                style: TextStyle(color: Colors.black45))),
+          onPressed: () => widget.bloc.onNewEvent(ForgotPasswordClicked(context: context)),
+          child: Text(
+            Strings.forgot_password,
+            style: TextStyle(color: Colors.black45),
+          ),
+        ),
         FlatButton(
-            onPressed: () {
-              _showSignOutDialog();
-            },
-            child: Text(Strings.sign_out,
-                style: TextStyle(color: Colors.black45))),
+          onPressed: () => _showSignOutDialog(),
+          child: Text(
+            Strings.sign_out,
+            style: TextStyle(color: Colors.black45),
+          ),
+        ),
       ],
     );
 
-    Widget getLoginInfo() {
+    Widget getLoginInfo(prefix0.LogInModel state) {
       return SizedBox(
           height: 15,
           child: Text(
-            loginError,
+            state.errorInfo ?? "",
             textAlign: TextAlign.center,
             style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
           ));
     }
 
-    Widget _loginForm() {
+    Widget _loginForm(LogInModel state) {
+      print(
+          "_loginForm: ${state.email}, ${state.password}, ${state.loggingIn}");
+      emailController.text = state.email;
+      passwordController.text = state.password;
       return Card(
         elevation: 4,
         child: Padding(
@@ -182,22 +175,17 @@ class LoginPageState extends State<LoginPage> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               SizedBox(height: 8.0),
-              email,
+              _buildEmailInputField(),
               SizedBox(height: 8.0),
-              password,
+              _buildPasswordInputField(state),
               SizedBox(height: 8.0),
-              getLoginInfo(),
+              getLoginInfo(state),
               SizedBox(height: 8.0),
               AnimationButton(
                   buttonText: Strings.login_button_text,
-                  loggingIn: _loggingIn,
-                  onPressed: () {
-//                    Navigator.of(context).pop(); // Close keyboard
-                    print("onPressed: logging in..");
-                    analytics.logEvent(
-                        LoginEvent.click(EVENT_NAME.LOGIN_CLICKED).view());
-                    _loginAuth(context, _email, _password);
-                  }),
+                  loggingIn: state.loggingIn,
+                  onPressed: () => widget.bloc
+                      .onNewEvent(LoginButtonClicked(context: context))),
               forgotLabel
             ],
           ),
@@ -207,89 +195,45 @@ class LoginPageState extends State<LoginPage> {
 
     return new Scaffold(
       backgroundColor: Colors.white,
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 50.0),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                logo,
-                SizedBox(height: 8.0),
-                _loginForm(),
-                SizedBox(height: 8.0),
-              ],
-            ),
-          ),
-        ),
-      ),
+      body: StreamBuilder<prefix0.LogInModel>(
+          initialData: LogInModel(),
+          stream: widget.bloc.loginStateStream,
+          builder: (context, snapshot) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 24.0, vertical: 50.0),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      logo,
+                      SizedBox(height: 8.0),
+                      _loginForm(snapshot.data),
+                      SizedBox(height: 8.0),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }),
     );
   }
 
-  void _navigateToTabsScreen(BuildContext context) {
-    repository.timePage().then((response) {
-//      debugPrint("_navigateToTime response: $response");
-      Navigator.of(context)
-          .pushReplacement(PageTransition(widget: BottomNavigation()));
-    });
-  }
-
-  void _navigateToResetPassword(String email) {
-    Navigator.of(context)
-        .push(PageTransition(widget: ResetPasswordPage(emailAddress: email)));
-  }
-
-  void _loginAuth(BuildContext context, String email, String password) async {
-    Utils.hideSoftKeyboard(context);
-    print("loginAuth: called");
-    BaseAuth auth = Provider.of<BaseAuth>(context);
-    setState(() {
-      loginError = "";
-      _loggingIn = true;
-    });
-    auth.login(email, password).then((user){
-      if(user != null){
-        print("_loginAuth: User: ${user.name}");
-        preferences.setLoginUserName(_email);
-        preferences.setLoginPassword(_password);
-        analytics.logEvent(LoginEvent.impression(EVENT_NAME.LOGIN_OK).setUser(user.name).view());
-        _navigateToTabsScreen(context);
-      } else {
-        print("_loginAuth: user null");
-      }
-    }, onError: (e){
-      if(e is AppException){
-        print("_loginAuth: ${e.cause}");
-        _updateError(e.cause);
-      }
-    });
-  }
-
-  void _updateError(String error) {
-    // print("updateError: $error");
-    setState(() {
-      _loggingIn = false;
-      loginError = error;
-    });
-  }
-
-  void _showSignOutDialog()  {
+  void _showSignOutDialog() {
     PlatformAlertDialog dialog = PlatformAlertDialog(
       title: Strings.sign_out_approval_title,
       content: Strings.sign_out_approval_subtitle,
       defaultActionText: "OK",
       actions: <Widget>[
-        FlatButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
+        FlatButton(onPressed: () => Navigator.pop(context),
           child: Text(Strings.cancel),
         ),
         FlatButton(
-          onPressed: () {
-            _signOut();
+          onPressed: (){
+            widget.bloc.onNewEvent(SignOut());
             Navigator.pop(context);
           },
           child: Text(Strings.ok),
@@ -298,25 +242,5 @@ class LoginPageState extends State<LoginPage> {
     );
 
     dialog.show(context);
-  }
-
-  Future<Preferences> initPrefs() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    return Preferences.init(preferences);
-  }
-
-  void _signOut() async {
-    setState(() {
-      _email = "";
-      _password = "";
-    });
-    preferences.signOut();
-    await Provider.of<BaseAuth>(context).logout();
-  }
-
-  void _toggleObscureText() {
-    setState(() {
-      obscureText = !obscureText;
-    });
   }
 }

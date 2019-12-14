@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tikal_time_tracker/services/auth/auth.dart';
 import 'package:tikal_time_tracker/services/auth/user.dart';
 import 'package:tikal_time_tracker/services/locator/locator.dart';
 
@@ -14,7 +16,7 @@ class PageTitleState extends State<TimeTrackerPageTitle>{
 
   @override
   Widget build(BuildContext context) {
-    final user = locator<User>();
+    final user = Provider.of<BaseAuth>(context).getCurrentUser();
     return new Container(
       padding: const EdgeInsets.only(right: 16.0, left: 16.0, top: 8.0, bottom: 8.0),
       child: new Row(
