@@ -1,6 +1,9 @@
 name: tikal_time_tracker
 description: A new Flutter application.
 
+environment:
+  sdk: ">=2.2.2 <3.0.0"
+
 dependencies:
   flutter:
     sdk: flutter
@@ -16,8 +19,8 @@ dependencies:
   html: any
   ktoast: ^1.0.3
   url_launcher: ^4.0.2
-  firebase_core: ^0.2.5
-  firebase_analytics: ^1.0.4
+  firebase_core: ^0.4.3+1
+  firebase_analytics: ^5.0.9
   provider: ^3.2.0
   equatable: ^1.0.0
   get_it: ^3.0.3
