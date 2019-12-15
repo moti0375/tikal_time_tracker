@@ -17,6 +17,7 @@ import 'package:tikal_time_tracker/storage/preferences.dart';
 import 'network/time_tracker_api.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await setupLocator();
   runApp(new TimeTracker());
 }
