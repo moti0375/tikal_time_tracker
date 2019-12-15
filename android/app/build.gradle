@@ -37,6 +37,7 @@ android {
         applicationId "com.bartovapps.tikaltimetracker"
         minSdkVersion 16
         targetSdkVersion 29
+        multiDexEnabled true
         versionCode 12
         versionName "1.4.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
