@@ -3,35 +3,26 @@ import 'package:flutter/services.dart';
 import 'dart:async';
 import 'package:intl/intl.dart';
 
-class TimeTrackerDatePicker extends StatefulWidget {
+class TimeTrackerDatePicker extends StatelessWidget {
   final DateTime initializedDateTime;
   final String hint;
   final Function(DateTime dateTime) onSubmittedCallback;
   final RegExp datePattern = RegExp("^[0-3]?[0-9]/[0-1]?[0-9]/[2]?[0]?[0-9]{2}\$");
   final DateFormat dateFormat = DateFormat("d/M/y");
-
-  TimeTrackerDatePicker(
-      {this.initializedDateTime, this.onSubmittedCallback, this.hint});
-
-  @override
-  State<StatefulWidget> createState() {
-    return DatePickerState();
-  }
-}
-
-class DatePickerState extends State<TimeTrackerDatePicker> {
   TextEditingController dateInputController;
   DateTime _dateTime;
 
-  @override
-  void initState() {
-    super.initState();
-    if (widget.initializedDateTime != null) {
-      _dateTime = widget.initializedDateTime;
+  TimeTrackerDatePicker(
+      {this.initializedDateTime, this.onSubmittedCallback, this.hint}){
+    if(this.initializedDateTime != null){
+      _dateTime = initializedDateTime;
       dateInputController = new TextEditingController(
           text: "${_dateTime.day}/${_dateTime.month}/${_dateTime.year}");
+
     }
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +48,7 @@ class DatePickerState extends State<TimeTrackerDatePicker> {
                       _validator(value);
                     },
                     decoration: InputDecoration(
-                        hintText: widget.hint != null ? widget.hint : "Date",
+                        hintText: hint != null ? hint : "Date",
                         contentPadding:
                             EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
                         border: OutlineInputBorder(
@@ -85,26 +76,23 @@ class DatePickerState extends State<TimeTrackerDatePicker> {
   }
 
   void _validator(String value) {
-    Match match = widget.datePattern.firstMatch(value);
+    Match match = datePattern.firstMatch(value);
     if (match != null) {
       print("matched: $value");
-      DateTime date = widget.dateFormat.parse(value);
+      DateTime date = dateFormat.parse(value);
       print("entered date: ${date.day}:${date.month}:${date.year}");
       _onDateSelected(date);
       SystemChannels.textInput.invokeMethod('TextInput.hide');
     } else {
       _dateTime = null;
-      widget.onSubmittedCallback(null);
+      onSubmittedCallback(null);
     }
   }
 
   void _onDateSelected(DateTime date) {
-    widget.onSubmittedCallback(date);
-    setState(() {
-      _dateTime = date;
-      dateInputController = new TextEditingController(
-          text: "${_dateTime.day}/${_dateTime.month}/${_dateTime.year}");
-    });
+    onSubmittedCallback(date);
+    _dateTime = date;
+    dateInputController.text =  "${_dateTime.day}/${_dateTime.month}/${_dateTime.year}";
   }
 }
 

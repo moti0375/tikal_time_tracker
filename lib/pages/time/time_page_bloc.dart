@@ -111,14 +111,16 @@ class TimePageBloc  {
     final projects = auth.getCurrentUser().projects;
     print("_navigateToEditScreen: Projects $projects");
 
-    NewRecordPage page = new NewRecordPage(
-        projects: projects,
-        dateTime: item.date,
-        timeRecord: item,
-        flow: NewRecordFlow.update_record);
+//    NewRecordPage page = new NewRecordPage(
+//        projects: projects,
+//        dateTime: item.date,
+//        timeRecord: item,
+//        flow: NewRecordFlow.update_record);
+
+    NewRecordPage newRecordPage = NewRecordPage.create(projects, item);
     Navigator.of(context)
         .push(new PageTransition(
-        widget: page))
+        widget: newRecordPage))
         .then((value) {
 //      print("got value from page");
       if (value != null) {
@@ -134,13 +136,12 @@ class TimePageBloc  {
   _navigateToNextScreen(BuildContext context) {
     final projects = auth.getCurrentUser().projects;
     print("_navigateToNextScreen: " + projects.toString());
+
+    var newRecordPage = NewRecordPage.create(projects, null);
+
     Navigator.of(context)
         .push(new PageTransition(
-        widget: new NewRecordPage(
-            projects: projects,
-            dateTime: selectedDate,
-            timeRecord: null,
-            flow: NewRecordFlow.new_record)))
+        widget: newRecordPage))
         .then((value) {
 //      print("got value from page");
       if (value != null) {
