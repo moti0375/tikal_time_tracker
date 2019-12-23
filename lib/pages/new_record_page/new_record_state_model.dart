@@ -23,7 +23,7 @@ class NewRecordStateModel {
     this.formOk = true;
     this.flow = NewRecordFlow.update_record;
     this.tasks.clear();
-    this.tasks.addAll(timeRecord.project ?? timeRecord.project.tasks);
+    this.tasks.addAll(timeRecord.project.tasks);
     return this;
   }
 

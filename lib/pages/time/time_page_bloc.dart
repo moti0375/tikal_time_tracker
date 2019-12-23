@@ -105,19 +105,12 @@ class TimePageBloc  {
     }
   }
 
-  _navigateToEditScreen(TimeRecord item, BuildContext context) {
+  _navigateToEditScreen(TimeRecord timeRecord, BuildContext context) {
 //    print("_navigateToEditScreen: ");
     print("_navigateToEditScreen: projects ${auth.getCurrentUser().projects}");
     final projects = auth.getCurrentUser().projects;
-    print("_navigateToEditScreen: Projects $projects");
 
-//    NewRecordPage page = new NewRecordPage(
-//        projects: projects,
-//        dateTime: item.date,
-//        timeRecord: item,
-//        flow: NewRecordFlow.update_record);
-
-    NewRecordPage newRecordPage = NewRecordPage.create(projects, item);
+    var newRecordPage = NewRecordPage.create(projects, timeRecord);
     Navigator.of(context)
         .push(new PageTransition(
         widget: newRecordPage))
@@ -128,7 +121,7 @@ class TimePageBloc  {
           dateSelected(DateSelectedEvent(selectedDate: value.date));
         }
       } else {
-        dateSelected(DateSelectedEvent(selectedDate: item.date));
+        dateSelected(DateSelectedEvent(selectedDate: timeRecord.date));
       }
     });
   }

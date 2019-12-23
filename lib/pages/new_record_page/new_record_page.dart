@@ -40,8 +40,8 @@ class NewRecordPage extends StatefulWidget {
         create: (context) => NewRecordPageBloc(
           locator<Analytics>(),
           projects,
+          timeRecord,
           repository: locator<AppRepository>(),
-          timeRecord: timeRecord,
         ),
         child: Consumer<NewRecordPageBloc>(
           builder: (context, bloc, _) => NewRecordPage(bloc: bloc),
@@ -157,7 +157,8 @@ class NewRecordPageState extends State<NewRecordPage> {
   void _updateFieldsValues(NewRecordStateModel stateModel) {
     commentInputController.text = stateModel.timeRecord.comment;
     durationInputController.text = stateModel.timeRecord.duration == null
-        ? "" : Utils.buildTimeStringFromDuration(stateModel.timeRecord.duration);
+        ? ""
+        : Utils.buildTimeStringFromDuration(stateModel.timeRecord.duration);
   }
 
   Widget buildPageBody(
@@ -254,8 +255,7 @@ class NewRecordPageState extends State<NewRecordPage> {
             focusNode: commentFocusNode,
             onFieldSubmitted: (comment) {
               if (stateModel.formOk) {
-                widget.bloc
-                    .dispatchEvent(OnSaveButtonClicked(context: context));
+                widget.bloc.dispatchEvent(OnSaveButtonClicked(context: context));
               }
             },
             maxLines: 4,
@@ -320,26 +320,23 @@ class NewRecordPageState extends State<NewRecordPage> {
       hint: "Start Time",
       onTimeSelected: (TimeOfDay time) =>
           widget.bloc.dispatchEvent(OnStartTime(selectedTime: time)),
-       onNowButtonClicked: () => {
-        widget.bloc.dispatchEvent(OnNowButtonClicked())
-       },
+      onNowButtonClicked: () =>
+          {widget.bloc.dispatchEvent(OnNowButtonClicked())},
     );
   }
 
   TimeTrackerTimePicker buildFinishTimePicker(
       BuildContext context, NewRecordStateModel stateModel) {
     return TimeTrackerTimePicker(
-      pickerName: "finishTimePicker: ",
-      initialTimeValue: stateModel.timeRecord.finish,
-      hint: "Finish Time",
-      onTimeSelected: (TimeOfDay time) => {
-        widget.bloc.dispatchEvent(OnFinishTime(selectedTime: time)),
-        FocusScope.of(context).requestFocus(commentFocusNode)
-      },
-      onNowButtonClicked: () => {
-        widget.bloc.dispatchEvent(OnNowButtonClicked())
-      }
-    );
+        pickerName: "finishTimePicker: ",
+        initialTimeValue: stateModel.timeRecord.finish,
+        hint: "Finish Time",
+        onTimeSelected: (TimeOfDay time) => {
+              widget.bloc.dispatchEvent(OnFinishTime(selectedTime: time)),
+              FocusScope.of(context).requestFocus(commentFocusNode)
+            },
+        onNowButtonClicked: () =>
+            {widget.bloc.dispatchEvent(OnNowButtonClicked())});
   }
 
   Container buildTasksDropDown(NewRecordStateModel stateModel) {
@@ -402,8 +399,7 @@ class NewRecordPageState extends State<NewRecordPage> {
                   ),
                 );
               }).toList(),
-              onChanged: (Project value) => widget.bloc
-                  .dispatchEvent(OnSelectedProject(selectedProject: value))),
+              onChanged: (Project value) => widget.bloc.dispatchEvent(OnSelectedProject(selectedProject: value))),
         ));
   }
 
@@ -438,20 +434,6 @@ class NewRecordPageState extends State<NewRecordPage> {
 //            .setUser(User.me.name)
 //            .setDetails(e is AppException ? e.cause : e.toString())
 //            .view());
-
-    PlatformAlertDialog dialog = PlatformAlertDialog(
-        title: "Edit Record Error",
-        content: e is AppException ? e.cause : "There was an error",
-        defaultActionText: "OK",
-        actions: <Widget>[
-          FlatButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Text(Strings.ok),
-          ),
-        ]);
-    dialog.show(context);
   }
 }
 
