@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tikal_time_tracker/data/models.dart';
+import 'package:tikal_time_tracker/pages/time/time_page_event.dart';
 import 'package:tikal_time_tracker/services/auth/auth.dart';
 import 'package:tikal_time_tracker/services/auth/user.dart';
 import 'package:tikal_time_tracker/services/locator/locator.dart';
@@ -45,7 +46,7 @@ class _TimePageState extends State<TimePage> {
   @override
   void initState() {
     super.initState();
-    widget.bloc.dateSelected(DateSelectedEvent(selectedDate: DateTime.now()));
+    widget.bloc.dispatchEvent(DateSelectedEvent(selectedDate: DateTime.now()));
   }
 
   final TextEditingController dateInputController =
@@ -62,9 +63,7 @@ class _TimePageState extends State<TimePage> {
       backgroundColor: Colors.black12,
       appBar: _buildAppBar(title: Strings.app_name, context: context),
       floatingActionButton: new FloatingActionButton(
-          onPressed: () {
-            widget.bloc.onAddFabClicked(context);
-          },
+          onPressed: () => widget.bloc.dispatchEvent(FabAddRecordClicked(context)),
           child: Icon(Icons.add)),
       body: StreamBuilder<TimeReport>(
           initialData: TimeReport(date: DateTime.now(), timeReport: List<TimeRecord>()),
@@ -127,7 +126,7 @@ class _TimePageState extends State<TimePage> {
     return PlaceholderContent(
         title: Strings.no_work_title,
         subtitle: Strings.no_work_subtitle,
-        onPressed: () => widget.bloc.onAddEmptyScreenTap(context));
+        onPressed: () => widget.bloc.dispatchEvent(EmptyScreenAddRecordClicked(context)));
   }
 
   void onNewRecordScreenClicked() {}
@@ -137,7 +136,7 @@ class _TimePageState extends State<TimePage> {
         initializedDateTime: widget.bloc.selectedDate,
         onSubmittedCallback: (date) {
           dateInputController.text = "${date.day}/${date.month}/${date.year}";
-          widget.bloc.onDatePickerDateSelected(DateSelectedEvent(selectedDate: date));
+          widget.bloc.dispatchEvent(DatePickerSelectedEvent(selectedDate:date));
         });
   }
 
@@ -178,12 +177,9 @@ class _TimePageState extends State<TimePage> {
                   dismissibleItems: true,
                   onItemClick: (item) {
                     print("onItemClickListener: ");
-                    widget.bloc.navigateRecordEditPage(item, buildContext);
+                    widget.bloc.dispatchEvent(OnTimeRecordItemClicked(buildContext, timeRecord: item));
                   },
-                  onItemDismissed: (item) {
-                    print("onItemDismissed: ");
-                    widget.bloc.onItemDismissed(item);
-                  },
+                  onItemDismissed: (item) => widget.bloc.dispatchEvent(OnItemDismissed(context, timeRecord: item)),
                 ),
                 summaryRow(snapshot),
                 _infoRow(snapshot)
@@ -236,9 +232,7 @@ class _TimePageState extends State<TimePage> {
               width: 24.0,
               height: 24.0,
               child: GestureDetector(
-                onTap: () {
-                  widget.bloc.onAboutClicked(context);
-                },
+                onTap: () => widget.bloc.dispatchEvent(OnAboutItemClicked(context: context)),
                 child: Image.asset(
                   'assets/logo_no_background.png',
                 ),
@@ -265,13 +259,10 @@ class _TimePageState extends State<TimePage> {
 
   void _select(Choice choice, BuildContext context) {
     if (choice.action == MenuAction.Logout) {
-      widget.bloc.logout();
+      widget.bloc.dispatchEvent(LogoutItemClicked());
     }
     if (choice.action == MenuAction.About) {
-      widget.bloc.onAboutClicked(context);
+      widget.bloc.dispatchEvent(OnAboutItemClicked(context: context));
     }
-  }
-
-  _onDateSelected(DateTime selectedDate) {
   }
 }

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tikal_time_tracker/analytics/analytics.dart';
+import 'package:tikal_time_tracker/data/repository/app_repository.dart';
 import 'package:tikal_time_tracker/data/repository/time_records_repository.dart';
 import 'package:tikal_time_tracker/pages/login/login_page.dart';
 import 'package:tikal_time_tracker/pages/time/time_page.dart';
@@ -12,6 +13,7 @@ import 'package:tikal_time_tracker/pages/reports/generate_report_page.dart';
 import 'package:tikal_time_tracker/resources/strings.dart';
 import 'package:tikal_time_tracker/services/auth/auth.dart';
 import 'package:tikal_time_tracker/services/auth/user.dart';
+import 'package:tikal_time_tracker/services/locator/locator.dart';
 
 enum Tab {
   Time,
@@ -110,7 +112,7 @@ class BottomNavigationState extends State<BottomNavigation> {
     return Consumer<BaseAuth>(
       builder:(context, auth, _) => Provider<TimePageBloc>(
         create: (context) =>
-            TimePageBloc(repository: TimeRecordsRepository(), auth: auth, analytics: Analytics.instance),
+            TimePageBloc(locator<AppRepository>(),  auth,  locator<Analytics>()),
         child: Consumer<TimePageBloc>(
           builder: (context, bloc, _) => TimePage(
             bloc: bloc,
