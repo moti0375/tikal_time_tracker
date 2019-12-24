@@ -1,3 +1,4 @@
+
 class Strings{
   static const app_name = "Tikal Time Tracker";
 
@@ -74,7 +75,7 @@ class Strings{
   static const send_button_text = "Send";
 
   //About screen
-  static const version_text = "Version ";
+  static const version_text = "Version";
   static const about_text = "Developed with Google's Flutter cross platform framework";
   static const developer_text = "Moti Bartov, Tikal Mobile Group";
   static const developer_email = "motib@tikalk.com";
@@ -84,7 +85,6 @@ class Strings{
   //Reset password screen
   static const reset_password_page_title = "Password Resetting";
   static const reset_password_button_text = "Reset password ";
-  static const app_version = "1.4.0";
 }
 
 class Values{

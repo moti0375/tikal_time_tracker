@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:package_info/package_info.dart';
 import 'package:tikal_time_tracker/services/auth/user.dart';
+import 'package:tikal_time_tracker/services/locator/locator.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:tikal_time_tracker/resources/strings.dart';
 import 'package:tikal_time_tracker/analytics/analytics.dart';
 import 'package:tikal_time_tracker/analytics/events/base_event.dart';
 
 class AboutScreen extends StatelessWidget{
-
   final Analytics analytics = Analytics.instance;
   @override
   Widget build(BuildContext context) {
@@ -67,7 +68,7 @@ class AboutScreen extends StatelessWidget{
                       textAlign: TextAlign.center,
                       maxLines: 1,
                         style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),),
-                    getTextRow("${Strings.version_text} ${Strings.app_version}"),
+                    getTextRow("${Strings.version_text}: ${locator<PackageInfo>().version}"),
                     getTextRow(Strings.about_text),
                   ],
                 ),

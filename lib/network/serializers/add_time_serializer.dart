@@ -19,7 +19,7 @@ class AddTimeSerializer extends Serializer<TimeRecord>{
 
     map["project"] = "${model.project.value}";
     map["task"] = "${model.task.value}";
-    map["date"] = "${model.date.toString()}";
+    map["date"] = "${dateFormat.format(model.date)}";
     map["start"] = Utils.buildTimeStringFromTime(model.start);
     map["finish"] = model.finish == null ? "" : Utils.buildTimeStringFromTime(model.finish);
     map["duration"] = "";

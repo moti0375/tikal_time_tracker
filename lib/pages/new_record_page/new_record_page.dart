@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tikal_time_tracker/data/exceptions/failed_login_exception.dart';
+import 'package:tikal_time_tracker/data/repository/app_repository.dart';
+import 'package:tikal_time_tracker/pages/new_record_page/new_record_page_event.dart';
+import 'package:tikal_time_tracker/pages/new_record_page/new_record_state_model.dart';
 import 'package:tikal_time_tracker/services/auth/auth.dart';
 import 'package:tikal_time_tracker/services/auth/user.dart';
 import 'package:tikal_time_tracker/services/locator/locator.dart';
@@ -14,173 +17,59 @@ import 'package:tikal_time_tracker/ui/platform_alert_dialog.dart';
 import 'package:tikal_time_tracker/ui/platform_appbar.dart';
 import 'package:tikal_time_tracker/utils/utils.dart';
 import 'package:tikal_time_tracker/ui/date_picker_widget.dart';
-import 'package:tikal_time_tracker/pages/new_record_page/new_record_contract.dart';
-import 'package:tikal_time_tracker/pages/new_record_page/new_record_presenter.dart';
+import 'package:tikal_time_tracker/pages/new_record_page/new_record_bloc.dart';
 import 'package:tikal_time_tracker/ui/time_picker.dart';
 import 'package:tikal_time_tracker/resources/strings.dart';
 import 'package:tikal_time_tracker/analytics/analytics.dart';
 import 'package:tikal_time_tracker/analytics/events/new_record_event.dart';
 
-// ignore: must_be_immutable
 class NewRecordPage extends StatefulWidget {
-  final List<Project> projects;
-  final DateTime dateTime;
-  final TimeRecord timeRecord;
+  final NewRecordPageBloc bloc;
 
-  NewRecordFlow flow;
-
-  NewRecordPage({this.projects, this.dateTime, this.timeRecord, this.flow});
+  NewRecordPage({this.bloc});
 
   @override
   State<StatefulWidget> createState() {
     return new NewRecordPageState();
   }
+
+  static Widget create(List<Project> projects, TimeRecord timeRecord) {
+    return Consumer<BaseAuth>(
+      builder: (context, auth, _) => Provider<NewRecordPageBloc>(
+        create: (context) => NewRecordPageBloc(
+          locator<Analytics>(),
+          projects,
+          timeRecord,
+          auth: auth,
+          repository: locator<AppRepository>(),
+        ),
+        child: Consumer<NewRecordPageBloc>(
+          builder: (context, bloc, _) => NewRecordPage(bloc: bloc),
+        ),
+        dispose: (context, bloc) => bloc.dispose(),
+      ),
+    );
+  }
 }
 
-class NewRecordPageState extends State<NewRecordPage> implements NewRecordViewContract {
-  Analytics analytics = Analytics.instance;
-  Project _selectedProject;
-  TimeOfDay _startTime;
-  TimeOfDay _finishTime;
-  Duration _duration;
-  DateTime _selectedDate;
-  TextEditingController startTimeController;
-  TextEditingController finishTimeController;
-  TextEditingController dateInputController;
-  TextEditingController durationInputController;
-  TextEditingController commentInputController;
+class NewRecordPageState extends State<NewRecordPage> {
+  TextEditingController durationInputController =
+      new TextEditingController(text: "");
+  TextEditingController commentInputController =
+      new TextEditingController(text: "");
   FocusNode commentFocusNode;
-  FocusNode startPickerNode;
-  FocusNode endPickerNode;
-  bool isSaveButtonEnabled = false;
-  TimeRecordsRepository repository = new TimeRecordsRepository();
-  NewRecordPresenterContract presenter;
-
-  List<Project> _projects = new List<Project>();
-
-  Task _selectedTask;
-  List<Task> _tasks = new List<Task>();
 
   @override
   void initState() {
     super.initState();
-    print("initState: flow ${widget.flow}, ${widget.projects}");
-    _projects.addAll(widget.projects);
-    _selectedDate = widget.dateTime;
     _setCommentController();
     _setFocusNodes();
-    analytics.logEvent(
-        NewRecordeEvent.impression(EVENT_NAME.NEW_TIME_PAGE_OPENED).
-        setUser(User.me.name).view());
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _setPresenter();
-  }
-  @override
-  void showSaveRecordFailed() {
-  }
-
-  @override
-  void showSaveRecordSuccess(TimeRecord timeRecord) {
-    analytics.logEvent(
-        NewRecordeEvent.impression(EVENT_NAME.RECORD_SAVED_SUCCESS).
-        setUser(User.me.name).view());
-    Navigator.of(context).pop(timeRecord);
-  }
-
-  @override
-  initNewRecord() {
-    analytics.logEvent(
-        NewRecordeEvent.impression(EVENT_NAME.CREATING_NEW_RECORD).setUser(User.me.name).view());
-
-//    print("_initNewRecord:");
-    startTimeController = new TextEditingController(
-      text: "",
-    );
-    finishTimeController = new TextEditingController(text: "");
-    dateInputController = new TextEditingController(text: "");
-    if (widget.dateTime != null) {
-      _selectedDate = widget.dateTime;
-      presenter.dateSelected(_selectedDate);
-    }
-  }
-
-  @override
-  initUpdateRecord() {
-    analytics
-        .logEvent(NewRecordeEvent.impression(EVENT_NAME.EDITING_RECORD).
-    setUser(Provider.of<BaseAuth>(context).getCurrentUser().name).view());
-//    print("_initUpdateRecord: date: ${widget.timeRecord.date.toString()}");
-    _selectedDate = widget.timeRecord.date;
-    _startTime = widget.timeRecord.start;
-    _finishTime = widget.timeRecord.finish;
-
-    print("initUpdateRecord: ${widget.timeRecord.project}");
-    var p = _projects.firstWhere((p){
-      return p.value == widget.timeRecord.project.value;
-    });
-    presenter.projectSelected(p);
-    presenter.taskSelected(widget.timeRecord.task);
-    presenter.commentEntered(widget.timeRecord.comment);
-    presenter.dateSelected(_selectedDate);
-    presenter.startTimeSelected(_startTime);
-    presenter.endTimeSelected(_finishTime);
-
-    setState(() {
-      TextEditingValue textEditingValue =
-          TextEditingValue(text: widget.timeRecord.comment);
-      commentInputController.value = textEditingValue;
-    });
-  }
-
-  @override
-  void showSelectedProject(Project value) {
-    setState(() {
-      print("_onProjectSelected: $value");
-      _selectedProject = value;
-    });
-  }
-
-  @override
-  void showAssignedTasks(List<Task> tasks) {
-    setState(() {
-      _tasks = tasks;
-    });
-  }
-
-  @override
-  void showSelectedTask(Task value) {
-    setState(() {
-      _selectedTask = value;
-    });
-  }
-
-  @override
-  void showDuration(Duration duration) {
-    setState(() {
-      _duration = duration;
-      durationInputController = TextEditingController(
-          text: _duration == null
-              ? ""
-              : Utils.buildTimeStringFromDuration(_duration));
-    });
-  }
-
-  @override
-  void setButtonState(bool enabled) {
-    setState(() {
-      isSaveButtonEnabled = enabled;
-    });
   }
 
   _setCommentController() {
     commentInputController = TextEditingController();
-    commentInputController.addListener(() {
-      presenter.commentEntered(commentInputController.text);
-    });
+    commentInputController.addListener(() => widget.bloc
+        .dispatchEvent(OnComment(comment: commentInputController.text)));
   }
 
   _setFocusNodes() {
@@ -190,127 +79,103 @@ class NewRecordPageState extends State<NewRecordPage> implements NewRecordViewCo
         commentInputController.clear();
       }
     });
-    startPickerNode = FocusNode();
-    endPickerNode = FocusNode();
-    endPickerNode.addListener(() {
-      if (!endPickerNode.hasFocus) {
-        print("no focus anymore..");
-        endPickerNode.unfocus();
-        //   FocusScope.of(context).requestFocus(null);
-//        endPickerNode.dispose();
-      }
-    });
   }
 
-  _setPresenter() {
-    presenter = NewRecordPresenter(
-        repository: repository,
-        timeRecord: widget.timeRecord,
-        flow: widget.flow);
-    presenter.subscribe(this);
+  Row _buildButtonsRow(NewRecordStateModel newRecordStateModel) {
+    List<Widget> children;
+    if (newRecordStateModel.flow == NewRecordFlow.update_record) {
+      children = [
+        Expanded(
+          child: _buildSaveButton(newRecordStateModel),
+        ),
+        Expanded(
+          child: _buildDeleteButton(),
+        )
+      ];
+    } else {
+      children = [
+        Expanded(
+          child: _buildSaveButton(newRecordStateModel),
+        )
+      ];
+    }
+
+    return Row(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: children,
+    );
+  }
+
+  void _updateFieldsValues(NewRecordStateModel stateModel) {
+    commentInputController.text = stateModel.timeRecord.comment;
+    durationInputController.text = stateModel.timeRecord.duration == null
+        ? ""
+        : Utils.buildTimeStringFromDuration(stateModel.timeRecord.duration);
+  }
+
+  Widget buildPageBody(
+      AsyncSnapshot<NewRecordStateModel> snapshot,
+      BuildContext context,
+      Row _buildButtonsRow(NewRecordStateModel newRecordStateModel)) {
+    _updateFieldsValues(snapshot.data);
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Flexible(
+            flex: 4,
+            child: ListView(
+              children: <Widget>[
+                new TimeTrackerPageTitle(),
+                buildProjectsDropDown(snapshot.data),
+                buildTasksDropDown(snapshot.data),
+                buildDatePicker(snapshot.data),
+                buildStartTimePicker(context, snapshot.data),
+                buildFinishTimePicker(context, snapshot.data),
+                buildDurationField(),
+                buildCommentField(snapshot.data)
+              ],
+            ),
+          ),
+          Flexible(
+              flex: 1,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Expanded(flex: 1, child: _buildButtonsRow(snapshot.data))
+                ],
+              ))
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    print("new_record_page build: $_selectedProject");
-    final projectsDropDown = Container(
-        margin: EdgeInsets.symmetric(vertical: 4.0),
-        decoration: BoxDecoration(
-            border: Border.all(width: 0.5, color: Colors.black45)),
-        padding: EdgeInsets.symmetric(horizontal: 10.0),
-        child: DropdownButtonHideUnderline(
-          child: new DropdownButton(
-              iconSize: 30.0,
-              hint: Container(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  Strings.drop_down_project_title,
-                  style: TextStyle(fontSize: 24.0, color: Colors.black26),
-                ),
-              ),
-              value: _selectedProject,
-              items: _projects.map((Project value) {
-                return new DropdownMenuItem<Project>(
-                  value: value,
-                  child: new Text(
-                    value.name,
-                    style: TextStyle(fontSize: 24.0),
-                  ),
-                );
-              }).toList(),
-              onChanged: (Project value) {
-                presenter.projectSelected(value);
-              }),
-        ));
-
-    final tasksDropDown = Container(
-        margin: EdgeInsets.symmetric(vertical: 4.0),
-        decoration: BoxDecoration(
-            border: Border.all(width: 0.5, color: Colors.black45)),
-        padding: EdgeInsets.symmetric(horizontal: 10.0),
-        child: DropdownButtonHideUnderline(
-          child: new DropdownButton(
-              iconSize: 30.0,
-              hint: Container(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  Strings.drop_down_task_title,
-                  style: TextStyle(fontSize: 24.0, color: Colors.black26),
-                ),
-              ),
-              value: _selectedTask,
-              items: _tasks.map((Task value) {
-                return new DropdownMenuItem<Task>(
-                  value: value,
-                  child: new Text(
-                    value.name
-                        .toString()
-                        .substring(value.toString().indexOf('.') + 1),
-                    style: TextStyle(fontSize: 24.0),
-                  ),
-                );
-              }).toList(),
-              onChanged: (Task value) {
-                presenter.taskSelected(value);
-              }),
-        ));
-
-    final finishTimePicker = TimeTrackerTimePicker(
-      pickerName: "finishTimePicker: ",
-      initialTimeValue: _finishTime,
-      hint: "Finish Time",
-      focusNode: endPickerNode,
-      callback: (TimeOfDay time) {
-        presenter.endTimeSelected(time);
-      },
-      onSubmitCallback: () {
-//      print("finishTimePicker submitted");
-        FocusScope.of(context).requestFocus(commentFocusNode);
+    var bloc = Provider.of<NewRecordPageBloc>(context);
+    return StreamBuilder<NewRecordStateModel>(
+      stream: bloc.stateStream,
+      initialData: NewRecordStateModel(),
+      builder: (context, snapshot) {
+        return Scaffold(
+          appBar: PlatformAppbar(
+            title: Text(snapshot.data.flow == NewRecordFlow.update_record
+                ? Strings.edit_record_page_title
+                : Strings.new_record_page_title),
+          ).build(context),
+          body: SafeArea(
+            child: buildPageBody(snapshot, context, _buildButtonsRow),
+          ),
+        );
       },
     );
+  }
 
-    final startTimePicker = TimeTrackerTimePicker(
-      pickerName: "startTimePicker: ",
-      initialTimeValue: _startTime,
-      hint: "Start Time",
-      focusNode: startPickerNode,
-      callback: (TimeOfDay time) {
-        presenter.startTimeSelected(time);
-      },
-      onSubmitCallback: () {
-//      print("startTimePicker submitted");
-        finishTimePicker.requestFocus(context);
-      },
-    );
-
-    Widget datePicker = TimeTrackerDatePicker(
-        initializedDateTime: _selectedDate,
-        onSubmittedCallback: (date) {
-//      print("datePicker: callback ${date.toString()}");
-          presenter.dateSelected(date);
-        });
-
-    final durationInput = Container(
+  Container buildDurationField() {
+    return Container(
       padding: EdgeInsets.only(left: 4.0, right: 4.0, top: 8.0),
       child: new Row(
         children: <Widget>[
@@ -330,73 +195,18 @@ class NewRecordPageState extends State<NewRecordPage> implements NewRecordViewCo
         ],
       ),
     );
+  }
 
-    Widget _saveButton = Padding(
-      padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-      child: RaisedButton(
-        onPressed: () {
-          if (isSaveButtonEnabled) {
-            analytics.logEvent(
-                NewRecordeEvent.click(EVENT_NAME.SAVE_RECORD_CLICKED));
-            SystemChannels.textInput.invokeMethod('TextInput.hide');
-            presenter.saveButtonClicked();
-          }
-        },
-        color: isSaveButtonEnabled ? Colors.orangeAccent : Colors.grey,
-        child: Text(Strings.save_button_text,
-            style: TextStyle(color: Colors.white)),
-      ),
-    );
-
-    Widget _deleteButton = Padding(
-      padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-      child: RaisedButton(
-        onPressed: () {
-          _showDeleteAlertDialog();
-          analytics.logEvent(
-              NewRecordeEvent.click(EVENT_NAME.DELETE_RECORD_CLICKED).
-              setUser(User.me.name));
-        },
-        color: Colors.orangeAccent,
-        child: Text(Strings.delete_button_text,
-            style: TextStyle(color: Colors.white)),
-      ),
-    );
-
-    Row _buildButtonsRow() {
-      List<Widget> children;
-      if (widget.flow == NewRecordFlow.update_record) {
-        children = [
-          Expanded(
-            child: _saveButton,
-          ),
-          Expanded(
-            child: _deleteButton,
-          )
-        ];
-      } else {
-        children = [
-          Expanded(
-            child: _saveButton,
-          )
-        ];
-      }
-
-      return Row(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: children,
-      );
-    }
-
-    Widget _commentField = Container(
+  Container buildCommentField(NewRecordStateModel stateModel) {
+    return Container(
         padding: EdgeInsets.only(left: 4.0, right: 4.0, top: 8.0),
         child: TextFormField(
             textInputAction: TextInputAction.done,
             focusNode: commentFocusNode,
             onFieldSubmitted: (comment) {
-              if (isSaveButtonEnabled) {
-                presenter.saveButtonClicked();
+              if (stateModel.formOk) {
+                widget.bloc
+                    .dispatchEvent(OnSaveButtonClicked(context: context));
               }
             },
             maxLines: 4,
@@ -406,62 +216,142 @@ class NewRecordPageState extends State<NewRecordPage> implements NewRecordViewCo
                     borderRadius: BorderRadius.circular(10.0)),
                 contentPadding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
                 hintText: Strings.note_hint)));
+  }
 
-    return Scaffold(
-      appBar: PlatformAppbar(
-        title: Text(widget.flow == NewRecordFlow.update_record
-            ? Strings.edit_record_page_title
-            : Strings.new_record_page_title),
-      ).build(context),
-      body: SafeArea(
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Flexible(
-                flex: 4,
-                child: ListView(
-                  children: <Widget>[
-                    new TimeTrackerPageTitle(),
-                    projectsDropDown,
-                    tasksDropDown,
-                    datePicker,
-                    startTimePicker,
-                    finishTimePicker,
-                    durationInput,
-                    _commentField
-                  ],
-                ),
-              ),
-              Flexible(
-                  flex: 1,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      Expanded(flex: 1, child: _buildButtonsRow())
-                    ],
-                  ))
-            ],
-          ),
-        ),
+  Padding _buildDeleteButton() {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+      child: RaisedButton(
+        onPressed: () {
+          _showDeleteAlertDialog();
+//        analytics.logEvent(
+//            NewRecordeEvent.click(EVENT_NAME.DELETE_RECORD_CLICKED).setUser(User.me.name));
+        },
+        color: Colors.orangeAccent,
+        child: Text(Strings.delete_button_text,
+            style: TextStyle(color: Colors.white)),
       ),
     );
   }
 
-  _createEmptyDropDown() {
-    _tasks.add(_selectedTask);
-    return _tasks.map((Task item) {
-      //print("item: $item");
-      return new DropdownMenuItem<Task>(
-        value: item,
-        child: new Text(
-          item.name,
-          style: TextStyle(fontSize: 25.0),
-        ),
-      );
-    }).toList();
+  Padding _buildSaveButton(NewRecordStateModel stateModel) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+      child: RaisedButton(
+        onPressed: () {
+          if (stateModel.formOk) {
+            print("_buildSaveButton: ");
+//          analytics.logEvent(
+//              NewRecordeEvent.click(EVENT_NAME.SAVE_RECORD_CLICKED));
+            SystemChannels.textInput.invokeMethod('TextInput.hide');
+            widget.bloc.dispatchEvent(OnSaveButtonClicked(context: context));
+          }
+        },
+        color: stateModel.formOk ? Colors.orangeAccent : Colors.grey,
+        child: Text(Strings.save_button_text,
+            style: TextStyle(color: Colors.white)),
+      ),
+    );
+  }
+
+  TimeTrackerDatePicker buildDatePicker(NewRecordStateModel stateModel) {
+    print("buildDatePicker: ${stateModel.timeRecord.date}");
+    return TimeTrackerDatePicker(
+        initializedDateTime: stateModel.timeRecord.date,
+        onSubmittedCallback: (date) =>
+            widget.bloc.dispatchEvent(OnDateSelected(selectedDate: date)));
+  }
+
+  TimeTrackerTimePicker buildStartTimePicker(
+      BuildContext context, NewRecordStateModel stateModel) {
+    print("buildStartTimePicker: ${stateModel.timeRecord.start}");
+    return TimeTrackerTimePicker(
+      pickerName: "startTimePicker: ",
+      initialTimeValue: stateModel.timeRecord.start,
+      hint: "Start Time",
+      onTimeSelected: (TimeOfDay time) =>
+          widget.bloc.dispatchEvent(OnStartTime(selectedTime: time)),
+      onNowButtonClicked: () => widget.bloc.dispatchEvent(OnNowButtonClicked()),
+    );
+  }
+
+  TimeTrackerTimePicker buildFinishTimePicker(
+      BuildContext context, NewRecordStateModel stateModel) {
+    return TimeTrackerTimePicker(
+      pickerName: "finishTimePicker: ",
+      initialTimeValue: stateModel.timeRecord.finish,
+      hint: "Finish Time",
+      onTimeSelected: (TimeOfDay time) => {
+        widget.bloc.dispatchEvent(OnFinishTime(selectedTime: time)),
+        FocusScope.of(context).requestFocus(commentFocusNode)
+      },
+      onNowButtonClicked: () => widget.bloc.dispatchEvent(OnNowButtonClicked()),
+    );
+  }
+
+  Container buildTasksDropDown(NewRecordStateModel stateModel) {
+    return Container(
+        margin: EdgeInsets.symmetric(vertical: 4.0),
+        decoration: BoxDecoration(
+            border: Border.all(width: 0.5, color: Colors.black45)),
+        padding: EdgeInsets.symmetric(horizontal: 10.0),
+        child: DropdownButtonHideUnderline(
+          child: new DropdownButton(
+              iconSize: 30.0,
+              hint: Container(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  Strings.drop_down_task_title,
+                  style: TextStyle(fontSize: 24.0, color: Colors.black26),
+                ),
+              ),
+              value: stateModel.timeRecord.task,
+              items: stateModel.tasks.map((Task value) {
+                return new DropdownMenuItem<Task>(
+                  value: value,
+                  child: new Text(
+                    value.name
+                        .toString()
+                        .substring(value.toString().indexOf('.') + 1),
+                    style: TextStyle(fontSize: 24.0),
+                  ),
+                );
+              }).toList(),
+              onChanged: (Task value) => widget.bloc
+                  .dispatchEvent(OnSelectedTask(selectedTask: value))),
+        ));
+  }
+
+  Container buildProjectsDropDown(NewRecordStateModel newRecordStateModel) {
+    print("buildProjectsDropDown: ${newRecordStateModel.projects}");
+    return Container(
+        margin: EdgeInsets.symmetric(vertical: 4.0),
+        decoration: BoxDecoration(
+            border: Border.all(width: 0.5, color: Colors.black45)),
+        padding: EdgeInsets.symmetric(horizontal: 10.0),
+        child: DropdownButtonHideUnderline(
+          child: new DropdownButton(
+              iconSize: 30.0,
+              hint: Container(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  Strings.drop_down_project_title,
+                  style: TextStyle(fontSize: 24.0, color: Colors.black26),
+                ),
+              ),
+              value: newRecordStateModel.timeRecord.project,
+              items: newRecordStateModel.projects.map((Project value) {
+                return new DropdownMenuItem<Project>(
+                  value: value,
+                  child: new Text(
+                    value.name,
+                    style: TextStyle(fontSize: 24.0),
+                  ),
+                );
+              }).toList(),
+              onChanged: (Project value) => widget.bloc
+                  .dispatchEvent(OnSelectedProject(selectedProject: value))),
+        ));
   }
 
   void _showDeleteAlertDialog() {
@@ -471,15 +361,13 @@ class NewRecordPageState extends State<NewRecordPage> implements NewRecordViewCo
       defaultActionText: "OK",
       actions: <Widget>[
         FlatButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
+          onPressed: () => Navigator.pop(context),
           child: Text(Strings.delete_cancel_text),
         ),
         FlatButton(
           onPressed: () {
             Navigator.pop(context);
-            presenter.deleteButtonClicked();
+            widget.bloc.dispatchEvent(OnDeleteButtonClicked(context: context));
           },
           child: Text(Strings.delete_approve_text),
         )
@@ -492,23 +380,11 @@ class NewRecordPageState extends State<NewRecordPage> implements NewRecordViewCo
   @override
   void onError(Exception e) {
     print("onError: ${e.toString()}");
-    analytics.logEvent(NewRecordeEvent.impression(EVENT_NAME.FAILED_TO_EDIT_OR_SAVE).
-    setUser(User.me.name).
-    setDetails(e is AppException ? e.cause : e.toString()).view());
-
-    PlatformAlertDialog dialog = PlatformAlertDialog(
-        title: "Edit Record Error",
-        content: e is AppException ? e.cause : "There was an error",
-        defaultActionText: "OK",
-        actions: <Widget>[
-          FlatButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Text(Strings.ok),
-          ),
-        ]);
-    dialog.show(context);
+//    analytics.logEvent(
+//        NewRecordeEvent.impression(EVENT_NAME.FAILED_TO_EDIT_OR_SAVE)
+//            .setUser(User.me.name)
+//            .setDetails(e is AppException ? e.cause : e.toString())
+//            .view());
   }
 }
 

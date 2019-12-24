@@ -2,13 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:tikal_time_tracker/analytics/analytics.dart';
+import 'package:tikal_time_tracker/analytics/events/new_record_event.dart' as prefix0;
 import 'package:tikal_time_tracker/analytics/events/time_event.dart';
 import 'package:tikal_time_tracker/bloc_base/bloc_base_event.dart';
 import 'package:tikal_time_tracker/data/exceptions/failed_login_exception.dart';
 import 'package:tikal_time_tracker/pages/about_screen/about_screen.dart';
 import 'package:tikal_time_tracker/pages/new_record_page/new_record_page.dart';
 import 'package:tikal_time_tracker/services/auth/auth.dart';
-import 'package:tikal_time_tracker/services/auth/user.dart';
 import 'package:tikal_time_tracker/utils/page_transition.dart';
 
 import '../../data/repository/time_records_repository.dart';
@@ -60,6 +60,8 @@ class TimePageBloc  {
 
   void onItemDismissed(TimeRecord item) {
     print("onItemDismissed: ${item.toString()}");
+    analytics.logEvent(prefix0.NewRecordeEvent.click(prefix0.EVENT_NAME.SWIPE_TO_DELETE).setUser(auth.getCurrentUser().name));
+
     repository.deleteTime(item).then((value){
       print("onItemDismissed: ");
       _loadTime(_currentDate);
@@ -105,20 +107,15 @@ class TimePageBloc  {
     }
   }
 
-  _navigateToEditScreen(TimeRecord item, BuildContext context) {
+  _navigateToEditScreen(TimeRecord timeRecord, BuildContext context) {
 //    print("_navigateToEditScreen: ");
     print("_navigateToEditScreen: projects ${auth.getCurrentUser().projects}");
     final projects = auth.getCurrentUser().projects;
-    print("_navigateToEditScreen: Projects $projects");
 
-    NewRecordPage page = new NewRecordPage(
-        projects: projects,
-        dateTime: item.date,
-        timeRecord: item,
-        flow: NewRecordFlow.update_record);
+    var newRecordPage = NewRecordPage.create(projects, timeRecord);
     Navigator.of(context)
         .push(new PageTransition(
-        widget: page))
+        widget: newRecordPage))
         .then((value) {
 //      print("got value from page");
       if (value != null) {
@@ -126,7 +123,7 @@ class TimePageBloc  {
           dateSelected(DateSelectedEvent(selectedDate: value.date));
         }
       } else {
-        dateSelected(DateSelectedEvent(selectedDate: item.date));
+        dateSelected(DateSelectedEvent(selectedDate: timeRecord.date));
       }
     });
   }
@@ -134,13 +131,12 @@ class TimePageBloc  {
   _navigateToNextScreen(BuildContext context) {
     final projects = auth.getCurrentUser().projects;
     print("_navigateToNextScreen: " + projects.toString());
+
+    var newRecordPage = NewRecordPage.create(projects, null);
+
     Navigator.of(context)
         .push(new PageTransition(
-        widget: new NewRecordPage(
-            projects: projects,
-            dateTime: selectedDate,
-            timeRecord: null,
-            flow: NewRecordFlow.new_record)))
+        widget: newRecordPage))
         .then((value) {
 //      print("got value from page");
       if (value != null) {

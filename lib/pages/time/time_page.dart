@@ -55,7 +55,7 @@ class _TimePageState extends State<TimePage> {
   Widget build(BuildContext context) {
     User user = Provider.of<BaseAuth>(context).getCurrentUser();
 
-    print("build: TimePage: $user");
+//    print("build: TimePage: $user");
 
     return Scaffold(
       resizeToAvoidBottomPadding: false,
@@ -158,16 +158,16 @@ class _TimePageState extends State<TimePage> {
     );
   }
 
-  Widget _buildBody(AsyncSnapshot<TimeReport> snapshot, BuildContext context, User user) {
-    print("_buildBody: ${snapshot.connectionState}");
+  Widget _buildBody(AsyncSnapshot<TimeReport> snapshot, BuildContext buildContext, User user) {
+//    print("_buildBody: ${snapshot.connectionState}");
     if (snapshot.hasError) {
-      print("_buildBody: ${snapshot.error}");
-      _logout(context);
+//      print("_buildBody: ${snapshot.error}");
+      _logout(buildContext);
       return _buildPlaceHolder(context, user);
     } else if (snapshot.hasData) {
-      print("_buildBody: done with data");
+//      print("_buildBody: done with data");
       return (snapshot.data.timeReport.isEmpty)
-          ? _buildPlaceHolder(context, user)
+          ? _buildPlaceHolder(buildContext, user)
           : Column(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.start,
@@ -178,7 +178,7 @@ class _TimePageState extends State<TimePage> {
                   dismissibleItems: true,
                   onItemClick: (item) {
                     print("onItemClickListener: ");
-                    widget.bloc.navigateRecordEditPage(item, context);
+                    widget.bloc.navigateRecordEditPage(item, buildContext);
                   },
                   onItemDismissed: (item) {
                     print("onItemDismissed: ");
@@ -191,7 +191,7 @@ class _TimePageState extends State<TimePage> {
             );
     } else {
       print("_buildBody: other");
-      return _buildPlaceHolder(context, user);
+      return _buildPlaceHolder(buildContext, user);
     }
   }
 
