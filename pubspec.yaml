@@ -25,6 +25,7 @@ dependencies:
   provider: ^3.2.0
   equatable: ^1.0.0
   get_it: ^3.0.3
+  package_info: ^0.4.0+13
 
 dev_dependencies:
   jaguar_retrofit_gen:

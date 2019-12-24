@@ -2,13 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:tikal_time_tracker/analytics/analytics.dart';
+import 'package:tikal_time_tracker/analytics/events/new_record_event.dart' as prefix0;
 import 'package:tikal_time_tracker/analytics/events/time_event.dart';
 import 'package:tikal_time_tracker/bloc_base/bloc_base_event.dart';
 import 'package:tikal_time_tracker/data/exceptions/failed_login_exception.dart';
 import 'package:tikal_time_tracker/pages/about_screen/about_screen.dart';
 import 'package:tikal_time_tracker/pages/new_record_page/new_record_page.dart';
 import 'package:tikal_time_tracker/services/auth/auth.dart';
-import 'package:tikal_time_tracker/services/auth/user.dart';
 import 'package:tikal_time_tracker/utils/page_transition.dart';
 
 import '../../data/repository/time_records_repository.dart';
@@ -60,6 +60,8 @@ class TimePageBloc  {
 
   void onItemDismissed(TimeRecord item) {
     print("onItemDismissed: ${item.toString()}");
+    analytics.logEvent(prefix0.NewRecordeEvent.click(prefix0.EVENT_NAME.SWIPE_TO_DELETE).setUser(auth.getCurrentUser().name));
+
     repository.deleteTime(item).then((value){
       print("onItemDismissed: ");
       _loadTime(_currentDate);

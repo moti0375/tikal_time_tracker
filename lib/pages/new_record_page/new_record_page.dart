@@ -17,7 +17,6 @@ import 'package:tikal_time_tracker/ui/platform_alert_dialog.dart';
 import 'package:tikal_time_tracker/ui/platform_appbar.dart';
 import 'package:tikal_time_tracker/utils/utils.dart';
 import 'package:tikal_time_tracker/ui/date_picker_widget.dart';
-import 'package:tikal_time_tracker/pages/new_record_page/new_record_contract.dart';
 import 'package:tikal_time_tracker/pages/new_record_page/new_record_bloc.dart';
 import 'package:tikal_time_tracker/ui/time_picker.dart';
 import 'package:tikal_time_tracker/resources/strings.dart';
@@ -41,6 +40,7 @@ class NewRecordPage extends StatefulWidget {
           locator<Analytics>(),
           projects,
           timeRecord,
+          auth: auth,
           repository: locator<AppRepository>(),
         ),
         child: Consumer<NewRecordPageBloc>(
@@ -53,19 +53,9 @@ class NewRecordPage extends StatefulWidget {
 }
 
 class NewRecordPageState extends State<NewRecordPage> {
-  TextEditingController startTimeController =
-      new TextEditingController(text: "");
-  TextEditingController finishTimeController =
-      new TextEditingController(text: "");
-  TextEditingController dateInputController =
-      new TextEditingController(text: "");
-  TextEditingController durationInputController =
-      new TextEditingController(text: "");
-  TextEditingController commentInputController =
-      new TextEditingController(text: "");
+  TextEditingController durationInputController = new TextEditingController(text: "");
+  TextEditingController commentInputController = new TextEditingController(text: "");
   FocusNode commentFocusNode;
-  FocusNode startPickerNode;
-  FocusNode endPickerNode;
 
   @override
   void initState() {
@@ -73,35 +63,6 @@ class NewRecordPageState extends State<NewRecordPage> {
     _setCommentController();
     _setFocusNodes();
   }
-
-  @override
-  initUpdateRecord() {
-//    print("_initUpdateRecord: date: ${widget.timeRecord.date.toString()}");
-//    _selectedDate = widget.timeRecord.date;
-//    _startTime = widget.timeRecord.start;
-//    _finishTime = widget.timeRecord.finish;
-//
-//    print("initUpdateRecord: ${widget.timeRecord.project}");
-//    var p = _projects.firstWhere((p) {
-//      return p.value == widget.timeRecord.project.value;
-//    });
-//    presenter.projectSelected(p);
-//    presenter.taskSelected(widget.timeRecord.task);
-//    presenter.commentEntered(widget.timeRecord.comment);
-//    presenter.dateSelected(_selectedDate);
-//    presenter.startTimeSelected(_startTime);
-//    presenter.endTimeSelected(_finishTime);
-  }
-
-//  @override
-//  void showDuration(Duration duration) {
-//    setState(() {
-//      durationInputController = TextEditingController(
-//          text: _duration == null
-//              ? ""
-//              : Utils.buildTimeStringFromDuration(_duration));
-//    });
-//  }
 
   _setCommentController() {
     commentInputController = TextEditingController();
@@ -114,16 +75,6 @@ class NewRecordPageState extends State<NewRecordPage> {
     commentFocusNode.addListener(() {
       if (commentFocusNode.hasFocus && commentInputController.text.isEmpty) {
         commentInputController.clear();
-      }
-    });
-    startPickerNode = FocusNode();
-    endPickerNode = FocusNode();
-    endPickerNode.addListener(() {
-      if (!endPickerNode.hasFocus) {
-        print("no focus anymore..");
-        endPickerNode.unfocus();
-        //   FocusScope.of(context).requestFocus(null);
-//        endPickerNode.dispose();
       }
     });
   }
@@ -165,7 +116,6 @@ class NewRecordPageState extends State<NewRecordPage> {
       AsyncSnapshot<NewRecordStateModel> snapshot,
       BuildContext context,
       Row _buildButtonsRow(NewRecordStateModel newRecordStateModel)) {
-    print("buildPageBody: ");
     _updateFieldsValues(snapshot.data);
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16.0),
@@ -208,8 +158,6 @@ class NewRecordPageState extends State<NewRecordPage> {
       stream: bloc.stateStream,
       initialData: NewRecordStateModel(),
       builder: (context, snapshot) {
-        print(
-            "NewRecordPage builder: snapshot => ${snapshot.connectionState}, ${snapshot.data}");
         return Scaffold(
           appBar: PlatformAppbar(
             title: Text(snapshot.data.flow == NewRecordFlow.update_record

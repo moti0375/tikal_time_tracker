@@ -11,11 +11,10 @@ import 'package:tikal_time_tracker/data/project.dart';
 import 'package:tikal_time_tracker/data/repository/app_repository.dart';
 import 'package:tikal_time_tracker/data/task.dart';
 import 'package:tikal_time_tracker/data/models.dart';
-import 'package:tikal_time_tracker/pages/new_record_page/new_record_contract.dart';
 import 'package:tikal_time_tracker/pages/new_record_page/new_record_page.dart';
 import 'package:tikal_time_tracker/pages/new_record_page/new_record_page_event.dart';
 import 'package:tikal_time_tracker/resources/strings.dart';
-import 'package:tikal_time_tracker/services/auth/user.dart';
+import 'package:tikal_time_tracker/services/auth/auth.dart';
 import 'package:tikal_time_tracker/ui/platform_alert_dialog.dart';
 
 import 'new_record_state_model.dart';
@@ -24,6 +23,7 @@ class NewRecordPageBloc {
   static const String TAG = "NewRecordPageBloc";
 
   final AppRepository repository;
+  final BaseAuth auth;
   NewRecordFlow flow;
 
   Analytics _analytics;
@@ -31,12 +31,12 @@ class NewRecordPageBloc {
 
   NewRecordPageBloc(
       this._analytics, List<Project> projects, TimeRecord timeRecord,
-      {this.repository}) {
+      {this.auth, this.repository}) {
     newRecordPageStateModel = NewRecordStateModel(projects: projects);
     print("$TAG: created");
     _analytics.logEvent(
         NewRecordeEvent.impression(EVENT_NAME.NEW_TIME_PAGE_OPENED)
-            .setUser(User.me.name)
+            .setUser(auth.getCurrentUser().name)
             .view());
     initEventStream();
     initBloc(projects, timeRecord);
@@ -57,7 +57,7 @@ class NewRecordPageBloc {
       print("$TAG update a recrod");
       newRecordPageStateModel.updateWithTimeRecord(timeRecord);
       _analytics.logEvent(NewRecordeEvent.impression(EVENT_NAME.EDITING_RECORD)
-          .setUser(User.me.name)
+          .setUser(auth.getCurrentUser().name)
           .view());
     } else {
       print("$TAG new recrod");
@@ -66,15 +66,10 @@ class NewRecordPageBloc {
           .updateWith(date: DateTime.now());
       _analytics.logEvent(
           NewRecordeEvent.impression(EVENT_NAME.CREATING_NEW_RECORD)
-              .setUser(User.me.name)
+              .setUser(auth.getCurrentUser().name)
               .view());
     }
     _stateSink.add(newRecordPageStateModel);
-
-//    Future.delayed(Duration(milliseconds: 500), () {
-//      print(
-//          "$TAG initBloc done ${newRecordPageStateModel.projects.toString()}");
-//    });
   }
 
   void _projectSelected(Project project) {
@@ -126,9 +121,12 @@ class NewRecordPageBloc {
     if (this.newRecordPageStateModel.flow == NewRecordFlow.new_record) {
       repository.addTime(this.newRecordPageStateModel.timeRecord).then(
         (_) {
+          _analytics.logEvent(NewRecordeEvent.impression(EVENT_NAME.RECORD_SAVED_SUCCESS)
+              .setUser(auth.getCurrentUser().name)
+              .view());
           _popBack(context, this.newRecordPageStateModel.timeRecord);
         },
-        onError: (e) => _showErrorDialog(e, context),
+        onError: (e) => _showErrorDialog(e, context, "Save Record Error"),
       );
     }
 
@@ -136,10 +134,12 @@ class NewRecordPageBloc {
       print(
           "_saveTimeRecord: about to update ${this.newRecordPageStateModel.timeRecord.toString()}");
       repository.updateTime(this.newRecordPageStateModel.timeRecord).then((_) {
+        _analytics.logEvent(NewRecordeEvent.impression(EVENT_NAME.EDIT_RECORD_SUCCESS)
+            .setUser(auth.getCurrentUser().name)
+            .view());
         _popBack(context, this.newRecordPageStateModel.timeRecord);
       }, onError: (e) {
-        print("There was an error: ${(e as AppException).cause}");
-        _showErrorDialog(e, context);
+        _showErrorDialog(e, context, "Edit Record Error");
       });
     }
   }
@@ -198,7 +198,9 @@ class NewRecordPageBloc {
     }
 
     if (event is OnSaveButtonClicked) {
-      print("OnSaveButtonClicked");
+      _analytics.logEvent(NewRecordeEvent.click(EVENT_NAME.SAVE_RECORD_CLICKED)
+          .setUser(auth.getCurrentUser().name));
+
       _saveTimeRecord(event.context);
     }
 
@@ -208,7 +210,7 @@ class NewRecordPageBloc {
     }
 
     if (event is OnDeleteButtonClicked) {
-      print("OnSaveButtonClicked");
+      _analytics.logEvent(NewRecordeEvent.click(EVENT_NAME.DELETE_RECORD_CLICKED).setUser(auth.getCurrentUser().name));
       _handleDeleteButton(event.context);
     }
   }
@@ -217,9 +219,13 @@ class NewRecordPageBloc {
     Navigator.of(context).pop(this.newRecordPageStateModel.timeRecord);
   }
 
-  void _showErrorDialog(e, context) {
+  void _showErrorDialog(e, context, title) {
+    _analytics.logEvent(NewRecordeEvent.impression(EVENT_NAME.FAILED_TO_EDIT_OR_SAVE)
+        .setUser(auth.getCurrentUser().name)
+        .view());
+
     PlatformAlertDialog dialog = PlatformAlertDialog(
-        title: "Edit Record Error",
+        title: title,
         content: e is AppException ? e.cause : "There was an error",
         defaultActionText: "OK",
         actions: <Widget>[
