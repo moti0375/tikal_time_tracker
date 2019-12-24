@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/src/material/time.dart';
 import 'package:tikal_time_tracker/analytics/analytics.dart';
 import 'package:tikal_time_tracker/analytics/events/new_record_event.dart';
+import 'package:tikal_time_tracker/analytics/events/time_event.dart' as timeEvent;
 import 'package:tikal_time_tracker/data/exceptions/failed_login_exception.dart';
 
 import 'package:tikal_time_tracker/data/project.dart';
@@ -212,6 +213,10 @@ class NewRecordPageBloc {
     if (event is OnDeleteButtonClicked) {
       _analytics.logEvent(NewRecordeEvent.click(EVENT_NAME.DELETE_RECORD_CLICKED).setUser(auth.getCurrentUser().name));
       _handleDeleteButton(event.context);
+    }
+
+    if (event is OnNowButtonClicked) {
+      _analytics.logEvent(timeEvent.TimeEvent.click(timeEvent.EVENT_NAME.TIME_PICKER_NOW).setUser(auth.getCurrentUser().name));
     }
   }
 

@@ -53,8 +53,10 @@ class NewRecordPage extends StatefulWidget {
 }
 
 class NewRecordPageState extends State<NewRecordPage> {
-  TextEditingController durationInputController = new TextEditingController(text: "");
-  TextEditingController commentInputController = new TextEditingController(text: "");
+  TextEditingController durationInputController =
+      new TextEditingController(text: "");
+  TextEditingController commentInputController =
+      new TextEditingController(text: "");
   FocusNode commentFocusNode;
 
   @override
@@ -203,7 +205,8 @@ class NewRecordPageState extends State<NewRecordPage> {
             focusNode: commentFocusNode,
             onFieldSubmitted: (comment) {
               if (stateModel.formOk) {
-                widget.bloc.dispatchEvent(OnSaveButtonClicked(context: context));
+                widget.bloc
+                    .dispatchEvent(OnSaveButtonClicked(context: context));
               }
             },
             maxLines: 4,
@@ -268,23 +271,22 @@ class NewRecordPageState extends State<NewRecordPage> {
       hint: "Start Time",
       onTimeSelected: (TimeOfDay time) =>
           widget.bloc.dispatchEvent(OnStartTime(selectedTime: time)),
-      onNowButtonClicked: () =>
-          {widget.bloc.dispatchEvent(OnNowButtonClicked())},
+      onNowButtonClicked: () => widget.bloc.dispatchEvent(OnNowButtonClicked()),
     );
   }
 
   TimeTrackerTimePicker buildFinishTimePicker(
       BuildContext context, NewRecordStateModel stateModel) {
     return TimeTrackerTimePicker(
-        pickerName: "finishTimePicker: ",
-        initialTimeValue: stateModel.timeRecord.finish,
-        hint: "Finish Time",
-        onTimeSelected: (TimeOfDay time) => {
-              widget.bloc.dispatchEvent(OnFinishTime(selectedTime: time)),
-              FocusScope.of(context).requestFocus(commentFocusNode)
-            },
-        onNowButtonClicked: () =>
-            {widget.bloc.dispatchEvent(OnNowButtonClicked())});
+      pickerName: "finishTimePicker: ",
+      initialTimeValue: stateModel.timeRecord.finish,
+      hint: "Finish Time",
+      onTimeSelected: (TimeOfDay time) => {
+        widget.bloc.dispatchEvent(OnFinishTime(selectedTime: time)),
+        FocusScope.of(context).requestFocus(commentFocusNode)
+      },
+      onNowButtonClicked: () => widget.bloc.dispatchEvent(OnNowButtonClicked()),
+    );
   }
 
   Container buildTasksDropDown(NewRecordStateModel stateModel) {
@@ -347,7 +349,8 @@ class NewRecordPageState extends State<NewRecordPage> {
                   ),
                 );
               }).toList(),
-              onChanged: (Project value) => widget.bloc.dispatchEvent(OnSelectedProject(selectedProject: value))),
+              onChanged: (Project value) => widget.bloc
+                  .dispatchEvent(OnSelectedProject(selectedProject: value))),
         ));
   }
 
