@@ -22,6 +22,7 @@ enum Tab {
 }
 
 class BottomNavigation extends StatefulWidget {
+
   @override
   State<StatefulWidget> createState() {
     return BottomNavigationState();
@@ -41,27 +42,29 @@ String tabName({Tab tab}) {
 }
 
 class BottomNavigationState extends State<BottomNavigation> {
-  Tab currentTab = Tab.Time;
+  int _page = 0;
+  PageController _pageController;
   StreamSubscription<User> listen;
 
   _onSelectedTab(int index) {
-    switch (index) {
-      case 0:
-        _updateCurrentTab(Tab.Time);
-        break;
-      case 1:
-        _updateCurrentTab(Tab.Reports);
-        break;
-      case 2:
-        _updateCurrentTab(Tab.Users);
-        break;
-    }
+    _pageController.animateToPage(index, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+//    switch (index) {
+//      case 0:
+//        _updateCurrentTab(Tab.Time);
+//        break;
+//      case 1:
+//        _updateCurrentTab(Tab.Reports);
+//        break;
+//      case 2:
+//        _updateCurrentTab(Tab.Users);
+//        break;
+//    }
   }
 
-  _updateCurrentTab(Tab tab) {
-    setState(() {
-      currentTab = tab;
-    });
+  @override
+  void initState() {
+    _pageController = PageController(initialPage: _page);
+    super.initState();
   }
 
   @override
@@ -93,19 +96,19 @@ class BottomNavigationState extends State<BottomNavigation> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: _buildBody(), bottomNavigationBar: _buildBottomNavigation());
-  }
-
-  Widget _buildBody() {
-    switch (currentTab) {
-      case Tab.Time:
-        return _buildTimePage();
-      case Tab.Reports:
-        return GenerateReportPage();
-      case Tab.Users:
-        return UsersPage();
-    }
-    return Container();
+        body: PageView(
+          controller: _pageController,
+          onPageChanged: (i) {
+            setState(() {
+              _page = i;
+            });
+          },
+          children: <Widget>[
+            _buildTimePage(),
+            GenerateReportPage(),
+            UsersPage()
+          ],
+        ), bottomNavigationBar: _buildBottomNavigation());
   }
 
   Widget _buildTimePage() {
@@ -125,8 +128,9 @@ class BottomNavigationState extends State<BottomNavigation> {
 
   Widget _buildBottomNavigation() {
     return BottomNavigationBar(
+      currentIndex: _page,
       type: BottomNavigationBarType.fixed,
-      items: [
+      items: <BottomNavigationBarItem>[
         _buildItem(icon: Icons.access_time, tab: Tab.Time),
         _buildItem(icon: Icons.line_weight, tab: Tab.Reports),
         _buildItem(icon: Icons.contacts, tab: Tab.Users)
@@ -137,14 +141,9 @@ class BottomNavigationState extends State<BottomNavigation> {
 
   BottomNavigationBarItem _buildItem({IconData icon, Tab tab}) {
     return BottomNavigationBarItem(
-        icon: Icon(icon, color: _colorTabMatching(item: tab)),
+        icon: Icon(icon),
         title: Text(
           tabName(tab: tab),
-          style: TextStyle(color: _colorTabMatching(item: tab)),
         ));
-  }
-
-  Color _colorTabMatching({Tab item}) {
-    return currentTab == item ? Theme.of(context).primaryColor : Colors.grey;
   }
 }
