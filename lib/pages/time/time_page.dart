@@ -30,13 +30,13 @@ class TimePage extends StatefulWidget {
 
 class _TimePageState extends State<TimePage> {
 
-  final List<Choice> choices = const <Choice>[
-    const Choice(
+  final List<Choice> choices =  <Choice>[
+     Choice(
       action: MenuAction.Logout,
       title: "Logout",
       icon: null,
     ),
-    const Choice(
+     Choice(
       action: MenuAction.About,
       title: "About",
       icon: null,

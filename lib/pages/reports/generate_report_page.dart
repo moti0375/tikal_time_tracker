@@ -428,8 +428,7 @@ class GenerateReportState extends State<GenerateReportPage> implements ReportsVi
   void showReport(List<TimeRecord> items) {
     analytics.logEvent(ReportsEvent.impression(EVENT_NAME.REPORT_GENERATED_SUCCESS).view());
     Navigator.of(context).push(new MaterialPageRoute(
-        builder: (BuildContext context) => new ReportPage(
-            report: Report(
+        builder: (BuildContext context) =>  ReportPage.create(Report(
                 report: items,
                 startDate: _startDate,
                 endDate: _endDate,

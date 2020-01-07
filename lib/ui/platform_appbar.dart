@@ -1,3 +1,4 @@
+import 'package:tikal_time_tracker/ui/more_with_red_dot_icon.dart';
 import 'package:tikal_time_tracker/ui/platform_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -7,8 +8,13 @@ class PlatformAppbar extends PlatformWidget {
   final List<Choice> actions;
   final Widget title;
   final Function onPressed;
+  final bool notificationEnabled;
 
-  PlatformAppbar({this.title, this.actions, this.onPressed});
+  PlatformAppbar(
+      {this.title,
+      this.actions,
+      this.onPressed,
+      this.notificationEnabled = false});
 
   @override
   Widget buildCupertinoWidget(BuildContext context) {
@@ -32,12 +38,21 @@ class PlatformAppbar extends PlatformWidget {
     if (actions != null) {
       return AppBar(title: title, actions: <Widget>[
         PopupMenuButton<Choice>(
+          icon: notificationEnabled
+              ? MoreWithRedDotIcon()
+              : Icon(Icons.more_vert),
           onSelected: onPressed,
           itemBuilder: (BuildContext context) {
             return actions.map((c) {
               return PopupMenuItem<Choice>(
                 value: c,
-                child: Text(c.title),
+                child: RichText(
+                  text: TextSpan(
+                    text: c.title,
+                    style: DefaultTextStyle.of(context).style,
+                      children: c.textSpans
+                  ),
+                ),
               );
             }).toList();
           },
@@ -60,7 +75,7 @@ class PlatformAppbar extends PlatformWidget {
                 child: Text(action.title),
                 onPressed: () {
                   Navigator.of(context, rootNavigator: true).pop();
-                  if(onPressed != null){
+                  if (onPressed != null) {
                     onPressed(action);
 //                    Navigator.pop(context);
                   }
@@ -75,14 +90,14 @@ class PlatformAppbar extends PlatformWidget {
         padding: EdgeInsets.all(8),
         child: Text(actions[0].title),
         onPressed: () {
-          if(onPressed != null){
+          if (onPressed != null) {
             onPressed(actions[0]);
           }
         },
       );
     } else {
       return CupertinoButton(
-         padding: EdgeInsets.all(8),
+          padding: EdgeInsets.all(8),
           child: Text("Menu"),
           onPressed: () {
             _showSheet(context);

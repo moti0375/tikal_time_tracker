@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tikal_time_tracker/pages/report/report_page_bloc.dart';
+import 'package:tikal_time_tracker/pages/report/report_page_event.dart';
+import 'package:tikal_time_tracker/pages/report/report_page_state_model.dart';
 import 'package:tikal_time_tracker/pages/reports/place_holder_content.dart';
 import 'package:tikal_time_tracker/data/models.dart';
+import 'package:tikal_time_tracker/services/auth/auth.dart';
 import 'package:tikal_time_tracker/services/auth/user.dart';
+import 'package:tikal_time_tracker/services/locator/locator.dart';
+import 'package:tikal_time_tracker/storage/preferences.dart';
 import 'package:tikal_time_tracker/ui/platform_appbar.dart';
 import 'package:tikal_time_tracker/ui/time_record_list_builder.dart';
 import 'package:tikal_time_tracker/utils/action_choice.dart';
@@ -12,21 +19,35 @@ import 'package:tikal_time_tracker/analytics/analytics.dart';
 import 'package:tikal_time_tracker/analytics/events/reports_event.dart';
 
 class ReportPage extends StatelessWidget {
-  final Report report;
+  final ReportPageBloc bloc;
   final Analytics analytics = Analytics.instance;
 
-  final List<Choice> choices = const <Choice>[
-    const Choice(
+  final List<Choice> choices =  <Choice>[
+     Choice(
         action: MenuAction.SendEmail,
         title: Strings.action_send_email,
-        icon: Icons.email)
+        icon: Icons.email),
+     Choice(
+        action: MenuAction.ReportAnalysis,
+        title: Strings.action_report_analysis,
+        icon: Icons.assessment)
   ];
 
-  ReportPage({this.report}) {
-    analytics.logEvent(
-        ReportsEvent.impression(EVENT_NAME.REPORT_GENERATED_SUCCESS).setUser(User.me.name).open());
-    // print("Total: ${report.getTotalString()}");
+  List<Choice> _buildChoices(bool didUserSawAnalysisOption){
+    return  <Choice>[
+       Choice(
+          action: MenuAction.SendEmail,
+          title: Strings.action_send_email,
+          icon: Icons.email),
+       Choice(
+          action: MenuAction.ReportAnalysis,
+          title: Strings.action_report_analysis,
+          icon: Icons.assessment,
+      textSpans: didUserSawAnalysisOption ? [] : [TextSpan(text: ' New!!', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red))])
+    ];
   }
+
+  ReportPage({this.bloc});
 
   @override
   Widget build(BuildContext context) {
@@ -37,48 +58,59 @@ class ReportPage extends StatelessWidget {
         //  print("Navigate to SendEmail page");
         Navigator.of(context).push(new PageTransition(widget: SendEmailPage()));
       }
+
+      if(choice.action == MenuAction.ReportAnalysis){
+        bloc.dispatchEvent(OnAnalysisItemClick(context));
+      }
     }
 
-    Widget _buildAppBar({String title}) {
+    Widget _buildAppBar({String title, bool userSawAnalysisOption}) {
       return PlatformAppbar(
         title: Text(title),
-        actions: choices,
+        actions: _buildChoices(userSawAnalysisOption),
         onPressed: _select,
+        notificationEnabled: userSawAnalysisOption == null ? true : !userSawAnalysisOption,
       ).build(context);
     }
 
-    return Scaffold(
-      appBar: _buildAppBar(title: Strings.report_page_title),
-      body: Column(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Expanded(
-            flex: 0,
-            child: _createTitle(context),
+    return StreamBuilder<ReportPageStateModel>(
+      stream: bloc.reportStream,
+      initialData: ReportPageStateModel(),
+      builder: (context, snapshot) {
+        return Scaffold(
+          appBar: _buildAppBar(title: Strings.report_page_title, userSawAnalysisOption: snapshot.data.userSawAnalysisOption),
+          body: Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Expanded(
+                flex: 0,
+                child: _createTitle(context, snapshot.data),
+              ),
+              Expanded(flex: 1, child: _buildContent(snapshot.data))
+            ],
           ),
-          Expanded(flex: 1, child: _buildContent())
-        ],
-      ),
+        );
+      }
     );
   }
 
-  _buildContent() {
-    if (report == null || report.report.isEmpty) {
-      return PlaceholderContent();
+  _buildContent(ReportPageStateModel data) {
+    if (data.timeTrackerReport == null || data.timeTrackerReport.report.isEmpty) {
+      return PlaceholderContent(subtitle: "",);
     } else {
       return Container(
           padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
           child: TimeRecordListViewBuilder(
-            items: report.report,
+            items: data.timeTrackerReport.report,
             intermittently: false,
             dismissibleItems: false,
           ));
     }
   }
 
-  Widget _createTitle(BuildContext context) {
+  Widget _createTitle(BuildContext context, ReportPageStateModel data) {
     return Container(
       width: MediaQuery.of(context).size.width * 1,
       padding: const EdgeInsets.only(
@@ -90,8 +122,7 @@ class ReportPage extends StatelessWidget {
         children: <Widget>[
           Container(
             padding: EdgeInsets.only(bottom: 2.0),
-            child: Text(
-              "Report: ${report.startDate.day}/${report.startDate.month}/${report.startDate.year} - ${report.endDate.day}/${report.endDate.month}/${report.endDate.year}",
+            child: Text(data.timeTrackerReport != null ? "Report: ${data.timeTrackerReport.startDate.day}/${data.timeTrackerReport.startDate.month}/${data.timeTrackerReport.startDate.year} - ${data.timeTrackerReport.endDate.day}/${data.timeTrackerReport.endDate.month}/${data.timeTrackerReport.endDate.year}" : "",
               style: TextStyle(fontSize: 20.0, color: Colors.black45),
             ),
           ),
@@ -109,7 +140,7 @@ class ReportPage extends StatelessWidget {
                   "${User.me.name}, ${User.me.company}, ${User.me.role.toString().split(".").last}",
                   textAlign: TextAlign.start,
                 ),
-                Text("${Strings.total} ${report.getTotalString()}",
+                Text(data.timeTrackerReport != null ? "${Strings.total} ${data.timeTrackerReport.getTotalString()}" : "",
                     textAlign: TextAlign.end)
               ],
             ),
@@ -118,4 +149,21 @@ class ReportPage extends StatelessWidget {
       ),
     );
   }
+
+  static Widget create(Report report) {
+    return Consumer<BaseAuth>(
+      builder: (context, auth, _) => Provider<ReportPageBloc>(
+        create: (context) => ReportPageBloc(
+          locator<Analytics>(),
+          report,
+          locator<Preferences>(),
+        ),
+        child: Consumer<ReportPageBloc>(
+          builder: (context, bloc, _) => ReportPage(bloc: bloc),
+        ),
+        dispose: (context, bloc) => bloc.dispose(),
+      ),
+    );
+  }
 }
+

@@ -51,6 +51,7 @@ class Strings{
   //Report page
   static const report_page_title = "Report";
   static const action_send_email = "Send Email";
+  static const action_report_analysis = "Report Analysis";
   static const total = "Total:";
 
   //New Record page

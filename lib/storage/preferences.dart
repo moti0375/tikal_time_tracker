@@ -7,6 +7,10 @@ class Preferences{
   static const String SING_IN_PASSWORD = "sing_in_password";
   static const String LOGIN_IN_USER_NAME = "login_username";
   static const String LOGIN_IN_PASSWORD = "login_in_password";
+  static const String USER_SAW_REPORT_ANALYSIS = "user_saw_analysis";
+  static const String ANALYSIS_COUNTER = "analysis_counter";
+
+  final int _ANALYSIS_LIMIT = 3;
 
   static Preferences _singleton;
   SharedPreferences prefs;
@@ -57,6 +61,28 @@ class Preferences{
 
   Future<String> getLoginPassword() async {
     return prefs.getString(LOGIN_IN_PASSWORD);
+  }
+
+  void setAnalysisCounter() async {
+    var counterValue = 0;
+
+    if(prefs.containsKey(ANALYSIS_COUNTER)){
+      counterValue = prefs.getInt(ANALYSIS_COUNTER);
+    }
+
+    if(counterValue < _ANALYSIS_LIMIT){
+      prefs.setInt(ANALYSIS_COUNTER, ++counterValue);
+    } else if(!prefs.containsKey(USER_SAW_REPORT_ANALYSIS)){
+      prefs.setBool(USER_SAW_REPORT_ANALYSIS, true);
+    }
+  }
+
+  Future<bool> didUserSawAnalysis() async {
+    if(prefs.containsKey(USER_SAW_REPORT_ANALYSIS)){
+      return prefs.getBool(USER_SAW_REPORT_ANALYSIS);
+    } else {
+      return false;
+    }
   }
 
   Future<void> signOut() async {
