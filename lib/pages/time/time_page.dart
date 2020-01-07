@@ -28,7 +28,7 @@ class TimePage extends StatefulWidget {
   _TimePageState createState() => _TimePageState();
 }
 
-class _TimePageState extends State<TimePage> {
+class _TimePageState extends State<TimePage> with AutomaticKeepAliveClientMixin<TimePage>{
 
   final List<Choice> choices =  <Choice>[
      Choice(
@@ -265,4 +265,7 @@ class _TimePageState extends State<TimePage> {
       widget.bloc.dispatchEvent(OnAboutItemClicked(context: context));
     }
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

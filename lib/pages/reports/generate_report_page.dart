@@ -14,6 +14,7 @@ import 'package:tikal_time_tracker/resources/strings.dart';
 import 'package:tikal_time_tracker/analytics/analytics.dart';
 import 'package:tikal_time_tracker/analytics/events/reports_event.dart';
 import 'package:tikal_time_tracker/ui/platform_appbar.dart';
+import 'package:tikal_time_tracker/utils/page_transition.dart';
 
 class GenerateReportPage extends StatefulWidget {
   @override
@@ -23,7 +24,7 @@ class GenerateReportPage extends StatefulWidget {
   }
 }
 
-class GenerateReportState extends State<GenerateReportPage> implements ReportsViewContract{
+class GenerateReportState extends State<GenerateReportPage> with AutomaticKeepAliveClientMixin<GenerateReportPage> implements ReportsViewContract{
   Analytics analytics = Analytics.instance;
   Project _selectedProject;
   List<Task> _tasks = new List.from(User.me.tasks);
@@ -427,13 +428,22 @@ class GenerateReportState extends State<GenerateReportPage> implements ReportsVi
   @override
   void showReport(List<TimeRecord> items) {
     analytics.logEvent(ReportsEvent.impression(EVENT_NAME.REPORT_GENERATED_SUCCESS).view());
-    Navigator.of(context).push(new MaterialPageRoute(
-        builder: (BuildContext context) =>  ReportPage.create(Report(
-                report: items,
-                startDate: _startDate,
-                endDate: _endDate,
-                project: null,
-                task: null))));
+
+    Navigator.of(context).push(new PageTransition(widget: ReportPage.create(Report(
+        report: items,
+        startDate: _startDate,
+        endDate: _endDate,
+        project: null,
+        task: null))));
+
+
+//    Navigator.of(context).push(new MaterialPageRoute(
+//        builder: (BuildContext context) =>  ReportPage.create(Report(
+//                report: items,
+//                startDate: _startDate,
+//                endDate: _endDate,
+//                project: null,
+//                task: null))));
     }
 
   @override
@@ -446,6 +456,9 @@ class GenerateReportState extends State<GenerateReportPage> implements ReportsVi
     Navigator.of(context).pushReplacement(new MaterialPageRoute(
         builder: (BuildContext context) => new LoginPage()));
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 class Period{

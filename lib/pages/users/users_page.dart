@@ -9,9 +9,15 @@ import 'package:tikal_time_tracker/analytics/analytics.dart';
 import 'package:tikal_time_tracker/analytics/events/users_event.dart';
 import 'package:tikal_time_tracker/ui/platform_appbar.dart';
 
-class UsersPage extends StatelessWidget{
+class UsersPage extends StatefulWidget{
 
+  @override
+  _UsersPageState createState() => _UsersPageState();
+}
+
+class _UsersPageState extends State<UsersPage> with AutomaticKeepAliveClientMixin<UsersPage>{
  final analytics = Analytics.instance;
+
  final bloc = UsersBloc(repository: TimeRecordsRepository());
 
   Widget build(BuildContext context) {
@@ -58,4 +64,7 @@ class UsersPage extends StatelessWidget{
       );
     }
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
