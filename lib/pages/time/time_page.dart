@@ -223,6 +223,7 @@ class _TimePageState extends State<TimePage> with AutomaticKeepAliveClientMixin<
 
   PreferredSizeWidget _buildAppBar({String title, BuildContext context}) {
     return PlatformAppbar(
+      heroTag: "TimePage",
       title: Row(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,

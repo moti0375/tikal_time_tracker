@@ -31,7 +31,7 @@ class NewRecordPageBloc {
   NewRecordStateModel newRecordPageStateModel;
 
   NewRecordPageBloc(
-      this._analytics, List<Project> projects, TimeRecord timeRecord,
+      this._analytics, List<Project> projects, TimeRecord timeRecord, DateTime date,
       {this.auth, this.repository}) {
     newRecordPageStateModel = NewRecordStateModel(projects: projects);
     print("$TAG: created");
@@ -40,7 +40,7 @@ class NewRecordPageBloc {
             .setUser(auth.getCurrentUser().name)
             .view());
     initEventStream();
-    initBloc(projects, timeRecord);
+    initBloc(projects, timeRecord, date);
   }
 
   StreamController<NewRecordStateModel> _stateController = StreamController();
@@ -51,7 +51,7 @@ class NewRecordPageBloc {
   StreamController<NewRecordPageEvent> _eventController = StreamController<NewRecordPageEvent>();
   Sink<NewRecordPageEvent> get _eventSink => _eventController.sink;
 
-  void initBloc(List<Project> projects, TimeRecord timeRecord) async {
+  void initBloc(List<Project> projects, TimeRecord timeRecord, DateTime dateTime) async {
     print("$TAG initBloc");
 
     if (timeRecord != null) {
@@ -64,7 +64,7 @@ class NewRecordPageBloc {
       print("$TAG new recrod");
       newRecordPageStateModel
           .updateWith(projects: projects)
-          .updateWith(date: DateTime.now());
+          .updateWith(date: dateTime);
       _analytics.logEvent(
           NewRecordeEvent.impression(EVENT_NAME.CREATING_NEW_RECORD)
               .setUser(auth.getCurrentUser().name)

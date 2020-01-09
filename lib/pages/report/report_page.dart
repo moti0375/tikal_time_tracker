@@ -22,29 +22,42 @@ class ReportPage extends StatelessWidget {
   final ReportPageBloc bloc;
   final Analytics analytics = Analytics.instance;
 
-  final List<Choice> choices =  <Choice>[
-     Choice(
+  final List<Choice> choices = <Choice>[
+    Choice(
         action: MenuAction.SendEmail,
         title: Strings.action_send_email,
         icon: Icons.email),
-     Choice(
+    Choice(
         action: MenuAction.ReportAnalysis,
         title: Strings.action_report_analysis,
         icon: Icons.assessment)
   ];
 
-  List<Choice> _buildChoices(bool didUserSawAnalysisOption){
-    return  <Choice>[
-       Choice(
+  List<Choice> _buildChoices(bool didUserSawAnalysisOption, bool reportEmpty) {
+    if (reportEmpty) {
+      return null;
+    }
+
+    var choices = <Choice>[
+      Choice(
           action: MenuAction.SendEmail,
           title: Strings.action_send_email,
           icon: Icons.email),
-       Choice(
-          action: MenuAction.ReportAnalysis,
-          title: Strings.action_report_analysis,
-          icon: Icons.assessment,
-      textSpans: didUserSawAnalysisOption ? [] : [TextSpan(text: ' New!!', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red))])
+      Choice(
+        action: MenuAction.ReportAnalysis,
+        title: Strings.action_report_analysis,
+        icon: Icons.assessment,
+        textSpans: didUserSawAnalysisOption == null
+            ? []
+            : [
+                TextSpan(
+                    text: ' New!!',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.red))
+              ],
+      )
     ];
+    return choices;
   }
 
   ReportPage({this.bloc});
@@ -53,53 +66,67 @@ class ReportPage extends StatelessWidget {
   Widget build(BuildContext context) {
     void _select(Choice choice) {
       if (choice.action == MenuAction.SendEmail) {
-        analytics.logEvent(ReportsEvent.click(EVENT_NAME.ACTION_SEND_MAIL).setUser(User.me.name));
+        analytics.logEvent(ReportsEvent.click(EVENT_NAME.ACTION_SEND_MAIL)
+            .setUser(User.me.name));
 
         //  print("Navigate to SendEmail page");
         Navigator.of(context).push(new PageTransition(widget: SendEmailPage()));
       }
 
-      if(choice.action == MenuAction.ReportAnalysis){
+      if (choice.action == MenuAction.ReportAnalysis) {
         bloc.dispatchEvent(OnAnalysisItemClick(context));
       }
     }
 
-    Widget _buildAppBar({String title, bool userSawAnalysisOption}) {
+    Widget _buildAppBar(
+        {String title, bool userSawAnalysisOption, bool reportEmpty}) {
       return PlatformAppbar(
+        heroTag: "ReportPage",
         title: Text(title),
-        actions: _buildChoices(userSawAnalysisOption),
+        actions: _buildChoices(userSawAnalysisOption, reportEmpty),
         onPressed: _select,
-        notificationEnabled: userSawAnalysisOption == null ? true : !userSawAnalysisOption,
+        notificationEnabled:
+            userSawAnalysisOption == null ? true : !userSawAnalysisOption,
       ).build(context);
     }
 
     return StreamBuilder<ReportPageStateModel>(
-      stream: bloc.reportStream,
-      initialData: ReportPageStateModel(),
-      builder: (context, snapshot) {
-        return Scaffold(
-          appBar: _buildAppBar(title: Strings.report_page_title, userSawAnalysisOption: snapshot.data.userSawAnalysisOption),
-          body: Column(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Expanded(
-                flex: 0,
-                child: _createTitle(context, snapshot.data),
-              ),
-              Expanded(flex: 1, child: _buildContent(snapshot.data))
-            ],
-          ),
-        );
-      }
-    );
+        stream: bloc.reportStream,
+        initialData: ReportPageStateModel(),
+        builder: (context, snapshot) {
+          return Scaffold(
+            appBar: _buildAppBar(
+                title: Strings.report_page_title,
+                userSawAnalysisOption: snapshot.data.userSawAnalysisOption,
+                reportEmpty: _isReportEmpty(snapshot.data)),
+            body: Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Expanded(
+                  flex: 0,
+                  child: _createTitle(context, snapshot.data),
+                ),
+                Expanded(flex: 1, child: _buildContent(snapshot.data))
+              ],
+            ),
+          );
+        });
   }
 
   _buildContent(ReportPageStateModel data) {
-    if (data.timeTrackerReport == null || data.timeTrackerReport.report.isEmpty) {
-      return PlaceholderContent(subtitle: "",);
+    if (_isReportEmpty(data)) {
+      print("_buildContent: emptyReport");
+      return Column(
+        children: <Widget>[
+          PlaceholderContent(
+            subtitle: "",
+          ),
+        ],
+      );
     } else {
+      print("_buildContent: showing report");
       return Container(
           padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
           child: TimeRecordListViewBuilder(
@@ -122,7 +149,10 @@ class ReportPage extends StatelessWidget {
         children: <Widget>[
           Container(
             padding: EdgeInsets.only(bottom: 2.0),
-            child: Text(data.timeTrackerReport != null ? "Report: ${data.timeTrackerReport.startDate.day}/${data.timeTrackerReport.startDate.month}/${data.timeTrackerReport.startDate.year} - ${data.timeTrackerReport.endDate.day}/${data.timeTrackerReport.endDate.month}/${data.timeTrackerReport.endDate.year}" : "",
+            child: Text(
+              data.timeTrackerReport != null
+                  ? "Report: ${data.timeTrackerReport.startDate.day}/${data.timeTrackerReport.startDate.month}/${data.timeTrackerReport.startDate.year} - ${data.timeTrackerReport.endDate.day}/${data.timeTrackerReport.endDate.month}/${data.timeTrackerReport.endDate.year}"
+                  : "",
               style: TextStyle(fontSize: 20.0, color: Colors.black45),
             ),
           ),
@@ -140,7 +170,10 @@ class ReportPage extends StatelessWidget {
                   "${User.me.name}, ${User.me.company}, ${User.me.role.toString().split(".").last}",
                   textAlign: TextAlign.start,
                 ),
-                Text(data.timeTrackerReport != null ? "${Strings.total} ${data.timeTrackerReport.getTotalString()}" : "",
+                Text(
+                    data.timeTrackerReport != null
+                        ? "${Strings.total} ${data.timeTrackerReport.getTotalString()}"
+                        : "",
                     textAlign: TextAlign.end)
               ],
             ),
@@ -165,5 +198,9 @@ class ReportPage extends StatelessWidget {
       ),
     );
   }
-}
 
+  bool _isReportEmpty(ReportPageStateModel data) {
+    return data.timeTrackerReport == null ||
+        data.timeTrackerReport.report.isEmpty;
+  }
+}

@@ -74,7 +74,7 @@ class TimePageBloc  {
     print("_navigateToEditScreen: projects ${_auth.getCurrentUser().projects}");
     final projects = _auth.getCurrentUser().projects;
 
-    var newRecordPage = NewRecordPage.create(projects, timeRecord);
+    var newRecordPage = NewRecordPage.create(projects, timeRecord, null);
     Navigator.of(context)
         .push(new PageTransition(
         widget: newRecordPage))
@@ -94,7 +94,7 @@ class TimePageBloc  {
     final projects = _auth.getCurrentUser().projects;
     print("_navigateToNextScreen: " + projects.toString());
 
-    var newRecordPage = NewRecordPage.create(projects, null);
+    var newRecordPage = NewRecordPage.create(projects, null, selectedDate);
 
     Navigator.of(context)
         .push(new PageTransition(

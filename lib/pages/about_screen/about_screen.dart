@@ -29,22 +29,16 @@ class AboutScreen extends StatelessWidget{
         )
     );
 
-    final flutter_logo = Hero(
-        tag: 'flutter_logo',
-        child: CircleAvatar(
-          backgroundColor: Colors.transparent,
-          radius: 24.0,
-          child: Image.asset('assets/flutter_logo.png'),
-        )
+    final flutterLogo = CircleAvatar(
+      backgroundColor: Colors.transparent,
+      radius: 24.0,
+      child: Image.asset('assets/flutter_logo.png'),
     );
 
-    final dart_logo = Hero(
-        tag: 'dart_logo',
-        child: CircleAvatar(
-          backgroundColor: Colors.transparent,
-          radius: 24.0,
-          child: Image.asset('assets/dart_logo.png'),
-        )
+    final dartLogo = CircleAvatar(
+      backgroundColor: Colors.transparent,
+      radius: 24.0,
+      child: Image.asset('assets/dart_logo.png'),
     );
     return Scaffold(
         appBar: AppBar(
@@ -89,8 +83,8 @@ class AboutScreen extends StatelessWidget{
                         mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          flutter_logo,
-                          dart_logo,
+                          flutterLogo,
+                          dartLogo,
                         ],
                       ),
                     ),

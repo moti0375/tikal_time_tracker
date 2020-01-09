@@ -42,6 +42,7 @@ class ReportAnalysisPageState extends State<ReportAnalysisPage>{
 
   Widget _buildAppBar({String title, BuildContext context}) {
     return PlatformAppbar(
+      heroTag: "ReportAnalysisPage",
       title: Text(title),
       actions: null,
     ).build(context);

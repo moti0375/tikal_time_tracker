@@ -9,19 +9,21 @@ class PlatformAppbar extends PlatformWidget {
   final Widget title;
   final Function onPressed;
   final bool notificationEnabled;
+  final heroTag;
 
   PlatformAppbar(
       {this.title,
       this.actions,
       this.onPressed,
-      this.notificationEnabled = false});
+      this.notificationEnabled = false, this.heroTag = ""});
 
   @override
   Widget buildCupertinoWidget(BuildContext context) {
     if (actions != null) {
       print("buildCupertinoAppbar: with actions");
       return CupertinoNavigationBar(
-        transitionBetweenRoutes: true,
+        heroTag: this.heroTag,
+        transitionBetweenRoutes: false,
         middle: title,
         trailing: _buildCupertinoTrailing(context, actions),
       );
@@ -99,9 +101,8 @@ class PlatformAppbar extends PlatformWidget {
       return CupertinoButton(
           padding: EdgeInsets.all(8),
           child: Text("Menu"),
-          onPressed: () {
-            _showSheet(context);
-          });
+          onPressed: () => _showSheet(context)
+      );
     }
   }
 }

@@ -226,6 +226,7 @@ class GenerateReportState extends State<GenerateReportPage> with AutomaticKeepAl
     return Scaffold(
         resizeToAvoidBottomPadding: false,
         appBar: PlatformAppbar(
+          heroTag: "GenerateReportPage",
           title: Text(Strings.reports_page_title),
         ).build(context),
         backgroundColor: Colors.white,

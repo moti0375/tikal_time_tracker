@@ -25,6 +25,7 @@ class _UsersPageState extends State<UsersPage> with AutomaticKeepAliveClientMixi
 
     return Scaffold(
       appBar: PlatformAppbar(
+        heroTag: "UsersPage",
         title: Text("Users"),
       ).build(context),
       body: StreamBuilder<List<Member>>(

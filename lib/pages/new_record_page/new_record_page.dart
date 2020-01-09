@@ -33,13 +33,14 @@ class NewRecordPage extends StatefulWidget {
     return new NewRecordPageState();
   }
 
-  static Widget create(List<Project> projects, TimeRecord timeRecord) {
+  static Widget create(List<Project> projects, TimeRecord timeRecord, DateTime date) {
     return Consumer<BaseAuth>(
       builder: (context, auth, _) => Provider<NewRecordPageBloc>(
         create: (context) => NewRecordPageBloc(
           locator<Analytics>(),
           projects,
           timeRecord,
+          date,
           auth: auth,
           repository: locator<AppRepository>(),
         ),
