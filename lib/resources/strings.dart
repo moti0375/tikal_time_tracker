@@ -53,6 +53,7 @@ class Strings{
   static const action_send_email = "Send Email";
   static const action_report_analysis = "Report Analysis";
   static const total = "Total:";
+  static const action_new_banner = "New!!";
 
   //New Record page
   static const new_record_page_title = "New Time Record";

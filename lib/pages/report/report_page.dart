@@ -47,11 +47,11 @@ class ReportPage extends StatelessWidget {
         action: MenuAction.ReportAnalysis,
         title: Strings.action_report_analysis,
         icon: Icons.assessment,
-        textSpans: didUserSawAnalysisOption == null
+        textSpans: didUserSawAnalysisOption == null || didUserSawAnalysisOption
             ? []
             : [
                 TextSpan(
-                    text: ' New!!',
+                    text: ' ${Strings.action_new_banner}',
                     style: TextStyle(
                         fontWeight: FontWeight.bold, color: Colors.red))
               ],
