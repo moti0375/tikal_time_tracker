@@ -74,6 +74,8 @@ class ReportPage extends StatelessWidget {
       }
 
       if (choice.action == MenuAction.ReportAnalysis) {
+        analytics.logEvent(ReportsEvent.click(EVENT_NAME.ACTION_REPORT_ANALYSIS)
+            .setUser(User.me.name));
         bloc.dispatchEvent(OnAnalysisItemClick(context));
       }
     }

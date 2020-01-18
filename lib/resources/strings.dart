@@ -87,6 +87,10 @@ class Strings{
   //Reset password screen
   static const reset_password_page_title = "Password Resetting";
   static const reset_password_button_text = "Reset password ";
+
+  //Report Analysis page
+  static const report_analysis_page_title = "Report Analysis";
+
 }
 
 class Values{

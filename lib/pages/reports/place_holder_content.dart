@@ -14,28 +14,29 @@ class PlaceholderContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Text(title, style: TextStyle(
-              fontSize: 32.0,
-              color: Colors.black54
-            ),
-            textAlign: TextAlign.center),
-            GestureDetector(
-              onTap: (){
-                if(onPressed != null){
-                  onPressed();
-                }
-              },
-              child: Text(subtitle, style: TextStyle(
+        child: InkWell(
+          onTap: (){
+            if(onPressed != null){
+              onPressed();
+            }
+          },
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Text(title, style: TextStyle(
+                fontSize: 32.0,
+                color: Colors.black54
+              ),
+              textAlign: TextAlign.center),
+              Text(subtitle, style: TextStyle(
                   fontSize: 16.0,
                   color: Colors.black54
               ),
-                  textAlign: TextAlign.center),
-            )
-          ],
+                  textAlign: TextAlign.center)
+            ],
+          ),
         ),
       ),
     );

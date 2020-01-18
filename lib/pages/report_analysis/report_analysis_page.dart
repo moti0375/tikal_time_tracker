@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:pie_chart/pie_chart.dart';
+import 'package:tikal_time_tracker/analytics/analytics.dart';
+import 'package:tikal_time_tracker/analytics/events/reports_event.dart';
+import 'package:tikal_time_tracker/resources/strings.dart';
+import 'package:tikal_time_tracker/services/auth/user.dart';
+import 'package:tikal_time_tracker/services/locator/locator.dart';
 import 'package:tikal_time_tracker/ui/platform_appbar.dart';
 
 class ReportAnalysisPage extends StatefulWidget {
@@ -14,7 +19,7 @@ class ReportAnalysisPage extends StatefulWidget {
 }
 
 class ReportAnalysisPageState extends State<ReportAnalysisPage>{
-
+  final analytics = locator<Analytics>();
   int  currentAnalysisIndex = 0;
 
   @override
@@ -28,7 +33,7 @@ class ReportAnalysisPageState extends State<ReportAnalysisPage>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _buildAppBar(title: "Report Analysis", context: context),
+      appBar: _buildAppBar(title: Strings.report_analysis_page_title, context: context),
       body: Center(
         child: InkWell(
           onTap: _switchAnalysis,
@@ -49,6 +54,9 @@ class ReportAnalysisPageState extends State<ReportAnalysisPage>{
   }
 
   void _switchAnalysis() {
+    analytics.logEvent(ReportsEvent.click(EVENT_NAME.ACTION_REPORT_ANALYSIS_TAP)
+        .setUser(User.me.name));
+
     setState(() {
       if(currentAnalysisIndex == widget.analysis.length-1){
         currentAnalysisIndex = 0;
