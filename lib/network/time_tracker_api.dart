@@ -33,6 +33,9 @@ class TimeTrackerApi extends _$TimeTrackerApiClient implements ApiClient{
   static const  String BASE_URL = "https://planet.tikalk.com";
   static const  String _TAG = "TimeTrackerApi";
 
+  //When adding new request run this command to generate code:
+  //flutter pub run build_runner build
+
   @override
   resty.Route base;
   @override
@@ -132,6 +135,9 @@ class TimeTrackerApi extends _$TimeTrackerApiClient implements ApiClient{
 
   @PostReq(path: "time_edit.php")
   Future<dynamic> updateTime(@QueryParam("id") int id, @AsForm() UpdateRequest request);
+
+  @GetReq(path: "time_edit.php")
+  Future<dynamic> getIncompleteTimeRecordById(@QueryParam("id") int id);
 
   @PostReq(path: "time_delete.php")
   Future<dynamic> timeDelete(@QueryParam("id") int id, @AsForm() DeleteRequest request);
