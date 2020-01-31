@@ -22,5 +22,6 @@ abstract class TimeDateSource{
  Future<dynamic> resetPassword(ResetPasswordForm login){return null;}
  Future<dynamic> sendEmailPage(){return null;}
  Future<dynamic> sendEmail(SendEmailForm request){return null;}
+ Future<DateTime> getIncompleteRecordById(int id){return null;}
  void updateCredentials(Credentials credentials){}
 }

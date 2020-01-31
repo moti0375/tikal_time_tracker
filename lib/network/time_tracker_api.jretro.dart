@@ -77,6 +77,14 @@ abstract class _$TimeTrackerApiClient implements ApiClient {
     return serializers.from(await req.go().body);
   }
 
+  Future<dynamic> getIncompleteRecordById(int id) async {
+    var req = base.get
+        .path(basePath)
+        .path("time_edit.php")
+        .query("id", id);
+    return serializers.from(await req.go().body);
+  }
+
   Future<dynamic> timeDelete(int id, DeleteRequest request) async {
     var req = base.post
         .path(basePath)

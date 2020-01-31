@@ -110,6 +110,11 @@ class AppRepository implements TimeDateSource, LoginDataSource{
     return _timeRepository.getAllMembers(role);
   }
 
+  @override
+  Future<DateTime> getIncompleteRecordById(int id) {
+    return _timeRepository.getIncompleteRecordById(id);
+  }
+
 
 
 }

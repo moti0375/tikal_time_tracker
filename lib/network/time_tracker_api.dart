@@ -133,6 +133,9 @@ class TimeTrackerApi extends _$TimeTrackerApiClient implements ApiClient{
   @PostReq(path: "time_edit.php")
   Future<dynamic> updateTime(@QueryParam("id") int id, @AsForm() UpdateRequest request);
 
+  @PostReq(path: "time_edit.php")
+  Future<dynamic> getIncompleteRecordById(@QueryParam("id") int id);
+
   @PostReq(path: "time_delete.php")
   Future<dynamic> timeDelete(@QueryParam("id") int id, @AsForm() DeleteRequest request);
 

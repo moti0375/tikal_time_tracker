@@ -127,7 +127,14 @@ class NewRecordPageBloc {
               .view());
           _popBack(context, this.newRecordPageStateModel.timeRecord);
         },
-        onError: (e) => _showErrorDialog(e, context, "Save Record Error"),
+        onError: (e) {
+          if(e is IncompleteRecordException){
+            print("_saveTimeRecord: IncompleteRecordException ${e.recordId}");
+            _getIncompleteRecordById(e, context);
+          } else {
+            _showErrorDialog(e, context, "Save Record Error");
+          }
+        },
       );
     }
 
@@ -240,5 +247,39 @@ class NewRecordPageBloc {
           ),
         ]);
     dialog.show(context);
+  }
+
+  void _getIncompleteRecordById(IncompleteRecordException e, BuildContext context) async {
+    repository.getIncompleteRecordById(e.recordId).then((response){
+      print("_getIncompleteRecordById: Response: $response");
+      _showIncompleteRecordErrorDialog(e, response, context);
+    }, onError: (e) => _showErrorDialog(e, context, "Save Record Error"));
+  }
+
+  void _showIncompleteRecordErrorDialog(IncompleteRecordException e,  DateTime recordDate, BuildContext context) {
+      _analytics.logEvent(NewRecordeEvent.impression(EVENT_NAME.FAILED_TO_EDIT_OR_SAVE)
+          .setUser(auth.getCurrentUser().name)
+          .view());
+
+      print("_showIncompleteRecordErrorDialog: ${e.cause}");
+
+      PlatformAlertDialog dialog = PlatformAlertDialog(
+          title: "Save Record Error",
+          content: e.cause != null ? "${e.cause}.\n Record Date: ${recordDate.day}-${recordDate.month}-${recordDate.year}" : "There was an error",
+          defaultActionText: "OK",
+          actions: <Widget>[
+            FlatButton(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.of(context).pop(recordDate);
+              },
+              child: Text("Edit"),
+            ),
+            FlatButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(Strings.cancel),
+            ),
+          ]);
+      dialog.show(context);
   }
 }

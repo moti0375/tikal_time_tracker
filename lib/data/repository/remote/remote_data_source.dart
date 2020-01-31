@@ -146,4 +146,11 @@ class RemoteDateSource implements TimeDateSource {
       return parser.parseSendEmailResponse(response);
     });
   }
+
+  @override
+  Future<DateTime> getIncompleteRecordById(int id) async {
+    return api.getIncompleteRecordById(id).then((response){
+      return parser.parseIncompleteRecordResponse(response);
+    });
+  }
 }

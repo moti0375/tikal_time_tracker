@@ -116,4 +116,9 @@ class LocalDataSource implements TimeDateSource {
     return null;
   }
 
+  @override
+  Future<DateTime> getIncompleteRecordById(int id) {
+    return null;
+  }
+
 }

@@ -1,14 +1,14 @@
-import 'package:flutter/services.dart';
-import 'package:tikal_time_tracker/data/exceptions/failed_login_exception.dart';
-import 'package:tikal_time_tracker/resources/strings.dart';
-import 'package:tikal_time_tracker/services/auth/user.dart';
-import 'package:tikal_time_tracker/data/project.dart';
-import 'package:tikal_time_tracker/data/task.dart';
-import 'package:tikal_time_tracker/data/models.dart';
-import 'package:tikal_time_tracker/data/member.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:tikal_time_tracker/data/exceptions/errors.dart';
+import 'package:tikal_time_tracker/data/exceptions/failed_login_exception.dart';
+import 'package:tikal_time_tracker/data/member.dart';
+import 'package:tikal_time_tracker/data/models.dart';
+import 'package:tikal_time_tracker/data/project.dart';
+import 'package:tikal_time_tracker/data/task.dart';
 import 'package:tikal_time_tracker/network/requests/send_email_form.dart';
+import 'package:tikal_time_tracker/resources/strings.dart';
+import 'package:tikal_time_tracker/services/auth/user.dart';
 
 class DomParser {
   static const String TAG = "DomParser";
@@ -18,7 +18,6 @@ class DomParser {
   DateFormat timeFormat = DateFormat('H:m');
 
   User getUserFromDom(String domStr) {
-
     String pageTitle = domStr.substring(
         domStr.indexOf("<!-- page title and user details -->"),
         domStr.indexOf("<!-- end of page title and user details -->"));
@@ -27,8 +26,8 @@ class DomParser {
     String trtdEnd = "</td></tr>";
     String dash = " - ";
     String comma = ", ";
-    String userDetails = pageTitle.substring(
-        pageTitle.indexOf(trtd) + trtd.length);
+    String userDetails =
+        pageTitle.substring(pageTitle.indexOf(trtd) + trtd.length);
     userDetails = userDetails.substring(0, userDetails.indexOf(trtdEnd));
     print("UserDetails: $userDetails");
 
@@ -54,12 +53,12 @@ class DomParser {
     projects.forEach((p) {
       List<Task> tasksForProj = List<Task>();
 //      print("getUserFromDom: p = ${p.name}:${tasksForProjects[p.value]}");
-        tasksForProjects[p.value].forEach((t) {
+      tasksForProjects[p.value].forEach((t) {
         Task task = tasks.firstWhere((e) {
 //          print("firstWhere: $t -> ${e.value}:${e.name}");
           return (e.value == t);
         }, orElse: () => null);
-        if(task != null){
+        if (task != null) {
           tasksForProj.add(task);
         }
       });
@@ -86,7 +85,7 @@ class DomParser {
       return it.substring(0, it.indexOf("\");"));
     }).toList();
 
-   // print("_extractProjects: ${projects.toString()}");
+    // print("_extractProjects: ${projects.toString()}");
 
     List<Project> result = projects.map((projectStr) {
       String container = projectStr.replaceAll("\"", "");
@@ -99,7 +98,7 @@ class DomParser {
 
       return Project(name: name, value: val);
     }).toList();
-  //  print("_extractProjects result: ${result.toString()}");
+    //  print("_extractProjects result: ${result.toString()}");
     return result;
   }
 
@@ -183,11 +182,11 @@ class DomParser {
     rows.removeAt(0);
     //debugPrint("$TAG rows: ${rows.toString()}, size: ${rows.length}");
 
-    try{
+    try {
       rows = rows.map((r) {
         return r.substring(r.indexOf(">") + 1, r.indexOf("</tr>"));
       }).toList();
-    } on RangeError catch(e){
+    } on RangeError catch (e) {
       print("There was a RangeError, return empty report: ${e.message}");
       return TimeReport(date: date, timeReport: List<TimeRecord>());
     }
@@ -206,9 +205,9 @@ class DomParser {
       });
 
       TimeOfDay start;
-      try{
+      try {
         start = TimeOfDay.fromDateTime(timeFormat.parse(cells[2]));
-      }catch(e){
+      } catch (e) {
         if (e is FormatException) {
           start = null;
         }
@@ -242,7 +241,6 @@ class DomParser {
           comment: cells[5].trim().replaceAll("&nbsp;", ""));
     }).toList();
 
-
     Duration dayTotal = parseTotalValue(timeDomStr, "Day total:");
     Duration weekTotal = parseTotalValue(timeDomStr, "Week total:");
     Duration monthTotal = parseTotalValue(timeDomStr, "Month total:");
@@ -253,18 +251,25 @@ class DomParser {
 
     Duration remainTotal;
 
-    if(timeDomStr.contains(overQuotaNeedle)){
+    if (timeDomStr.contains(overQuotaNeedle)) {
       overQuota = true;
       remainTotal = parseOverQuota(timeDomStr, overQuotaNeedle);
-    }else{
+    } else {
       remainTotal = parseRemainQuote(timeDomStr, remainQuotaNeedle);
     }
 
     String message = null;
-    if(timeDomStr.contains("Time interval overlaps")){
+    if (timeDomStr.contains("Time interval overlaps")) {
       message = Strings.interval_overlap;
     }
-    TimeReport report = TimeReport(timeReport: result, dayTotal: dayTotal, weekTotal: weekTotal, monthTotal: monthTotal, quota: remainTotal, overQuota: overQuota, message: message);
+    TimeReport report = TimeReport(
+        timeReport: result,
+        dayTotal: dayTotal,
+        weekTotal: weekTotal,
+        monthTotal: monthTotal,
+        quota: remainTotal,
+        overQuota: overQuota,
+        message: message);
     return report;
   }
 
@@ -284,7 +289,6 @@ class DomParser {
   }
 
   List<Member> parseUsersPage(String domStr, Role myRole) {
-
     String start =
         "<table cellspacing=\"1\" cellpadding=\"3\" border=\"0\" width=\"100%\">";
     String end = "</table>";
@@ -295,7 +299,7 @@ class DomParser {
 
     List<String> rows = buffer.split("</tr>");
     rows.removeAt(0);
-    if(myRole != Role.User){
+    if (myRole != Role.User) {
       rows.removeAt(0);
     }
     rows.removeLast();
@@ -308,31 +312,40 @@ class DomParser {
 
       cells.removeLast();
       //First cell (user name) should be stripped explicitly
-      cells[0] = cells[0].substring(cells[0].indexOf(span)+span.length).trim();
+      cells[0] =
+          cells[0].substring(cells[0].indexOf(span) + span.length).trim();
 //      print("parseUsersPage: buffer:  $cells");
-      if(myRole != Role.User){
+      if (myRole != Role.User) {
         return createMemberForManager(cells);
       }
 
       Role role = _getRoleFromRoleString(cells[2]);
-      return Member(name: cells[0], email: cells[1], role: role, hasIncompleteEntry: false);
+      return Member(
+          name: cells[0],
+          email: cells[1],
+          role: role,
+          hasIncompleteEntry: false);
     }).toList();
 
 //     print("members: ${members.toString()}");
     return members;
   }
 
-  Member createMemberForManager(List<String> cells){
+  Member createMemberForManager(List<String> cells) {
     String name;
     bool hasIncompleteEntry = false;
 
-    if(cells[0].contains("User has an uncompleted time entry")){
+    if (cells[0].contains("User has an uncompleted time entry")) {
       hasIncompleteEntry = true;
     }
     name = cells[0].substring(cells[0].indexOf("span>") + 5).trim();
-    debugPrint("user: ${cells[0]}" );
+    debugPrint("user: ${cells[0]}");
     Role role = _getRoleFromRoleString(cells[2]);
-    return Member(name: name, email: cells[1], role: role, hasIncompleteEntry: hasIncompleteEntry);
+    return Member(
+        name: name,
+        email: cells[1],
+        role: role,
+        hasIncompleteEntry: hasIncompleteEntry);
   }
 
   List<TimeRecord> parseReportPage(String domStr, Role role) {
@@ -367,7 +380,7 @@ class DomParser {
 //      print("parseReportPage: cells ${cells.toString()}");
 
       DateTime dateTime = dateFormat.parse(cells[0]);
-      Project project ;
+      Project project;
       Task task;
       String userName;
 
@@ -376,11 +389,11 @@ class DomParser {
         case Role.User:
           {
 //            print("parsing for User");
-             project = User.me.projects.firstWhere((it) {
+            project = User.me.projects.firstWhere((it) {
               return it.name == cells[1 + cellsOffset];
             });
 
-             task = User.me.tasks.firstWhere((it) {
+            task = User.me.tasks.firstWhere((it) {
               return it.name == cells[2 + cellsOffset];
             });
             break;
@@ -419,9 +432,10 @@ class DomParser {
       }
 
       Duration d;
-      if(start == null && finish == null){
-        TimeOfDay duration = TimeOfDay.fromDateTime(timeFormat.parse(cells[5 + cellsOffset]));
-        d = Duration(hours: duration.hour, minutes:  duration.minute);
+      if (start == null && finish == null) {
+        TimeOfDay duration =
+            TimeOfDay.fromDateTime(timeFormat.parse(cells[5 + cellsOffset]));
+        d = Duration(hours: duration.hour, minutes: duration.minute);
       }
 
       return TimeRecord(
@@ -449,16 +463,25 @@ class DomParser {
     }
   }
 
-
-  String parseSaveAndAddTimeResponse(String response){
-
+  String parseSaveAndAddTimeResponse(String response) {
     final String errorTdStart = "<td class=\"error\">";
-    if(response.indexOf(errorTdStart) > 0){
-      String buffer = response.substring(response.indexOf(errorTdStart) + errorTdStart.length);
-      buffer = buffer.substring(0, buffer.indexOf("<br>"));
-      print("parseSaveAndAddTimeResponse: Error: ${buffer.trim()}");
-      if(buffer.isNotEmpty){
-        final e = AppException(cause: buffer.trim());
+    if (response.indexOf(errorTdStart) > 0) {
+      String buffer = response
+          .substring(response.indexOf(errorTdStart) + errorTdStart.length);
+      buffer = buffer.substring(0, buffer.indexOf("<br>")).trim();
+      print("parseSaveAndAddTimeResponse: Error: $buffer");
+      if (buffer.isNotEmpty) {
+        if (buffer.contains(uncompletedExistsError)) {
+          String idStart = buffer.substring(buffer.indexOf("?") + 4);
+          idStart = idStart.substring(0, idStart.indexOf("\'"));
+          print(
+              "parseSaveAndAddTimeResponse: incompleteId: ${int.parse(idStart)}");
+          final e = IncompleteRecordException(
+              cause: buffer.trim().substring(0, buffer.indexOf("<a href")).trim(), recordId: int.parse(idStart));
+          throw e;
+        }
+
+        final e = AppException(cause: buffer);
         throw e;
       }
     }
@@ -491,7 +514,7 @@ class DomParser {
       print("$b: ${b.length}");
       b.forEach((cb) {
         Member member = _getMemberFromCheckbox(cb.trim());
-        if(member != null){
+        if (member != null) {
           members.add(member);
         }
 //        print(member.toString());
@@ -534,16 +557,14 @@ class DomParser {
     int value;
     String id;
 
-
-    if(!cbString.contains("type=\"checkbox\"")){
+    if (!cbString.contains("type=\"checkbox\"")) {
       return null;
     }
 
-    if(cbString.contains("checked")){
+    if (cbString.contains("checked")) {
       id = cbString.substring(
           cbString.indexOf("id=\"") + 4, cbString.indexOf("checked=") - 2);
-
-    }else{
+    } else {
       id = cbString.substring(
           cbString.indexOf("id=\"") + 4, cbString.indexOf("value=") - 2);
     }
@@ -560,53 +581,59 @@ class DomParser {
     return Member(id: id, value: value, name: name);
   }
 
-
   SendEmailForm parseSendEmailPage(String response) {
-
     String formStart = "<form name=\"mailForm\" method=\"post\">";
     String formEnd = "form>";
-    String formTableStart = " <table cellspacing=\"4\" cellpadding=\"7\" border=\"0\">";
+    String formTableStart =
+        " <table cellspacing=\"4\" cellpadding=\"7\" border=\"0\">";
     String formBuffer = response.substring(response.indexOf(formStart));
     formBuffer = formBuffer.substring(0, formBuffer.indexOf(formEnd));
-    formBuffer = formBuffer.substring(formBuffer.indexOf(formTableStart) + formTableStart.length);
+    formBuffer = formBuffer
+        .substring(formBuffer.indexOf(formTableStart) + formTableStart.length);
 
     String toStringStartTitle = "<td align=\"right\">To (*):<\/td>";
-    String toString = formBuffer.substring(formBuffer.indexOf(toStringStartTitle) + toStringStartTitle.length);
-    toString = toString.substring(toString.indexOf("value=\"") + 7,  toString.indexOf("\">"));
-
+    String toString = formBuffer.substring(
+        formBuffer.indexOf(toStringStartTitle) + toStringStartTitle.length);
+    toString = toString.substring(
+        toString.indexOf("value=\"") + 7, toString.indexOf("\">"));
 
     String ccStringStartTitle = "<td align=\"right\">Cc:<\/td>";
-    String ccString = formBuffer.substring(formBuffer.indexOf(ccStringStartTitle) + ccStringStartTitle.length);
-    ccString = ccString.substring(ccString.indexOf("value=\"") + 7,  ccString.indexOf("\">"));
+    String ccString = formBuffer.substring(
+        formBuffer.indexOf(ccStringStartTitle) + ccStringStartTitle.length);
+    ccString = ccString.substring(
+        ccString.indexOf("value=\"") + 7, ccString.indexOf("\">"));
 
     String subjectStringStartTitle = "<td align=\"right\">Subject (*):<\/td>";
-    String subjectString = formBuffer.substring(formBuffer.indexOf(subjectStringStartTitle) + subjectStringStartTitle.length);
-    subjectString = subjectString.substring(subjectString.indexOf("value=\"") + 7,  subjectString.indexOf("\">"));
+    String subjectString = formBuffer.substring(
+        formBuffer.indexOf(subjectStringStartTitle) +
+            subjectStringStartTitle.length);
+    subjectString = subjectString.substring(
+        subjectString.indexOf("value=\"") + 7, subjectString.indexOf("\">"));
 
 //    debugPrint("parseSendEmailPager: page body: $formBuffer");
     return SendEmailForm(to: toString, cc: ccString, subject: subjectString);
   }
 
-
   String parseSendEmailResponse(String response) {
     debugPrint("parseSendEmailResponse: $response");
-    if(response.contains("Report sent")){
+    if (response.contains("Report sent")) {
       return "Report sent";
-    } else{
+    } else {
       return "Failed to sent report";
     }
   }
 
-  Duration parseTotalValue(String response, String needle){
+  Duration parseTotalValue(String response, String needle) {
     Duration dayTotal;
     String buffer = response;
-    if(response.contains(needle)){
-      buffer  = response.substring(response.indexOf(needle) + needle.length);
+    if (response.contains(needle)) {
+      buffer = response.substring(response.indexOf(needle) + needle.length);
       buffer = buffer.substring(0, buffer.indexOf("<")).trim();
-      var totalArray  = buffer.split(":");
+      var totalArray = buffer.split(":");
       String totalHour = totalArray[0];
       String totalMinutes = totalArray[1];
-      dayTotal = new Duration(hours: int.parse(totalHour), minutes: int.parse(totalMinutes));
+      dayTotal = new Duration(
+          hours: int.parse(totalHour), minutes: int.parse(totalMinutes));
     } else {
       dayTotal = Duration(hours: 0, minutes: 0);
     }
@@ -615,19 +642,20 @@ class DomParser {
     return dayTotal;
   }
 
-  Duration parseRemainQuote(String response, String needle){
+  Duration parseRemainQuote(String response, String needle) {
     Duration dayTotal;
     String buffer = response;
-    if(response.contains(needle)){
-      buffer  = response.substring(response.indexOf(needle) + needle.length);
-      if(buffer.contains("red;\">")){
+    if (response.contains(needle)) {
+      buffer = response.substring(response.indexOf(needle) + needle.length);
+      if (buffer.contains("red;\">")) {
         buffer = buffer.substring(buffer.indexOf("red;\">") + "red;\">".length);
       }
       buffer = buffer.substring(0, buffer.indexOf("<")).trim();
-      var totalArray  = buffer.split(":");
+      var totalArray = buffer.split(":");
       String totalHour = totalArray[0];
       String totalMinutes = totalArray[1];
-      dayTotal = new Duration(hours: int.parse(totalHour), minutes: int.parse(totalMinutes));
+      dayTotal = new Duration(
+          hours: int.parse(totalHour), minutes: int.parse(totalMinutes));
     } else {
       dayTotal = Duration(hours: 0, minutes: 0);
     }
@@ -636,19 +664,21 @@ class DomParser {
     return dayTotal;
   }
 
-  Duration parseOverQuota(String response, String needle){
+  Duration parseOverQuota(String response, String needle) {
     Duration dayTotal;
     String buffer = response;
-    if(response.contains(needle)){
-      buffer  = response.substring(response.indexOf(needle) + needle.length);
-      if(buffer.contains("green;\">")){
-        buffer = buffer.substring(buffer.indexOf("green;\">") + "green;\">".length);
+    if (response.contains(needle)) {
+      buffer = response.substring(response.indexOf(needle) + needle.length);
+      if (buffer.contains("green;\">")) {
+        buffer =
+            buffer.substring(buffer.indexOf("green;\">") + "green;\">".length);
       }
       buffer = buffer.substring(0, buffer.indexOf("<")).trim();
-      var totalArray  = buffer.split(":");
+      var totalArray = buffer.split(":");
       String totalHour = totalArray[0];
       String totalMinutes = totalArray[1];
-      dayTotal = new Duration(hours: int.parse(totalHour), minutes: int.parse(totalMinutes));
+      dayTotal = new Duration(
+          hours: int.parse(totalHour), minutes: int.parse(totalMinutes));
     } else {
       dayTotal = Duration(hours: 0, minutes: 0);
     }
@@ -657,5 +687,14 @@ class DomParser {
     return dayTotal;
   }
 
-
+  Future<DateTime> parseIncompleteRecordResponse(String response) async {
+    DateFormat dateFormat = DateFormat('yyyy-MM-dd');
+    String dateNeedle = "id=\"date\"";
+    String valueNeedle = "value=\"";
+    String buffer = response.substring(response.indexOf(dateNeedle) + dateNeedle.length);
+    buffer = buffer.substring(buffer.indexOf(valueNeedle) + valueNeedle.length);
+    String recordDate = buffer.substring(0, buffer.indexOf("\""));
+    debugPrint("parseIncompleteRecordResponse: $recordDate");
+    return dateFormat.parse(recordDate);
+  }
 }

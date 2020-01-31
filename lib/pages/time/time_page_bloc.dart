@@ -105,6 +105,10 @@ class TimePageBloc  {
         if (value is TimeRecord) {
           dispatchEvent(DateSelectedEvent(selectedDate: value.date));
         }
+        if(value is DateTime){
+          print("_navigateToNextScreen: $value");
+          dispatchEvent(DateSelectedEvent(selectedDate: value));
+        }
       } else {
         dispatchEvent(DateSelectedEvent(selectedDate: selectedDate));
       }

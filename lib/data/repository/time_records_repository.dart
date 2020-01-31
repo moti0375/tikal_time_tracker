@@ -123,4 +123,9 @@ class TimeRecordsRepository implements TimeDateSource{
     return remoteDateSource.sendEmailPage();
   }
 
+  @override
+  Future<DateTime> getIncompleteRecordById(int id) {
+    return remoteDateSource.getIncompleteRecordById(id);
+  }
+
 }
