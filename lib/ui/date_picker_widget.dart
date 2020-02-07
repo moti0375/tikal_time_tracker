@@ -4,25 +4,17 @@ import 'dart:async';
 import 'package:intl/intl.dart';
 
 class TimeTrackerDatePicker extends StatelessWidget {
+  static const weekendDay = DateTime.saturday;
   final DateTime initializedDateTime;
   final String hint;
   final Function(DateTime dateTime) onSubmittedCallback;
   final RegExp datePattern = RegExp("^[0-3]?[0-9]/[0-1]?[0-9]/[2]?[0]?[0-9]{2}\$");
   final DateFormat dateFormat = DateFormat("d/M/y");
-  TextEditingController dateInputController;
-  DateTime _dateTime;
+  final TextEditingController dateInputController = TextEditingController();
 
-  TimeTrackerDatePicker(
-      {this.initializedDateTime, this.onSubmittedCallback, this.hint}){
-    if(this.initializedDateTime != null){
-      _dateTime = initializedDateTime;
-      dateInputController = new TextEditingController(
-          text: "${_dateTime.day}/${_dateTime.month}/${_dateTime.year}");
-
-    }
+  TimeTrackerDatePicker({this.initializedDateTime, this.onSubmittedCallback, this.hint}){
+    dateInputController.text = dateFormat.format(initializedDateTime);
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -65,13 +57,22 @@ class TimeTrackerDatePicker extends StatelessWidget {
 
     final DateTime picked = await showDatePicker(
         context: context,
-        initialDate: _dateTime.weekday == 5 || _dateTime.weekday == 6 ? DateTime(DateTime.now().year, DateTime.now().month, 1) :  _dateTime ,
+        initialDate: initializedDateTime.weekday == weekendDay ? DateTime(DateTime.now().year, DateTime.now().month, 1) :  initializedDateTime ,
         selectableDayPredicate: (DateTime val) =>
-        val.weekday == 5 || val.weekday == 6 ? false : true,
+        val.weekday == weekendDay ? false : true,
         firstDate: DateTime(DateTime.now().year - 1, 1),
         lastDate: DateTime(DateTime.now().year + 1, 12));
     if (picked != null) {
       _onDateSelected(picked);
+    }
+  }
+
+  DateTime getDefaultWeekday(){
+    var firstDayOfMonth  = DateTime(DateTime.now().year, DateTime.now().month, 1);
+    if(firstDayOfMonth.weekday == weekendDay){
+      return DateTime(DateTime.now().year, DateTime.now().month, 2);
+    } else {
+      return firstDayOfMonth;
     }
   }
 
@@ -84,15 +85,12 @@ class TimeTrackerDatePicker extends StatelessWidget {
       _onDateSelected(date);
       SystemChannels.textInput.invokeMethod('TextInput.hide');
     } else {
-      _dateTime = null;
       onSubmittedCallback(null);
     }
   }
 
   void _onDateSelected(DateTime date) {
     onSubmittedCallback(date);
-    _dateTime = date;
-    dateInputController.text =  "${_dateTime.day}/${_dateTime.month}/${_dateTime.year}";
   }
 }
 

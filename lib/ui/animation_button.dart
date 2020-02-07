@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
-class AnimationButton extends StatelessWidget {
 
-  AnimationButton({@required this.buttonText, @required this.onPressed, @required this.loggingIn});
+class AnimationButton extends StatelessWidget {
+  AnimationButton(
+      {@required this.buttonText, this.onPressed,
+      this.loggingIn = false});
+
   final VoidCallback onPressed;
   final String buttonText;
   final bool loggingIn;
@@ -14,12 +16,16 @@ class AnimationButton extends StatelessWidget {
       key: _globalKey,
       height: 45.0,
       child: RaisedButton(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+          side: BorderSide(color: Theme.of(context).primaryColor)
+        ),
         color: Theme.of(context).primaryColor,
         padding: EdgeInsets.all(0.0),
         child: buildButtonChild(),
-        onPressed: loggingIn == true ? null : () {
-          onPressed();
-        },
+        onPressed: loggingIn == true
+            ? null
+            : onPressed,
       ),
     );
   }
@@ -28,7 +34,7 @@ class AnimationButton extends StatelessWidget {
     if (!loggingIn) {
       return Text(
         buttonText,
-        style: TextStyle(color: Colors.white, fontSize: 16.0),
+        style: TextStyle(color: Colors.white, fontSize: 25.0),
       );
     } else {
       return SizedBox(

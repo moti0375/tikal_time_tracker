@@ -1,18 +1,20 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:tikal_time_tracker/services/auth/user.dart';
+
+import 'package:flutter/material.dart';
+import 'package:tikal_time_tracker/analytics/analytics.dart';
+import 'package:tikal_time_tracker/analytics/events/reports_event.dart';
 import 'package:tikal_time_tracker/data/models.dart';
 import 'package:tikal_time_tracker/data/project.dart';
-import 'package:tikal_time_tracker/data/task.dart';
 import 'package:tikal_time_tracker/data/repository/time_records_repository.dart';
-import 'package:tikal_time_tracker/pages/report/report_page.dart';
+import 'package:tikal_time_tracker/data/task.dart';
 import 'package:tikal_time_tracker/pages/login/login_page.dart';
-import 'package:tikal_time_tracker/ui/page_title.dart';
+import 'package:tikal_time_tracker/pages/report/report_page.dart';
 import 'package:tikal_time_tracker/pages/reports/reports_contract.dart';
 import 'package:tikal_time_tracker/pages/reports/reports_presenter.dart';
 import 'package:tikal_time_tracker/resources/strings.dart';
-import 'package:tikal_time_tracker/analytics/analytics.dart';
-import 'package:tikal_time_tracker/analytics/events/reports_event.dart';
+import 'package:tikal_time_tracker/services/auth/user.dart';
+import 'package:tikal_time_tracker/ui/animation_button.dart';
+import 'package:tikal_time_tracker/ui/page_title.dart';
 import 'package:tikal_time_tracker/ui/platform_appbar.dart';
 import 'package:tikal_time_tracker/utils/page_transition.dart';
 
@@ -24,7 +26,9 @@ class GenerateReportPage extends StatefulWidget {
   }
 }
 
-class GenerateReportState extends State<GenerateReportPage> with AutomaticKeepAliveClientMixin<GenerateReportPage> implements ReportsViewContract{
+class GenerateReportState extends State<GenerateReportPage>
+    with AutomaticKeepAliveClientMixin<GenerateReportPage>
+    implements ReportsViewContract {
   Analytics analytics = Analytics.instance;
   Project _selectedProject;
   List<Task> _tasks = new List.from(User.me.tasks);
@@ -52,12 +56,12 @@ class GenerateReportState extends State<GenerateReportPage> with AutomaticKeepAl
     super.initState();
     presenter = new ReportsPresenter(repository: repository);
     presenter.subscribe(this);
-    analytics.logEvent(ReportsEvent.impression(EVENT_NAME.REPORTS_SCREEN).open());
+    analytics
+        .logEvent(ReportsEvent.impression(EVENT_NAME.REPORTS_SCREEN).open());
   }
 
   @override
   Widget build(BuildContext context) {
-
     final projectsDropDown = Container(
         margin: EdgeInsets.symmetric(vertical: 4.0),
         decoration: BoxDecoration(
@@ -86,8 +90,7 @@ class GenerateReportState extends State<GenerateReportPage> with AutomaticKeepAl
               onChanged: (Project value) {
                 _onProjectSelected(value);
               }),
-        )
-    );
+        ));
 
     final tasksDropDown = Container(
         margin: EdgeInsets.symmetric(vertical: 4.0),
@@ -120,34 +123,34 @@ class GenerateReportState extends State<GenerateReportPage> with AutomaticKeepAl
         ));
 
     final predefiendPeriod = Container(
-        margin: EdgeInsets.symmetric(vertical: 8.0),
-        decoration: BoxDecoration(
-            border: Border.all(width: 0.5, color: Colors.black45)),
-        padding: EdgeInsets.symmetric(horizontal: 10.0),
-        child: DropdownButtonHideUnderline(
-          child: new DropdownButton(
-              iconSize: 30.0,
-              hint: Container(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  Strings.drop_down_period_title,
-                  style: TextStyle(fontSize: 24.0, color: Colors.black26),
-                ),
+      margin: EdgeInsets.symmetric(vertical: 8.0),
+      decoration:
+          BoxDecoration(border: Border.all(width: 0.5, color: Colors.black45)),
+      padding: EdgeInsets.symmetric(horizontal: 10.0),
+      child: DropdownButtonHideUnderline(
+        child: new DropdownButton(
+            iconSize: 30.0,
+            hint: Container(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                Strings.drop_down_period_title,
+                style: TextStyle(fontSize: 24.0, color: Colors.black26),
               ),
-              value: _selectedPeriod,
-              items: _predefinedPeriod.map((Period value) {
-                return new DropdownMenuItem<Period>(
-                  value: value,
-                  child: new Text(
-                    value.name,
-                    style: TextStyle(fontSize: 24.0),
-                  ),
-                );
-              }).toList(),
-              onChanged: (Period value) {
-                _onPeriodSelected(value);
-              }),
-        ),
+            ),
+            value: _selectedPeriod,
+            items: _predefinedPeriod.map((Period value) {
+              return new DropdownMenuItem<Period>(
+                value: value,
+                child: new Text(
+                  value.name,
+                  style: TextStyle(fontSize: 24.0),
+                ),
+              );
+            }).toList(),
+            onChanged: (Period value) {
+              _onPeriodSelected(value);
+            }),
+      ),
     );
 
     final startDateInput = Container(
@@ -166,14 +169,15 @@ class GenerateReportState extends State<GenerateReportPage> with AutomaticKeepAl
           ),
           Container(
             child: new Flexible(
-                  child: new TextField(
-                      decoration: InputDecoration(
-                          hintText: Strings.start_date,
-                          contentPadding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(20.0))),
-                      maxLines: 1,
-                      controller: startDateInputController),
+              child: new TextField(
+                  decoration: InputDecoration(
+                      hintText: Strings.start_date,
+                      contentPadding:
+                          EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20.0))),
+                  maxLines: 1,
+                  controller: startDateInputController),
             ),
           ),
         ],
@@ -212,59 +216,52 @@ class GenerateReportState extends State<GenerateReportPage> with AutomaticKeepAl
 
     var generateButton = Container(
       padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-      child: RaisedButton(
-        onPressed: () {
-          if (isButtonEnabled) {
-            _handleGenerateButtonClicked();
-          }
-        },
-        color: isButtonEnabled ? Colors.orangeAccent : Colors.grey,
-        child: Text(Strings.generate_button_text, style: TextStyle(color: Colors.white)),
+      child: AnimationButton(
+        onPressed: isButtonEnabled
+            ? () {
+                if (isButtonEnabled) {
+                  _handleGenerateButtonClicked();
+                }
+              }
+            : null,
+        buttonText: Strings.generate_button_text,
       ),
     );
 
     return Scaffold(
-        resizeToAvoidBottomPadding: false,
-        appBar: PlatformAppbar(
-          heroTag: "GenerateReportPage",
-          title: Text(Strings.reports_page_title),
-        ).build(context),
-        backgroundColor: Colors.white,
-        body: Container(
-          padding: EdgeInsets.symmetric(horizontal: 16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              TimeTrackerPageTitle(),
-              Expanded(
-                flex: 4,
-                child: ListView(
-                  padding:
-                      EdgeInsets.symmetric(vertical: 8.0, horizontal: 0.0),
-                  shrinkWrap: false,
-                  children: <Widget>[
-                    projectsDropDown,
-                    tasksDropDown,
-                    startDateInput,
-                    endDateInput,
-                    predefiendPeriod,
-                  ],
-                ),
+      resizeToAvoidBottomPadding: false,
+      appBar: PlatformAppbar(
+        heroTag: "GenerateReportPage",
+        title: Text(Strings.reports_page_title),
+      ).build(context),
+      backgroundColor: Colors.white,
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        padding: EdgeInsets.symmetric(horizontal: 16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            TimeTrackerPageTitle(),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children:<Widget>[
+                  projectsDropDown,
+                  tasksDropDown,
+                  startDateInput,
+                  endDateInput,
+                  predefiendPeriod,
+                ],
               ),
-              Flexible(
-                child: SingleChildScrollView(
-                  child:ListBody(
-                    children: <Widget>[
-                      generateButton,
-                    ],
-                  ),
-                )
-              )
-            ],
-          ),
-        ));
+            ),
+            generateButton,
+          ],
+        ),
+      ),
+    );
   }
 
   void _onProjectSelected(Project value) {
@@ -423,20 +420,22 @@ class GenerateReportState extends State<GenerateReportPage> with AutomaticKeepAl
 
   void _handleGenerateButtonClicked() {
     analytics.logEvent(ReportsEvent.click(EVENT_NAME.GENERATE_REPORT_CLICKED));
-    presenter.onClickGenerateButton(_selectedProject, _selectedTask, _startDate, _endDate, _selectedPeriod);
+    presenter.onClickGenerateButton(
+        _selectedProject, _selectedTask, _startDate, _endDate, _selectedPeriod);
   }
 
   @override
   void showReport(List<TimeRecord> items) {
-    analytics.logEvent(ReportsEvent.impression(EVENT_NAME.REPORT_GENERATED_SUCCESS).view());
+    analytics.logEvent(
+        ReportsEvent.impression(EVENT_NAME.REPORT_GENERATED_SUCCESS).view());
 
-    Navigator.of(context).push(new PageTransition(widget: ReportPage.create(Report(
-        report: items,
-        startDate: _startDate,
-        endDate: _endDate,
-        project: null,
-        task: null))));
-
+    Navigator.of(context).push(new PageTransition(
+        widget: ReportPage.create(Report(
+            report: items,
+            startDate: _startDate,
+            endDate: _endDate,
+            project: null,
+            task: null))));
 
 //    Navigator.of(context).push(new MaterialPageRoute(
 //        builder: (BuildContext context) =>  ReportPage.create(Report(
@@ -445,7 +444,7 @@ class GenerateReportState extends State<GenerateReportPage> with AutomaticKeepAl
 //                endDate: _endDate,
 //                project: null,
 //                task: null))));
-    }
+  }
 
   @override
   void logOut() {
@@ -453,7 +452,10 @@ class GenerateReportState extends State<GenerateReportPage> with AutomaticKeepAl
   }
 
   _logout() {
-    analytics.logEvent(ReportsEvent.impression(EVENT_NAME.FAILED_TO_GENERATE_REPORT).view().setDetails("Logout"));
+    analytics.logEvent(
+        ReportsEvent.impression(EVENT_NAME.FAILED_TO_GENERATE_REPORT)
+            .view()
+            .setDetails("Logout"));
     Navigator.of(context).pushReplacement(new MaterialPageRoute(
         builder: (BuildContext context) => new LoginPage()));
   }
@@ -462,9 +464,9 @@ class GenerateReportState extends State<GenerateReportPage> with AutomaticKeepAl
   bool get wantKeepAlive => true;
 }
 
-class Period{
- final String name;
- final int value;
+class Period {
+  final String name;
+  final int value;
 
   Period({this.name, this.value});
 

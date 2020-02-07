@@ -8,6 +8,7 @@ import 'package:tikal_time_tracker/pages/new_record_page/new_record_state_model.
 import 'package:tikal_time_tracker/services/auth/auth.dart';
 import 'package:tikal_time_tracker/services/auth/user.dart';
 import 'package:tikal_time_tracker/services/locator/locator.dart';
+import 'package:tikal_time_tracker/ui/animation_button.dart';
 import 'package:tikal_time_tracker/ui/page_title.dart';
 import 'package:tikal_time_tracker/data/project.dart';
 import 'package:tikal_time_tracker/data/task.dart';
@@ -222,15 +223,13 @@ class NewRecordPageState extends State<NewRecordPage> {
   Padding _buildDeleteButton() {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-      child: RaisedButton(
+      child: AnimationButton(
         onPressed: () {
           _showDeleteAlertDialog();
 //        analytics.logEvent(
 //            NewRecordeEvent.click(EVENT_NAME.DELETE_RECORD_CLICKED).setUser(User.me.name));
         },
-        color: Colors.orangeAccent,
-        child: Text(Strings.delete_button_text,
-            style: TextStyle(color: Colors.white)),
+        buttonText: Strings.delete_button_text,
       ),
     );
   }
@@ -238,8 +237,8 @@ class NewRecordPageState extends State<NewRecordPage> {
   Padding _buildSaveButton(NewRecordStateModel stateModel) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-      child: RaisedButton(
-        onPressed: () {
+      child: AnimationButton(
+        onPressed: stateModel.formOk ? () {
           if (stateModel.formOk) {
             print("_buildSaveButton: ");
 //          analytics.logEvent(
@@ -247,10 +246,8 @@ class NewRecordPageState extends State<NewRecordPage> {
             SystemChannels.textInput.invokeMethod('TextInput.hide');
             widget.bloc.dispatchEvent(OnSaveButtonClicked(context: context));
           }
-        },
-        color: stateModel.formOk ? Colors.orangeAccent : Colors.grey,
-        child: Text(Strings.save_button_text,
-            style: TextStyle(color: Colors.white)),
+        } : null,
+        buttonText: Strings.save_button_text,
       ),
     );
   }
