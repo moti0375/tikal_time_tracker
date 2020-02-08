@@ -57,7 +57,7 @@ class TimeTrackerDatePicker extends StatelessWidget {
 
     final DateTime picked = await showDatePicker(
         context: context,
-        initialDate: initializedDateTime.weekday == weekendDay ? DateTime(DateTime.now().year, DateTime.now().month, 1) :  initializedDateTime ,
+        initialDate: initializedDateTime.weekday == weekendDay ? _getDefaultWeekday() :  initializedDateTime ,
         selectableDayPredicate: (DateTime val) =>
         val.weekday == weekendDay ? false : true,
         firstDate: DateTime(DateTime.now().year - 1, 1),
@@ -67,9 +67,11 @@ class TimeTrackerDatePicker extends StatelessWidget {
     }
   }
 
-  DateTime getDefaultWeekday(){
+  DateTime _getDefaultWeekday(){
+    print("It's a weekend day! get another default day");
     var firstDayOfMonth  = DateTime(DateTime.now().year, DateTime.now().month, 1);
     if(firstDayOfMonth.weekday == weekendDay){
+      print("OMG, 1'st day of month is also weekend! set default to 2'nd of month");
       return DateTime(DateTime.now().year, DateTime.now().month, 2);
     } else {
       return firstDayOfMonth;
