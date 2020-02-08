@@ -31,7 +31,9 @@ class ReportPageBloc{
 
   ReportPageBloc(this._analytics, Report report, this._preferences){
     print("ReportPageBloc: initializig bloc");
-    _analytics.logEvent(ReportsEvent.impression(EVENT_NAME.REPORT_GENERATED_SUCCESS).setUser(User.me.name).open());
+    _analytics.logEvent(ReportsEvent.impression(EVENT_NAME.REPORT_GENERATED_SUCCESS).
+    setUser(User.me.name).
+    open());
 
     var builder = ReportPageStateModelBuilder.fromAppState(_stateModel);
     builder.timeTrackerReport = report;

@@ -68,14 +68,11 @@ class ReportPage extends StatelessWidget {
       if (choice.action == MenuAction.SendEmail) {
         analytics.logEvent(ReportsEvent.click(EVENT_NAME.ACTION_SEND_MAIL)
             .setUser(User.me.name));
-
-        //  print("Navigate to SendEmail page");
         Navigator.of(context).push(new PageTransition(widget: SendEmailPage()));
       }
 
       if (choice.action == MenuAction.ReportAnalysis) {
-        analytics.logEvent(ReportsEvent.click(EVENT_NAME.ACTION_REPORT_ANALYSIS)
-            .setUser(User.me.name));
+        analytics.logEvent(ReportsEvent.click(EVENT_NAME.ACTION_REPORT_ANALYSIS));
         bloc.dispatchEvent(OnAnalysisItemClick(context));
       }
     }

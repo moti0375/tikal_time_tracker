@@ -1,17 +1,15 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/src/material/time.dart';
 import 'package:tikal_time_tracker/analytics/analytics.dart';
 import 'package:tikal_time_tracker/analytics/events/new_record_event.dart';
 import 'package:tikal_time_tracker/analytics/events/time_event.dart' as timeEvent;
 import 'package:tikal_time_tracker/data/exceptions/failed_login_exception.dart';
-
+import 'package:tikal_time_tracker/data/models.dart';
 import 'package:tikal_time_tracker/data/project.dart';
 import 'package:tikal_time_tracker/data/repository/app_repository.dart';
 import 'package:tikal_time_tracker/data/task.dart';
-import 'package:tikal_time_tracker/data/models.dart';
 import 'package:tikal_time_tracker/pages/new_record_page/new_record_page.dart';
 import 'package:tikal_time_tracker/pages/new_record_page/new_record_page_event.dart';
 import 'package:tikal_time_tracker/resources/strings.dart';
@@ -30,15 +28,13 @@ class NewRecordPageBloc {
   Analytics _analytics;
   NewRecordStateModel newRecordPageStateModel;
 
-  NewRecordPageBloc(
-      this._analytics, List<Project> projects, TimeRecord timeRecord, DateTime date,
+  NewRecordPageBloc(this._analytics, List<Project> projects,
+      TimeRecord timeRecord, DateTime date,
       {this.auth, this.repository}) {
     newRecordPageStateModel = NewRecordStateModel(projects: projects);
     print("$TAG: created");
     _analytics.logEvent(
-        NewRecordeEvent.impression(EVENT_NAME.NEW_TIME_PAGE_OPENED)
-            .setUser(auth.getCurrentUser().name)
-            .view());
+        NewRecordEvent.impression(EVENT_NAME.NEW_TIME_PAGE_OPENED).view());
     initEventStream();
     initBloc(projects, timeRecord, date);
   }
@@ -46,19 +42,22 @@ class NewRecordPageBloc {
   StreamController<NewRecordStateModel> _stateController = StreamController();
 
   Stream<NewRecordStateModel> get stateStream => _stateController.stream;
+
   Sink<NewRecordStateModel> get _stateSink => _stateController.sink;
 
-  StreamController<NewRecordPageEvent> _eventController = StreamController<NewRecordPageEvent>();
+  StreamController<NewRecordPageEvent> _eventController =
+      StreamController<NewRecordPageEvent>();
+
   Sink<NewRecordPageEvent> get _eventSink => _eventController.sink;
 
-  void initBloc(List<Project> projects, TimeRecord timeRecord, DateTime dateTime) async {
+  void initBloc(
+      List<Project> projects, TimeRecord timeRecord, DateTime dateTime) async {
     print("$TAG initBloc");
 
     if (timeRecord != null) {
       print("$TAG update a recrod");
       newRecordPageStateModel.updateWithTimeRecord(timeRecord);
-      _analytics.logEvent(NewRecordeEvent.impression(EVENT_NAME.EDITING_RECORD)
-          .setUser(auth.getCurrentUser().name)
+      _analytics.logEvent(NewRecordEvent.impression(EVENT_NAME.EDITING_RECORD)
           .view());
     } else {
       print("$TAG new recrod");
@@ -66,8 +65,7 @@ class NewRecordPageBloc {
           .updateWith(projects: projects)
           .updateWith(date: dateTime);
       _analytics.logEvent(
-          NewRecordeEvent.impression(EVENT_NAME.CREATING_NEW_RECORD)
-              .setUser(auth.getCurrentUser().name)
+          NewRecordEvent.impression(EVENT_NAME.CREATING_NEW_RECORD)
               .view());
     }
     _stateSink.add(newRecordPageStateModel);
@@ -122,13 +120,15 @@ class NewRecordPageBloc {
     if (this.newRecordPageStateModel.flow == NewRecordFlow.new_record) {
       repository.addTime(this.newRecordPageStateModel.timeRecord).then(
         (_) {
-          _analytics.logEvent(NewRecordeEvent.impression(EVENT_NAME.RECORD_SAVED_SUCCESS)
-              .setUser(auth.getCurrentUser().name)
-              .view());
+          _analytics.logEvent(
+              NewRecordEvent.impression(EVENT_NAME.RECORD_SAVED_SUCCESS)
+                  .setUser(auth.getCurrentUser().name)
+                  .view());
           _popBack(context, this.newRecordPageStateModel.timeRecord);
         },
         onError: (e) {
-          if(e is IncompleteRecordException){
+          _sendFailedEvent(e);
+          if (e is IncompleteRecordException) {
             print("_saveTimeRecord: IncompleteRecordException ${e.recordId}");
             _getIncompleteRecordById(e, context);
           } else {
@@ -142,11 +142,13 @@ class NewRecordPageBloc {
       print(
           "_saveTimeRecord: about to update ${this.newRecordPageStateModel.timeRecord.toString()}");
       repository.updateTime(this.newRecordPageStateModel.timeRecord).then((_) {
-        _analytics.logEvent(NewRecordeEvent.impression(EVENT_NAME.EDIT_RECORD_SUCCESS)
-            .setUser(auth.getCurrentUser().name)
-            .view());
+        _analytics.logEvent(
+            NewRecordEvent.impression(EVENT_NAME.EDIT_RECORD_SUCCESS)
+                .setUser(auth.getCurrentUser().name)
+                .view());
         _popBack(context, this.newRecordPageStateModel.timeRecord);
       }, onError: (e) {
+        _sendFailedEvent(e);
         _showErrorDialog(e, context, "Edit Record Error");
       });
     }
@@ -157,15 +159,10 @@ class NewRecordPageBloc {
   }
 
   _handleDeleteButton(BuildContext context) {
-    print(
-        "About to delete record: ${this.newRecordPageStateModel.timeRecord.toString()}");
+    print("About to delete record: ${this.newRecordPageStateModel.timeRecord.toString()}");
     repository.deleteTime(this.newRecordPageStateModel.timeRecord).then(
-        (response) {
-      print("Success: $response");
-      _popBack(context, this.newRecordPageStateModel.timeRecord);
-    }, onError: (e) {
-      print("_handleDeleteButton: There was an error");
-    });
+          (response) => _popBack(context, this.newRecordPageStateModel.timeRecord),
+          onError: (e) => _handleDeleteError);
   }
 
   void initEventStream() {
@@ -206,9 +203,7 @@ class NewRecordPageBloc {
     }
 
     if (event is OnSaveButtonClicked) {
-      _analytics.logEvent(NewRecordeEvent.click(EVENT_NAME.SAVE_RECORD_CLICKED)
-          .setUser(auth.getCurrentUser().name));
-
+      _analytics.logEvent(NewRecordEvent.click(EVENT_NAME.SAVE_RECORD_CLICKED));
       _saveTimeRecord(event.context);
     }
 
@@ -218,12 +213,12 @@ class NewRecordPageBloc {
     }
 
     if (event is OnDeleteButtonClicked) {
-      _analytics.logEvent(NewRecordeEvent.click(EVENT_NAME.DELETE_RECORD_CLICKED).setUser(auth.getCurrentUser().name));
+      _analytics.logEvent(NewRecordEvent.click(EVENT_NAME.DELETE_RECORD_CLICKED));
       _handleDeleteButton(event.context);
     }
 
     if (event is OnNowButtonClicked) {
-      _analytics.logEvent(timeEvent.TimeEvent.click(timeEvent.EVENT_NAME.TIME_PICKER_NOW).setUser(auth.getCurrentUser().name));
+      _analytics.logEvent(timeEvent.TimeEvent.click(timeEvent.EVENT_NAME.TIME_PICKER_NOW));
     }
   }
 
@@ -232,10 +227,6 @@ class NewRecordPageBloc {
   }
 
   void _showErrorDialog(e, context, title) {
-    _analytics.logEvent(NewRecordeEvent.impression(EVENT_NAME.FAILED_TO_EDIT_OR_SAVE)
-        .setUser(auth.getCurrentUser().name)
-        .view());
-
     PlatformAlertDialog dialog = PlatformAlertDialog(
         title: title,
         content: e is AppException ? e.cause : "There was an error",
@@ -249,37 +240,52 @@ class NewRecordPageBloc {
     dialog.show(context);
   }
 
-  void _getIncompleteRecordById(IncompleteRecordException e, BuildContext context) async {
-    repository.getIncompleteRecordById(e.recordId).then((response){
+  void _getIncompleteRecordById(
+      IncompleteRecordException e, BuildContext context) async {
+    repository.getIncompleteRecordById(e.recordId).then((response) {
       print("_getIncompleteRecordById: Response: $response");
       _showIncompleteRecordErrorDialog(e, response, context);
     }, onError: (e) => _showErrorDialog(e, context, "Save Record Error"));
   }
 
-  void _showIncompleteRecordErrorDialog(IncompleteRecordException e,  DateTime recordDate, BuildContext context) {
-      _analytics.logEvent(NewRecordeEvent.impression(EVENT_NAME.FAILED_TO_EDIT_OR_SAVE)
-          .setUser(auth.getCurrentUser().name)
-          .view());
+  void _showIncompleteRecordErrorDialog(
+      IncompleteRecordException e, DateTime recordDate, BuildContext context) {
+    print("_showIncompleteRecordErrorDialog: ${e.cause}");
 
-      print("_showIncompleteRecordErrorDialog: ${e.cause}");
+    PlatformAlertDialog dialog = PlatformAlertDialog(
+        title: "Save Record Error",
+        content: e.cause != null
+            ? "${e.cause}.\n Record Date: ${recordDate.day}-${recordDate.month}-${recordDate.year}"
+            : "There was an error",
+        defaultActionText: "OK",
+        actions: <Widget>[
+          FlatButton(
+            onPressed: () {
+              Navigator.pop(context); //Dismiss the popup
+              Navigator.of(context).pop(recordDate); //Pop the page
+            },
+            child: Text("Edit"),
+          ),
+          FlatButton(
+            onPressed: () => Navigator.pop(context), //Dismiss the popup
+            child: Text(Strings.cancel),
+          ),
+        ]);
+    dialog.show(context);
+  }
 
-      PlatformAlertDialog dialog = PlatformAlertDialog(
-          title: "Save Record Error",
-          content: e.cause != null ? "${e.cause}.\n Record Date: ${recordDate.day}-${recordDate.month}-${recordDate.year}" : "There was an error",
-          defaultActionText: "OK",
-          actions: <Widget>[
-            FlatButton(
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.of(context).pop(recordDate);
-              },
-              child: Text("Edit"),
-            ),
-            FlatButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(Strings.cancel),
-            ),
-          ]);
-      dialog.show(context);
+  void _sendFailedEvent(Exception e) {
+    var event = NewRecordEvent.impression(EVENT_NAME.FAILED_TO_EDIT_OR_SAVE)
+        .setUser(auth.getCurrentUser().name);
+    if (e is AppException && e.cause != null) {
+      event.setDetails(e.cause).view();
+    } else {
+      event.setDetails(e.toString()).view();
+    }
+    _analytics.logEvent(event);
+  }
+
+  void _handleDeleteError(Exception e){
+    _analytics.logEvent(NewRecordEvent.click(EVENT_NAME.FAILED_TO_DELETE_RECORD).setUser(auth.getCurrentUser().name).setDetails(e.toString()));
   }
 }

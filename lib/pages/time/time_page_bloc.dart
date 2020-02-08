@@ -23,9 +23,7 @@ class TimePageBloc  {
 
   TimePageBloc(this._repository, this._auth, this._analytics){
    _initializeEventsStream();
-   _analytics.logEvent(TimeEvent.impression(EVENT_NAME.TIME_PAGE_OPENED)
-       .setUser(_auth.getCurrentUser().name)
-       .view());
+   _analytics.logEvent(TimeEvent.impression(EVENT_NAME.TIME_PAGE_OPENED).view());
   }
 
   StreamController<TimeReport> _timeStreamController = StreamController.broadcast();
@@ -57,10 +55,9 @@ class TimePageBloc  {
     _timeEventsController.close();
   }
 
-  void onItemDismissed(TimeRecord item) {
-    print("onItemDismissed: ${item.toString()}");
+  void _handleOnItemDismissed(TimeRecord item) {
+    _analytics.logEvent(prefix0.NewRecordEvent.click(prefix0.EVENT_NAME.SWIPE_TO_DELETE).setUser(_auth.getCurrentUser().name));
     _repository.deleteTime(item).then((value){
-      print("onItemDismissed: ");
       _loadTime(_currentDate);
     });
   }
@@ -116,10 +113,12 @@ class TimePageBloc  {
   }
 
   void _logout() async {
+    _analytics.logEvent(TimeEvent.click(EVENT_NAME.ACTION_LOGOUT).setUser(_auth.getCurrentUser().name));
     await _auth.logout();
   }
 
   void _onAboutClicked(BuildContext context) async {
+    _analytics.logEvent(TimeEvent.click(EVENT_NAME.ACTION_ABOUT));
     Navigator.of(context).push(new PageTransition(widget: new AboutScreen()));
   }
 
@@ -136,29 +135,20 @@ class TimePageBloc  {
     }
 
     if(event is OnAboutItemClicked){
-      _analytics.logEvent(
-          TimeEvent.click(EVENT_NAME.ACTION_ABOUT).setUser(_auth.getCurrentUser().name));
       _onAboutClicked(event.context);
     }
 
     if(event is LogoutItemClicked){
-      _analytics.logEvent(
-          TimeEvent.click(EVENT_NAME.ACTION_LOGOUT).setUser(_auth.getCurrentUser().name));
-
       _logout();
     }
     
     if(event is FabAddRecordClicked){
-      _analytics.logEvent(
-          TimeEvent.click(EVENT_NAME.NEW_RECORD_FAB_CLICKED)
-              .setUser(_auth.getCurrentUser().name));
+      _analytics.logEvent(TimeEvent.click(EVENT_NAME.NEW_RECORD_FAB_CLICKED));
       _navigateToNextScreen(event.context);
     }
 
     if(event is EmptyScreenAddRecordClicked){
-      _analytics.logEvent(
-          TimeEvent.click(EVENT_NAME.NEW_RECORD_SCREEN_CLICKED)
-              .setUser(_auth.getCurrentUser().name));
+      _analytics.logEvent(TimeEvent.click(EVENT_NAME.NEW_RECORD_SCREEN_CLICKED));
       _navigateToNextScreen(event.context);
     }
 
@@ -167,8 +157,7 @@ class TimePageBloc  {
     }
 
     if(event is OnItemDismissed){
-      _analytics.logEvent(prefix0.NewRecordeEvent.click(prefix0.EVENT_NAME.SWIPE_TO_DELETE).setUser(_auth.getCurrentUser().name));
-      onItemDismissed(event.timeRecord);
+      _handleOnItemDismissed(event.timeRecord);
     }
   }
 }

@@ -31,10 +31,7 @@ class TimeTrackerTimePicker extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: GestureDetector(
               onTap: () {
-//                print("onTap TimePicker");
-                Analytics.instance.logEvent(
-                    TimeEvent.click(EVENT_NAME.TIME_PICKER_ICON)
-                        .setUser(User.me.name));
+                Analytics.instance.logEvent(TimeEvent.click(EVENT_NAME.TIME_PICKER_ICON));
                 _showStartTimeDialog(context);
               },
               child: Icon(Icons.access_time),
