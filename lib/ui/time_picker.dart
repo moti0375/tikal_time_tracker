@@ -19,7 +19,7 @@ class TimeTrackerTimePicker extends StatelessWidget {
       this.initialTimeValue,
       this.hint,
       this.onTimeSelected,
-      this.onNowButtonClicked}) {}
+      this.onNowButtonClicked});
 
   @override
   Widget build(BuildContext context) {

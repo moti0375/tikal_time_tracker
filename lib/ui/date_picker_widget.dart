@@ -13,7 +13,9 @@ class TimeTrackerDatePicker extends StatelessWidget {
   final TextEditingController dateInputController = TextEditingController();
 
   TimeTrackerDatePicker({this.initializedDateTime, this.onSubmittedCallback, this.hint}){
-    dateInputController.text = dateFormat.format(initializedDateTime);
+    if(initializedDateTime != null) {
+      dateInputController.text = dateFormat.format(initializedDateTime);
+    }
   }
 
   @override

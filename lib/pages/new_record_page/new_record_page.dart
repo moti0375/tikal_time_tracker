@@ -1,28 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:tikal_time_tracker/data/exceptions/failed_login_exception.dart';
+import 'package:tikal_time_tracker/analytics/analytics.dart';
+import 'package:tikal_time_tracker/data/models.dart';
+import 'package:tikal_time_tracker/data/project.dart';
 import 'package:tikal_time_tracker/data/repository/app_repository.dart';
+import 'package:tikal_time_tracker/data/task.dart';
+import 'package:tikal_time_tracker/pages/new_record_page/new_record_bloc.dart';
 import 'package:tikal_time_tracker/pages/new_record_page/new_record_page_event.dart';
 import 'package:tikal_time_tracker/pages/new_record_page/new_record_state_model.dart';
+import 'package:tikal_time_tracker/resources/strings.dart';
 import 'package:tikal_time_tracker/services/auth/auth.dart';
-import 'package:tikal_time_tracker/services/auth/user.dart';
 import 'package:tikal_time_tracker/services/locator/locator.dart';
 import 'package:tikal_time_tracker/ui/animation_button.dart';
+import 'package:tikal_time_tracker/ui/date_picker_widget.dart';
 import 'package:tikal_time_tracker/ui/page_title.dart';
-import 'package:tikal_time_tracker/data/project.dart';
-import 'package:tikal_time_tracker/data/task.dart';
-import 'package:tikal_time_tracker/data/models.dart';
-import 'package:tikal_time_tracker/data/repository/time_records_repository.dart';
 import 'package:tikal_time_tracker/ui/platform_alert_dialog.dart';
 import 'package:tikal_time_tracker/ui/platform_appbar.dart';
-import 'package:tikal_time_tracker/utils/utils.dart';
-import 'package:tikal_time_tracker/ui/date_picker_widget.dart';
-import 'package:tikal_time_tracker/pages/new_record_page/new_record_bloc.dart';
 import 'package:tikal_time_tracker/ui/time_picker.dart';
-import 'package:tikal_time_tracker/resources/strings.dart';
-import 'package:tikal_time_tracker/analytics/analytics.dart';
-import 'package:tikal_time_tracker/analytics/events/new_record_event.dart';
+import 'package:tikal_time_tracker/utils/utils.dart';
 
 class NewRecordPage extends StatefulWidget {
   final NewRecordPageBloc bloc;
@@ -34,7 +30,8 @@ class NewRecordPage extends StatefulWidget {
     return new NewRecordPageState();
   }
 
-  static Widget create(List<Project> projects, TimeRecord timeRecord, DateTime date) {
+  static Widget create(
+      List<Project> projects, TimeRecord timeRecord, DateTime date) {
     return Consumer<BaseAuth>(
       builder: (context, auth, _) => Provider<NewRecordPageBloc>(
         create: (context) => NewRecordPageBloc(
@@ -122,15 +119,15 @@ class NewRecordPageState extends State<NewRecordPage> {
       Row _buildButtonsRow(NewRecordStateModel newRecordStateModel)) {
     _updateFieldsValues(snapshot.data);
     return Container(
+      height: double.infinity,
+      width: double.infinity,
       padding: EdgeInsets.symmetric(horizontal: 16.0),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Flexible(
-            flex: 4,
+          new TimeTrackerPageTitle(),
+          Expanded(
             child: ListView(
               children: <Widget>[
-                new TimeTrackerPageTitle(),
                 buildProjectsDropDown(snapshot.data),
                 buildTasksDropDown(snapshot.data),
                 buildDatePicker(snapshot.data),
@@ -141,15 +138,7 @@ class NewRecordPageState extends State<NewRecordPage> {
               ],
             ),
           ),
-          Flexible(
-              flex: 1,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Expanded(flex: 1, child: _buildButtonsRow(snapshot.data))
-                ],
-              ))
+          _buildButtonsRow(snapshot.data)
         ],
       ),
     );
@@ -238,15 +227,17 @@ class NewRecordPageState extends State<NewRecordPage> {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
       child: AnimationButton(
-        onPressed: stateModel.formOk ? () {
-          if (stateModel.formOk) {
-            print("_buildSaveButton: ");
+        onPressed: stateModel.formOk
+            ? () {
+                if (stateModel.formOk) {
+                  print("_buildSaveButton: ");
 //          analytics.logEvent(
 //              NewRecordeEvent.click(EVENT_NAME.SAVE_RECORD_CLICKED));
-            SystemChannels.textInput.invokeMethod('TextInput.hide');
-            widget.bloc.dispatchEvent(OnSaveButtonClicked(context: context));
-          }
-        } : null,
+                  SystemChannels.textInput.invokeMethod('TextInput.hide');
+//                  widget.bloc.dispatchEvent(OnSaveButtonClicked(context: context));
+                }
+              }
+            : null,
         buttonText: Strings.save_button_text,
       ),
     );
