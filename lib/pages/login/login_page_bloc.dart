@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -7,12 +6,12 @@ import 'package:tikal_time_tracker/analytics/analytics.dart';
 import 'package:tikal_time_tracker/analytics/events/login_event.dart';
 import 'package:tikal_time_tracker/bottom_navigation.dart';
 import 'package:tikal_time_tracker/data/exceptions/failed_login_exception.dart';
-import 'package:tikal_time_tracker/data/models.dart';
 import 'package:tikal_time_tracker/data/repository/app_repository.dart';
 import 'package:tikal_time_tracker/pages/login/login_event.dart';
 import 'package:tikal_time_tracker/pages/login/login_state.dart';
 import 'package:tikal_time_tracker/pages/reset_password/reset_password_page.dart';
 import 'package:tikal_time_tracker/services/auth/auth.dart';
+import 'package:tikal_time_tracker/services/auth/user.dart';
 import 'package:tikal_time_tracker/storage/preferences.dart';
 import 'package:tikal_time_tracker/utils/page_transition.dart';
 
@@ -24,21 +23,24 @@ class LoginPageBloc {
 
   LogInModel _currentState = LogInModel();
 
-  LoginPageBloc(this._auth ,this._preferences, this._repository, this._analytics) {
+  LoginPageBloc(
+      this._auth, this._preferences, this._repository, this._analytics) {
     _loginEventsController.stream.listen((event) {
       _mapInputEvent(event);
     });
     setInitialState();
   }
 
-  StreamController<LogInModel> _loginStateStreamController = StreamController
-      .broadcast();
+  StreamController<LogInModel> _loginStateStreamController =
+      StreamController.broadcast();
 
-  Stream<LogInModel> get loginStateStream => _loginStateStreamController.stream.asBroadcastStream();
+  Stream<LogInModel> get loginStateStream =>
+      _loginStateStreamController.stream.asBroadcastStream();
+
   Sink<LogInModel> get _loginStateSink => _loginStateStreamController.sink;
 
-  StreamController<LoginPageEvent> _loginEventsController = StreamController<
-      LoginPageEvent>();
+  StreamController<LoginPageEvent> _loginEventsController =
+      StreamController<LoginPageEvent>();
 
   Sink<LoginPageEvent> get _loginEventsSink => _loginEventsController.sink;
 
@@ -57,7 +59,7 @@ class LoginPageBloc {
       _updateUsername(event.userName);
     }
 
-   if (event is Password) {
+    if (event is Password) {
       _updatePassword(event.password);
     }
 
@@ -66,15 +68,15 @@ class LoginPageBloc {
       _startLogin(event.context);
     }
 
-    if(event is ForgotPasswordClicked){
+    if (event is ForgotPasswordClicked) {
       _navigateToResetPassword(event);
     }
 
-    if(event is ToggleObscureMode){
+    if (event is ToggleObscureMode) {
       _toggleObscure();
     }
 
-    if(event is SignOut){
+    if (event is SignOut) {
       _signOut();
     }
   }
@@ -89,23 +91,14 @@ class LoginPageBloc {
 
   void _startLogin(BuildContext context) async {
     _loginStateSink.add(_currentState.updateWith(loggingIn: true));
-    _auth.login(_currentState.email, _currentState.password).then((user) {
-      if (user != null) {
-        print("_loginAuth: User: ${user.name}");
-        _preferences.setLoginUserName(_currentState.email);
-        _preferences.setLoginPassword(_currentState.password);
-        _analytics.logEvent(LoginEvent.impression(EVENT_NAME.LOGIN_OK)
-            .setUser(user.name)
-            .view());
-        _navigateToTabsScreen(context);
-      }
-    }, onError: (e)  {
-      if(e is AppException){
-        _loginStateSink.add(_currentState.updateWith(loggingIn: false, errorInfo: e.cause));
-      } else {
-        _loginStateSink.add(_currentState.updateWith(loggingIn: false, errorInfo: "There was an error"));
-      }
-    });
+    _auth.login(_currentState.email, _currentState.password).then(
+      (user) {
+        if (user != null) {
+         _handleLoginSuccess(user, context);
+        }
+      },
+      onError: (e) => _handleLoginError(e),
+    );
   }
 
   void _navigateToTabsScreen(BuildContext context) {
@@ -123,9 +116,9 @@ class LoginPageBloc {
     _loginStateStreamController.add(_currentState);
   }
 
-
   void _navigateToResetPassword(ForgotPasswordClicked forgotPasswordEvent) {
-    Navigator.of(forgotPasswordEvent.context).push(PageTransition(widget: ResetPasswordPage(emailAddress: _currentState.email)));
+    Navigator.of(forgotPasswordEvent.context).push(PageTransition(
+        widget: ResetPasswordPage(emailAddress: _currentState.email)));
   }
 
   void _toggleObscure() {
@@ -138,6 +131,33 @@ class LoginPageBloc {
     _loginStateSink.add(_currentState);
     _preferences.signOut();
   }
+
+  void _handleLoginSuccess(User user, BuildContext context) {
+    _preferences.setLoginUserName(_currentState.email);
+    _preferences.setLoginPassword(_currentState.password);
+    _analytics.logEvent(LoginEvent.impression(EVENT_NAME.LOGIN_OK)
+        .setUser(user.name)
+        .view());
+    _navigateToTabsScreen(context);
+  }
+
+  void _handleLoginError(Exception e) {
+    if (e is AppException) {
+      _analytics.logEvent(LoginEvent.click(EVENT_NAME.LOGIN_FAILED)
+          .setUser(_currentState.email)
+          .setDetails(e.cause)
+          .view());
+      _loginStateSink
+          .add(_currentState.updateWith(loggingIn: false, errorInfo: e.cause));
+    } else {
+      _analytics.logEvent(LoginEvent.click(EVENT_NAME.LOGIN_FAILED)
+          .setUser(_currentState.email)
+          .setDetails(e.toString())
+          .view());
+      _loginStateSink.add(_currentState.updateWith(
+          loggingIn: false, errorInfo: "There was an error"));
+    }
+  }
+
+
 }
-
-
