@@ -151,14 +151,13 @@ class LoginPageState extends State<LoginPage> {
       ],
     );
 
-    Widget getLoginInfo(prefix0.LogInModel state) {
-      return SizedBox(
-          height: 15,
-          child: Text(
-            state.errorInfo ?? "",
-            textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
-          ));
+    Widget _loginInfo(prefix0.LogInModel state) {
+
+      return Text(
+        state.errorInfo ?? "",
+        textAlign: TextAlign.center,
+        style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+      );
     }
 
     Widget _loginForm(LogInModel state) {
@@ -179,7 +178,7 @@ class LoginPageState extends State<LoginPage> {
               SizedBox(height: 8.0),
               _buildPasswordInputField(state),
               SizedBox(height: 8.0),
-              getLoginInfo(state),
+              _loginInfo(state),
               SizedBox(height: 8.0),
               AnimationButton(
                   buttonText: Strings.login_button_text,
