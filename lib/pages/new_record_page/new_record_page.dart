@@ -196,8 +196,8 @@ class NewRecordPageState extends State<NewRecordPage> {
             focusNode: commentFocusNode,
             onFieldSubmitted: (comment) {
               if (stateModel.formOk) {
-                widget.bloc
-                    .dispatchEvent(OnSaveButtonClicked(context: context));
+                Utils.hideSoftKeyboard(context);
+                widget.bloc.dispatchEvent(OnSaveButtonClicked(context: context));
               }
             },
             maxLines: 4,
@@ -213,11 +213,7 @@ class NewRecordPageState extends State<NewRecordPage> {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
       child: AnimationButton(
-        onPressed: () {
-          _showDeleteAlertDialog();
-//        analytics.logEvent(
-//            NewRecordeEvent.click(EVENT_NAME.DELETE_RECORD_CLICKED).setUser(User.me.name));
-        },
+        onPressed: () => _showDeleteAlertDialog,
         buttonText: Strings.delete_button_text,
       ),
     );
@@ -230,11 +226,9 @@ class NewRecordPageState extends State<NewRecordPage> {
         onPressed: stateModel.formOk
             ? () {
                 if (stateModel.formOk) {
-                  print("_buildSaveButton: ");
-//          analytics.logEvent(
-//              NewRecordeEvent.click(EVENT_NAME.SAVE_RECORD_CLICKED));
-                  SystemChannels.textInput.invokeMethod('TextInput.hide');
-//                  widget.bloc.dispatchEvent(OnSaveButtonClicked(context: context));
+                  Utils.hideSoftKeyboard(context);
+                  widget.bloc
+                      .dispatchEvent(OnSaveButtonClicked(context: context));
                 }
               }
             : null,
@@ -246,9 +240,10 @@ class NewRecordPageState extends State<NewRecordPage> {
   TimeTrackerDatePicker buildDatePicker(NewRecordStateModel stateModel) {
     print("buildDatePicker: ${stateModel.timeRecord.date}");
     return TimeTrackerDatePicker(
-        initializedDateTime: stateModel.timeRecord.date,
-        onSubmittedCallback: (date) =>
-            widget.bloc.dispatchEvent(OnDateSelected(selectedDate: date)));
+      initializedDateTime: stateModel.timeRecord.date,
+      onSubmittedCallback: (date) =>
+          widget.bloc.dispatchEvent(OnDateSelected(selectedDate: date)),
+    );
   }
 
   TimeTrackerTimePicker buildStartTimePicker(

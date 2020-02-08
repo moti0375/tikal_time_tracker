@@ -231,6 +231,7 @@ class SendEmailPageState extends State<SendEmailPage>
         setState(() {
           status = "";
         });
+        Utils.hideSoftKeyboard(context);
         analytics.logEvent(EmailEvent.click(EVENT_NAME.SEND_MAIL_CLICKED));
         presenter.onSendMailButtonClicked();
       },
