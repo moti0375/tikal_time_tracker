@@ -10,6 +10,7 @@ import 'package:tikal_time_tracker/data/repository/app_repository.dart';
 import 'package:tikal_time_tracker/pages/login/login_event.dart';
 import 'package:tikal_time_tracker/pages/login/login_state.dart';
 import 'package:tikal_time_tracker/pages/reset_password/reset_password_page.dart';
+import 'package:tikal_time_tracker/resources/strings.dart';
 import 'package:tikal_time_tracker/services/auth/auth.dart';
 import 'package:tikal_time_tracker/services/auth/user.dart';
 import 'package:tikal_time_tracker/storage/preferences.dart';
@@ -90,7 +91,7 @@ class LoginPageBloc {
   }
 
   void _startLogin(BuildContext context) async {
-    _loginStateSink.add(_currentState.updateWith(loggingIn: true));
+    _loginStateSink.add(_currentState.updateWith(loggingIn: true, errorInfo: Strings.empty_string));
     _auth.login(_currentState.email, _currentState.password).then(
       (user) {
         if (user != null) {
@@ -127,7 +128,7 @@ class LoginPageBloc {
   }
 
   void _signOut() async {
-    _currentState.updateWith(email: "", password: "");
+    _currentState.updateWith(email: Strings.empty_string, password: Strings.empty_string);
     _loginStateSink.add(_currentState);
     _preferences.signOut();
   }

@@ -22,7 +22,7 @@ class SendEmailPageState extends State<SendEmailPage>
     implements SendMailContractView {
   Analytics analytics = Analytics.instance;
   SendMailContractPresenter presenter;
-  String status = "";
+  String status = Strings.empty_string;
   TextEditingController toInputTextController;
   TextEditingController ccInputTextController;
   TextEditingController subjectInputTextController;
@@ -229,7 +229,7 @@ class SendEmailPageState extends State<SendEmailPage>
       buttonText: Strings.send_button_text,
       onPressed: () {
         setState(() {
-          status = "";
+          status = Strings.empty_string;
         });
         Utils.hideSoftKeyboard(context);
         analytics.logEvent(EmailEvent.click(EVENT_NAME.SEND_MAIL_CLICKED));

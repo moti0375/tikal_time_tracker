@@ -13,6 +13,7 @@ import 'package:tikal_time_tracker/data/repository/remote/remote_data_source.dar
 import 'package:tikal_time_tracker/data/repository/time_records_repository.dart';
 import 'package:tikal_time_tracker/network/credentials.dart';
 import 'package:tikal_time_tracker/network/time_tracker_api.dart';
+import 'package:tikal_time_tracker/resources/strings.dart';
 import 'package:tikal_time_tracker/storage/preferences.dart';
 
 GetIt locator = GetIt.instance;
@@ -28,7 +29,7 @@ Future<void> setupLocator() async {
 Future setTimeTrackerApi() async {
   TimeTrackerApi api = TimeTrackerApi.create();
   locator.registerLazySingleton(() => DomParser());
-  TimeRecordsRepository timeRecordsRepository = TimeRecordsRepository.init(RemoteDateSource(api: api), Credentials(signInUserName: "", signInPassword: ""));
+  TimeRecordsRepository timeRecordsRepository = TimeRecordsRepository.init(RemoteDateSource(api: api), Credentials(signInUserName: Strings.empty_string, signInPassword: Strings.empty_string));
   LoginRepository loginRepository = LoginRepository(LoginRemoteDataSource(api));
   locator.registerLazySingleton(() => AppRepository(timeRecordsRepository, loginRepository));
 }

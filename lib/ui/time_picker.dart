@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tikal_time_tracker/analytics/analytics.dart';
 import 'package:tikal_time_tracker/analytics/events/time_event.dart';
+import 'package:tikal_time_tracker/resources/strings.dart';
 import 'package:tikal_time_tracker/services/auth/user.dart';
 import 'package:tikal_time_tracker/ui/unfocusable_input_text_field.dart';
 import 'package:tikal_time_tracker/utils/utils.dart';
@@ -43,8 +44,8 @@ class TimeTrackerTimePicker extends StatelessWidget {
               child: UnFocusableInputTextField(
                 textValue: initialTimeValue != null
                     ? Utils.buildTimeStringFromTime(initialTimeValue)
-                    : "",
-                hint: hint ?? "",
+                    : Strings.empty_string,
+                hint: hint ?? Strings.empty_string,
                 onTap: () => _showStartTimeDialog(context),
               ),
             ),

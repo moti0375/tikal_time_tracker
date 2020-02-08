@@ -154,7 +154,7 @@ class LoginPageState extends State<LoginPage> {
     Widget _loginInfo(prefix0.LogInModel state) {
 
       return Text(
-        state.errorInfo ?? "",
+        state.errorInfo ?? Strings.empty_string,
         textAlign: TextAlign.center,
         style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
       );

@@ -53,9 +53,9 @@ class NewRecordPage extends StatefulWidget {
 
 class NewRecordPageState extends State<NewRecordPage> {
   TextEditingController durationInputController =
-      new TextEditingController(text: "");
+      new TextEditingController(text: Strings.empty_string);
   TextEditingController commentInputController =
-      new TextEditingController(text: "");
+      new TextEditingController(text: Strings.empty_string);
   FocusNode commentFocusNode;
 
   @override
@@ -109,7 +109,7 @@ class NewRecordPageState extends State<NewRecordPage> {
   void _updateFieldsValues(NewRecordStateModel stateModel) {
     commentInputController.text = stateModel.timeRecord.comment;
     durationInputController.text = stateModel.timeRecord.duration == null
-        ? ""
+        ? Strings.empty_string
         : Utils.buildTimeStringFromDuration(stateModel.timeRecord.duration);
   }
 

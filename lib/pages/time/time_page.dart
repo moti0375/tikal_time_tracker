@@ -50,7 +50,7 @@ class _TimePageState extends State<TimePage> with AutomaticKeepAliveClientMixin<
   }
 
   final TextEditingController dateInputController =
-      new TextEditingController(text: "");
+      new TextEditingController(text: Strings.empty_string);
 
   @override
   Widget build(BuildContext context) {

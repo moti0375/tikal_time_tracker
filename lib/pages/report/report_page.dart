@@ -120,7 +120,7 @@ class ReportPage extends StatelessWidget {
       return Column(
         children: <Widget>[
           PlaceholderContent(
-            subtitle: "",
+            subtitle: Strings.empty_string,
           ),
         ],
       );
@@ -151,7 +151,7 @@ class ReportPage extends StatelessWidget {
             child: Text(
               data.timeTrackerReport != null
                   ? "Report: ${data.timeTrackerReport.startDate.day}/${data.timeTrackerReport.startDate.month}/${data.timeTrackerReport.startDate.year} - ${data.timeTrackerReport.endDate.day}/${data.timeTrackerReport.endDate.month}/${data.timeTrackerReport.endDate.year}"
-                  : "",
+                  : Strings.empty_string,
               style: TextStyle(fontSize: 20.0, color: Colors.black45),
             ),
           ),

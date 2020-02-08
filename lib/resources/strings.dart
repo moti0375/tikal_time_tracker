@@ -1,6 +1,7 @@
 
 class Strings{
   static const app_name = "Tikal Time Tracker";
+  static const empty_string = "";
 
   //Login page
   static const email_hint = "Email";
