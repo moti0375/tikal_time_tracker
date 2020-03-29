@@ -213,7 +213,7 @@ class NewRecordPageState extends State<NewRecordPage> {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
       child: AnimationButton(
-        onPressed: () => _showDeleteAlertDialog,
+        onPressed: _showDeleteAlertDialog,
         buttonText: Strings.delete_button_text,
       ),
     );
