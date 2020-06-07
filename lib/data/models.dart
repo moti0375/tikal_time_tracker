@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tikal_time_tracker/data/remote.dart';
 import '../data/database/database_helper.dart';
 import '../data/project.dart';
 import '../data/task.dart';
@@ -13,11 +14,12 @@ class TimeRecord{
   DateTime date;
   String comment;
   String userName;
+  Remote remote;
 
   TimeRecord.empty();
 
   TimeRecord({this.id, this.project, this.task, this.start, this.finish,
-      this.date, this.comment, this.duration, this.userName}){
+      this.date, this.comment, this.duration, this.userName, this.remote}){
 
     DateTime s;
 
@@ -39,7 +41,8 @@ class TimeRecord{
       columnStart.toString() : "${start.hour}:${start.minute}",
       columnFinish.toString() : "${finish.hour}:${finish.minute}",
       columnDuration.toString() : "${duration.inHours}:${duration.inSeconds % 60}",
-      columnComment.toString() : comment
+      columnComment.toString() : comment,
+      columnRemote.toString() : remote
     };
 
     if(id != null){

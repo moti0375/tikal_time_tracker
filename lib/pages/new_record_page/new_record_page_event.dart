@@ -1,9 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:tikal_time_tracker/data/project.dart';
+import 'package:tikal_time_tracker/data/remote.dart';
 import 'package:tikal_time_tracker/data/task.dart';
 
 abstract class NewRecordPageEvent{}
+
+@immutable
+class OnSelectedRemote extends NewRecordPageEvent{
+  final Remote selectedRemote;
+  OnSelectedRemote({@required this.selectedRemote});
+}
+
+
 @immutable
 class OnSelectedProject extends NewRecordPageEvent{
   final Project selectedProject;

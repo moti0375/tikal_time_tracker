@@ -8,6 +8,7 @@ import 'package:tikal_time_tracker/analytics/events/time_event.dart' as timeEven
 import 'package:tikal_time_tracker/data/exceptions/failed_login_exception.dart';
 import 'package:tikal_time_tracker/data/models.dart';
 import 'package:tikal_time_tracker/data/project.dart';
+import 'package:tikal_time_tracker/data/remote.dart';
 import 'package:tikal_time_tracker/data/repository/app_repository.dart';
 import 'package:tikal_time_tracker/data/task.dart';
 import 'package:tikal_time_tracker/pages/new_record_page/new_record_page.dart';
@@ -69,6 +70,11 @@ class NewRecordPageBloc {
               .view());
     }
     _stateSink.add(newRecordPageStateModel);
+  }
+
+  void _remoteSelected(Remote remote) {
+    this.newRecordPageStateModel.updateWith(remote: remote);
+    _stateSink.add(this.newRecordPageStateModel);
   }
 
   void _projectSelected(Project project) {
@@ -182,6 +188,11 @@ class NewRecordPageBloc {
   }
 
   void _handleInputEvents(NewRecordPageEvent event) {
+
+    if (event is OnSelectedRemote) {
+      _remoteSelected(event.selectedRemote);
+    }
+
     if (event is OnSelectedProject) {
       _projectSelected(event.selectedProject);
     }

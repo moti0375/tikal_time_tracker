@@ -11,6 +11,7 @@ const String columnStart = "start";
 const String columnFinish = "finish";
 const String columnDuration = "duration";
 const String columnComment = "comment";
+const String columnRemote = "remote";
 
 class TimeRecordDatabaseOpenHelper {
   Database db;

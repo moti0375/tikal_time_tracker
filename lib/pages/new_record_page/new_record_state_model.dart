@@ -1,7 +1,7 @@
-import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:tikal_time_tracker/data/models.dart';
 import 'package:tikal_time_tracker/data/project.dart';
+import 'package:tikal_time_tracker/data/remote.dart';
 import 'package:tikal_time_tracker/data/task.dart';
 import 'package:tikal_time_tracker/pages/new_record_page/new_record_page.dart';
 
@@ -36,13 +36,14 @@ class NewRecordStateModel {
       Duration duration,
       DateTime date,
       String comment,
-      bool formOk}) {
+      bool formOk, Remote remote}) {
     this.timeRecord.task =  task ?? this.timeRecord.task;
     this.timeRecord.start = startTime ?? this.timeRecord.start;
     this.timeRecord.finish = finishTime ?? this.timeRecord.finish;
     this.timeRecord.duration = duration ?? this.timeRecord.duration;
     this.timeRecord.date = date ?? this.timeRecord.date;
     this.timeRecord.comment = comment ?? this.timeRecord.comment;
+    this.timeRecord.remote = remote ?? this.timeRecord.remote;
     this.formOk = this.timeRecord.date != null && this.timeRecord.start != null && this.timeRecord.project != null && this.timeRecord.task != null;
     if(project != null){
       this.timeRecord.project = project;

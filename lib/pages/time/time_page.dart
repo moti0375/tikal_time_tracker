@@ -4,19 +4,13 @@ import 'package:tikal_time_tracker/data/models.dart';
 import 'package:tikal_time_tracker/pages/time/time_page_event.dart';
 import 'package:tikal_time_tracker/services/auth/auth.dart';
 import 'package:tikal_time_tracker/services/auth/user.dart';
-import 'package:tikal_time_tracker/services/locator/locator.dart';
 import 'package:tikal_time_tracker/ui/platform_appbar.dart';
 import 'package:tikal_time_tracker/ui/time_record_list_builder.dart';
-import 'package:tikal_time_tracker/pages/new_record_page/new_record_page.dart';
 import 'package:tikal_time_tracker/pages/reports/place_holder_content.dart';
 import 'package:tikal_time_tracker/ui/date_picker_widget.dart';
 import 'package:tikal_time_tracker/utils/action_choice.dart';
 import 'package:tikal_time_tracker/pages/time/time_page_bloc.dart';
-import 'package:tikal_time_tracker/pages/about_screen/about_screen.dart';
-import 'package:tikal_time_tracker/utils/page_transition.dart';
 import 'package:tikal_time_tracker/resources/strings.dart';
-import 'package:tikal_time_tracker/analytics/analytics.dart';
-import 'package:tikal_time_tracker/analytics/events/time_event.dart';
 import 'package:tikal_time_tracker/utils/utils.dart';
 
 class TimePage extends StatefulWidget {
@@ -54,6 +48,7 @@ class _TimePageState extends State<TimePage> with AutomaticKeepAliveClientMixin<
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     User user = Provider.of<BaseAuth>(context).getCurrentUser();
 
 //    print("build: TimePage: $user");

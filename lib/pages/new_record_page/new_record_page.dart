@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:tikal_time_tracker/analytics/analytics.dart';
 import 'package:tikal_time_tracker/data/models.dart';
 import 'package:tikal_time_tracker/data/project.dart';
+import 'package:tikal_time_tracker/data/remote.dart';
 import 'package:tikal_time_tracker/data/repository/app_repository.dart';
 import 'package:tikal_time_tracker/data/task.dart';
 import 'package:tikal_time_tracker/pages/new_record_page/new_record_bloc.dart';
@@ -128,6 +129,7 @@ class NewRecordPageState extends State<NewRecordPage> {
           Expanded(
             child: ListView(
               children: <Widget>[
+                buildRemoteDropDown(snapshot.data),
                 buildProjectsDropDown(snapshot.data),
                 buildTasksDropDown(snapshot.data),
                 buildDatePicker(snapshot.data),
@@ -164,6 +166,8 @@ class NewRecordPageState extends State<NewRecordPage> {
       },
     );
   }
+
+
 
   Container buildDurationField() {
     return Container(
@@ -338,6 +342,41 @@ class NewRecordPageState extends State<NewRecordPage> {
         ));
   }
 
+  Widget buildRemoteDropDown(NewRecordStateModel newRecordStateModel) {
+    return Container(
+        margin: EdgeInsets.symmetric(vertical: 4.0),
+        decoration: BoxDecoration(
+            border: Border.all(width: 0.5, color: Colors.black45)),
+        padding: EdgeInsets.symmetric(horizontal: 10.0),
+        child: DropdownButtonHideUnderline(
+          child:  DropdownButton(
+              iconSize: 30.0,
+              hint: Container(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  Strings.drop_down_remote_title,
+                  style: TextStyle(fontSize: 24.0, color: Colors.black26),
+                ),
+              ),
+              value: newRecordStateModel.timeRecord.remote,
+              items: Provider.of<BaseAuth>(context).getCurrentUser().remotes.map((Remote value) {
+                return new DropdownMenuItem<Remote>(
+                  value: value,
+                  child: new Text(
+                    value.name,
+                    style: TextStyle(fontSize: 24.0),
+                  ),
+                );
+              }).toList(),
+              onChanged: (value) {
+                    widget.bloc.dispatchEvent(OnSelectedRemote(selectedRemote: value));
+              },
+          ),
+        ));
+
+  }
+
+
   void _showDeleteAlertDialog() {
     PlatformAlertDialog dialog = PlatformAlertDialog(
       title: Strings.delete_alert_title,
@@ -359,16 +398,6 @@ class NewRecordPageState extends State<NewRecordPage> {
     );
 
     dialog.show(context);
-  }
-
-  @override
-  void onError(Exception e) {
-    print("onError: ${e.toString()}");
-//    analytics.logEvent(
-//        NewRecordeEvent.impression(EVENT_NAME.FAILED_TO_EDIT_OR_SAVE)
-//            .setUser(User.me.name)
-//            .setDetails(e is AppException ? e.cause : e.toString())
-//            .view());
   }
 }
 
