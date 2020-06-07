@@ -15,12 +15,13 @@ class UpdateTimeSerializer extends Serializer<UpdateRequest>{
 
   @override
   Map<String, String> toMap(UpdateRequest model) {
-    print("form serializer: toSap: ${model.toString()}");
+    print("form serializer: toMap: ${model.toString()}");
     TimeRecord timeRecord = model.timeRecord;
     Map<String, String> map = Map<String, String>();
 
 
     map["id"] = "${timeRecord.id}";
+    map["time_field_5"] = "${timeRecord.remote.value}";
     map["project"] = "${timeRecord.project.value}";
     map["task"] = "${timeRecord.task.value}";
     map["date"] = "${dateFormat.format(timeRecord.date)}";
@@ -30,6 +31,8 @@ class UpdateTimeSerializer extends Serializer<UpdateRequest>{
     map["note"] = timeRecord.comment;
     map["btn_save"] = "Save";
     map["browser_today"] = "${dateFormat.format(DateTime.now())}";
+
+    print("toMap: ${map.toString()}");
     return map;
   }
 

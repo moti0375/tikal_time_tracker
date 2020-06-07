@@ -80,7 +80,7 @@ class TimeRecord{
 
   @override
   String toString() {
-    return 'TimeRecord{id: $id, project: $project, task: $task, start: $start, finish: $finish, duration: $duration, dateTime: ${date.millisecondsSinceEpoch}, comment: $comment}';
+    return 'TimeRecord{id: $id, project: $project, task: $task, start: $start, finish: $finish, duration: $duration, dateTime: ${date.millisecondsSinceEpoch}, comment: $comment, remote: $remote}';
   }
 
   String getDurationString(){
