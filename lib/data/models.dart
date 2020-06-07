@@ -42,7 +42,6 @@ class TimeRecord{
       columnFinish.toString() : "${finish.hour}:${finish.minute}",
       columnDuration.toString() : "${duration.inHours}:${duration.inSeconds % 60}",
       columnComment.toString() : comment,
-      columnRemote.toString() : remote
     };
 
     if(id != null){
