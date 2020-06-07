@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 
 class FormInputItem extends StatelessWidget{
   final String title;
-  TextEditingController _controller ;
+  final TextEditingController _controller = TextEditingController();
   final dynamic onChangedTextChangedListener;
   String _text = "";
   final String hint;
   final bool enabled;
 
   FormInputItem({this.title, this.enabled, this.onChangedTextChangedListener, this.hint}){
-    _controller = TextEditingController(text:  this.title);
+    _controller.text = this.title;
   }
 
   @override

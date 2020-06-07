@@ -23,7 +23,7 @@ dependencies:
   firebase_core: ^0.4.3+1
   firebase_analytics: ^5.0.9
   provider: ^3.2.0
-  equatable: ^1.0.0
+  equatable: ^1.2.0
   get_it: ^3.0.3
   package_info: ^0.4.0+13
   pie_chart: ^3.1.1

@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:tikal_time_tracker/data/project.dart';
+import 'package:tikal_time_tracker/data/remote.dart';
 import 'package:tikal_time_tracker/data/task.dart';
 import 'package:tikal_time_tracker/data/models.dart';
 import 'package:tikal_time_tracker/data/dom/dom_parser.dart';
@@ -11,6 +11,7 @@ class User {
    String company;
    List<Project> projects;
    List<Task> tasks;
+   List<Remote> remotes;
 
   static User _me;
   static User get me => _me;
@@ -35,11 +36,11 @@ class User {
     _me = parser.getUserFromDom(dom);
   }
 
-  User({this.name, this.role, this.company, this.projects, this.tasks});
+  User({this.name, this.role, this.company, this.projects, this.tasks, this.remotes});
 
-  factory User.builder(String name, Role role, String company, List<Project> projects, List<Task> tasks){
+  factory User.builder(String name, Role role, String company, List<Project> projects, List<Task> tasks, List<Remote> remotes){
 //    print("User.builder: projects: ${projects.toString()}, ${tasks.toString()}");
-    return new User(name: name, role: role, company: company, projects: projects, tasks: tasks);
+    return new User(name: name, role: role, company: company, projects: projects, tasks: tasks, remotes: remotes);
   }
 
    @override

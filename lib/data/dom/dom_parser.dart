@@ -5,6 +5,7 @@ import 'package:tikal_time_tracker/data/exceptions/failed_login_exception.dart';
 import 'package:tikal_time_tracker/data/member.dart';
 import 'package:tikal_time_tracker/data/models.dart';
 import 'package:tikal_time_tracker/data/project.dart';
+import 'package:tikal_time_tracker/data/remote.dart';
 import 'package:tikal_time_tracker/data/task.dart';
 import 'package:tikal_time_tracker/network/requests/send_email_form.dart';
 import 'package:tikal_time_tracker/resources/strings.dart';
@@ -18,10 +19,11 @@ class DomParser {
   DateFormat timeFormat = DateFormat('H:m');
 
   User getUserFromDom(String domStr) {
+    debugPrint("$TAG: domStr: $domStr");
+
     String pageTitle = domStr.substring(
         domStr.indexOf("<!-- page title and user details -->"),
         domStr.indexOf("<!-- end of page title and user details -->"));
-//    print("$TAG: pageTitle: $pageTitle");
     String trtd = "<tr><td>";
     String trtdEnd = "</td></tr>";
     String dash = " - ";
@@ -39,7 +41,8 @@ class DomParser {
     print("$TAG: name: $name, role: $role, company: $company");
     List<Task> tasks = _extractTasks(domStr);
     List<Project> projects = _extractProjectsForUser(domStr, tasks);
-    return User.builder(name, role, company, projects, tasks);
+    List<Remote> remotes = _setRemotes();
+    return User.builder(name, role, company, projects, tasks, remotes);
   }
 
   List<Project> _extractProjectsForUser(String domStr, List<Task> tasks) {
@@ -696,5 +699,9 @@ class DomParser {
     String recordDate = buffer.substring(0, buffer.indexOf("\""));
     debugPrint("parseIncompleteRecordResponse: $recordDate");
     return dateFormat.parse(recordDate);
+  }
+
+  List<Remote> _setRemotes() {
+    return [Remote(name: 'yes', value: 10), Remote(name: 'no', value: 11)];
   }
 }
