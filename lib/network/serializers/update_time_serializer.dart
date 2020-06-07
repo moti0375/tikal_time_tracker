@@ -31,8 +31,6 @@ class UpdateTimeSerializer extends Serializer<UpdateRequest>{
     map["note"] = timeRecord.comment;
     map["btn_save"] = "Save";
     map["browser_today"] = "${dateFormat.format(DateTime.now())}";
-
-    print("toMap: ${map.toString()}");
     return map;
   }
 
