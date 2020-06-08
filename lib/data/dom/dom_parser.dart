@@ -19,7 +19,7 @@ class DomParser {
   DateFormat timeFormat = DateFormat('H:m');
 
   User getUserFromDom(String domStr) {
-    debugPrint("$TAG: domStr: $domStr");
+//    debugPrint("$TAG: domStr: $domStr");
 
     String pageTitle = domStr.substring(
         domStr.indexOf("<!-- page title and user details -->"),
