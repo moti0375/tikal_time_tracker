@@ -8,6 +8,7 @@ import 'package:tikal_time_tracker/analytics/events/time_event.dart' as timeEven
 import 'package:tikal_time_tracker/data/exceptions/failed_login_exception.dart';
 import 'package:tikal_time_tracker/data/models.dart';
 import 'package:tikal_time_tracker/data/project.dart';
+import 'package:tikal_time_tracker/data/remote.dart';
 import 'package:tikal_time_tracker/data/repository/app_repository.dart';
 import 'package:tikal_time_tracker/data/task.dart';
 import 'package:tikal_time_tracker/pages/new_record_page/new_record_page.dart';
@@ -28,13 +29,10 @@ class NewRecordPageBloc {
   Analytics _analytics;
   NewRecordStateModel newRecordPageStateModel;
 
-  NewRecordPageBloc(this._analytics, List<Project> projects,
-      TimeRecord timeRecord, DateTime date,
-      {this.auth, this.repository}) {
+  NewRecordPageBloc(this._analytics, List<Project> projects, TimeRecord timeRecord, DateTime date, {this.auth, this.repository}) {
     newRecordPageStateModel = NewRecordStateModel(projects: projects);
     print("$TAG: created");
-    _analytics.logEvent(
-        NewRecordEvent.impression(EVENT_NAME.NEW_TIME_PAGE_OPENED).view());
+    _analytics.logEvent(NewRecordEvent.impression(EVENT_NAME.NEW_TIME_PAGE_OPENED).view());
     initEventStream();
     initBloc(projects, timeRecord, date);
   }
@@ -45,30 +43,27 @@ class NewRecordPageBloc {
 
   Sink<NewRecordStateModel> get _stateSink => _stateController.sink;
 
-  StreamController<NewRecordPageEvent> _eventController =
-      StreamController<NewRecordPageEvent>();
+  StreamController<NewRecordPageEvent> _eventController = StreamController<NewRecordPageEvent>();
 
   Sink<NewRecordPageEvent> get _eventSink => _eventController.sink;
 
-  void initBloc(
-      List<Project> projects, TimeRecord timeRecord, DateTime dateTime) async {
+  void initBloc(List<Project> projects, TimeRecord timeRecord, DateTime dateTime) async {
     print("$TAG initBloc");
-
     if (timeRecord != null) {
       print("$TAG update a recrod");
       newRecordPageStateModel.updateWithTimeRecord(timeRecord);
-      _analytics.logEvent(NewRecordEvent.impression(EVENT_NAME.EDITING_RECORD)
-          .view());
+      _analytics.logEvent(NewRecordEvent.impression(EVENT_NAME.EDITING_RECORD).view());
     } else {
       print("$TAG new recrod");
-      newRecordPageStateModel
-          .updateWith(projects: projects)
-          .updateWith(date: dateTime);
-      _analytics.logEvent(
-          NewRecordEvent.impression(EVENT_NAME.CREATING_NEW_RECORD)
-              .view());
+      newRecordPageStateModel.updateWith(projects: projects).updateWith(date: dateTime);
+      _analytics.logEvent(NewRecordEvent.impression(EVENT_NAME.CREATING_NEW_RECORD).view());
     }
     _stateSink.add(newRecordPageStateModel);
+  }
+
+  void _remoteSelected(Remote remote) {
+    this.newRecordPageStateModel.updateWith(remote: remote);
+    _stateSink.add(this.newRecordPageStateModel);
   }
 
   void _projectSelected(Project project) {
@@ -93,15 +88,12 @@ class NewRecordPageBloc {
   }
 
   void _calculateDuration() {
-    if (newRecordPageStateModel.timeRecord.finish != null &&
-        newRecordPageStateModel.timeRecord.start != null) {
+    if (newRecordPageStateModel.timeRecord.finish != null && newRecordPageStateModel.timeRecord.start != null) {
       var date = newRecordPageStateModel.timeRecord.date;
       var startTime = newRecordPageStateModel.timeRecord.start;
       var finishTime = newRecordPageStateModel.timeRecord.finish;
-      DateTime s = new DateTime(
-          date.year, date.month, date.day, startTime.hour, startTime.minute);
-      DateTime f = new DateTime(
-          date.year, date.month, date.day, finishTime.hour, finishTime.minute);
+      DateTime s = new DateTime(date.year, date.month, date.day, startTime.hour, startTime.minute);
+      DateTime f = new DateTime(date.year, date.month, date.day, finishTime.hour, finishTime.minute);
 
       Duration d = f.difference(s);
 
@@ -120,10 +112,7 @@ class NewRecordPageBloc {
     if (this.newRecordPageStateModel.flow == NewRecordFlow.new_record) {
       repository.addTime(this.newRecordPageStateModel.timeRecord).then(
         (_) {
-          _analytics.logEvent(
-              NewRecordEvent.impression(EVENT_NAME.RECORD_SAVED_SUCCESS)
-                  .setUser(auth.getCurrentUser().name)
-                  .view());
+          _analytics.logEvent(NewRecordEvent.impression(EVENT_NAME.RECORD_SAVED_SUCCESS).setUser(auth.getCurrentUser().name).view());
           _popBack(context, this.newRecordPageStateModel.timeRecord);
         },
         onError: (e) {
@@ -139,13 +128,9 @@ class NewRecordPageBloc {
     }
 
     if (this.newRecordPageStateModel.flow == NewRecordFlow.update_record) {
-      print(
-          "_saveTimeRecord: about to update ${this.newRecordPageStateModel.timeRecord.toString()}");
+      print("_saveTimeRecord: about to update ${this.newRecordPageStateModel.timeRecord.toString()}");
       repository.updateTime(this.newRecordPageStateModel.timeRecord).then((_) {
-        _analytics.logEvent(
-            NewRecordEvent.impression(EVENT_NAME.EDIT_RECORD_SUCCESS)
-                .setUser(auth.getCurrentUser().name)
-                .view());
+        _analytics.logEvent(NewRecordEvent.impression(EVENT_NAME.EDIT_RECORD_SUCCESS).setUser(auth.getCurrentUser().name).view());
         _popBack(context, this.newRecordPageStateModel.timeRecord);
       }, onError: (e) {
         _sendFailedEvent(e);
@@ -160,9 +145,7 @@ class NewRecordPageBloc {
 
   _handleDeleteButton(BuildContext context) {
     print("About to delete record: ${this.newRecordPageStateModel.timeRecord.toString()}");
-    repository.deleteTime(this.newRecordPageStateModel.timeRecord).then(
-          (response) => _popBack(context, this.newRecordPageStateModel.timeRecord),
-          onError: (e) => _handleDeleteError);
+    repository.deleteTime(this.newRecordPageStateModel.timeRecord).then((response) => _popBack(context, this.newRecordPageStateModel.timeRecord), onError: (e) => _handleDeleteError);
   }
 
   void initEventStream() {
@@ -182,6 +165,10 @@ class NewRecordPageBloc {
   }
 
   void _handleInputEvents(NewRecordPageEvent event) {
+    if (event is OnSelectedRemote) {
+      _remoteSelected(event.selectedRemote);
+    }
+
     if (event is OnSelectedProject) {
       _projectSelected(event.selectedProject);
     }
@@ -227,36 +214,28 @@ class NewRecordPageBloc {
   }
 
   void _showErrorDialog(e, context, title) {
-    PlatformAlertDialog dialog = PlatformAlertDialog(
-        title: title,
-        content: e is AppException ? e.cause : "There was an error",
-        defaultActionText: "OK",
-        actions: <Widget>[
-          FlatButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(Strings.ok),
-          ),
-        ]);
+    PlatformAlertDialog dialog = PlatformAlertDialog(title: title, content: e is AppException ? e.cause : "There was an error", defaultActionText: "OK", actions: <Widget>[
+      FlatButton(
+        onPressed: () => Navigator.pop(context),
+        child: Text(Strings.ok),
+      ),
+    ]);
     dialog.show(context);
   }
 
-  void _getIncompleteRecordById(
-      IncompleteRecordException e, BuildContext context) async {
+  void _getIncompleteRecordById(IncompleteRecordException e, BuildContext context) async {
     repository.getIncompleteRecordById(e.recordId).then((response) {
       print("_getIncompleteRecordById: Response: $response");
       _showIncompleteRecordErrorDialog(e, response, context);
     }, onError: (e) => _showErrorDialog(e, context, "Save Record Error"));
   }
 
-  void _showIncompleteRecordErrorDialog(
-      IncompleteRecordException e, DateTime recordDate, BuildContext context) {
+  void _showIncompleteRecordErrorDialog(IncompleteRecordException e, DateTime recordDate, BuildContext context) {
     print("_showIncompleteRecordErrorDialog: ${e.cause}");
 
     PlatformAlertDialog dialog = PlatformAlertDialog(
         title: "Save Record Error",
-        content: e.cause != null
-            ? "${e.cause}.\n Record Date: ${recordDate.day}-${recordDate.month}-${recordDate.year}"
-            : "There was an error",
+        content: e.cause != null ? "${e.cause}.\n Record Date: ${recordDate.day}-${recordDate.month}-${recordDate.year}" : "There was an error",
         defaultActionText: "OK",
         actions: <Widget>[
           FlatButton(
@@ -275,8 +254,7 @@ class NewRecordPageBloc {
   }
 
   void _sendFailedEvent(Exception e) {
-    var event = NewRecordEvent.impression(EVENT_NAME.FAILED_TO_EDIT_OR_SAVE)
-        .setUser(auth.getCurrentUser().name);
+    var event = NewRecordEvent.impression(EVENT_NAME.FAILED_TO_EDIT_OR_SAVE).setUser(auth.getCurrentUser().name);
     if (e is AppException && e.cause != null) {
       event.setDetails(e.cause).view();
     } else {
@@ -285,7 +263,7 @@ class NewRecordPageBloc {
     _analytics.logEvent(event);
   }
 
-  void _handleDeleteError(Exception e){
+  void _handleDeleteError(Exception e) {
     _analytics.logEvent(NewRecordEvent.click(EVENT_NAME.FAILED_TO_DELETE_RECORD).setUser(auth.getCurrentUser().name).setDetails(e.toString()));
   }
 }

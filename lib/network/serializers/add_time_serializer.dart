@@ -14,7 +14,7 @@ class AddTimeSerializer extends Serializer<TimeRecord>{
 
   @override
   Map<String, String> toMap(TimeRecord model) {
-    print("form serializer: toSap: ${model.toString()}");
+    print("form serializer: toMap: ${model.toString()}");
     Map<String, String> map = Map<String, String>();
 
     map["project"] = "${model.project.value}";
@@ -26,8 +26,11 @@ class AddTimeSerializer extends Serializer<TimeRecord>{
     if(model.comment != null && model.comment.isNotEmpty){
       map["note"] = model.comment;
     }
+    map["time_field_5"] = "${model.remote.value}";
     map["btn_submit"] = "Submit";
     map["browser_today"] = "${dateFormat.format(DateTime.now())}";
+    print("AddTimeSerializer serializer: map: ${map.toString()}");
+
     return map;
   }
 
