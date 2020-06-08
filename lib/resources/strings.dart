@@ -45,6 +45,7 @@ class Strings{
   static const drop_down_task_title = "Select a Task";
   static const drop_down_project_title = "Select a Project";
   static const drop_down_remote_title = "Select Remote";
+  static const drop_down_remote = "Remote - ";
   static const drop_down_period_title = "Select a Period";
   static const start_date = "Start Date";
   static const end_date = "End Date";

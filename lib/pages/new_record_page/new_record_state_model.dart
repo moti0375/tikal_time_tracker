@@ -20,7 +20,7 @@ class NewRecordStateModel {
 
   NewRecordStateModel updateWithTimeRecord(TimeRecord timeRecord) {
     this.timeRecord = timeRecord;
-    this.formOk = true;
+    this.formOk = false;
     this.flow = NewRecordFlow.update_record;
     this.tasks.clear();
     this.tasks.addAll(timeRecord.project.tasks);
@@ -44,7 +44,7 @@ class NewRecordStateModel {
     this.timeRecord.date = date ?? this.timeRecord.date;
     this.timeRecord.comment = comment ?? this.timeRecord.comment;
     this.timeRecord.remote = remote ?? this.timeRecord.remote;
-    this.formOk = this.timeRecord.date != null && this.timeRecord.start != null && this.timeRecord.project != null && this.timeRecord.task != null;
+    this.formOk = this.timeRecord.date != null && this.timeRecord.start != null && this.timeRecord.project != null && this.timeRecord.task != null && this.timeRecord.remote != null;
     if(project != null){
       this.timeRecord.project = project;
       this.tasks.clear();
