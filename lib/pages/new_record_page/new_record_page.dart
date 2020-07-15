@@ -363,7 +363,7 @@ class NewRecordPageState extends State<NewRecordPage> {
                 return new DropdownMenuItem<Remote>(
                   value: value,
                   child: new Text(
-                    '${Strings.drop_down_remote}${value.name}',
+                    value.name,
                     style: TextStyle(fontSize: 24.0),
                   ),
                 );

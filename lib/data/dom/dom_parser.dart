@@ -21,35 +21,31 @@ class DomParser {
   User getUserFromDom(String domStr) {
 //    debugPrint("$TAG: domStr: $domStr");
 
-    String pageTitle = domStr.substring(
-        domStr.indexOf("<!-- page title and user details -->"),
-        domStr.indexOf("<!-- end of page title and user details -->"));
+    String pageTitle = domStr.substring(domStr.indexOf("<!-- page title and user details -->"), domStr.indexOf("<!-- end of page title and user details -->"));
     String trtd = "<tr><td>";
     String trtdEnd = "</td></tr>";
     String dash = " - ";
     String comma = ", ";
-    String userDetails =
-        pageTitle.substring(pageTitle.indexOf(trtd) + trtd.length);
+    String userDetails = pageTitle.substring(pageTitle.indexOf(trtd) + trtd.length);
     userDetails = userDetails.substring(0, userDetails.indexOf(trtdEnd));
     print("UserDetails: $userDetails");
 
     String name = userDetails.substring(0, userDetails.indexOf(dash));
-    String roleStr = userDetails.substring(
-        userDetails.indexOf(dash) + dash.length, userDetails.indexOf(comma));
+    String roleStr = userDetails.substring(userDetails.indexOf(dash) + dash.length, userDetails.indexOf(comma));
     Role role = _getRoleFromRoleString(roleStr);
     String company = userDetails.substring(userDetails.indexOf(comma) + 1);
     print("$TAG: name: $name, role: $role, company: $company");
     List<Task> tasks = _extractTasks(domStr);
     List<Project> projects = _extractProjectsForUser(domStr, tasks);
-    List<Remote> remotes = _setRemotes();
+
+    List<Remote> remotes = _extractRemoteFromDom(domStr);
     return User.builder(name, role, company, projects, tasks, remotes);
   }
 
   List<Project> _extractProjectsForUser(String domStr, List<Task> tasks) {
     List<Project> projects = _extractProjects(domStr);
 
-    Map<int, List<int>> tasksForProjects =
-        _extractTasksForProjects(domStr, projects);
+    Map<int, List<int>> tasksForProjects = _extractTasksForProjects(domStr, projects);
 
 //    debugPrint("_extractTasks: $domStr");
 
@@ -76,9 +72,7 @@ class DomParser {
   List<Project> _extractProjects(String domStr) {
     String firstDelimiter = "var projects = new Array();";
     String secondDelimiter = "// Prepare an array of task ids for projects";
-    String buffer = domStr.substring(
-        domStr.indexOf(firstDelimiter) + firstDelimiter.length,
-        domStr.indexOf(secondDelimiter));
+    String buffer = domStr.substring(domStr.indexOf(firstDelimiter) + firstDelimiter.length, domStr.indexOf(secondDelimiter));
 
     List<String> projects = buffer.split("projects[idx] = new Array(");
 
@@ -107,37 +101,29 @@ class DomParser {
 
   List<Task> _extractTasks(String domStr) {
     String startBuffer = "var task_names = new Array();";
-    String endBuffer = "// Prepare an array of template";
-    String tasksStart = domStr.substring(
-        domStr.indexOf(startBuffer) + startBuffer.length + 1,
-        domStr.indexOf(endBuffer));
+//    String endBuffer = "// Prepare an array of template";
+    String endBuffer = "// Mandatory top options"; //Old version TimeTracker
+    String tasksStart = domStr.substring(domStr.indexOf(startBuffer) + startBuffer.length + 1, domStr.indexOf(endBuffer));
     List<String> tasksList = tasksStart.split(";");
 
-    debugPrint("_extractTasks: $domStr" );
+//    debugPrint("_extractTasks: $domStr" );
     tasksList.removeLast();
 
     List<Task> tasks = tasksList.map((taskStr) {
       String delimiter = "[";
-      int value = int.tryParse(taskStr.substring(
-          taskStr.indexOf(delimiter) + 1, taskStr.indexOf("]")));
-      String name = taskStr
-          .replaceAll("\"", "")
-          .substring(taskStr.indexOf("= ") + 2)
-          .trim();
+      int value = int.tryParse(taskStr.substring(taskStr.indexOf(delimiter) + 1, taskStr.indexOf("]")));
+      String name = taskStr.replaceAll("\"", "").substring(taskStr.indexOf("= ") + 2).trim();
       return Task(name: name, value: value);
     }).toList();
 //    print("_extractTasks: ${tasks.toString()}");
     return tasks;
   }
 
-  Map<int, List<int>> _extractTasksForProjects(
-      String domStr, List<Project> projects) {
+  Map<int, List<int>> _extractTasksForProjects(String domStr, List<Project> projects) {
     String startDelimiter = "var task_ids = new Array()";
     String endDelimiter = "// Prepare an array of task names.";
 
-    String container = domStr.substring(
-        domStr.indexOf(startDelimiter) + startDelimiter.length,
-        domStr.indexOf(endDelimiter));
+    String container = domStr.substring(domStr.indexOf(startDelimiter) + startDelimiter.length, domStr.indexOf(endDelimiter));
 //    print("_extractTasksForProjects: container $container");
 
     List<String> l = container.split(";");
@@ -148,13 +134,8 @@ class DomParser {
     Map<int, List<int>> projectsAndTasks = Map<int, List<int>>();
     l.forEach((it) {
 //      print("_extractTasksForProjects: ${it.substring(it.indexOf("[") + 1, it.indexOf("]"))}");
-      int prjVal =
-          int.tryParse(it.substring(it.indexOf("[") + 1, it.indexOf("]")));
-      List<int> tasks = it
-          .substring(it.indexOf(" = ") + 3)
-          .replaceAll("\"", "")
-          .split(",")
-          .map((it) {
+      int prjVal = int.tryParse(it.substring(it.indexOf("[") + 1, it.indexOf("]")));
+      List<int> tasks = it.substring(it.indexOf(" = ") + 3).replaceAll("\"", "").split(",").map((it) {
         return int.tryParse(it.trim());
       }).toList();
 
@@ -168,12 +149,39 @@ class DomParser {
     return projectsAndTasks;
   }
 
+  List<Remote> _extractRemoteFromDom(String domStr) {
+    debugPrint("starting _extractRemoteFromDom: ");
+
+    String firstDelimiter = 'id="time_field_5"';
+    String secondDelimiter = '</select>';
+    String buffer = domStr.substring(domStr.indexOf(firstDelimiter) + firstDelimiter.length, domStr.indexOf(secondDelimiter)).trim();
+
+    buffer = buffer.substring(buffer.indexOf('</option>') + '</option>'.length).trim();
+    List<String> remoteRows = buffer.split('\n');
+
+    List<Remote> remotes = remoteRows.map((r) {
+      debugPrint("parsing: $r ...");
+      String valueStartBuffer = '<option value="';
+      String valueEndBuffer = '"';
+      var value = r.substring(r.indexOf(valueStartBuffer) + valueStartBuffer.length);
+      value = value.substring(0, value.indexOf(valueEndBuffer));
+
+      String nameStartBuffer = '>';
+      String nameEndBuffer = '<';
+      String name = r.substring(r.indexOf(nameStartBuffer) + nameStartBuffer.length);
+
+      name = name.substring(0, name.indexOf(nameEndBuffer));
+      return Remote(value: int.parse(value), name: name.trim());
+    }).toList();
+
+//    print("getUserFromDom: ${projects.toString()}");
+    return remotes;
+  }
+
   TimeReport parseTimePage(String timeDomStr) {
-    String start =
-        "<table border=\"0\" cellpadding=\"3\" cellspacing=\"1\" width=\"100%\">";
+    String start = "<table border=\"0\" cellpadding=\"3\" cellspacing=\"1\" width=\"100%\">";
     String stop = "</table>";
-    String buffer =
-        timeDomStr.substring(timeDomStr.indexOf(start) + start.length);
+    String buffer = timeDomStr.substring(timeDomStr.indexOf(start) + start.length);
     buffer = buffer.substring(0, buffer.indexOf(stop));
 
 //    debugPrint("parseTimePage $timeDomStr");
@@ -225,23 +233,14 @@ class DomParser {
       }
 
 //      .substring(cells[6].indexOf("id=")+1, cells[6].indexOf("\">"))
-      int trackerId = int.parse(cells[6]
-          .substring(cells[6].indexOf("id=") + 3, cells[6].indexOf("\">"))
-          .trim());
+      int trackerId = int.parse(cells[6].substring(cells[6].indexOf("id=") + 3, cells[6].indexOf("\">")).trim());
 //      print("trackerId: $trackerId");
 
       Project project = User.me.projects.firstWhere((it) {
         return it.name == cells[0];
       });
 
-      return TimeRecord(
-          id: trackerId,
-          project: project,
-          task: task,
-          start: start,
-          date: date,
-          finish: finish,
-          comment: cells[5].trim().replaceAll("&nbsp;", ""));
+      return TimeRecord(id: trackerId, project: project, task: task, start: start, date: date, finish: finish, comment: cells[5].trim().replaceAll("&nbsp;", ""));
     }).toList();
 
     Duration dayTotal = parseTotalValue(timeDomStr, "Day total:");
@@ -265,14 +264,7 @@ class DomParser {
     if (timeDomStr.contains("Time interval overlaps")) {
       message = Strings.interval_overlap;
     }
-    TimeReport report = TimeReport(
-        timeReport: result,
-        dayTotal: dayTotal,
-        weekTotal: weekTotal,
-        monthTotal: monthTotal,
-        quota: remainTotal,
-        overQuota: overQuota,
-        message: message);
+    TimeReport report = TimeReport(timeReport: result, dayTotal: dayTotal, weekTotal: weekTotal, monthTotal: monthTotal, quota: remainTotal, overQuota: overQuota, message: message);
     return report;
   }
 
@@ -280,20 +272,17 @@ class DomParser {
     String pageTitleStart = "<!-- page title and user details -->";
     String pageTitleEnd = "<!-- end of page title and user details -->";
 
-    String timeStr = domStr
-        .substring(domStr.indexOf(pageTitleStart) + pageTitleStart.length);
+    String timeStr = domStr.substring(domStr.indexOf(pageTitleStart) + pageTitleStart.length);
     timeStr = timeStr.substring(0, timeStr.indexOf(pageTitleEnd));
 
-    timeStr = timeStr.substring(
-        timeStr.indexOf("Time: ") + 6, timeStr.indexOf("</div>"));
+    timeStr = timeStr.substring(timeStr.indexOf("Time: ") + 6, timeStr.indexOf("</div>"));
 //    print("_extractDateTime: $timeStr");
     DateFormat formatter = DateFormat("y-MM-d");
     return formatter.parse(timeStr.trim());
   }
 
   List<Member> parseUsersPage(String domStr, Role myRole) {
-    String start =
-        "<table cellspacing=\"1\" cellpadding=\"3\" border=\"0\" width=\"100%\">";
+    String start = "<table cellspacing=\"1\" cellpadding=\"3\" border=\"0\" width=\"100%\">";
     String end = "</table>";
     String span = "</span>";
 
@@ -315,19 +304,14 @@ class DomParser {
 
       cells.removeLast();
       //First cell (user name) should be stripped explicitly
-      cells[0] =
-          cells[0].substring(cells[0].indexOf(span) + span.length).trim();
+      cells[0] = cells[0].substring(cells[0].indexOf(span) + span.length).trim();
 //      print("parseUsersPage: buffer:  $cells");
       if (myRole != Role.User) {
         return createMemberForManager(cells);
       }
 
       Role role = _getRoleFromRoleString(cells[2]);
-      return Member(
-          name: cells[0],
-          email: cells[1],
-          role: role,
-          hasIncompleteEntry: false);
+      return Member(name: cells[0], email: cells[1], role: role, hasIncompleteEntry: false);
     }).toList();
 
 //     print("members: ${members.toString()}");
@@ -344,11 +328,7 @@ class DomParser {
     name = cells[0].substring(cells[0].indexOf("span>") + 5).trim();
     debugPrint("user: ${cells[0]}");
     Role role = _getRoleFromRoleString(cells[2]);
-    return Member(
-        name: name,
-        email: cells[1],
-        role: role,
-        hasIncompleteEntry: hasIncompleteEntry);
+    return Member(name: name, email: cells[1], role: role, hasIncompleteEntry: hasIncompleteEntry);
   }
 
   List<TimeRecord> parseReportPage(String domStr, Role role) {
@@ -358,8 +338,7 @@ class DomParser {
     String formEnd = "</form>";
     String reportStart = "-- normal report -->";
     String reportEnd = "</table>";
-    String buffer = domStr.substring(
-        domStr.indexOf(formStart) + formStart.length, domStr.indexOf(formEnd));
+    String buffer = domStr.substring(domStr.indexOf(formStart) + formStart.length, domStr.indexOf(formEnd));
 //    debugPrint("parseReportPage: $buffer");
 
     buffer = buffer.substring(buffer.indexOf(reportStart) + reportStart.length);
@@ -415,8 +394,7 @@ class DomParser {
       TimeOfDay start;
 
       try {
-        start =
-            TimeOfDay.fromDateTime(timeFormat.parse(cells[3 + cellsOffset]));
+        start = TimeOfDay.fromDateTime(timeFormat.parse(cells[3 + cellsOffset]));
       } catch (e) {
         if (e is FormatException) {
           start = null;
@@ -426,8 +404,7 @@ class DomParser {
       TimeOfDay finish;
 
       try {
-        finish =
-            TimeOfDay.fromDateTime(timeFormat.parse(cells[4 + cellsOffset]));
+        finish = TimeOfDay.fromDateTime(timeFormat.parse(cells[4 + cellsOffset]));
       } catch (e) {
         if (e is FormatException) {
           finish = null;
@@ -436,20 +413,11 @@ class DomParser {
 
       Duration d;
       if (start == null && finish == null) {
-        TimeOfDay duration =
-            TimeOfDay.fromDateTime(timeFormat.parse(cells[5 + cellsOffset]));
+        TimeOfDay duration = TimeOfDay.fromDateTime(timeFormat.parse(cells[5 + cellsOffset]));
         d = Duration(hours: duration.hour, minutes: duration.minute);
       }
 
-      return TimeRecord(
-          date: dateTime,
-          project: project,
-          task: task,
-          start: start,
-          finish: finish,
-          duration: d,
-          comment: cells[6].trim().replaceAll("&nbsp;", ""),
-          userName: userName);
+      return TimeRecord(date: dateTime, project: project, task: task, start: start, finish: finish, duration: d, comment: cells[6].trim().replaceAll("&nbsp;", ""), userName: userName);
     }).toList();
 
 //    print("parseReportPage: ${records.toString()}");
@@ -469,18 +437,15 @@ class DomParser {
   String parseSaveAndAddTimeResponse(String response) {
     final String errorTdStart = "<td class=\"error\">";
     if (response.indexOf(errorTdStart) > 0) {
-      String buffer = response
-          .substring(response.indexOf(errorTdStart) + errorTdStart.length);
+      String buffer = response.substring(response.indexOf(errorTdStart) + errorTdStart.length);
       buffer = buffer.substring(0, buffer.indexOf("<br>")).trim();
       print("parseSaveAndAddTimeResponse: Error: $buffer");
       if (buffer.isNotEmpty) {
         if (buffer.contains(uncompletedExistsError)) {
           String idStart = buffer.substring(buffer.indexOf("?") + 4);
           idStart = idStart.substring(0, idStart.indexOf("\'"));
-          print(
-              "parseSaveAndAddTimeResponse: incompleteId: ${int.parse(idStart)}");
-          final e = IncompleteRecordException(
-              cause: buffer.trim().substring(0, buffer.indexOf("<a href")).trim(), recordId: int.parse(idStart));
+          print("parseSaveAndAddTimeResponse: incompleteId: ${int.parse(idStart)}");
+          final e = IncompleteRecordException(cause: buffer.trim().substring(0, buffer.indexOf("<a href")).trim(), recordId: int.parse(idStart));
           throw e;
         }
 
@@ -493,13 +458,9 @@ class DomParser {
   }
 
   List<Member> parseGenerateReportPage(String apiResponse) {
-    String buffer = apiResponse.substring(apiResponse.indexOf(">Deselect all"),
-        apiResponse.indexOf("function setAllusers(value)"));
+    String buffer = apiResponse.substring(apiResponse.indexOf(">Deselect all"), apiResponse.indexOf("function setAllusers(value)"));
     String tableStart = "100%\">";
-    buffer = buffer
-        .substring(buffer.indexOf(tableStart) + tableStart.length,
-            buffer.indexOf("</table>"))
-        .trim();
+    buffer = buffer.substring(buffer.indexOf(tableStart) + tableStart.length, buffer.indexOf("</table>")).trim();
     List<String> trs = buffer.split("<tr>");
     debugPrint("tr: $trs");
 
@@ -565,11 +526,9 @@ class DomParser {
     }
 
     if (cbString.contains("checked")) {
-      id = cbString.substring(
-          cbString.indexOf("id=\"") + 4, cbString.indexOf("checked=") - 2);
+      id = cbString.substring(cbString.indexOf("id=\"") + 4, cbString.indexOf("checked=") - 2);
     } else {
-      id = cbString.substring(
-          cbString.indexOf("id=\"") + 4, cbString.indexOf("value=") - 2);
+      id = cbString.substring(cbString.indexOf("id=\"") + 4, cbString.indexOf("value=") - 2);
     }
 
     String needle = "value=\"";
@@ -587,31 +546,22 @@ class DomParser {
   SendEmailForm parseSendEmailPage(String response) {
     String formStart = "<form name=\"mailForm\" method=\"post\">";
     String formEnd = "form>";
-    String formTableStart =
-        " <table cellspacing=\"4\" cellpadding=\"7\" border=\"0\">";
+    String formTableStart = " <table cellspacing=\"4\" cellpadding=\"7\" border=\"0\">";
     String formBuffer = response.substring(response.indexOf(formStart));
     formBuffer = formBuffer.substring(0, formBuffer.indexOf(formEnd));
-    formBuffer = formBuffer
-        .substring(formBuffer.indexOf(formTableStart) + formTableStart.length);
+    formBuffer = formBuffer.substring(formBuffer.indexOf(formTableStart) + formTableStart.length);
 
     String toStringStartTitle = "<td align=\"right\">To (*):<\/td>";
-    String toString = formBuffer.substring(
-        formBuffer.indexOf(toStringStartTitle) + toStringStartTitle.length);
-    toString = toString.substring(
-        toString.indexOf("value=\"") + 7, toString.indexOf("\">"));
+    String toString = formBuffer.substring(formBuffer.indexOf(toStringStartTitle) + toStringStartTitle.length);
+    toString = toString.substring(toString.indexOf("value=\"") + 7, toString.indexOf("\">"));
 
     String ccStringStartTitle = "<td align=\"right\">Cc:<\/td>";
-    String ccString = formBuffer.substring(
-        formBuffer.indexOf(ccStringStartTitle) + ccStringStartTitle.length);
-    ccString = ccString.substring(
-        ccString.indexOf("value=\"") + 7, ccString.indexOf("\">"));
+    String ccString = formBuffer.substring(formBuffer.indexOf(ccStringStartTitle) + ccStringStartTitle.length);
+    ccString = ccString.substring(ccString.indexOf("value=\"") + 7, ccString.indexOf("\">"));
 
     String subjectStringStartTitle = "<td align=\"right\">Subject (*):<\/td>";
-    String subjectString = formBuffer.substring(
-        formBuffer.indexOf(subjectStringStartTitle) +
-            subjectStringStartTitle.length);
-    subjectString = subjectString.substring(
-        subjectString.indexOf("value=\"") + 7, subjectString.indexOf("\">"));
+    String subjectString = formBuffer.substring(formBuffer.indexOf(subjectStringStartTitle) + subjectStringStartTitle.length);
+    subjectString = subjectString.substring(subjectString.indexOf("value=\"") + 7, subjectString.indexOf("\">"));
 
 //    debugPrint("parseSendEmailPager: page body: $formBuffer");
     return SendEmailForm(to: toString, cc: ccString, subject: subjectString);
@@ -635,8 +585,7 @@ class DomParser {
       var totalArray = buffer.split(":");
       String totalHour = totalArray[0];
       String totalMinutes = totalArray[1];
-      dayTotal = new Duration(
-          hours: int.parse(totalHour), minutes: int.parse(totalMinutes));
+      dayTotal = new Duration(hours: int.parse(totalHour), minutes: int.parse(totalMinutes));
     } else {
       dayTotal = Duration(hours: 0, minutes: 0);
     }
@@ -657,8 +606,7 @@ class DomParser {
       var totalArray = buffer.split(":");
       String totalHour = totalArray[0];
       String totalMinutes = totalArray[1];
-      dayTotal = new Duration(
-          hours: int.parse(totalHour), minutes: int.parse(totalMinutes));
+      dayTotal = new Duration(hours: int.parse(totalHour), minutes: int.parse(totalMinutes));
     } else {
       dayTotal = Duration(hours: 0, minutes: 0);
     }
@@ -673,15 +621,13 @@ class DomParser {
     if (response.contains(needle)) {
       buffer = response.substring(response.indexOf(needle) + needle.length);
       if (buffer.contains("green;\">")) {
-        buffer =
-            buffer.substring(buffer.indexOf("green;\">") + "green;\">".length);
+        buffer = buffer.substring(buffer.indexOf("green;\">") + "green;\">".length);
       }
       buffer = buffer.substring(0, buffer.indexOf("<")).trim();
       var totalArray = buffer.split(":");
       String totalHour = totalArray[0];
       String totalMinutes = totalArray[1];
-      dayTotal = new Duration(
-          hours: int.parse(totalHour), minutes: int.parse(totalMinutes));
+      dayTotal = new Duration(hours: int.parse(totalHour), minutes: int.parse(totalMinutes));
     } else {
       dayTotal = Duration(hours: 0, minutes: 0);
     }
@@ -699,9 +645,5 @@ class DomParser {
     String recordDate = buffer.substring(0, buffer.indexOf("\""));
     debugPrint("parseIncompleteRecordResponse: $recordDate");
     return dateFormat.parse(recordDate);
-  }
-
-  List<Remote> _setRemotes() {
-    return [Remote(name: 'yes', value: 10), Remote(name: 'no', value: 11)];
   }
 }
