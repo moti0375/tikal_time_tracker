@@ -107,13 +107,13 @@ class DomParser {
 
   List<Task> _extractTasks(String domStr) {
     String startBuffer = "var task_names = new Array();";
-    String endBuffer = "// Mandatory top options";
+    String endBuffer = "// Prepare an array of template";
     String tasksStart = domStr.substring(
         domStr.indexOf(startBuffer) + startBuffer.length + 1,
         domStr.indexOf(endBuffer));
     List<String> tasksList = tasksStart.split(";");
 
-//    debugPrint("_extractTasks: $domStr" );
+    debugPrint("_extractTasks: $domStr" );
     tasksList.removeLast();
 
     List<Task> tasks = tasksList.map((taskStr) {

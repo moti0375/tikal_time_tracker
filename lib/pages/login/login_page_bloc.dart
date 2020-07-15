@@ -142,7 +142,7 @@ class LoginPageBloc {
     _navigateToTabsScreen(context);
   }
 
-  void _handleLoginError(Exception e) {
+  void _handleLoginError(dynamic e) {
     if (e is AppException) {
       _analytics.logEvent(LoginEvent.click(EVENT_NAME.LOGIN_FAILED)
           .setUser(_currentState.email)
@@ -151,6 +151,7 @@ class LoginPageBloc {
       _loginStateSink
           .add(_currentState.updateWith(loggingIn: false, errorInfo: e.cause));
     } else {
+      debugPrint("There was an error: ${e.toString()}");
       _analytics.logEvent(LoginEvent.click(EVENT_NAME.LOGIN_FAILED)
           .setUser(_currentState.email)
           .setDetails(e.toString())

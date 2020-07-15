@@ -1,4 +1,3 @@
-import 'package:tikal_time_tracker/data/dom/dom_parser.dart';
 import 'package:tikal_time_tracker/data/exceptions/failed_login_exception.dart';
 import 'package:tikal_time_tracker/data/repository/login_data_source.dart';
 import 'package:tikal_time_tracker/network/credentials.dart';
@@ -6,7 +5,6 @@ import 'package:tikal_time_tracker/network/requests/login_request.dart';
 import 'package:tikal_time_tracker/network/time_tracker_api.dart';
 import 'package:tikal_time_tracker/resources/strings.dart';
 import 'package:tikal_time_tracker/services/auth/user.dart';
-import 'package:tikal_time_tracker/services/locator/locator.dart';
 import 'dart:async';
 
 class LoginRemoteDataSource implements LoginDataSource{
@@ -28,7 +26,7 @@ class LoginRemoteDataSource implements LoginDataSource{
     timeout(Duration(milliseconds: CONNECTION_TIMEOUT), onTimeout: (){
       print("There was a timeout:");
     });
-    print("singInStatus: $singInStatus");
+//    print("singInStatus: $singInStatus");
     if(singInStatus == null || singInStatus.contains("401 Unauthorized")){
       throw AppException(cause: Strings.signin_error);
     } else {
@@ -41,8 +39,7 @@ class LoginRemoteDataSource implements LoginDataSource{
   Future<User> login(String email, String password) async {
     bool signInPassed = await _singIn(email, password);
     if(signInPassed) {
-      String response = await _api.login(
-          LoginForm(Login: email, Password: password));
+      String response = await _api.login(LoginForm(Login: email, Password: password));
 
       if(response.isEmpty){  //This means login succeeded
         //It's time to create user, this is done by navigating to time page and parsing the user details.
