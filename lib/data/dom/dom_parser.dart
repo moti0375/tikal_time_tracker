@@ -101,8 +101,8 @@ class DomParser {
 
   List<Task> _extractTasks(String domStr) {
     String startBuffer = "var task_names = new Array();";
-//    String endBuffer = "// Prepare an array of template";
-    String endBuffer = "// Mandatory top options"; //Old version TimeTracker
+    String endBuffer = "// Prepare an array of template";
+//    String endBuffer = "// Mandatory top options"; //Old version TimeTracker
     String tasksStart = domStr.substring(domStr.indexOf(startBuffer) + startBuffer.length + 1, domStr.indexOf(endBuffer));
     List<String> tasksList = tasksStart.split(";");
 
