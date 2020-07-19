@@ -2,16 +2,15 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:tikal_time_tracker/data/member.dart';
 import 'package:tikal_time_tracker/data/models.dart';
+import 'package:tikal_time_tracker/data/remote.dart';
 import 'package:tikal_time_tracker/network/requests/send_email_form.dart';
 import 'package:tikal_time_tracker/network/time_tracker_api.dart';
 import 'package:tikal_time_tracker/network/requests/reports_form.dart';
 import 'package:tikal_time_tracker/network/requests/update_request.dart';
 import 'package:jaguar_serializer/jaguar_serializer.dart';
 import 'package:tikal_time_tracker/network/requests/delete_request.dart';
-import 'package:tikal_time_tracker/network/requests/login_request.dart';
 import 'package:tikal_time_tracker/network/requests/reset_password_form.dart';
 import 'package:tikal_time_tracker/network/credentials.dart';
-import 'dart:convert';
 import 'package:tikal_time_tracker/data/dom/dom_parser.dart';
 import 'package:tikal_time_tracker/services/locator/locator.dart';
 
@@ -152,5 +151,10 @@ class RemoteDateSource implements TimeDateSource {
     return api.getIncompleteRecordById(id).then((response){
       return parser.parseIncompleteRecordResponse(response);
     });
+  }
+
+  @override
+  Future<Remote> getRemoteFromRecord(int recordId) {
+    return api.getIncompleteRecordById(recordId).then((response) => parser.parseRemoteFromResponse(response));
   }
 }

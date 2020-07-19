@@ -51,8 +51,9 @@ class NewRecordPageBloc {
     print("$TAG initBloc");
     if (timeRecord != null) {
       print("$TAG update a recrod");
-      newRecordPageStateModel.updateWithTimeRecord(timeRecord);
       _analytics.logEvent(NewRecordEvent.impression(EVENT_NAME.EDITING_RECORD).view());
+      newRecordPageStateModel.updateWithTimeRecord(timeRecord);
+      _loadEditedRecord(timeRecord); //Loading the remote value from server
     } else {
       print("$TAG new recrod");
       newRecordPageStateModel.updateWith(projects: projects).updateWith(date: dateTime);
@@ -265,5 +266,13 @@ class NewRecordPageBloc {
 
   void _handleDeleteError(Exception e) {
     _analytics.logEvent(NewRecordEvent.click(EVENT_NAME.FAILED_TO_DELETE_RECORD).setUser(auth.getCurrentUser().name).setDetails(e.toString()));
+  }
+
+  void _loadEditedRecord(TimeRecord timeRecord) {
+     repository.getRemoteFromRecord(timeRecord.id).then((value) {
+       debugPrint("_loadEditedRecord: ${value.toString()}");
+       _remoteSelected(value);
+     }).catchError((e){
+     });
   }
 }

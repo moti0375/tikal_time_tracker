@@ -1,5 +1,6 @@
 import 'package:tikal_time_tracker/data/member.dart';
 import 'package:tikal_time_tracker/data/models.dart';
+import 'package:tikal_time_tracker/data/remote.dart';
 import 'package:tikal_time_tracker/data/repository/login_data_source.dart';
 import 'package:tikal_time_tracker/data/repository/login_repository.dart';
 import 'package:tikal_time_tracker/data/repository/time_data_source.dart';
@@ -113,6 +114,12 @@ class AppRepository implements TimeDateSource, LoginDataSource{
   @override
   Future<DateTime> getIncompleteRecordById(int id) {
     return _timeRepository.getIncompleteRecordById(id);
+  }
+
+  @override
+  Future<Remote> getRemoteFromRecord(int recordId) {
+    return _timeRepository.getRemoteFromRecord(recordId);
+
   }
 
 

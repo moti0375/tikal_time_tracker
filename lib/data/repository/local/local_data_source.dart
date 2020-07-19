@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tikal_time_tracker/data/member.dart';
+import 'package:tikal_time_tracker/data/remote.dart';
 import 'package:tikal_time_tracker/network/credentials.dart';
 import 'package:tikal_time_tracker/network/requests/reports_form.dart';
 import 'package:tikal_time_tracker/network/requests/reset_password_form.dart';
@@ -121,4 +122,8 @@ class LocalDataSource implements TimeDateSource {
     return null;
   }
 
+  @override
+  Future<Remote> getRemoteFromRecord(int recordId) {
+    return null;
+  }
 }

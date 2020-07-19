@@ -1,5 +1,6 @@
 import 'package:tikal_time_tracker/data/models.dart';
 import 'package:tikal_time_tracker/data/member.dart';
+import 'package:tikal_time_tracker/data/remote.dart';
 import 'dart:async';
 import 'package:tikal_time_tracker/network/credentials.dart';
 import 'package:tikal_time_tracker/network/requests/reports_form.dart';
@@ -23,5 +24,6 @@ abstract class TimeDateSource{
  Future<dynamic> sendEmailPage(){return null;}
  Future<dynamic> sendEmail(SendEmailForm request){return null;}
  Future<DateTime> getIncompleteRecordById(int id){return null;}
+ Future<Remote> getRemoteFromRecord(int recordId){return null;}
  void updateCredentials(Credentials credentials){}
 }

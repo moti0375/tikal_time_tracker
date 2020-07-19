@@ -1,14 +1,13 @@
 import 'dart:async';
 import 'package:tikal_time_tracker/data/member.dart';
+import 'package:tikal_time_tracker/data/remote.dart';
 import 'package:tikal_time_tracker/network/requests/reports_form.dart';
 import 'package:tikal_time_tracker/network/requests/reset_password_form.dart';
 import 'package:tikal_time_tracker/data/models.dart';
 import 'package:tikal_time_tracker/data/repository/time_data_source.dart';
 import 'package:tikal_time_tracker/data/repository/local/local_data_source.dart';
-import 'package:tikal_time_tracker/data/repository/remote/remote_data_source.dart';
 import 'package:tikal_time_tracker/network/credentials.dart';
 import 'package:tikal_time_tracker/network/requests/send_email_form.dart';
-import 'package:tikal_time_tracker/network/time_tracker_api.dart';
 
 
 class TimeRecordsRepository implements TimeDateSource{
@@ -126,6 +125,11 @@ class TimeRecordsRepository implements TimeDateSource{
   @override
   Future<DateTime> getIncompleteRecordById(int id) {
     return remoteDateSource.getIncompleteRecordById(id);
+  }
+
+  @override
+  Future<Remote> getRemoteFromRecord(int recordId) {
+    return remoteDateSource.getRemoteFromRecord(recordId);
   }
 
 }

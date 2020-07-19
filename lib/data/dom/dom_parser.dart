@@ -646,4 +646,34 @@ class DomParser {
     debugPrint("parseIncompleteRecordResponse: $recordDate");
     return dateFormat.parse(recordDate);
   }
+
+  Remote parseRemoteFromResponse(response) {
+    debugPrint("starting _extractRemoteFromDom: ");
+
+    String firstDelimiter = 'id="time_field_5"';
+    String secondDelimiter = '</select>';
+    String buffer = response.substring(response.indexOf(firstDelimiter) + firstDelimiter.length, response.indexOf(secondDelimiter)).trim();
+
+    buffer = buffer.substring(buffer.indexOf('</option>') + '</option>'.length).trim();
+    List<String> remoteRows = buffer.split('\n');
+
+    String selectedRow = remoteRows.firstWhere((element) => element.contains("selected"), orElse: (){ return null;});
+
+    if(selectedRow == null) {
+      return null;
+    }
+
+    String valueStartBuffer = '<option value="';
+    String valueEndBuffer = '"';
+    var value = selectedRow.substring(selectedRow.indexOf(valueStartBuffer) + valueStartBuffer.length);
+    value = value.substring(0, value.indexOf(valueEndBuffer));
+
+    String nameStartBuffer = '>';
+    String nameEndBuffer = '<';
+    String name = selectedRow.substring(selectedRow.indexOf(nameStartBuffer) + nameStartBuffer.length);
+
+    name = name.substring(0, name.indexOf(nameEndBuffer));
+    return Remote(value: int.parse(value), name: name.trim());
+  }
+
 }
