@@ -1,8 +1,9 @@
+import 'package:tikal_time_tracker/services/auth/auth.dart';
+
 import 'reports_contract.dart';
 import 'package:tikal_time_tracker/data/repository/time_records_repository.dart';
 import 'package:tikal_time_tracker/data/project.dart';
 import 'package:tikal_time_tracker/data/task.dart';
-import 'package:tikal_time_tracker/services/auth/user.dart';
 import 'package:tikal_time_tracker/pages/users/member_list_item.dart';
 import 'package:tikal_time_tracker/data/member.dart';
 import 'package:tikal_time_tracker/network/requests/reports_form.dart';
@@ -15,8 +16,9 @@ class ReportsPresenter implements ReportsPresenterContract {
   TimeRecordsRepository repository;
   ReportsViewContract view;
   List<Member> members;
+  final BaseAuth auth;
 
-  ReportsPresenter({this.repository});
+  ReportsPresenter({this.repository, this.auth});
 
   @override
   void onClickGenerateButton(Project project, Task task, DateTime startTime, DateTime endDate, Period period) {
@@ -31,7 +33,8 @@ class ReportsPresenter implements ReportsPresenterContract {
   }
 
   void _loadReportsPage(){
-    repository.reportsPage(User.me.role).then((response){
+    print("_loadReportsPage: ${auth.getCurrentUser().toString()}");
+    repository.reportsPage(auth.getCurrentUser().role).then((response){
       print("_loadReportsPage: Success");
 
       if(response is List<Member>){
@@ -64,7 +67,7 @@ class ReportsPresenter implements ReportsPresenterContract {
   }
 
   void _getReport(ReportForm request){
-    repository.getReport(request, User.me.role).then((response){
+    repository.getReport(request, auth.getCurrentUser().role).then((response){
       debugPrint("_getReport: ${response.toString()}");
       view.showReport(response);
     }, onError: (e){

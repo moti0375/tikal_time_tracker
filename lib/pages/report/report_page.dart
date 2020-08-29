@@ -67,7 +67,7 @@ class ReportPage extends StatelessWidget {
     void _select(Choice choice) {
       if (choice.action == MenuAction.SendEmail) {
         analytics.logEvent(ReportsEvent.click(EVENT_NAME.ACTION_SEND_MAIL)
-            .setUser(User.me.name));
+            .setUser(Provider.of<BaseAuth>(context).getCurrentUser().name));
         Navigator.of(context).push(new PageTransition(widget: SendEmailPage()));
       }
 
@@ -137,6 +137,7 @@ class ReportPage extends StatelessWidget {
   }
 
   Widget _createTitle(BuildContext context, ReportPageStateModel data) {
+    User user = Provider.of<BaseAuth>(context).getCurrentUser();
     return Container(
       width: MediaQuery.of(context).size.width * 1,
       padding: const EdgeInsets.only(
@@ -166,7 +167,7 @@ class ReportPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text(
-                  "${User.me.name}, ${User.me.company}, ${User.me.role.toString().split(".").last}",
+                  "${user.name}, ${user.company}, ${user.role.toString().split(".").last}",
                   textAlign: TextAlign.start,
                 ),
                 Text(
@@ -189,6 +190,7 @@ class ReportPage extends StatelessWidget {
           locator<Analytics>(),
           report,
           locator<Preferences>(),
+          auth
         ),
         child: Consumer<ReportPageBloc>(
           builder: (context, bloc, _) => ReportPage(bloc: bloc),

@@ -51,7 +51,7 @@ class _TimePageState extends State<TimePage> with AutomaticKeepAliveClientMixin<
     super.build(context);
     User user = Provider.of<BaseAuth>(context).getCurrentUser();
 
-//    print("build: TimePage: $user");
+    print('build: TimePage');
 
     return Scaffold(
       resizeToAvoidBottomPadding: false,

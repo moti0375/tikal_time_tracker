@@ -9,20 +9,21 @@ class PlatformAppbar extends PlatformWidget {
   final Widget title;
   final Function onPressed;
   final bool notificationEnabled;
-  final heroTag;
+  final String heroTag;
 
   PlatformAppbar(
       {this.title,
       this.actions,
       this.onPressed,
-      this.notificationEnabled = false, this.heroTag = ""});
+      this.notificationEnabled = false, this.heroTag});
 
   @override
   Widget buildCupertinoWidget(BuildContext context) {
+    print("Hero tag: $heroTag");
     if (actions != null) {
       print("buildCupertinoAppbar: with actions");
       return CupertinoNavigationBar(
-        heroTag: this.heroTag,
+        heroTag: heroTag,
         transitionBetweenRoutes: false,
         middle: title,
         trailing: _buildCupertinoTrailing(context, actions),
@@ -30,6 +31,8 @@ class PlatformAppbar extends PlatformWidget {
     } else {
       print("buildCupertinoAppbar: no actions");
       return CupertinoNavigationBar(
+        heroTag: heroTag,
+        transitionBetweenRoutes: false,
         middle: title,
       );
     }

@@ -1,13 +1,13 @@
 import 'package:tikal_time_tracker/data/member.dart';
 import 'package:tikal_time_tracker/data/repository/time_records_repository.dart';
-import 'package:tikal_time_tracker/services/auth/user.dart';
+import 'package:tikal_time_tracker/services/auth/auth.dart';
+
 class UsersBloc {
 
-
-  TimeRecordsRepository repository;
-
-  UsersBloc({this.repository});
+  final TimeRecordsRepository repository;
+  final BaseAuth auth;
+  UsersBloc({this.repository, this.auth});
   Stream<List<Member>> loadUsers() {
-     return repository.getAllMembers(User.me.role);
+     return repository.getAllMembers(auth.getCurrentUser().role);
   }
 }

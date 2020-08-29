@@ -5,7 +5,6 @@ import 'package:tikal_time_tracker/data/repository/login_data_source.dart';
 import 'package:tikal_time_tracker/data/repository/login_repository.dart';
 import 'package:tikal_time_tracker/data/repository/time_data_source.dart';
 import 'package:tikal_time_tracker/data/repository/time_records_repository.dart';
-import 'package:tikal_time_tracker/network/credentials.dart';
 import 'package:tikal_time_tracker/network/requests/reports_form.dart';
 import 'package:tikal_time_tracker/network/requests/reset_password_form.dart';
 import 'package:tikal_time_tracker/network/requests/send_email_form.dart';
@@ -82,11 +81,6 @@ class AppRepository implements TimeDateSource, LoginDataSource{
   @override
   Future timePage() {
     return _timeRepository.timePage();
-  }
-
-  @override
-  void updateCredentials(Credentials credentials) {
-    _timeRepository.updateCredentials(credentials);
   }
 
   @override

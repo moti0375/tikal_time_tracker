@@ -1,16 +1,12 @@
 import 'dart:async';
-import 'dart:math';
-
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:tikal_time_tracker/analytics/analytics.dart';
 import 'package:tikal_time_tracker/analytics/events/reports_event.dart';
 import 'package:tikal_time_tracker/data/models.dart';
 import 'package:tikal_time_tracker/pages/report/report_page_event.dart';
 import 'package:tikal_time_tracker/pages/report/report_page_state_model.dart';
 import 'package:tikal_time_tracker/pages/report_analysis/report_analysis_page.dart';
-import 'package:tikal_time_tracker/pages/send_email/send_email_page.dart';
-import 'package:tikal_time_tracker/services/auth/user.dart';
+import 'package:tikal_time_tracker/services/auth/auth.dart';
 import "package:collection/collection.dart";
 import 'package:tikal_time_tracker/storage/preferences.dart';
 import 'package:tikal_time_tracker/utils/page_transition.dart';
@@ -19,6 +15,7 @@ class ReportPageBloc{
   final Analytics _analytics;
   final Preferences _preferences;
   ReportPageStateModel _stateModel = ReportPageStateModel();
+  final BaseAuth auth;
 
   StreamController<ReportPageStateModel> _reportStreamController = StreamController();
   Stream<ReportPageStateModel> get reportStream => _reportStreamController.stream;
@@ -29,10 +26,10 @@ class ReportPageBloc{
 
 
 
-  ReportPageBloc(this._analytics, Report report, this._preferences){
+  ReportPageBloc(this._analytics, Report report, this._preferences, this.auth){
     print("ReportPageBloc: initializig bloc");
     _analytics.logEvent(ReportsEvent.impression(EVENT_NAME.REPORT_GENERATED_SUCCESS).
-    setUser(User.me.name).
+    setUser(auth.getCurrentUser().name).
     open());
 
     var builder = ReportPageStateModelBuilder.fromAppState(_stateModel);

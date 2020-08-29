@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:pie_chart/pie_chart.dart';
+import 'package:provider/provider.dart';
 import 'package:tikal_time_tracker/analytics/analytics.dart';
 import 'package:tikal_time_tracker/analytics/events/reports_event.dart';
 import 'package:tikal_time_tracker/resources/strings.dart';
-import 'package:tikal_time_tracker/services/auth/user.dart';
+import 'package:tikal_time_tracker/services/auth/auth.dart';
 import 'package:tikal_time_tracker/services/locator/locator.dart';
 import 'package:tikal_time_tracker/ui/platform_appbar.dart';
 
@@ -36,7 +37,7 @@ class ReportAnalysisPageState extends State<ReportAnalysisPage>{
       appBar: _buildAppBar(title: Strings.report_analysis_page_title, context: context),
       body: Center(
         child: InkWell(
-          onTap: _switchAnalysis,
+          onTap: () => _switchAnalysis(context),
           child: PieChart(
             dataMap: widget.analysis[currentAnalysisIndex],
           ),
@@ -53,9 +54,9 @@ class ReportAnalysisPageState extends State<ReportAnalysisPage>{
     ).build(context);
   }
 
-  void _switchAnalysis() {
+  void _switchAnalysis(BuildContext context) {
     analytics.logEvent(ReportsEvent.click(EVENT_NAME.ACTION_REPORT_ANALYSIS_TAP)
-        .setUser(User.me.name));
+        .setUser(Provider.of<BaseAuth>(context).getCurrentUser().name));
 
     setState(() {
       if(currentAnalysisIndex == widget.analysis.length-1){

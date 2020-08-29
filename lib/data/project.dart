@@ -1,19 +1,13 @@
-import 'package:equatable/equatable.dart';
+import 'package:tikal_time_tracker/data/name_value_entity.dart';
 
 import 'task.dart';
 
+
 // ignore: must_be_immutable
-class Project extends Equatable {
-  String name;
-  int value;
+class Project extends NameValueEntity {
   List<Task> tasks;
 
-  Project({this.name, this.value, this.tasks});
-
-  @override
-  String toString() {
-    return 'Project{name: $name, value: $value, tasks: $tasks}';
-  }
+  Project({String name, int value, this.tasks}) : super (name: name, value: value);
 
   @override
   List<Object> get props => [name, value, tasks];

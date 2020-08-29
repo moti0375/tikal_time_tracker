@@ -33,7 +33,6 @@ class AppAuth extends BaseAuth {
   Future<void> logout() async {
     authStreamController.add(null);
     _user = null;
-    User.clear();
     notifyListeners();
     return null;
   }

@@ -44,7 +44,7 @@ class LoginRemoteDataSource implements LoginDataSource{
       if(response.isEmpty){  //This means login succeeded
         //It's time to create user, this is done by navigating to time page and parsing the user details.
         String userResponse = await _api.time();
-        return User.create(userResponse);
+        return parser.createUserFromDom(userResponse);
       } else {
         if(response.contains("Incorrect login or password")){
           throw AppException(cause: Strings.incorrect_credentials);

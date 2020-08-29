@@ -55,10 +55,6 @@ class RemoteDateSource implements TimeDateSource {
   }
 
 
-  @override
-  void updateCredentials(Credentials credentials) {
-    api.updateAuthHeader(credentials);
-  }
 
   @override
   Future timePage() {

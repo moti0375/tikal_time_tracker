@@ -1,50 +1,30 @@
+import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:tikal_time_tracker/data/project.dart';
 import 'package:tikal_time_tracker/data/remote.dart';
 import 'package:tikal_time_tracker/data/task.dart';
 import 'package:tikal_time_tracker/data/models.dart';
-import 'package:tikal_time_tracker/data/dom/dom_parser.dart';
 
+class User extends Equatable{
+  final String name;
+  final Role role;
+  final String company;
+  final List<Project> projects;
+  final List<Task> tasks;
+  final List<Remote> remotes;
 
-class User {
-   String name;
-   Role role;
-   String company;
-   List<Project> projects;
-   List<Task> tasks;
-   List<Remote> remotes;
+  User({
+    @required this.name,
+    @required this.role,
+    @required this.company,
+    @required this.projects,
+    @required this.tasks,
+    @required this.remotes,
+  });
 
-  static User _me;
-  static User get me => _me;
+  @override
+  List<Object> get props => [name, role, company, projects, tasks, remotes];
 
-  DomParser parser = DomParser();
-
-  factory User.create(String dom)  {
-    if (_me == null) {
-      User._internal(dom);
-    }
-    return _me;
-//    print("User: init ${me.toString()}");
-  }
-
-  static void clear(){
-    if(_me != null){
-      _me = null;
-    }
-  }
-  User._internal(String dom){
-    print("User: internal");
-    _me = parser.getUserFromDom(dom);
-  }
-
-  User({this.name, this.role, this.company, this.projects, this.tasks, this.remotes});
-
-  factory User.builder(String name, Role role, String company, List<Project> projects, List<Task> tasks, List<Remote> remotes){
-//    print("User.builder: projects: ${projects.toString()}, ${tasks.toString()}");
-    return new User(name: name, role: role, company: company, projects: projects, tasks: tasks, remotes: remotes);
-  }
-
-   @override
-   String toString() {
-     return 'User{name: $name, role: $role, company: $company, projects: $projects, tasks: $tasks}';
-   }
+  @override
+  bool get stringify => true;
 }

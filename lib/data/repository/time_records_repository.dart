@@ -6,7 +6,6 @@ import 'package:tikal_time_tracker/network/requests/reset_password_form.dart';
 import 'package:tikal_time_tracker/data/models.dart';
 import 'package:tikal_time_tracker/data/repository/time_data_source.dart';
 import 'package:tikal_time_tracker/data/repository/local/local_data_source.dart';
-import 'package:tikal_time_tracker/network/credentials.dart';
 import 'package:tikal_time_tracker/network/requests/send_email_form.dart';
 
 
@@ -44,14 +43,7 @@ class TimeRecordsRepository implements TimeDateSource{
   Future<List<TimeRecord>> getRecordsBetweenDates(DateTime startDate, DateTime endDate) {
     print("getRecordsBetweenDates:");
 
-  return dateSource.getRecordsBetweenDates(startDate, endDate);
-  }
-
-
-  @override
-  void updateCredentials(Credentials credentials) {
-    print("repository: updateCredentials ");
-//    remoteDateSource.updateCredentials(credentials);
+    return dateSource.getRecordsBetweenDates(startDate, endDate);
   }
 
 

@@ -9,7 +9,9 @@ import 'package:tikal_time_tracker/data/remote.dart';
 import 'package:tikal_time_tracker/data/task.dart';
 import 'package:tikal_time_tracker/network/requests/send_email_form.dart';
 import 'package:tikal_time_tracker/resources/strings.dart';
+import 'package:tikal_time_tracker/services/auth/auth.dart';
 import 'package:tikal_time_tracker/services/auth/user.dart';
+import 'package:tikal_time_tracker/services/locator/locator.dart';
 
 class DomParser {
   static const String TAG = "DomParser";
@@ -18,7 +20,7 @@ class DomParser {
 
   DateFormat timeFormat = DateFormat('H:m');
 
-  User getUserFromDom(String domStr) {
+  User createUserFromDom(String domStr) {
 //    debugPrint("$TAG: domStr: $domStr");
 
     String pageTitle = domStr.substring(domStr.indexOf("<!-- page title and user details -->"), domStr.indexOf("<!-- end of page title and user details -->"));
@@ -39,7 +41,7 @@ class DomParser {
     List<Project> projects = _extractProjectsForUser(domStr, tasks);
 
     List<Remote> remotes = _extractRemoteFromDom(domStr);
-    return User.builder(name, role, company, projects, tasks, remotes);
+    return User(name: name, role: role, company: company, projects: projects, tasks: tasks, remotes: remotes);
   }
 
   List<Project> _extractProjectsForUser(String domStr, List<Task> tasks) {
@@ -213,7 +215,8 @@ class DomParser {
       }).toList();
 //     debugPrint("cells: ${cells.toString()}, size: ${cells.length}");
 
-      Task task = User.me.tasks.firstWhere((it) {
+      User user = locator<BaseAuth>().getCurrentUser();
+      Task task = user.tasks.firstWhere((it) {
 //        print("firstWhere: ${it.name}:${cells[1]}");
         return it.name == cells[1];
       });
@@ -239,7 +242,7 @@ class DomParser {
       int trackerId = int.parse(cells[6].substring(cells[6].indexOf("id=") + 3, cells[6].indexOf("\">")).trim());
 //      print("trackerId: $trackerId");
 
-      Project project = User.me.projects.firstWhere((it) {
+      Project project = user.projects.firstWhere((it) {
         return it.name == cells[0];
       });
 
@@ -370,15 +373,16 @@ class DomParser {
       String userName;
 
       int cellsOffset = 0;
+      User user = locator<BaseAuth>().getCurrentUser();
       switch (role) {
         case Role.User:
           {
 //            print("parsing for User");
-            project = User.me.projects.firstWhere((it) {
+            project = user.projects.firstWhere((it) {
               return it.name == cells[1 + cellsOffset];
             });
 
-            task = User.me.tasks.firstWhere((it) {
+            task = user.tasks.firstWhere((it) {
               return it.name == cells[2 + cellsOffset];
             });
             break;

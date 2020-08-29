@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
-import 'package:tikal_time_tracker/services/auth/user.dart';
+import 'package:provider/provider.dart';
+import 'package:tikal_time_tracker/services/auth/auth.dart';
 import 'package:tikal_time_tracker/services/locator/locator.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:tikal_time_tracker/resources/strings.dart';
@@ -12,7 +13,7 @@ class AboutScreen extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
 
-    analytics.logEvent(BaseEvent("about_screen").setUser(User.me.name).open());
+    analytics.logEvent(BaseEvent("about_screen").setUser(Provider.of<BaseAuth>(context).getCurrentUser().name).open());
     Widget getTextRow(String text){
       return Container(
         padding: EdgeInsets.symmetric(vertical: 4.0),

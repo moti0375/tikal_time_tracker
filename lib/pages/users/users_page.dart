@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:tikal_time_tracker/data/member.dart';
 import 'package:tikal_time_tracker/pages/users/users_block.dart';
 import 'package:tikal_time_tracker/pages/users/users_list_adapter.dart';
+import 'package:tikal_time_tracker/services/auth/auth.dart';
 import 'package:tikal_time_tracker/services/auth/user.dart';
+import 'package:tikal_time_tracker/services/locator/locator.dart';
 import 'package:tikal_time_tracker/ui/page_title.dart';
 import 'package:tikal_time_tracker/data/repository/time_records_repository.dart';
 import 'package:tikal_time_tracker/analytics/analytics.dart';
@@ -18,7 +21,15 @@ class UsersPage extends StatefulWidget{
 class _UsersPageState extends State<UsersPage> with AutomaticKeepAliveClientMixin<UsersPage>{
  final analytics = Analytics.instance;
 
- final bloc = UsersBloc(repository: TimeRecordsRepository());
+ UsersBloc bloc;
+
+ @override
+ void didChangeDependencies() {
+   super.didChangeDependencies();
+   if(bloc == null){
+     bloc = UsersBloc(repository: locator<TimeRecordsRepository>(), auth: locator<BaseAuth>());
+   }
+ }
 
   Widget build(BuildContext context) {
     analytics.logEvent(UsersEvent.impression(EVENT_NAME.USERS_SCREEN).open());
@@ -37,6 +48,9 @@ class _UsersPageState extends State<UsersPage> with AutomaticKeepAliveClientMixi
   }
 
   Widget _buildBody(BuildContext context, AsyncSnapshot snapshot){
+
+   User user = Provider.of<BaseAuth>(context).getCurrentUser();
+
     print("Users: _buildBody connection state: ${snapshot.connectionState}");
     if(!snapshot.hasData){
       return Center(
@@ -48,7 +62,7 @@ class _UsersPageState extends State<UsersPage> with AutomaticKeepAliveClientMixi
                 valueColor: AlwaysStoppedAnimation<Color>(Colors.blue)))
       );
     } else {
-      analytics.logEvent(UsersEvent.impression(EVENT_NAME.LOAD_USERS_SUCCESS).setUser(User.me.name).view());
+      analytics.logEvent(UsersEvent.impression(EVENT_NAME.LOAD_USERS_SUCCESS).setUser(user.name).view());
       return Container(
         padding: const EdgeInsets.only(top: 0.0, left: 16.0, right: 16.0),
         child: Column(
@@ -65,6 +79,7 @@ class _UsersPageState extends State<UsersPage> with AutomaticKeepAliveClientMixi
       );
     }
   }
+
 
   @override
   bool get wantKeepAlive => true;
