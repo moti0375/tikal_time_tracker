@@ -31,6 +31,7 @@ class ResetPasswordPresenter implements ResetPasswordBasePresenter{
 
   @override
   void onResetPasswordButtonClicked(String login) {
+    print("onResetPasswordButtonClicked: $login");
     _handleResetPasswordButtonClicked(login);
   }
 

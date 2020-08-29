@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tikal_time_tracker/services/locator/locator.dart';
 import 'package:tikal_time_tracker/ui/animation_button.dart';
 import 'package:tikal_time_tracker/pages/reset_password/reset_password_presenter.dart';
 import 'package:tikal_time_tracker/data/repository/time_records_repository.dart';
@@ -6,7 +7,7 @@ import 'package:tikal_time_tracker/pages/reset_password/reset_password_contract.
 import 'package:tikal_time_tracker/resources/strings.dart';
 
 class ResetPasswordPage extends StatefulWidget {
-  String emailAddress;
+  final String emailAddress;
 
   ResetPasswordPage({this.emailAddress});
 
@@ -21,30 +22,31 @@ class ResetPasswordState extends State<ResetPasswordPage>
   ResetPasswordPresenter _presenter;
   String _statusText = "";
 
+
   @override
   void initState() {
     super.initState();
-    _presenter = ResetPasswordPresenter(repository: TimeRecordsRepository());
-    _presenter.subscribe(this);
+
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if(_presenter == null){
+      _presenter = ResetPasswordPresenter(repository: locator<TimeRecordsRepository>());
+      _presenter.subscribe(this);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController emailController =
-        TextEditingController(text: widget.emailAddress);
-    emailController.addListener(() {
-      print("${emailController.text}");
-      widget.emailAddress = emailController.text;
-    });
+    TextEditingController emailController = TextEditingController(text: widget.emailAddress);
+
 
     final emailField = Container(
         padding: EdgeInsets.symmetric(vertical: 8.0),
         child: TextFormField(
           controller: emailController,
-          onFieldSubmitted: (value) {
-            print("onFieldSubmitted: $value");
-            widget.emailAddress = value;
-          },
           onEditingComplete: () {},
           textInputAction: TextInputAction.next,
           keyboardType: TextInputType.emailAddress,
@@ -77,7 +79,7 @@ class ResetPasswordState extends State<ResetPasswordPage>
     final resetPasswordButton = AnimationButton(
         buttonText: Strings.reset_password_button_text,
         onPressed: () {
-          _presenter.onResetPasswordButtonClicked(widget.emailAddress);
+          _presenter.onResetPasswordButtonClicked(emailController.text);
         }, loggingIn: false,);
 
     final statusField = Container(

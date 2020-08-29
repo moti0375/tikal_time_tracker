@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tikal_time_tracker/services/locator/locator.dart';
 import 'package:tikal_time_tracker/ui/animation_button.dart';
 import 'package:tikal_time_tracker/ui/page_title.dart';
 import 'package:tikal_time_tracker/network/requests/send_email_form.dart';
@@ -30,7 +31,7 @@ class SendEmailPageState extends State<SendEmailPage>
   @override
   void initState() {
     super.initState();
-    presenter = SendEmailPresenter(repository: TimeRecordsRepository());
+    presenter = SendEmailPresenter(repository: locator<TimeRecordsRepository>());
     presenter.subscribe(this);
     analytics.logEvent(EmailEvent.impression(EVENT_NAME.EMAIL_SCREEN).open());
   }
@@ -263,6 +264,7 @@ class SendEmailPageState extends State<SendEmailPage>
 
     return Scaffold(
       appBar: PlatformAppbar(
+        heroTag: "SendEmailPage",
         title: Text(Strings.send_email_page_title),
       ).build(context),
       backgroundColor: Colors.white,
