@@ -31,7 +31,6 @@ part  'time_tracker_api.jretro.dart';
 @GenApiClient(path: "timetracker")
 class TimeTrackerApi extends _$TimeTrackerApiClient implements ApiClient{
   static const  String BASE_URL = "https://planet.tikalk.com";
-  static const  String _TAG = "TimeTrackerApi";
 
   @override
   resty.Route base;
@@ -40,18 +39,8 @@ class TimeTrackerApi extends _$TimeTrackerApiClient implements ApiClient{
 
   Credentials credentials;
 
-  static TimeTrackerApi _instance;
-  static TimeTrackerApi get instance => _instance;
 
-
-  static TimeTrackerApi create() {
-    if (_instance == null) {
-      _instance = TimeTrackerApi._create();
-    }
-    return _instance;
-  }
-
-  static TimeTrackerApi _create(){
+  factory TimeTrackerApi.create(){
     JsonRepo serializers = JsonRepo();
     serializers.add(FormRequestSerializer());
     serializers.add(FormSerializer());
@@ -68,9 +57,6 @@ class TimeTrackerApi extends _$TimeTrackerApiClient implements ApiClient{
         serializers: serializers);
   }
 
-  factory TimeTrackerApi(){
-    return _instance;
-  }
 
   TimeTrackerApi._internal({@required this.base, @required this.serializers}){
     globalClient = Client();

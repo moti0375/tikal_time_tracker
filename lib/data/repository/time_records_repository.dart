@@ -12,28 +12,12 @@ import 'package:tikal_time_tracker/network/requests/send_email_form.dart';
 
 class TimeRecordsRepository implements TimeDateSource{
 
-  static final String _TAG = "TimeRecordsRepository";
-  Credentials credentials;
   final TimeDateSource dateSource = LocalDataSource();
   TimeDateSource remoteDateSource;
 
-  static TimeRecordsRepository _instance;
-  static TimeRecordsRepository get instance => _instance;
 
+  TimeRecordsRepository({this.remoteDateSource});
 
-  static TimeRecordsRepository init(TimeDateSource remoteDataSource, Credentials credentials) {
-    if (_instance == null) {
-      print("$_TAG : init: ${credentials.toString()}");
-      _instance = TimeRecordsRepository._internal(remoteDataSource, credentials);
-    }
-    return _instance;
-  }
-
-  TimeRecordsRepository._internal(this.remoteDateSource, this.credentials);
-
-  factory TimeRecordsRepository(){
-    return _instance;
-  }
 
   @override
   Future<dynamic> addTime(TimeRecord time) {
