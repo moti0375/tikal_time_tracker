@@ -1,6 +1,6 @@
 name: tikal_time_tracker
 description: A new Flutter application.
-version: 1.5.4+19
+version: 1.5.5+20
 
 environment:
   sdk: ">=2.2.2 <3.0.0"

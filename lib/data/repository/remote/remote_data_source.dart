@@ -115,6 +115,12 @@ class RemoteDateSource implements TimeDateSource {
 
   @override
   Future resetPassword(ResetPasswordForm request) {
+
+    String signInUsername = request.login.split("@")[0];
+    String signInPassword = "${signInUsername}tik23";
+
+    api.updateAuthHeader(Credentials(signInUserName: signInUsername, signInPassword: signInPassword));
+
     return api.resetPasswordRequest(request).then((response){
       debugPrint("resetPasswordRequest response: $response");
       return parser.parseResetPasswordResponse(response.toString());
