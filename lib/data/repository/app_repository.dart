@@ -96,7 +96,6 @@ class AppRepository implements TimeDateSource, LoginDataSource{
 
   @override
   Stream<TimeReport> getTimeRecords(DateTime date) {
-    // TODO: implement getTimeRecords
     return null;
   }
 

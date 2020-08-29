@@ -1,3 +1,4 @@
+import 'package:tikal_time_tracker/data/dom/dom_parser.dart';
 import 'package:tikal_time_tracker/data/exceptions/failed_login_exception.dart';
 import 'package:tikal_time_tracker/data/repository/login_data_source.dart';
 import 'package:tikal_time_tracker/network/credentials.dart';
@@ -11,9 +12,8 @@ class LoginRemoteDataSource implements LoginDataSource{
   static const CONNECTION_TIMEOUT = 5000;
 
   final TimeTrackerApi _api;
-  LoginRemoteDataSource(this._api);
-
-
+  final DomParser parser;
+  LoginRemoteDataSource(this._api, {this.parser});
 
   Future<bool> _singIn(String userName, String password) async {
 
@@ -44,7 +44,7 @@ class LoginRemoteDataSource implements LoginDataSource{
       if(response.isEmpty){  //This means login succeeded
         //It's time to create user, this is done by navigating to time page and parsing the user details.
         String userResponse = await _api.time();
-        return User.init(userResponse);
+        return User.create(userResponse);
       } else {
         if(response.contains("Incorrect login or password")){
           throw AppException(cause: Strings.incorrect_credentials);

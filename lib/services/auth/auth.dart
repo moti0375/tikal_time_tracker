@@ -1,17 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:tikal_time_tracker/data/dom/dom_parser.dart';
-import 'package:tikal_time_tracker/data/exceptions/failed_login_exception.dart';
 import 'package:tikal_time_tracker/data/repository/app_repository.dart';
-import 'package:tikal_time_tracker/data/repository/login_data_source.dart';
-import 'package:tikal_time_tracker/data/repository/time_records_repository.dart';
-import 'package:tikal_time_tracker/network/credentials.dart';
-import 'package:tikal_time_tracker/network/requests/login_request.dart';
-import 'package:tikal_time_tracker/network/time_tracker_api.dart';
-import 'package:tikal_time_tracker/resources/strings.dart';
 import 'package:tikal_time_tracker/services/auth/user.dart';
-import 'package:tikal_time_tracker/services/locator/locator.dart';
 abstract class BaseAuth with ChangeNotifier{
   Stream<User> get onAuthChanged;
   Future<User> login(String userName, String password);
@@ -42,6 +33,7 @@ class AppAuth extends BaseAuth {
   Future<void> logout() async {
     authStreamController.add(null);
     _user = null;
+    User.clear();
     notifyListeners();
     return null;
   }
@@ -59,6 +51,7 @@ class AppAuth extends BaseAuth {
   User getCurrentUser() {
     return _user;
   }
+
 }
 
 

@@ -131,6 +131,7 @@ class LoginPageBloc {
     _currentState.updateWith(email: Strings.empty_string, password: Strings.empty_string);
     _loginStateSink.add(_currentState);
     _preferences.signOut();
+    User.clear();
   }
 
   void _handleLoginSuccess(User user, BuildContext context) {

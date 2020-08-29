@@ -7,23 +7,20 @@ import 'package:tikal_time_tracker/network/requests/send_email_form.dart';
 import 'package:tikal_time_tracker/network/time_tracker_api.dart';
 import 'package:tikal_time_tracker/network/requests/reports_form.dart';
 import 'package:tikal_time_tracker/network/requests/update_request.dart';
-import 'package:jaguar_serializer/jaguar_serializer.dart';
 import 'package:tikal_time_tracker/network/requests/delete_request.dart';
 import 'package:tikal_time_tracker/network/requests/reset_password_form.dart';
 import 'package:tikal_time_tracker/network/credentials.dart';
 import 'package:tikal_time_tracker/data/dom/dom_parser.dart';
-import 'package:tikal_time_tracker/services/locator/locator.dart';
 
 
 import '../time_data_source.dart';
 
 class RemoteDateSource implements TimeDateSource {
-  TimeTrackerApi api;
-  JsonRepo serializers = JsonRepo();
+  final TimeTrackerApi api;
+  final DomParser parser;
   Credentials credentials;
-  DomParser parser = locator<DomParser>();
 
-  RemoteDateSource({this.api});
+  RemoteDateSource({this.api, this.parser});
 
   @override
   Future<dynamic> addTime(TimeRecord time) async {

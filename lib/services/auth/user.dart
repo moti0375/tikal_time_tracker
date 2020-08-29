@@ -18,7 +18,7 @@ class User {
 
   DomParser parser = DomParser();
 
-  static User init(String dom)  {
+  factory User.create(String dom)  {
     if (_me == null) {
       User._internal(dom);
     }
@@ -26,7 +26,7 @@ class User {
 //    print("User: init ${me.toString()}");
   }
 
-  static void signOut(){
+  static void clear(){
     if(_me != null){
       _me = null;
     }

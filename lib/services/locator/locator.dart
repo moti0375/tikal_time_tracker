@@ -1,5 +1,3 @@
-
-
 import 'package:get_it/get_it.dart';
 import 'package:package_info/package_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,23 +12,28 @@ import 'package:tikal_time_tracker/data/repository/time_records_repository.dart'
 import 'package:tikal_time_tracker/network/credentials.dart';
 import 'package:tikal_time_tracker/network/time_tracker_api.dart';
 import 'package:tikal_time_tracker/resources/strings.dart';
+import 'package:tikal_time_tracker/services/auth/auth.dart';
 import 'package:tikal_time_tracker/storage/preferences.dart';
 
 GetIt locator = GetIt.instance;
 
 Future<void> setupLocator() async {
+  DomParser parser = DomParser();
+  locator.registerSingleton(parser);
 
   await setPreferences();
   await setAnalytics();
   await setTimeTrackerApi();
   await registerPackageInfo();
+  await setBaseAuth();
 }
 
 Future setTimeTrackerApi() async {
   TimeTrackerApi api = TimeTrackerApi.create();
-  locator.registerLazySingleton(() => DomParser());
-  TimeRecordsRepository timeRecordsRepository = TimeRecordsRepository.init(RemoteDateSource(api: api), Credentials(signInUserName: Strings.empty_string, signInPassword: Strings.empty_string));
-  LoginRepository loginRepository = LoginRepository(LoginRemoteDataSource(api));
+  locator.registerLazySingleton<LoginRemoteDataSource>(() => LoginRemoteDataSource(api, parser: locator<DomParser>()));
+  TimeRecordsRepository timeRecordsRepository =
+      TimeRecordsRepository.init(RemoteDateSource(api: api, parser: locator<DomParser>()), Credentials(signInUserName: Strings.empty_string, signInPassword: Strings.empty_string));
+  LoginRepository loginRepository = LoginRepository(locator<LoginRemoteDataSource>());
   locator.registerLazySingleton(() => AppRepository(timeRecordsRepository, loginRepository));
 }
 
@@ -53,4 +56,9 @@ Future registerPackageInfo() async {
 Future<Preferences> initPreferences() async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
   return Preferences.init(preferences);
+}
+
+Future setBaseAuth() async {
+  BaseAuth auth = AppAuth(locator<AppRepository>());
+  locator.registerLazySingleton<BaseAuth>(() => auth);
 }

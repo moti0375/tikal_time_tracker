@@ -1,20 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tikal_time_tracker/data/dom/dom_parser.dart';
-import 'package:tikal_time_tracker/data/repository/app_repository.dart';
 import 'package:tikal_time_tracker/pages/login/login_page.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:tikal_time_tracker/analytics/analytics.dart';
-import 'package:tikal_time_tracker/analytics/firebase_endpoint.dart';
-import 'package:tikal_time_tracker/pages/login/login_page_bloc.dart';
 import 'package:tikal_time_tracker/services/auth/auth.dart';
 import 'package:provider/provider.dart';
-import 'package:tikal_time_tracker/services/auth/user.dart';
 import 'package:tikal_time_tracker/services/locator/locator.dart';
 import 'package:tikal_time_tracker/storage/preferences.dart';
-
-import 'network/time_tracker_api.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,7 +27,7 @@ class TimeTracker extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<BaseAuth>(
-            create: (context) => AppAuth(locator<AppRepository>())),
+            create: (context) => locator<BaseAuth>()),
       ],
       child: new MaterialApp(
         title: "Time Tracker",
