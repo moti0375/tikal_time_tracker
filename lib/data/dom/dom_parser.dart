@@ -154,7 +154,10 @@ class DomParser {
 
     String firstDelimiter = 'id="time_field_5"';
     String secondDelimiter = '</select>';
-    String buffer = domStr.substring(domStr.indexOf(firstDelimiter) + firstDelimiter.length, domStr.indexOf(secondDelimiter)).trim();
+    String buffer = domStr.substring(domStr.indexOf(firstDelimiter) + firstDelimiter.length).trim();
+    buffer = buffer.substring(0, buffer.indexOf(secondDelimiter));
+
+    debugPrint("_extractRemoteFromDom: buffer: $buffer");
 
     buffer = buffer.substring(buffer.indexOf('</option>') + '</option>'.length).trim();
     List<String> remoteRows = buffer.split('\n');
@@ -174,7 +177,7 @@ class DomParser {
       return Remote(value: int.parse(value), name: name.trim());
     }).toList();
 
-//    print("getUserFromDom: ${projects.toString()}");
+    print("_extractRemoteFromDom: ${remotes.toString()}");
     return remotes;
   }
 
