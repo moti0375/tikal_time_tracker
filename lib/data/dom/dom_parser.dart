@@ -38,6 +38,7 @@ class DomParser {
     String company = userDetails.substring(userDetails.indexOf(comma) + 1);
     print("$TAG: name: $name, role: $role, company: $company");
     List<Task> tasks = _extractTasks(domStr);
+    print("$TAG: Tasks: ${tasks.toString()}");
     List<Project> projects = _extractProjectsForUser(domStr, tasks);
 
     List<Remote> remotes = _extractRemoteFromDom(domStr);
@@ -45,33 +46,44 @@ class DomParser {
   }
 
   List<Project> _extractProjectsForUser(String domStr, List<Task> tasks) {
-    List<Project> projects = _extractProjects(domStr);
+    List<String> projectsList = _extractProjectsStrings(domStr);
+    Map<int, List<int>> tasksForProjects = _createTasksToProjectsMap(domStr);
 
-    Map<int, List<int>> tasksForProjects = _extractTasksForProjects(domStr, projects);
+    List<Project> projects = projectsList.map((projectStr) {
+      print("$TAG: Projects: ${projectStr.toString()}");
 
-//    debugPrint("_extractTasks: $domStr");
+      String container = projectStr.replaceAll("\"", "");
+      List<String> m = container.split(",");
+      print("${m[0].trim()}:${m[1].trim()}");
+      String name = m[1].trim();
+      String value = m[0].trim();
 
-    projects.forEach((p) {
-      List<Task> tasksForProj = List<Task>();
-//      print("getUserFromDom: p = ${p.name}:${tasksForProjects[p.value]}");
-      tasksForProjects[p.value].forEach((t) {
-        Task task = tasks.firstWhere((e) {
-//          print("firstWhere: $t -> ${e.value}:${e.name}");
-          return (e.value == t);
-        }, orElse: () => null);
-        if (task != null) {
-          tasksForProj.add(task);
-        }
-      });
+      int val = int.tryParse(value);
+      List<Task> availableTasks = _extractTasksForProject(tasksForProjects, tasks, val);
 //      print("getUserFromDom: tasksForProj ${p.name} : ${tasksForProj.toString()}");
-      p.tasks = tasksForProj;
-    });
+      return Project(name: name, value: val, tasks: availableTasks);
+    }).toList();
 
 //    print("getUserFromDom: ${projects.toString()}");
     return projects;
   }
 
-  List<Project> _extractProjects(String domStr) {
+  List<Task> _extractTasksForProject(Map<int, List<int>> tasksProjectsMap, List<Task> tasks, int projectId){
+    List<Task> availableTasks = List<Task>();
+//      print("getUserFromDom: p = ${p.name}:${tasksForProjects[p.value]}");
+    tasksProjectsMap[projectId].forEach((t) {
+      Task task = tasks.firstWhere((e) {
+//          print("firstWhere: $t -> ${e.value}:${e.name}");
+        return (e.value == t);
+      }, orElse: () => null);
+      if (task != null) {
+        availableTasks.add(task);
+      }
+    });
+    return availableTasks;
+  }
+
+  List<String> _extractProjectsStrings(String domStr) {
     String firstDelimiter = "var projects = new Array();";
     String secondDelimiter = "// Prepare an array of task ids for projects";
     String buffer = domStr.substring(domStr.indexOf(firstDelimiter) + firstDelimiter.length, domStr.indexOf(secondDelimiter));
@@ -86,19 +98,9 @@ class DomParser {
 
     // print("_extractProjects: ${projects.toString()}");
 
-    List<Project> result = projects.map((projectStr) {
-      String container = projectStr.replaceAll("\"", "");
-      List<String> m = container.split(",");
-      print("${m[0].trim()}:${m[1].trim()}");
-      String name = m[1].trim();
-      String value = m[0].trim();
-
-      int val = int.tryParse(value);
-
-      return Project(name: name, value: val);
-    }).toList();
+    
     //  print("_extractProjects result: ${result.toString()}");
-    return result;
+    return projects;
   }
 
   List<Task> _extractTasks(String domStr) {
@@ -121,7 +123,7 @@ class DomParser {
     return tasks;
   }
 
-  Map<int, List<int>> _extractTasksForProjects(String domStr, List<Project> projects) {
+  Map<int, List<int>> _createTasksToProjectsMap(String domStr) {
     String startDelimiter = "var task_ids = new Array()";
     String endDelimiter = "// Prepare an array of task names.";
 
@@ -141,7 +143,9 @@ class DomParser {
         return int.tryParse(it.trim());
       }).toList();
 
-      tasks.remove(14); //There is no task 14
+//      if(role == Role.User){
+//        tasks.remove(14); //There is no task 14
+//      }
 //      print("_extractTasksForProjects: tasks ${tasks.toString()}");
 
       projectsAndTasks[prjVal] = tasks;
@@ -159,13 +163,13 @@ class DomParser {
     String buffer = domStr.substring(domStr.indexOf(firstDelimiter) + firstDelimiter.length).trim();
     buffer = buffer.substring(0, buffer.indexOf(secondDelimiter));
 
-    debugPrint("_extractRemoteFromDom: buffer: $buffer");
+    //debugPrint("_extractRemoteFromDom: buffer: $buffer");
 
     buffer = buffer.substring(buffer.indexOf('</option>') + '</option>'.length).trim();
     List<String> remoteRows = buffer.split('\n');
 
     List<Remote> remotes = remoteRows.map((r) {
-      debugPrint("parsing: $r ...");
+     // debugPrint("parsing: $r ...");
       String valueStartBuffer = '<option value="';
       String valueEndBuffer = '"';
       var value = r.substring(r.indexOf(valueStartBuffer) + valueStartBuffer.length);

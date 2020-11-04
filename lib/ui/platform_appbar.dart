@@ -31,7 +31,7 @@ class PlatformAppbar extends PlatformWidget {
     } else {
       print("buildCupertinoAppbar: no actions");
       return CupertinoNavigationBar(
-        heroTag: heroTag,
+        heroTag: "heroTag",
         transitionBetweenRoutes: false,
         middle: title,
       );
