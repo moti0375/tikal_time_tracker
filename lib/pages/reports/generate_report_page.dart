@@ -15,6 +15,7 @@ import 'package:tikal_time_tracker/pages/reports/reports_contract.dart';
 import 'package:tikal_time_tracker/pages/reports/reports_presenter.dart';
 import 'package:tikal_time_tracker/resources/strings.dart';
 import 'package:tikal_time_tracker/services/auth/auth.dart';
+import 'package:tikal_time_tracker/services/auth/user.dart';
 import 'package:tikal_time_tracker/services/locator/locator.dart';
 import 'package:tikal_time_tracker/ui/animation_button.dart';
 import 'package:tikal_time_tracker/ui/page_title.dart';
@@ -68,8 +69,21 @@ class GenerateReportState extends State<GenerateReportPage> with AutomaticKeepAl
     }
   }
 
+  List<DropdownMenuItem<Project>> _buildDropDownItems(User user) {
+    return user != null ? user.projects.map((Project value) {
+      return new DropdownMenuItem<Project>(
+        value: value,
+        child: new Text(
+          value.name,
+          style: TextStyle(fontSize: 24.0),
+        ),
+      );
+    }).toList() : null;
+  }
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<BaseAuth>(context).getCurrentUser();
+
     final projectsDropDown = Container(
         margin: EdgeInsets.symmetric(vertical: 4.0),
         decoration: BoxDecoration(border: Border.all(width: 0.5, color: Colors.black45)),
@@ -85,15 +99,7 @@ class GenerateReportState extends State<GenerateReportPage> with AutomaticKeepAl
                 ),
               ),
               value: _selectedProject,
-              items: Provider.of<BaseAuth>(context).getCurrentUser().projects.map((Project value) {
-                return new DropdownMenuItem<Project>(
-                  value: value,
-                  child: new Text(
-                    value.name,
-                    style: TextStyle(fontSize: 24.0),
-                  ),
-                );
-              }).toList(),
+              items: _buildDropDownItems(user),
               onChanged: (Project value) {
                 _onProjectSelected(value);
               }),

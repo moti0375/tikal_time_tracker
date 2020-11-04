@@ -1,3 +1,4 @@
+import 'package:tikal_time_tracker/resources/strings.dart';
 import 'package:tikal_time_tracker/ui/more_with_red_dot_icon.dart';
 import 'package:tikal_time_tracker/ui/platform_widget.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +16,7 @@ class PlatformAppbar extends PlatformWidget {
       {this.title,
       this.actions,
       this.onPressed,
-      this.notificationEnabled = false, this.heroTag});
+      this.notificationEnabled = false, this.heroTag = Strings.empty_string});
 
   @override
   Widget buildCupertinoWidget(BuildContext context) {
@@ -31,7 +32,7 @@ class PlatformAppbar extends PlatformWidget {
     } else {
       print("buildCupertinoAppbar: no actions");
       return CupertinoNavigationBar(
-        heroTag: "heroTag",
+        heroTag: heroTag,
         transitionBetweenRoutes: false,
         middle: title,
       );

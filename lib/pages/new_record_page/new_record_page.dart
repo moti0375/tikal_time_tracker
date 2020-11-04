@@ -155,6 +155,7 @@ class NewRecordPageState extends State<NewRecordPage> {
       builder: (context, snapshot) {
         return Scaffold(
           appBar: PlatformAppbar(
+            heroTag: "NewRecordPage",
             title: Text(snapshot.data.flow == NewRecordFlow.update_record
                 ? Strings.edit_record_page_title
                 : Strings.new_record_page_title),
