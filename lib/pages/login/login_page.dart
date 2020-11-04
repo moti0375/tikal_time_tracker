@@ -12,6 +12,7 @@ import 'package:tikal_time_tracker/ui/animation_button.dart';
 import 'package:tikal_time_tracker/ui/platform_alert_dialog.dart';
 import 'package:tikal_time_tracker/analytics/analytics.dart';
 import 'package:tikal_time_tracker/resources/strings.dart';
+import 'package:tikal_time_tracker/utils/string_utils.dart';
 
 import 'login_state.dart';
 
@@ -152,11 +153,13 @@ class LoginPageState extends State<LoginPage> {
     );
 
     Widget _loginInfo(prefix0.LogInModel state) {
-
-      return Text(
-        state.errorInfo ?? Strings.empty_string,
-        textAlign: TextAlign.center,
-        style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+      return Visibility(
+        visible: StringUtils.isNotEmpty(state.errorInfo),
+        child: Text(
+          state.errorInfo ?? Strings.empty_string,
+          textAlign: TextAlign.center,
+          style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+        ),
       );
     }
 
@@ -165,29 +168,25 @@ class LoginPageState extends State<LoginPage> {
           "_loginForm: ${state.email}, ${state.password}, ${state.loggingIn}");
       emailController.text = state.email;
       passwordController.text = state.password;
-      return Card(
-        elevation: 4,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              SizedBox(height: 8.0),
-              _buildEmailInputField(),
-              SizedBox(height: 8.0),
-              _buildPasswordInputField(state),
-              SizedBox(height: 8.0),
-              _loginInfo(state),
-              SizedBox(height: 8.0),
-              AnimationButton(
-                  buttonText: Strings.login_button_text,
-                  loggingIn: state.loggingIn,
-                  onPressed: () => widget.bloc
-                      .onNewEvent(LoginButtonClicked(context: context))),
-              forgotLabel
-            ],
-          ),
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            SizedBox(height: 8.0),
+            _buildEmailInputField(),
+            SizedBox(height: 8.0),
+            _buildPasswordInputField(state),
+            SizedBox(height: 8.0),
+            _loginInfo(state),
+            AnimationButton(
+                buttonText: Strings.login_button_text,
+                loggingIn: state.loggingIn,
+                onPressed: () => widget.bloc
+                    .onNewEvent(LoginButtonClicked(context: context))),
+            forgotLabel
+          ],
         ),
       );
     }
