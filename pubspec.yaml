@@ -20,8 +20,8 @@ dependencies:
   html: any
   ktoast: ^1.0.3
   url_launcher: ^5.4.1
-  firebase_core: ^0.4.3+1
-  firebase_analytics: ^5.0.9
+  firebase_core: ^0.5.1
+  firebase_analytics: ^6.1.0
   provider: ^3.2.0
   equatable: ^1.2.0
   get_it: ^3.0.3
