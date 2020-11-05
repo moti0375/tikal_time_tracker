@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tikal_time_tracker/analytics/analytics.dart';
 import 'package:tikal_time_tracker/data/models.dart';
+import 'package:tikal_time_tracker/data/repository/app_repository.dart';
 import 'package:tikal_time_tracker/pages/time/time_page_event.dart';
 import 'package:tikal_time_tracker/resources/colors.dart';
 import 'package:tikal_time_tracker/services/auth/auth.dart';
 import 'package:tikal_time_tracker/services/auth/user.dart';
+import 'package:tikal_time_tracker/services/locator/locator.dart';
 import 'package:tikal_time_tracker/ui/platform_appbar.dart';
 import 'package:tikal_time_tracker/ui/time_record_list_builder.dart';
 import 'package:tikal_time_tracker/pages/reports/place_holder_content.dart';
@@ -21,17 +24,28 @@ class TimePage extends StatefulWidget {
 
   @override
   _TimePageState createState() => _TimePageState();
+
+  static Widget create() {
+    return Provider<TimePageBloc>(
+      create: (context) => TimePageBloc(locator<AppRepository>(), locator<BaseAuth>(), locator<Analytics>()),
+      child: Consumer<TimePageBloc>(
+        builder: (context, bloc, _) => TimePage(
+          bloc: bloc,
+        ),
+      ),
+      dispose: (context, bloc) => bloc.dispose(),
+    );
+  }
 }
 
-class _TimePageState extends State<TimePage> with AutomaticKeepAliveClientMixin<TimePage>{
-
-  final List<Choice> choices =  <Choice>[
-     Choice(
+class _TimePageState extends State<TimePage> with AutomaticKeepAliveClientMixin<TimePage> {
+  final List<Choice> choices = <Choice>[
+    Choice(
       action: MenuAction.Logout,
       title: "Logout",
       icon: null,
     ),
-     Choice(
+    Choice(
       action: MenuAction.About,
       title: "About",
       icon: null,
@@ -44,8 +58,7 @@ class _TimePageState extends State<TimePage> with AutomaticKeepAliveClientMixin<
     widget.bloc.dispatchEvent(DateSelectedEvent(selectedDate: DateTime.now()));
   }
 
-  final TextEditingController dateInputController =
-      new TextEditingController(text: Strings.empty_string);
+  final TextEditingController dateInputController = new TextEditingController(text: Strings.empty_string);
 
   @override
   Widget build(BuildContext context) {
@@ -57,9 +70,7 @@ class _TimePageState extends State<TimePage> with AutomaticKeepAliveClientMixin<
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       appBar: _buildAppBar(title: Strings.app_name, context: context),
-      floatingActionButton: new FloatingActionButton(
-          onPressed: () => widget.bloc.dispatchEvent(FabAddRecordClicked(context)),
-          child: Icon(Icons.add)),
+      floatingActionButton: new FloatingActionButton(onPressed: () => widget.bloc.dispatchEvent(FabAddRecordClicked(context)), child: Icon(Icons.add)),
       body: StreamBuilder<TimeReport>(
           initialData: TimeReport(date: DateTime.now(), timeReport: List<TimeRecord>()),
           stream: widget.bloc.timeReportStream,
@@ -88,13 +99,8 @@ class _TimePageState extends State<TimePage> with AutomaticKeepAliveClientMixin<
                 "${Strings.week_total} ${Utils.buildTimeStringFromDuration(snapshot.data.weekTotal)}",
                 textAlign: TextAlign.start,
               ),
-              Text(
-                  "${Strings.day_total} ${Utils.buildTimeStringFromDuration(snapshot.data.dayTotal)}",
-                  textAlign: TextAlign.end,
-                  style: TextStyle(
-                      color: snapshot.data.dayTotal.inHours < 9
-                          ? Colors.red
-                          : Colors.black))
+              Text("${Strings.day_total} ${Utils.buildTimeStringFromDuration(snapshot.data.dayTotal)}",
+                  textAlign: TextAlign.end, style: TextStyle(color: snapshot.data.dayTotal.inHours < 9 ? Colors.red : Colors.black))
             ],
           ),
         ),
@@ -117,18 +123,13 @@ class _TimePageState extends State<TimePage> with AutomaticKeepAliveClientMixin<
   }
 
   Widget buildQuotaWidget(TimeReport report) {
-    String title =
-        report.overQuota ? Strings.over_quota : Strings.remaining_quota;
+    String title = report.overQuota ? Strings.over_quota : Strings.remaining_quota;
     Color textColor = report.overQuota ? Colors.green : Colors.red;
-    return Text("$title ${Utils.buildTimeStringFromDuration(report.quota)}",
-        style: TextStyle(color: textColor));
+    return Text("$title ${Utils.buildTimeStringFromDuration(report.quota)}", style: TextStyle(color: textColor));
   }
 
   PlaceholderContent _buildPlaceHolder(BuildContext context, User user) {
-    return PlaceholderContent(
-        title: Strings.no_work_title,
-        subtitle: Strings.no_work_subtitle,
-        onPressed: () => widget.bloc.dispatchEvent(EmptyScreenAddRecordClicked(context)));
+    return PlaceholderContent(title: Strings.no_work_title, subtitle: Strings.no_work_subtitle, onPressed: () => widget.bloc.dispatchEvent(EmptyScreenAddRecordClicked(context)));
   }
 
   void onNewRecordScreenClicked() {}
@@ -138,7 +139,7 @@ class _TimePageState extends State<TimePage> with AutomaticKeepAliveClientMixin<
         initializedDateTime: widget.bloc.selectedDate,
         onSubmittedCallback: (date) {
           dateInputController.text = "${date.day}/${date.month}/${date.year}";
-          widget.bloc.dispatchEvent(DatePickerSelectedEvent(selectedDate:date));
+          widget.bloc.dispatchEvent(DatePickerSelectedEvent(selectedDate: date));
         });
   }
 
@@ -213,7 +214,8 @@ class _TimePageState extends State<TimePage> with AutomaticKeepAliveClientMixin<
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Text(user != null ? "${user.name}, ${user.company}, ${user.role.toString().split(".").last}" : "",
+                  Text(
+                    user != null ? "${user.name}, ${user.company}, ${user.role.toString().split(".").last}" : "",
                     textAlign: TextAlign.start,
                   )
                 ],
@@ -227,23 +229,20 @@ class _TimePageState extends State<TimePage> with AutomaticKeepAliveClientMixin<
   PreferredSizeWidget _buildAppBar({String title, BuildContext context}) {
     return PlatformAppbar(
       heroTag: "TimePage",
-      title: Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              margin: EdgeInsets.all(4.0),
-              width: 24.0,
-              height: 24.0,
-              child: GestureDetector(
-                onTap: () => widget.bloc.dispatchEvent(OnAboutItemClicked(context: context)),
-                child: Image.asset(
-                  'assets/logo_no_background.png',
-                ),
-              ),
+      title: Row(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.center, children: [
+        Container(
+          margin: EdgeInsets.all(4.0),
+          width: 24.0,
+          height: 24.0,
+          child: GestureDetector(
+            onTap: () => widget.bloc.dispatchEvent(OnAboutItemClicked(context: context)),
+            child: Image.asset(
+              'assets/logo_no_background.png',
             ),
-            Text(title)
-          ]),
+          ),
+        ),
+        Text(title)
+      ]),
       actions: choices,
       onPressed: (Choice c) {
         print("Selected: ${c.title}");

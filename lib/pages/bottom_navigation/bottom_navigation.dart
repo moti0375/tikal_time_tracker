@@ -2,18 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tikal_time_tracker/analytics/analytics.dart';
-import 'package:tikal_time_tracker/data/repository/app_repository.dart';
-import 'package:tikal_time_tracker/data/repository/time_records_repository.dart';
+import 'package:tikal_time_tracker/pages/bottom_navigation/tabs_helper.dart';
 import 'package:tikal_time_tracker/pages/login/login_page.dart';
-import 'package:tikal_time_tracker/pages/time/time_page.dart';
-import 'package:tikal_time_tracker/pages/time/time_page_bloc.dart';
-import 'package:tikal_time_tracker/pages/users/users_page.dart';
-import 'package:tikal_time_tracker/pages/reports/generate_report_page.dart';
 import 'package:tikal_time_tracker/resources/strings.dart';
 import 'package:tikal_time_tracker/services/auth/auth.dart';
 import 'package:tikal_time_tracker/services/auth/user.dart';
-import 'package:tikal_time_tracker/services/locator/locator.dart';
 
 enum Tab {
   Time,
@@ -43,27 +36,16 @@ String tabName({Tab tab}) {
 
 class BottomNavigationState extends State<BottomNavigation> {
   int _page = 0;
-  PageController _pageController;
   StreamSubscription<User> listen;
 
   _onSelectedTab(int index) {
-    _pageController.animateToPage(index, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
-//    switch (index) {
-//      case 0:
-//        _updateCurrentTab(Tab.Time);
-//        break;
-//      case 1:
-//        _updateCurrentTab(Tab.Reports);
-//        break;
-//      case 2:
-//        _updateCurrentTab(Tab.Users);
-//        break;
-//    }
+    setState(() {
+      _page = index;
+    });
   }
 
   @override
   void initState() {
-    _pageController = PageController(initialPage: _page);
     super.initState();
   }
 
@@ -96,34 +78,10 @@ class BottomNavigationState extends State<BottomNavigation> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: PageView(
-          controller: _pageController,
-          onPageChanged: (i) {
-            setState(() {
-              _page = i;
-            });
-          },
-          children: <Widget>[
-            _buildTimePage(),
-            GenerateReportPage(),
-            UsersPage()
-          ],
+        body: IndexedStack(
+          index: _page,
+          children: TabsHelper.screens,
         ), bottomNavigationBar: _buildBottomNavigation());
-  }
-
-  Widget _buildTimePage() {
-    return Consumer<BaseAuth>(
-      builder:(context, auth, _) => Provider<TimePageBloc>(
-        create: (context) =>
-            TimePageBloc(locator<AppRepository>(),  auth,  locator<Analytics>()),
-        child: Consumer<TimePageBloc>(
-          builder: (context, bloc, _) => TimePage(
-            bloc: bloc,
-          ),
-        ),
-        dispose: (context, bloc) => bloc.dispose(),
-      ),
-    );
   }
 
   Widget _buildBottomNavigation() {
@@ -142,8 +100,7 @@ class BottomNavigationState extends State<BottomNavigation> {
   BottomNavigationBarItem _buildItem({IconData icon, Tab tab}) {
     return BottomNavigationBarItem(
         icon: Icon(icon),
-        title: Text(
-          tabName(tab: tab),
-        ));
+        label: tabName(tab: tab),
+        );
   }
 }

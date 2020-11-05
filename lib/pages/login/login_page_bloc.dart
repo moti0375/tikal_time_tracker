@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:tikal_time_tracker/analytics/analytics.dart';
 import 'package:tikal_time_tracker/analytics/events/login_event.dart';
-import 'package:tikal_time_tracker/bottom_navigation.dart';
+import 'package:tikal_time_tracker/pages/bottom_navigation/bottom_navigation.dart';
 import 'package:tikal_time_tracker/data/exceptions/failed_login_exception.dart';
 import 'package:tikal_time_tracker/data/repository/app_repository.dart';
 import 'package:tikal_time_tracker/pages/login/login_event.dart';
