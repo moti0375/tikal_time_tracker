@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tikal_time_tracker/data/models.dart';
 import 'package:tikal_time_tracker/pages/time/time_page_event.dart';
+import 'package:tikal_time_tracker/resources/colors.dart';
 import 'package:tikal_time_tracker/services/auth/auth.dart';
 import 'package:tikal_time_tracker/services/auth/user.dart';
 import 'package:tikal_time_tracker/ui/platform_appbar.dart';
@@ -55,7 +56,6 @@ class _TimePageState extends State<TimePage> with AutomaticKeepAliveClientMixin<
 
     return Scaffold(
       resizeToAvoidBottomPadding: false,
-      backgroundColor: Colors.black12,
       appBar: _buildAppBar(title: Strings.app_name, context: context),
       floatingActionButton: new FloatingActionButton(
           onPressed: () => widget.bloc.dispatchEvent(FabAddRecordClicked(context)),
@@ -74,36 +74,43 @@ class _TimePageState extends State<TimePage> with AutomaticKeepAliveClientMixin<
       children: <Widget>[
         SizedBox(height: 10.0),
         Container(
+          margin: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
           height: 1.5,
-          color: Colors.black26,
+          color: AppColors.GeneralDividerGray,
         ),
-        Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Text(
-              "${Strings.week_total} ${Utils.buildTimeStringFromDuration(snapshot.data.weekTotal)}",
-              textAlign: TextAlign.start,
-            ),
-            Text(
-                "${Strings.day_total} ${Utils.buildTimeStringFromDuration(snapshot.data.dayTotal)}",
-                textAlign: TextAlign.end,
-                style: TextStyle(
-                    color: snapshot.data.dayTotal.inHours < 9
-                        ? Colors.red
-                        : Colors.black))
-          ],
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text(
+                "${Strings.week_total} ${Utils.buildTimeStringFromDuration(snapshot.data.weekTotal)}",
+                textAlign: TextAlign.start,
+              ),
+              Text(
+                  "${Strings.day_total} ${Utils.buildTimeStringFromDuration(snapshot.data.dayTotal)}",
+                  textAlign: TextAlign.end,
+                  style: TextStyle(
+                      color: snapshot.data.dayTotal.inHours < 9
+                          ? Colors.red
+                          : Colors.black))
+            ],
+          ),
         ),
-        Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Text(
-              "${Strings.month_total} ${Utils.buildTimeStringFromDuration(snapshot.data.monthTotal)}",
-              textAlign: TextAlign.start,
-            ),
-            buildQuotaWidget(snapshot.data),
-          ],
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text(
+                "${Strings.month_total} ${Utils.buildTimeStringFromDuration(snapshot.data.monthTotal)}",
+                textAlign: TextAlign.start,
+              ),
+              buildQuotaWidget(snapshot.data),
+            ],
+          ),
         ),
       ],
     );
@@ -188,7 +195,7 @@ class _TimePageState extends State<TimePage> with AutomaticKeepAliveClientMixin<
 
   Container _buildContent(AsyncSnapshot snapshot, BuildContext context, User user) {
     return Container(
-      padding: const EdgeInsets.all(16.0),
+      padding: EdgeInsets.symmetric(vertical: 16),
       child: Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.start,
@@ -196,11 +203,12 @@ class _TimePageState extends State<TimePage> with AutomaticKeepAliveClientMixin<
         children: <Widget>[
           _buildDatePicker(snapshot.data),
           Container(
+            margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
             height: 1.5,
-            color: Colors.black26,
+            color: AppColors.GeneralDividerGray,
           ),
           Container(
-              padding: EdgeInsets.only(bottom: 2.0),
+              padding: EdgeInsets.symmetric(vertical: 2.0, horizontal: 8.0),
               child: Row(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

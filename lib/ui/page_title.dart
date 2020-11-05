@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tikal_time_tracker/resources/colors.dart';
 import 'package:tikal_time_tracker/services/auth/auth.dart';
-import 'package:tikal_time_tracker/services/auth/user.dart';
-import 'package:tikal_time_tracker/services/locator/locator.dart';
 
 class TimeTrackerPageTitle extends StatefulWidget{
   @override
@@ -35,7 +34,7 @@ class PageTitleState extends State<TimeTrackerPageTitle>{
                 ),
                 Container(
                   height: 1.5,
-                  color: Colors.black26,
+                  color: AppColors.GeneralDividerGray,
                 )
               ],
             ),

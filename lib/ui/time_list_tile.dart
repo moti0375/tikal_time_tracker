@@ -31,7 +31,7 @@ class TimeListTile extends StatelessWidget {
         dense: true,
         onTap: onTap,
         onLongPress: onLongClick,
-        leading: Icon(Icons.work, color: Colors.lightBlueAccent),
+        leading: Icon(Icons.work, color: Colors.black54,),
         title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             mainAxisSize: MainAxisSize.max,

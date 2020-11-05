@@ -43,7 +43,6 @@ class _UsersPageState extends State<UsersPage> with AutomaticKeepAliveClientMixi
         stream: bloc.loadUsers(),
         builder: (context, snapshot) => _buildBody(context, snapshot),
       ),
-      backgroundColor: Colors.black12,
     );
   }
 
@@ -64,7 +63,6 @@ class _UsersPageState extends State<UsersPage> with AutomaticKeepAliveClientMixi
     } else {
       analytics.logEvent(UsersEvent.impression(EVENT_NAME.LOAD_USERS_SUCCESS).setUser(user.name).view());
       return Container(
-        padding: const EdgeInsets.only(top: 0.0, left: 16.0, right: 16.0),
         child: Column(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.start,

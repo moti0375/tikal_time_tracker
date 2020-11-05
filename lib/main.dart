@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tikal_time_tracker/pages/login/login_page.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -23,7 +24,13 @@ Future<Preferences> initPrefs() async {
 class TimeTracker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+
     Analytics.init();
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<BaseAuth>(

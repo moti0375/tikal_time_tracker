@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:tikal_time_tracker/data/member.dart';
+import 'package:tikal_time_tracker/resources/colors.dart';
 
 
 
 class UsersListAdapter extends StatelessWidget{
 
-  List<Member> items;
+  final List<Member> items;
   UsersListAdapter({this.items});
 
   @override
@@ -14,15 +15,12 @@ class UsersListAdapter extends StatelessWidget{
   }
 
 
-  Widget _buildListTile(Member item, Color color){
+  Widget _buildListTile(Member item){
     return Container(
-      decoration: BoxDecoration(
-          color: color
-      ),
       child: ListTile(
         isThreeLine: false,
         dense: true,
-        leading: Icon(Icons.perm_contact_calendar, color: Colors.lightBlueAccent),
+        leading: Icon(Icons.perm_contact_calendar, color: Colors.black54),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           mainAxisSize: MainAxisSize.max,
@@ -45,19 +43,11 @@ class UsersListAdapter extends StatelessWidget{
 
   Widget _buildListView(List<Member> items) {
 
-    Color evenColor = Colors.white;
-    Color oddColor = Colors.grey[200];
-    Color color = evenColor;
 
-    return ListView.builder(
+    return ListView.separated(
+        separatorBuilder: (context, index) => Divider(color: AppColors.GeneralDividerGray, height: 1),
         itemBuilder: (context, i) {
-
-          if (i % 2 == 0) {
-            color = evenColor;
-          } else {
-            color = oddColor;
-          }
-          return _buildListTile(items[i], color);
+          return _buildListTile(items[i]);
         },
         shrinkWrap: true,
         itemCount: items == null ? 0 : items.length);

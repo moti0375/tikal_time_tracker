@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tikal_time_tracker/data/models.dart';
+import 'package:tikal_time_tracker/resources/colors.dart';
 import 'package:tikal_time_tracker/ui/time_list_tile.dart';
-import 'package:tikal_time_tracker/utils/utils.dart';
 
 class TimeRecordListViewBuilder extends StatelessWidget {
   final List<TimeRecord> items;
@@ -26,10 +26,9 @@ class TimeRecordListViewBuilder extends StatelessWidget {
   }
 
   Widget _buildListTile(
-      TimeRecord item, Color color, BuildContext context, bool dismissible) {
+      TimeRecord item, BuildContext context, bool dismissible) {
 //    print("_buildListTile: ${item.toString()}");
     return Container(
-      decoration: BoxDecoration(color: color),
       child: dismissible ? _buildDismissibleItem(item) : _buildTile(item),
     );
   }
@@ -60,32 +59,12 @@ class TimeRecordListViewBuilder extends StatelessWidget {
 
   Widget _buildListView(List<TimeRecord> items, BuildContext context,
       bool intermittently, bool dismissible) {
-    DateTime day;
 
-    Color evenColor = Colors.white;
-    Color oddColor = Colors.grey[200];
-    Color color = evenColor;
 
-    return ListView.builder(
+    return ListView.separated(
+        separatorBuilder: (context, index) => Divider(color: AppColors.GeneralDividerGray, height: 1),
         itemBuilder: (context, i) {
-          if (intermittently) {
-            if (i % 2 == 0) {
-              color = evenColor;
-            } else {
-              color = oddColor;
-            }
-          } else {
-            if (day != null && (items[i].date.day != day.day)) {
-              if (color == evenColor) {
-                color = oddColor;
-              } else {
-                color = evenColor;
-              }
-            }
-          }
-
-          day = items[i].date;
-          return _buildListTile(items[i], color, context, dismissible);
+          return _buildListTile(items[i], context, dismissible);
         },
         shrinkWrap: true,
         itemCount: items == null ? 0 : items.length);
