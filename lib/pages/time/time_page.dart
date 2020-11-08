@@ -68,6 +68,7 @@ class _TimePageState extends State<TimePage> with AutomaticKeepAliveClientMixin<
     print('build: TimePage');
 
     return Scaffold(
+      backgroundColor: Colors.white,
       resizeToAvoidBottomPadding: false,
       appBar: _buildAppBar(title: Strings.app_name, context: context),
       floatingActionButton: new FloatingActionButton(onPressed: () => widget.bloc.dispatchEvent(FabAddRecordClicked(context)), child: Icon(Icons.add)),
@@ -236,8 +237,11 @@ class _TimePageState extends State<TimePage> with AutomaticKeepAliveClientMixin<
           height: 24.0,
           child: GestureDetector(
             onTap: () => widget.bloc.dispatchEvent(OnAboutItemClicked(context: context)),
-            child: Image.asset(
-              'assets/logo_no_background.png',
+            child: Hero(
+              tag: "logo",
+              child: Image.asset(
+                'assets/logo_no_background.png',
+              ),
             ),
           ),
         ),

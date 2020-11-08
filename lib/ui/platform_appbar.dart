@@ -1,3 +1,4 @@
+import 'package:tikal_time_tracker/resources/colors.dart';
 import 'package:tikal_time_tracker/resources/strings.dart';
 import 'package:tikal_time_tracker/ui/more_with_red_dot_icon.dart';
 import 'package:tikal_time_tracker/ui/platform_widget.dart';
@@ -20,55 +21,47 @@ class PlatformAppbar extends PlatformWidget {
 
   @override
   Widget buildCupertinoWidget(BuildContext context) {
-    print("Hero tag: $heroTag");
-    if (actions != null) {
-      print("buildCupertinoAppbar: with actions");
-      return CupertinoNavigationBar(
-        heroTag: heroTag,
-        transitionBetweenRoutes: false,
-        middle: title,
-        trailing: _buildCupertinoTrailing(context, actions),
-      );
-    } else {
-      print("buildCupertinoAppbar: no actions");
-      return CupertinoNavigationBar(
-        heroTag: heroTag,
-        transitionBetweenRoutes: false,
-        middle: title,
-      );
-    }
+    return CupertinoNavigationBar(
+      heroTag: heroTag,
+      transitionBetweenRoutes: false,
+      middle: title,
+      trailing: _buildCupertinoTrailing(context, actions),
+    );
+  }
+
+  List<Widget> _buildMaterialActions (List<Choice> actions){
+    return actions != null ? <Widget>[
+      PopupMenuButton<Choice>(
+        icon: notificationEnabled
+            ? MoreWithRedDotIcon()
+            : Icon(Icons.more_vert),
+        onSelected: onPressed,
+        itemBuilder: (BuildContext context) {
+          return actions.map((c) {
+            return PopupMenuItem<Choice>(
+              value: c,
+              child: RichText(
+                text: TextSpan(
+                    text: c.title,
+                    style: DefaultTextStyle.of(context).style,
+                    children: c.textSpans
+                ),
+              ),
+            );
+          }).toList();
+        },
+      )
+    ] : null;
   }
 
   @override
   Widget buildMaterialWidget(BuildContext context) {
-    if (actions != null) {
-      return AppBar(title: title, actions: <Widget>[
-        PopupMenuButton<Choice>(
-          icon: notificationEnabled
-              ? MoreWithRedDotIcon()
-              : Icon(Icons.more_vert),
-          onSelected: onPressed,
-          itemBuilder: (BuildContext context) {
-            return actions.map((c) {
-              return PopupMenuItem<Choice>(
-                value: c,
-                child: RichText(
-                  text: TextSpan(
-                    text: c.title,
-                    style: DefaultTextStyle.of(context).style,
-                      children: c.textSpans
-                  ),
-                ),
-              );
-            }).toList();
-          },
-        )
-      ]);
-    } else {
-      return AppBar(
-        title: title,
-      );
-    }
+    return AppBar(
+      elevation: 0,
+      backgroundColor: AppColors.White,
+      title: title,
+      actions: _buildMaterialActions(actions),
+    );
   }
 
   void _showSheet(BuildContext context) {
@@ -91,6 +84,10 @@ class PlatformAppbar extends PlatformWidget {
   }
 
   Widget _buildCupertinoTrailing(BuildContext context, List<Choice> actions) {
+    if(actions == null || actions.isEmpty){
+      return null;
+    }
+
     if (actions.length == 1) {
       return CupertinoButton(
         padding: EdgeInsets.all(8),

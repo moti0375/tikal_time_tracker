@@ -127,7 +127,8 @@ class NewRecordPageState extends State<NewRecordPage> {
         children: <Widget>[
           new TimeTrackerPageTitle(),
           Expanded(
-            child: ListView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
                 buildRemoteDropDown(snapshot.data),
                 buildProjectsDropDown(snapshot.data),
@@ -136,7 +137,7 @@ class NewRecordPageState extends State<NewRecordPage> {
                 buildStartTimePicker(context, snapshot.data),
                 buildFinishTimePicker(context, snapshot.data),
                 buildDurationField(),
-                buildCommentField(snapshot.data)
+                Expanded(child: buildCommentField(snapshot.data))
               ],
             ),
           ),
@@ -195,6 +196,11 @@ class NewRecordPageState extends State<NewRecordPage> {
 
   Container buildCommentField(NewRecordStateModel stateModel) {
     return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.black45),
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+      ),
+        margin: EdgeInsets.only(top: 8),
         padding: EdgeInsets.only(left: 4.0, right: 4.0, top: 8.0),
         child: TextFormField(
             textInputAction: TextInputAction.done,
@@ -205,11 +211,10 @@ class NewRecordPageState extends State<NewRecordPage> {
                 widget.bloc.dispatchEvent(OnSaveButtonClicked(context: context));
               }
             },
-            maxLines: 4,
             controller: commentInputController,
             decoration: InputDecoration(
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0)),
+                border: InputBorder.none,
+                focusedBorder: InputBorder.none,
                 contentPadding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
                 hintText: Strings.note_hint)));
   }

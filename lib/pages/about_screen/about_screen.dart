@@ -22,7 +22,7 @@ class AboutScreen extends StatelessWidget{
     }
 
     final logo = Hero(
-        tag: 'hero',
+        tag: 'logo',
         child: CircleAvatar(
           backgroundColor: Colors.transparent,
           radius: 48.0,
