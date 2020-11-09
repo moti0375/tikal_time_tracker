@@ -40,11 +40,9 @@ class TimeListTile extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            Padding(
-                padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 1.0),
-                child: Text(
-                    "${timeRecord.date.day}/${timeRecord.date.month}/${timeRecord.date.year}",
-                    style: TextStyle(fontSize: 12.0))),
+            Text(
+                "${timeRecord.date.day}/${timeRecord.date.month}/${timeRecord.date.year}",
+                style: TextStyle(fontSize: 12.0)),
             SizedBox(
               width: 4.0,
             ),
@@ -80,7 +78,7 @@ class TimeListTile extends StatelessWidget {
                     ),
                     softWrap: false,
                     maxLines: 1,
-                    textAlign: TextAlign.center,
+                    textAlign: TextAlign.right,
                     overflow: TextOverflow.ellipsis))
           ],
         ),

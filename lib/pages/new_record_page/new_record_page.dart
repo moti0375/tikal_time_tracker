@@ -127,8 +127,7 @@ class NewRecordPageState extends State<NewRecordPage> {
         children: <Widget>[
           new TimeTrackerPageTitle(),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+            child: ListView(
               children: <Widget>[
                 buildRemoteDropDown(snapshot.data),
                 buildProjectsDropDown(snapshot.data),
@@ -137,7 +136,7 @@ class NewRecordPageState extends State<NewRecordPage> {
                 buildStartTimePicker(context, snapshot.data),
                 buildFinishTimePicker(context, snapshot.data),
                 buildDurationField(),
-                Expanded(child: buildCommentField(snapshot.data))
+                buildCommentField(snapshot.data)
               ],
             ),
           ),
@@ -155,6 +154,7 @@ class NewRecordPageState extends State<NewRecordPage> {
       initialData: NewRecordStateModel(),
       builder: (context, snapshot) {
         return Scaffold(
+          resizeToAvoidBottomPadding: true,
           appBar: PlatformAppbar(
             heroTag: "NewRecordPage",
             title: Text(snapshot.data.flow == NewRecordFlow.update_record
@@ -196,11 +196,6 @@ class NewRecordPageState extends State<NewRecordPage> {
 
   Container buildCommentField(NewRecordStateModel stateModel) {
     return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.black45),
-        borderRadius: BorderRadius.all(Radius.circular(10)),
-      ),
-        margin: EdgeInsets.only(top: 8),
         padding: EdgeInsets.only(left: 4.0, right: 4.0, top: 8.0),
         child: TextFormField(
             textInputAction: TextInputAction.done,
@@ -211,10 +206,11 @@ class NewRecordPageState extends State<NewRecordPage> {
                 widget.bloc.dispatchEvent(OnSaveButtonClicked(context: context));
               }
             },
+            maxLines: 6,
             controller: commentInputController,
             decoration: InputDecoration(
-                border: InputBorder.none,
-                focusedBorder: InputBorder.none,
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0)),
                 contentPadding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
                 hintText: Strings.note_hint)));
   }
