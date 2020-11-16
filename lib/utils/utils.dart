@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:client_cookie/client_cookie.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:tikal_time_tracker/network/client_cookie.dart';
 
 class Utils {
   static String buildTimeStringFromTime(TimeOfDay time) {
@@ -17,7 +17,6 @@ class Utils {
 
   static List<ClientCookie> cookies(String cookiesString){
     String tt_login = ",tt_login";
-    DateFormat dateFormat = DateFormat('EEE, d-MMM-y H:m:s');
 
     List<ClientCookie> cookies = List<ClientCookie>();
     if(cookiesString.contains(tt_login)){
@@ -26,9 +25,6 @@ class Utils {
 
       ClientCookie sessionCookie = _getCookieMap(sessionCookieStr);
       ClientCookie loginCookie = _getCookieMap(ttLoginCookie);
-
-//      print("Session Cookie: ${sessionCookie.toString()}");
-//      print("ttLogin Cookie: ${loginCookie.toString()}");
 
       cookies.add(sessionCookie);
       cookies.add(loginCookie);

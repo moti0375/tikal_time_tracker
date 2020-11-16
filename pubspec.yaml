@@ -12,7 +12,6 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
-  jaguar_retrofit: ^2.5.4
   sqflite: ^1.1.8
   flutter_launcher_icons: ^0.6.0
   shared_preferences: ^0.5.8
@@ -30,7 +29,6 @@ dependencies:
   dio: 3.0.10
 
 dev_dependencies:
-  jaguar_retrofit_gen:
   build_runner:
   flutter_test:
     sdk: flutter

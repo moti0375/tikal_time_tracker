@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:jaguar_retrofit/annotations/params.dart';
 import 'package:tikal_time_tracker/data/models.dart';
+import 'package:tikal_time_tracker/network/client_cookie.dart';
 import 'package:tikal_time_tracker/network/credentials.dart';
 import 'package:tikal_time_tracker/network/requests/delete_request.dart';
 import 'package:tikal_time_tracker/network/requests/login_request.dart';
@@ -12,7 +12,6 @@ import 'package:tikal_time_tracker/network/requests/reset_password_form.dart';
 import 'package:tikal_time_tracker/network/requests/send_email_form.dart';
 import 'package:tikal_time_tracker/network/requests/update_request.dart';
 import 'package:tikal_time_tracker/utils/utils.dart';
-import 'package:client_cookie/client_cookie.dart';
 
 class DioNetworkAdapter {
   static const TAG = "DioNetworkAdapter";
@@ -158,7 +157,7 @@ class DioNetworkAdapter {
    return response.data;
   }
 
-  Future<dynamic> sendEmail(@AsForm() SendEmailForm request) async {
+  Future<dynamic> sendEmail(SendEmailForm request) async {
     FormData formData = FormData.fromMap(request.toMap());
     Response<dynamic> response = await dio.post('/report_send.php', data: formData);
     return response.data;
