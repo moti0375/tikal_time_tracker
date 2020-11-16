@@ -10,9 +10,7 @@ abstract class TimeDateSource{
  Future<TimeReport> getAllTimeForDate(DateTime date){return null;}
  Future<dynamic> addTime(TimeRecord time){return null;}
  Future<dynamic> updateTime(TimeRecord time){return null;}
- Future<List<TimeRecord>> getRecordsBetweenDates(DateTime startDate, DateTime endDate){return null;}
  Future<dynamic> deleteTime(TimeRecord time){return null;}
- Future<int> deleteTimeRecordForDate(DateTime dateTime){return null;}
  Future<dynamic> timePage(){return null;}
  Stream<List<Member>> getAllMembers(Role role){return null;}
  Future<dynamic> reportsPage(Role role){return null;}

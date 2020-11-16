@@ -90,21 +90,6 @@ class TimeTrackerApi extends _$TimeTrackerApiClient implements ApiClient{
     this.base.authHeader("Basic", Base64Encoder().convert(utf8Convert));
   }
 
-  @GetReq(path: "login.php" )
-  Future<dynamic> signIn();
-
-  @PostReq(path: "login.php", metadata: const {'jar':true} )
-  Future<dynamic> login(@AsForm() LoginForm request);
-
-  @GetReq(path: "time.php")
-  Future<dynamic> time();
-
-  @GetReq(path: "time.php")
-  Future<dynamic> timeForDate(@QueryParam("date") String date);
-
-  @GetReq(path: "users.php")
-  Future<dynamic> users();
-
   @GetReq(path: "reports.php")
   Future<dynamic> reports();
 
@@ -114,17 +99,9 @@ class TimeTrackerApi extends _$TimeTrackerApiClient implements ApiClient{
   @PostReq(path: "report.php")
   Future<dynamic> getReport();
 
-  @PostReq(path: "time.php")
-  Future<dynamic> addTime(@AsForm() TimeRecord request);
-
-  @PostReq(path: "time_edit.php")
-  Future<dynamic> updateTime(@QueryParam("id") int id, @AsForm() UpdateRequest request);
 
   @PostReq(path: "time_edit.php")
   Future<dynamic> getIncompleteRecordById(@QueryParam("id") int id);
-
-  @PostReq(path: "time_delete.php")
-  Future<dynamic> timeDelete(@QueryParam("id") int id, @AsForm() DeleteRequest request);
 
   @GetReq(path: "password_reset.php")
   Future<dynamic> resetPassword();

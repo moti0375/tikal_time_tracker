@@ -34,18 +34,6 @@ class TimeRecordsRepository implements TimeDateSource{
     return remoteDateSource.getAllTimeForDate(date);
   }
 
-  @override
-  Future<int> deleteTimeRecordForDate(DateTime dateTime) {
-    return dateSource.deleteTimeRecordForDate(dateTime);
-  }
-
-  @override
-  Future<List<TimeRecord>> getRecordsBetweenDates(DateTime startDate, DateTime endDate) {
-    print("getRecordsBetweenDates:");
-
-    return dateSource.getRecordsBetweenDates(startDate, endDate);
-  }
-
 
   @override
   Future timePage() {

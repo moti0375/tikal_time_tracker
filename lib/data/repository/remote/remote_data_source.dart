@@ -37,11 +37,6 @@ class RemoteDateSource implements TimeDateSource {
   }
 
   @override
-  Future<int> deleteTimeRecordForDate(DateTime dateTime) {
-    return null;
-  }
-
-  @override
   Future<TimeReport> getAllTimeForDate(DateTime date) {
     String month = date.month < 10 ? "0${date.month}" : "${date.month}";
     String day = date.day < 10 ? "0${date.day}" : "${date.day}";
@@ -51,21 +46,13 @@ class RemoteDateSource implements TimeDateSource {
   }
 
   @override
-  Future<List<TimeRecord>> getRecordsBetweenDates(
-      DateTime startDate, DateTime endDate) {
-    return null;
-  }
-
-
-
-  @override
   Future timePage() {
     return _adapter.time();
   }
 
   @override
   Stream<List<Member>> getAllMembers(Role role) async* {
-    String response = await api.users();
+    String response = await _adapter.users();
     yield parser.parseUsersPage(response, role);
   }
 

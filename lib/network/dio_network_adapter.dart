@@ -111,4 +111,9 @@ class DioNetworkAdapter {
     Response<dynamic> response = await dio.post("/time_edit.php", data: formData, queryParameters: {"id": id});
     return response.data;
   }
+
+  Future<dynamic> users() async {
+    Response<dynamic> response = await dio.get("/users.php");
+    return response.data;
+  }
 }

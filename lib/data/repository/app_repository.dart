@@ -29,11 +29,6 @@ class AppRepository implements TimeDateSource, LoginDataSource{
   }
 
   @override
-  Future<int> deleteTimeRecordForDate(DateTime dateTime) {
-    return _timeRepository.deleteTimeRecordForDate(dateTime);
-  }
-
-  @override
   Future<List<TimeRecord>> generateReport(ReportForm request) {
     return _timeRepository.generateReport(request);
   }
@@ -43,10 +38,6 @@ class AppRepository implements TimeDateSource, LoginDataSource{
     return _timeRepository.getAllTimeForDate(date);
   }
 
-  @override
-  Future<List<TimeRecord>> getRecordsBetweenDates(DateTime startDate, DateTime endDate) {
-    return _timeRepository.getRecordsBetweenDates(startDate, endDate);
-  }
 
   @override
   Future getReport(ReportForm request, Role role) {
