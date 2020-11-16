@@ -136,7 +136,7 @@ class RemoteDateSource implements TimeDateSource {
 
   @override
   Future<DateTime> getIncompleteRecordById(int id) async {
-    return api.getIncompleteRecordById(id).then((response){
+    return _adapter.getIncompleteRecordById(id).then((response){
       return parser.parseIncompleteRecordResponse(response);
     });
   }

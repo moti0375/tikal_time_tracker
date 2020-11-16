@@ -134,4 +134,9 @@ class DioNetworkAdapter {
     return response.data;
   }
 
+  Future<dynamic> getIncompleteRecordById(int id) async {
+    Response<dynamic> response = await dio.get("/time_edit.php", queryParameters: {"id": id});
+    return response.data;
+  }
+
 }

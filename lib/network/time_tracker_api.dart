@@ -90,19 +90,6 @@ class TimeTrackerApi extends _$TimeTrackerApiClient implements ApiClient{
     this.base.authHeader("Basic", Base64Encoder().convert(utf8Convert));
   }
 
-  @GetReq(path: "reports.php")
-  Future<dynamic> reports();
-
-  @PostReq(path: "reports.php")
-  Future<dynamic> generateReport(@AsForm() ReportForm request);
-
-  @PostReq(path: "report.php")
-  Future<dynamic> getReport();
-
-
-  @PostReq(path: "time_edit.php")
-  Future<dynamic> getIncompleteRecordById(@QueryParam("id") int id);
-
   @GetReq(path: "password_reset.php")
   Future<dynamic> resetPassword();
 
