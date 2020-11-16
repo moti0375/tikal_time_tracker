@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:tikal_time_tracker/data/member.dart';
 import 'package:tikal_time_tracker/data/models.dart';
 import 'package:tikal_time_tracker/data/remote.dart';
+import 'package:tikal_time_tracker/network/dio_network_adapter.dart';
 import 'package:tikal_time_tracker/network/requests/send_email_form.dart';
 import 'package:tikal_time_tracker/network/time_tracker_api.dart';
 import 'package:tikal_time_tracker/network/requests/reports_form.dart';
@@ -17,21 +18,22 @@ import '../time_data_source.dart';
 
 class RemoteDateSource implements TimeDateSource {
   final TimeTrackerApi api;
+  final DioNetworkAdapter _adapter;
   final DomParser parser;
   Credentials credentials;
 
-  RemoteDateSource({this.api, this.parser});
+  RemoteDateSource(this._adapter, {this.api, this.parser});
 
   @override
   Future<dynamic> addTime(TimeRecord time) async {
-    String apiResponse = await api.addTime(time);
+    String apiResponse = await _adapter.addTime(time);
     apiResponse = parser.parseSaveAndAddTimeResponse(apiResponse);
     return apiResponse;
   }
 
   @override
   Future<dynamic> deleteTime(TimeRecord time) {
-    return api.timeDelete(time.id, DeleteRequest(timeRecord: time));
+    return _adapter.deleteTime(time.id, DeleteRequest(timeRecord: time));
   }
 
   @override
@@ -43,7 +45,7 @@ class RemoteDateSource implements TimeDateSource {
   Future<TimeReport> getAllTimeForDate(DateTime date) {
     String month = date.month < 10 ? "0${date.month}" : "${date.month}";
     String day = date.day < 10 ? "0${date.day}" : "${date.day}";
-    return api.timeForDate("${date.year}-$month-$day").then((response){
+    return _adapter.timeForDate("${date.year}-$month-$day").then((response){
       return parser.parseTimePage(response.toString());
     });
   }
@@ -58,7 +60,7 @@ class RemoteDateSource implements TimeDateSource {
 
   @override
   Future timePage() {
-    return api.time();
+    return _adapter.time();
   }
 
   @override
@@ -103,7 +105,7 @@ class RemoteDateSource implements TimeDateSource {
 
   @override
   Future updateTime(TimeRecord time) {
-    return api.updateTime(time.id, UpdateRequest(timeRecord: time));
+    return _adapter.updateTime(time.id, UpdateRequest(timeRecord: time));
   }
 
   @override

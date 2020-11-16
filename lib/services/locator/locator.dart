@@ -9,6 +9,7 @@ import 'package:tikal_time_tracker/data/repository/login_repository.dart';
 import 'package:tikal_time_tracker/data/repository/remote/login_remote_datasource.dart';
 import 'package:tikal_time_tracker/data/repository/remote/remote_data_source.dart';
 import 'package:tikal_time_tracker/data/repository/time_records_repository.dart';
+import 'package:tikal_time_tracker/network/dio_network_adapter.dart';
 import 'package:tikal_time_tracker/network/time_tracker_api.dart';
 import 'package:tikal_time_tracker/services/auth/auth.dart';
 import 'package:tikal_time_tracker/storage/preferences.dart';
@@ -28,11 +29,13 @@ Future<void> setupLocator() async {
 
 Future setTimeTrackerApi() async {
   TimeTrackerApi api = TimeTrackerApi.create();
-
   locator.registerLazySingleton<TimeTrackerApi>(() => api);
 
-  locator.registerLazySingleton<LoginRemoteDataSource>(() => LoginRemoteDataSource(locator<TimeTrackerApi>(), parser: locator<DomParser>()));
-  TimeRecordsRepository timeRecordsRepository = TimeRecordsRepository(remoteDateSource: RemoteDateSource(api: api, parser: locator<DomParser>()));
+  DioNetworkAdapter adapter = DioNetworkAdapter.create();
+  locator.registerLazySingleton<DioNetworkAdapter>(() => adapter);
+
+  locator.registerLazySingleton<LoginRemoteDataSource>(() => LoginRemoteDataSource( locator<DioNetworkAdapter>(), parser: locator<DomParser>()));
+  TimeRecordsRepository timeRecordsRepository = TimeRecordsRepository(remoteDateSource: RemoteDateSource(locator<DioNetworkAdapter>(), api: api, parser: locator<DomParser>()));
 
   locator.registerLazySingleton<TimeRecordsRepository>(() => timeRecordsRepository);
   LoginRepository loginRepository = LoginRepository(locator<LoginRemoteDataSource>());

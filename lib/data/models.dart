@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tikal_time_tracker/data/remote.dart';
+import 'package:tikal_time_tracker/utils/formatters.dart';
+import 'package:tikal_time_tracker/utils/utils.dart';
 import '../data/database/database_helper.dart';
 import '../data/project.dart';
 import '../data/task.dart';
@@ -34,19 +36,23 @@ class TimeRecord{
   }
 
 
-  Map<String, dynamic> toMap(){
-    Map<String, dynamic> map = {columnProject.toString(): project,
-      columnTask.toString(): task,
-      columnDate.toString() : date.millisecondsSinceEpoch,
-      columnStart.toString() : "${start.hour}:${start.minute}",
-      columnFinish.toString() : "${finish.hour}:${finish.minute}",
-      columnDuration.toString() : "${duration.inHours}:${duration.inSeconds % 60}",
-      columnComment.toString() : comment,
-    };
+  Map<String, String> toMap() {
+    print("form serializer: toMap: ${this.toString()}");
+    Map<String, String> map = Map<String, String>();
 
-    if(id != null){
-      map[columnId] = id;
+    map["project"] = "${this.project.value}";
+    map["task"] = "${this.task.value}";
+    map["date"] = "${dateFormat.format(this.date)}";
+    map["start"] = Utils.buildTimeStringFromTime(this.start);
+    map["finish"] = this.finish == null ? "" : Utils.buildTimeStringFromTime(this.finish);
+    map["duration"] = "";
+    if(this.comment != null && this.comment.isNotEmpty){
+      map["note"] = this.comment;
     }
+    map["time_field_5"] = "${this.remote.value}";
+    map["btn_submit"] = "Submit";
+    map["browser_today"] = "${dateFormat.format(DateTime.now())}";
+    print("AddTimeSerializer serializer: map: ${map.toString()}");
 
     return map;
   }

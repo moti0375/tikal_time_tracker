@@ -1,13 +1,17 @@
 
 
 class LoginForm{
-  String Login;
-  String Password;
-  LoginForm({this.Login, this.Password});
+  String login;
+  String password;
+  LoginForm({this.login, this.password});
 
   @override
   String toString() {
-    return 'Form{Login: $Login, Password: $Password}';
+    return 'Form{Login: $login, Password: $password}';
+  }
+
+  Map<String, dynamic> toMap(){
+    return {'login': login, 'password': password};
   }
 }
 

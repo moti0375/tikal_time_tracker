@@ -27,6 +27,7 @@ dependencies:
   get_it: ^3.0.3
   package_info: ^0.4.0+13
   pie_chart: ^3.1.1
+  dio: 3.0.10
 
 dev_dependencies:
   jaguar_retrofit_gen:

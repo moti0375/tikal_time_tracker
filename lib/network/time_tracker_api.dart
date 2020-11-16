@@ -1,6 +1,6 @@
 import 'package:jaguar_retrofit/jaguar_retrofit.dart';
 import 'package:jaguar_serializer/jaguar_serializer.dart';
-import 'package:jaguar_serializer/src/repo/repo.dart';
+
 import 'package:jaguar_resty/jaguar_resty.dart' as resty;
 import 'package:jaguar_resty/jaguar_resty.dart';
 import 'package:client_cookie/client_cookie.dart';
@@ -52,6 +52,7 @@ class TimeTrackerApi extends _$TimeTrackerApiClient implements ApiClient{
     serializers.add(SendEmailSerializer());
     return TimeTrackerApi._internal(
         base: route(BASE_URL).before((route) {
+          print("before: ${route.toString()}");
           print("Metadata: ${route.metadataMap}");
         }),
         serializers: serializers);
