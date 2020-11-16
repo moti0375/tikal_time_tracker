@@ -5,7 +5,6 @@ import 'package:tikal_time_tracker/data/models.dart';
 import 'package:tikal_time_tracker/data/remote.dart';
 import 'package:tikal_time_tracker/network/dio_network_adapter.dart';
 import 'package:tikal_time_tracker/network/requests/send_email_form.dart';
-import 'package:tikal_time_tracker/network/time_tracker_api.dart';
 import 'package:tikal_time_tracker/network/requests/reports_form.dart';
 import 'package:tikal_time_tracker/network/requests/update_request.dart';
 import 'package:tikal_time_tracker/network/requests/delete_request.dart';
@@ -17,12 +16,11 @@ import 'package:tikal_time_tracker/data/dom/dom_parser.dart';
 import '../time_data_source.dart';
 
 class RemoteDateSource implements TimeDateSource {
-  final TimeTrackerApi api;
   final DioNetworkAdapter _adapter;
   final DomParser parser;
   Credentials credentials;
 
-  RemoteDateSource(this._adapter, {this.api, this.parser});
+  RemoteDateSource(this._adapter, {this.parser});
 
   @override
   Future<dynamic> addTime(TimeRecord time) async {
@@ -97,7 +95,7 @@ class RemoteDateSource implements TimeDateSource {
 
   @override
   Future resetPasswordPage() {
-    return api.resetPassword().then((response){
+    return _adapter.resetPassword().then((response){
       debugPrint("resetPasswordPage response: $response");
     });
   }
@@ -108,10 +106,9 @@ class RemoteDateSource implements TimeDateSource {
     String signInUsername = request.login.split("@")[0];
     String signInPassword = "${signInUsername}tik23";
 
-    api.updateAuthHeader(Credentials(signInUserName: signInUsername, signInPassword: signInPassword));
+    _adapter.updateAuthHeader(Credentials(signInUserName: signInUsername, signInPassword: signInPassword));
 
-    return api.resetPasswordRequest(request).then((response){
-      debugPrint("resetPasswordRequest response: $response");
+    return _adapter.resetPasswordRequest(request).then((response){
       return parser.parseResetPasswordResponse(response.toString());
     }, onError: (e){
       print("There was an error: ${e.toString()}");
@@ -120,7 +117,7 @@ class RemoteDateSource implements TimeDateSource {
 
   @override
   Future<SendEmailForm> sendEmailPage() {
-    return api.sendEmailPage().then((response){
+    return _adapter.sendEmailPage().then((response){
       return parser.parseSendEmailPage(response.toString());
     }, onError: (e){
       print("sendEmailPage: There was an error: ${e.toString()}");
@@ -129,7 +126,7 @@ class RemoteDateSource implements TimeDateSource {
 
   @override
   Future sendEmail(SendEmailForm request) {
-    return api.sendEmail(request).then((response){
+    return _adapter.sendEmail(request).then((response){
       return parser.parseSendEmailResponse(response);
     });
   }
@@ -143,6 +140,6 @@ class RemoteDateSource implements TimeDateSource {
 
   @override
   Future<Remote> getRemoteFromRecord(int recordId) {
-    return api.getIncompleteRecordById(recordId).then((response) => parser.parseRemoteFromResponse(response));
+    return _adapter.getIncompleteRecordById(recordId).then((response) => parser.parseRemoteFromResponse(response));
   }
 }
