@@ -6,6 +6,7 @@ import 'package:tikal_time_tracker/data/models.dart';
 import 'package:tikal_time_tracker/network/credentials.dart';
 import 'package:tikal_time_tracker/network/requests/delete_request.dart';
 import 'package:tikal_time_tracker/network/requests/login_request.dart';
+import 'package:tikal_time_tracker/network/requests/reports_form.dart';
 import 'package:tikal_time_tracker/network/requests/update_request.dart';
 import 'package:tikal_time_tracker/utils/utils.dart';
 import 'package:client_cookie/client_cookie.dart';
@@ -116,4 +117,21 @@ class DioNetworkAdapter {
     Response<dynamic> response = await dio.get("/users.php");
     return response.data;
   }
+
+  Future<dynamic> reports() async {
+    Response<dynamic> response = await dio.get("/reports.php");
+    return response.data;
+  }
+
+  Future<dynamic> generateReport( ReportForm request) async {
+    FormData formData = FormData.fromMap(request.toMap());
+    Response<dynamic> response = await dio.post("/reports.php", data: formData);
+    return response.data;
+  }
+
+  Future<dynamic> getReport() async {
+    Response<dynamic> response = await dio.post('/report.php');
+    return response.data;
+  }
+
 }

@@ -58,7 +58,7 @@ class RemoteDateSource implements TimeDateSource {
 
   @override
   Future<dynamic> reportsPage(Role role) {
-    return api.reports().then((response){
+    return _adapter.reports().then((response){
       //debugPrint("Response: ${response.toString()}");
       if(role == Role.Manager || role == Role.CoManager || role == Role.TopManager){
         List<Member> members = parser.parseGenerateReportPage(response);
@@ -72,7 +72,7 @@ class RemoteDateSource implements TimeDateSource {
 
   @override
   Future<List<TimeRecord>> generateReport(ReportForm request) {
-    return api.generateReport(request).then((response){
+    return _adapter.generateReport(request).then((response){
       debugPrint("remoteDataSource: report ${response.toString()}");
       List<TimeRecord> result = List<TimeRecord>();
       return result;
@@ -83,7 +83,7 @@ class RemoteDateSource implements TimeDateSource {
 
   @override
   Future<dynamic> getReport(ReportForm request, Role role) {
-    return api.getReport().then((response){
+    return _adapter.getReport().then((response){
       print("RemoteDateSource: getReport");
 //      debugPrint("getReport: report ${response.toString()}");
       return parser.parseReportPage(response, role);
