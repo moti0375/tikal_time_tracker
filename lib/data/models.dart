@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:tikal_time_tracker/data/remote.dart';
 import 'package:tikal_time_tracker/utils/formatters.dart';
 import 'package:tikal_time_tracker/utils/utils.dart';
-import '../data/database/database_helper.dart';
 import '../data/project.dart';
 import '../data/task.dart';
 
@@ -55,32 +54,6 @@ class TimeRecord{
     print("AddTimeSerializer serializer: map: ${map.toString()}");
 
     return map;
-  }
-
-  TimeRecord.fromMap(Map map){
-    id = map[columnId];
-    project = map[columnProject];
-    task = map[columnTask];
-
-    date = DateTime.fromMillisecondsSinceEpoch(map[columnDate]);
-
-    List<dynamic> container = map[columnStart].toString().split(":").map((String element) {
-      return int.parse(element);
-    }).toList();
-
-    start = TimeOfDay(hour: container[0], minute: container[1]);
-
-    container.clear();
-
-    container.addAll(map[columnFinish].toString().split(":").map((String element) {
-      return int.parse(element);
-    }).toList());
-    finish = TimeOfDay(hour: container[0], minute: container[1]);
-
-
-    duration = _calculateDuration(start: DateTime(date.year, date.month, date.day, start.hour, start.minute), finish: DateTime(date.year, date.month, date.day, finish.hour, finish.minute));
-    comment = map[columnComment];
-
   }
 
   @override

@@ -5,16 +5,12 @@ import 'package:tikal_time_tracker/network/requests/reports_form.dart';
 import 'package:tikal_time_tracker/network/requests/reset_password_form.dart';
 import 'package:tikal_time_tracker/data/models.dart';
 import 'package:tikal_time_tracker/data/repository/time_data_source.dart';
-import 'package:tikal_time_tracker/data/repository/local/local_data_source.dart';
 import 'package:tikal_time_tracker/network/requests/send_email_form.dart';
 
 
 class TimeRecordsRepository implements TimeDateSource{
 
-  final TimeDateSource dateSource = LocalDataSource();
   TimeDateSource remoteDateSource;
-
-
   TimeRecordsRepository({this.remoteDateSource});
 
 
