@@ -40,7 +40,7 @@ class AppRepository implements TimeDateSource, LoginDataSource{
 
 
   @override
-  Future getReport(ReportForm request, Role role) {
+  Future<List<TimeRecord>> getReport(ReportForm request, Role role) {
     return _timeRepository.getReport(request, role);
   }
 

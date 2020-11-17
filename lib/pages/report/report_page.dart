@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:tikal_time_tracker/pages/report/report_page_bloc.dart';
 import 'package:tikal_time_tracker/pages/report/report_page_event.dart';
 import 'package:tikal_time_tracker/pages/report/report_page_state_model.dart';
-import 'package:tikal_time_tracker/pages/reports/place_holder_content.dart';
+import 'package:tikal_time_tracker/ui/place_holder_content.dart';
 import 'package:tikal_time_tracker/data/models.dart';
 import 'package:tikal_time_tracker/services/auth/auth.dart';
 import 'package:tikal_time_tracker/services/auth/user.dart';

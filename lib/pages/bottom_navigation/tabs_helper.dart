@@ -5,7 +5,7 @@ import 'package:tikal_time_tracker/pages/users/users_page.dart';
 
 class TabsHelper {
   static Widget _timePage = TimePage.create();
-  static Widget _reportsTab = GenerateReportPage();
+  static Widget _reportsTab = GenerateReportPage.create();
   static Widget _usersTab = UsersPage();
 
   static List<Widget> screens = [

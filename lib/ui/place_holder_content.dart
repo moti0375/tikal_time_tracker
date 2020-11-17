@@ -15,11 +15,7 @@ class PlaceholderContent extends StatelessWidget {
     return Expanded(
       child: Center(
         child: InkWell(
-          onTap: (){
-            if(onPressed != null){
-              onPressed();
-            }
-          },
+          onTap: onPressed,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,

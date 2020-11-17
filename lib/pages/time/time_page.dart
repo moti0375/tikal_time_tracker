@@ -10,7 +10,7 @@ import 'package:tikal_time_tracker/services/auth/user.dart';
 import 'package:tikal_time_tracker/services/locator/locator.dart';
 import 'package:tikal_time_tracker/ui/platform_appbar.dart';
 import 'package:tikal_time_tracker/ui/time_record_list_builder.dart';
-import 'package:tikal_time_tracker/pages/reports/place_holder_content.dart';
+import 'package:tikal_time_tracker/ui/place_holder_content.dart';
 import 'package:tikal_time_tracker/ui/date_picker_widget.dart';
 import 'package:tikal_time_tracker/utils/action_choice.dart';
 import 'package:tikal_time_tracker/pages/time/time_page_bloc.dart';

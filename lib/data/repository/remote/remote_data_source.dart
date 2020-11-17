@@ -80,7 +80,7 @@ class RemoteDateSource implements TimeDateSource {
   }
 
   @override
-  Future<dynamic> getReport(ReportForm request, Role role) {
+  Future<List<TimeRecord>> getReport(ReportForm request, Role role) {
     return _adapter.getReport().then((response){
       print("RemoteDateSource: getReport");
 //      debugPrint("getReport: report ${response.toString()}");

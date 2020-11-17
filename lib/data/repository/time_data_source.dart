@@ -15,7 +15,7 @@ abstract class TimeDateSource{
  Stream<List<Member>> getAllMembers(Role role){return null;}
  Future<dynamic> reportsPage(Role role){return null;}
  Future<List<TimeRecord>> generateReport(ReportForm request){return null;}
- Future<dynamic> getReport(ReportForm request, Role role){return null;}
+ Future<List<TimeRecord>> getReport(ReportForm request, Role role){return null;}
  Future<dynamic> resetPasswordPage(){return null;}
  Future<dynamic> resetPassword(ResetPasswordForm login){return null;}
  Future<dynamic> sendEmailPage(){return null;}

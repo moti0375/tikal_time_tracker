@@ -26,9 +26,12 @@ dependencies:
   package_info: ^0.4.0+13
   pie_chart: ^3.1.1
   dio: 3.0.10
+  mobx: ^1.2.1+4
+  flutter_mobx: ^1.1.0+2
 
 dev_dependencies:
   build_runner:
+  mobx_codegen:
   flutter_test:
     sdk: flutter
 
