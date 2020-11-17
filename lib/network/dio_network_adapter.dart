@@ -20,6 +20,14 @@ class DioNetworkAdapter {
   static const BASE_URL = "https://planet.tikalk.com/timetracker";
   final Dio dio;
 
+  factory DioNetworkAdapter.create() {
+    BaseOptions options = BaseOptions(baseUrl: BASE_URL);
+    options.followRedirects = false;
+    options.validateStatus = (status) { return status < 400; };
+    Dio dio = Dio(options);
+    return DioNetworkAdapter._internal(dio: dio);
+  }
+
   DioNetworkAdapter._internal({this.dio}) {
     List<ClientCookie> cookies = List<ClientCookie>();
 
@@ -51,15 +59,6 @@ class DioNetworkAdapter {
       return response;
     }));
   }
-
-  factory DioNetworkAdapter.create() {
-    BaseOptions options = BaseOptions(baseUrl: BASE_URL);
-    options.followRedirects = false;
-    options.validateStatus = (status) { return status < 400; };
-    Dio dio = Dio(options);
-    return DioNetworkAdapter._internal(dio: dio);
-  }
-
 
   Future<dynamic> _executeGetRequest({String endpoint, Map<String, dynamic> params, Options options}) async {
     Response<dynamic> response = await dio.get(endpoint, queryParameters: params, options: options);
