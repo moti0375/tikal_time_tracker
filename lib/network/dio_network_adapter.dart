@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:tikal_time_tracker/data/models.dart';
 import 'package:tikal_time_tracker/network/client_cookie.dart';
 import 'package:tikal_time_tracker/network/credentials.dart';
+import 'package:tikal_time_tracker/network/endpoints.dart';
 import 'package:tikal_time_tracker/network/requests/delete_request.dart';
 import 'package:tikal_time_tracker/network/requests/login_request.dart';
 import 'package:tikal_time_tracker/network/requests/reports_form.dart';
@@ -59,107 +60,38 @@ class DioNetworkAdapter {
     return DioNetworkAdapter._internal(dio: dio);
   }
 
+
+  Future<dynamic> _executeGetRequest({String endpoint, Map<String, dynamic> params, Options options}) async {
+    Response<dynamic> response = await dio.get(endpoint, queryParameters: params, options: options);
+    return response.data;
+  }
+
+  Future<dynamic> _executePostRequest({String endpoint, Map<String, dynamic> params, Options options, FormData data}) async {
+    Response<dynamic> response = await dio.post(endpoint, queryParameters: params, options: options, data: data);
+    return response.data;
+  }
+
   void updateAuthHeader(Credentials credentials) {
     print("TimeTrackerApi: updateAuthHeader ${credentials.toString()}");
     List<int> utf8Convert = Utf8Encoder().convert("${credentials.signInUserName}:${credentials.signInPassword}");
     dio.options.headers[HttpHeaders.authorizationHeader] = "Basic ${Base64Encoder().convert(utf8Convert)}";
   }
 
-  Future<dynamic> signIn() async {
-    Response<dynamic> response = await dio.get('/login.php');
-    return response.data;
-  }
+  Future<dynamic> signIn() async => _executeGetRequest(endpoint: Endpoints.login);
+  Future<dynamic> login(LoginForm loginForm) async => _executePostRequest(endpoint: Endpoints.login, data: FormData.fromMap(loginForm.toMap()));
+  Future<dynamic> time() async => _executeGetRequest(endpoint: Endpoints.time);
+  Future<dynamic> timeForDate( String dateStr) async =>  _executeGetRequest(endpoint: Endpoints.time, params: {'date': dateStr });
+  Future<dynamic> addTime( TimeRecord timeRecord) async => _executePostRequest(endpoint: Endpoints.time, data: FormData.fromMap(timeRecord.toMap()));
+  Future<dynamic> deleteTime(int id, DeleteRequest request) async => _executePostRequest(endpoint: Endpoints.time_delete, params: {"id": id}, data: FormData.fromMap(request.toMap()));
+  Future<dynamic> updateTime(int id, UpdateRequest request) async => _executePostRequest(endpoint: Endpoints.time_edit, data: FormData.fromMap(request.toMap()), params: {"id": id});
+  Future<dynamic> users() async => await _executeGetRequest(endpoint: Endpoints.users);
+  Future<dynamic> reports() async => _executeGetRequest(endpoint: Endpoints.reports);
+  Future<dynamic> generateReport( ReportForm request) async =>  _executePostRequest(endpoint: Endpoints.reports, data: FormData.fromMap(request.toMap()));
+  Future<dynamic> getReport() async => _executePostRequest(endpoint: Endpoints.report);
+  Future<dynamic> getIncompleteRecordById(int id) async => _executeGetRequest(endpoint: Endpoints.time_edit, params: {"id": id});
+  Future<dynamic> resetPassword() async =>  _executeGetRequest(endpoint: Endpoints.reset_password);
+  Future<dynamic> resetPasswordRequest(ResetPasswordForm request) async => _executePostRequest(endpoint: Endpoints.reset_password, data: FormData.fromMap(request.toMap()));
+  Future<dynamic> sendEmailPage() async => _executeGetRequest(endpoint: Endpoints.send_report);
+  Future<dynamic> sendEmail(SendEmailForm request) async => _executePostRequest(endpoint: Endpoints.send_report, data: FormData.fromMap(request.toMap()));
 
-  Future<dynamic> login(LoginForm loginForm) async {
-    FormData formData = FormData.fromMap(loginForm.toMap());
-    print("$TAG, login: form: ${formData.toString()}");
-    try {
-      Response<dynamic> response = await dio.post('/login.php', data: formData);
-      print("$TAG: LoginResponse: ${response.data}");
-      return response.data;
-    } catch (e) {
-      print("$TAG error: ${e.toString()}");
-      if(e is DioError && e.response.statusCode == 302){
-        return "";
-      } else {
-        throw e;
-      }
-    }
-  }
-
-  Future<dynamic> time() async {
-    Response<dynamic> response = await dio.get('/time.php');
-    return response.data;
-  }
-
-  Future<dynamic> timeForDate( String dateStr) async {
-    Response<dynamic> response = await dio.get('/time.php', queryParameters: {'date': dateStr });
-    return response.data;
-  }
-
-  Future<dynamic> addTime( TimeRecord timeRecord) async {
-    FormData formData = FormData.fromMap(timeRecord.toMap());
-    Response<dynamic> response = await dio.post('/time.php', data: formData);
-    return response.data;
-  }
-
-  Future<dynamic> deleteTime(int id, DeleteRequest request) async {
-    FormData formData = FormData.fromMap(request.toMap());
-    Response<dynamic> response = await dio.post("/time_delete.php", queryParameters: {"id": id}, data: formData);
-    return response.data;
-  }
-
-  Future<dynamic> updateTime(int id, UpdateRequest request) async {
-    FormData formData = FormData.fromMap(request.toMap());
-    Response<dynamic> response = await dio.post("/time_edit.php", data: formData, queryParameters: {"id": id});
-    return response.data;
-  }
-
-  Future<dynamic> users() async {
-    Response<dynamic> response = await dio.get("/users.php");
-    return response.data;
-  }
-
-  Future<dynamic> reports() async {
-    Response<dynamic> response = await dio.get("/reports.php");
-    return response.data;
-  }
-
-  Future<dynamic> generateReport( ReportForm request) async {
-    FormData formData = FormData.fromMap(request.toMap());
-    Response<dynamic> response = await dio.post("/reports.php", data: formData);
-    return response.data;
-  }
-
-  Future<dynamic> getReport() async {
-    Response<dynamic> response = await dio.post('/report.php');
-    return response.data;
-  }
-
-  Future<dynamic> getIncompleteRecordById(int id) async {
-    Response<dynamic> response = await dio.get("/time_edit.php", queryParameters: {"id": id});
-    return response.data;
-  }
-
-  Future<dynamic> resetPassword() async {
-    Response<dynamic> response = await dio.get("/password_reset.php");
-    return response.data;
-  }
-
-  Future<dynamic> resetPasswordRequest(ResetPasswordForm request) async {
-    FormData formData = FormData.fromMap(request.toMap());
-    Response<dynamic> response = await dio.post('/password_reset.php', data: formData);
-    return response.data;
-  }
-
-  Future<dynamic> sendEmailPage() async {
-   Response<dynamic> response = await dio.get('/report_send.php');
-   return response.data;
-  }
-
-  Future<dynamic> sendEmail(SendEmailForm request) async {
-    FormData formData = FormData.fromMap(request.toMap());
-    Response<dynamic> response = await dio.post('/report_send.php', data: formData);
-    return response.data;
-  }
 }
