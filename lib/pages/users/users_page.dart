@@ -22,12 +22,13 @@ class _UsersPageState extends State<UsersPage> with AutomaticKeepAliveClientMixi
  final analytics = Analytics.instance;
 
  UsersBloc bloc;
-
+ User _user;
  @override
  void didChangeDependencies() {
    super.didChangeDependencies();
+   _user ??= Provider.of<BaseAuth>(context).getCurrentUser();
    if(bloc == null){
-     bloc = UsersBloc(repository: locator<TimeRecordsRepository>(), auth: locator<BaseAuth>());
+     bloc = UsersBloc(repository: locator<TimeRecordsRepository>());
    }
  }
 
@@ -40,15 +41,13 @@ class _UsersPageState extends State<UsersPage> with AutomaticKeepAliveClientMixi
         title: Text("Users"),
       ).build(context),
       body: StreamBuilder<List<Member>>(
-        stream: bloc.loadUsers(),
+        stream: bloc.loadUsers(_user),
         builder: (context, snapshot) => _buildBody(context, snapshot),
       ),
     );
   }
 
   Widget _buildBody(BuildContext context, AsyncSnapshot snapshot){
-
-   User user = Provider.of<BaseAuth>(context).getCurrentUser();
 
     print("Users: _buildBody connection state: ${snapshot.connectionState}");
     if(!snapshot.hasData){
@@ -61,7 +60,7 @@ class _UsersPageState extends State<UsersPage> with AutomaticKeepAliveClientMixi
                 valueColor: AlwaysStoppedAnimation<Color>(Colors.blue)))
       );
     } else {
-      analytics.logEvent(UsersEvent.impression(EVENT_NAME.LOAD_USERS_SUCCESS).setUser(user.name).view());
+      analytics.logEvent(UsersEvent.impression(EVENT_NAME.LOAD_USERS_SUCCESS).setUser(_user.name).view());
       return Container(
         child: Column(
           mainAxisSize: MainAxisSize.max,

@@ -16,7 +16,6 @@ class AppAuth extends BaseAuth {
 
   AppRepository _appRepository;
   User _user;
-  User get user => _user;
   AppAuth(this._appRepository);
 
   StreamController<User> authStreamController = StreamController.broadcast();

@@ -51,6 +51,7 @@ class GenerateReportState extends State<GenerateReportPage> with AutomaticKeepAl
 
   ReportsStore _store;
   List<ReactionDisposer> disposers = [];
+  User _user;
 
   @override
   void initState() {
@@ -69,6 +70,9 @@ class GenerateReportState extends State<GenerateReportPage> with AutomaticKeepAl
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    _user = Provider.of<BaseAuth>(context).getCurrentUser();
+    print("didChangeDependencies: ${_user.toString()}");
+
     if(_store == null){
       _store ??= Provider.of<ReportsStore>(context);
       _initReactions();
@@ -115,8 +119,6 @@ class GenerateReportState extends State<GenerateReportPage> with AutomaticKeepAl
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<BaseAuth>(context).getCurrentUser();
-
     Widget _buildProjectDropDown() {
       return Container(
           margin: EdgeInsets.symmetric(vertical: 4.0),
@@ -133,7 +135,7 @@ class GenerateReportState extends State<GenerateReportPage> with AutomaticKeepAl
                   ),
                 ),
                 value: _store.project,
-                items: _buildDropDownItems(user),
+                items: _buildDropDownItems(_user),
                 onChanged: (Project value) => _store.onProjectSelected(value)),
           ));
     }
@@ -154,7 +156,7 @@ class GenerateReportState extends State<GenerateReportPage> with AutomaticKeepAl
                   ),
                 ),
                 value: _store.task,
-                items: _store.project != null ? _createDropDownMenuItems<Task>(_store.project.tasks) : _createDropDownMenuItems<Task>(Provider.of<BaseAuth>(context).getCurrentUser().tasks),
+                items: _store.project != null ? _createDropDownMenuItems<Task>(_store.project.tasks) : _createDropDownMenuItems<Task>(_user != null ? _user.tasks : []),
                 onChanged: (Task value) => _store.onTaskSelected(value)),
           ));
     }
