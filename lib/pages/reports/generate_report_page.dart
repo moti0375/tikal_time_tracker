@@ -24,7 +24,6 @@ import 'package:tikal_time_tracker/utils/page_transition.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
 class GenerateReportPage extends StatefulWidget {
-
   @override
   State<StatefulWidget> createState() {
     return new GenerateReportState();
@@ -38,9 +37,7 @@ class GenerateReportPage extends StatefulWidget {
   }
 }
 
-class GenerateReportState extends State<GenerateReportPage> with AutomaticKeepAliveClientMixin<GenerateReportPage>  {
-
-
+class GenerateReportState extends State<GenerateReportPage> with AutomaticKeepAliveClientMixin<GenerateReportPage> {
   TextEditingController startDateInputController;
   TextEditingController endDateInputController;
 
@@ -68,9 +65,10 @@ class GenerateReportState extends State<GenerateReportPage> with AutomaticKeepAl
     _user = Provider.of<BaseAuth>(context).getCurrentUser();
     print("didChangeDependencies: ${_user.toString()}");
 
-    if(_store == null){
+    if (_store == null) {
       _store ??= Provider.of<ReportsStore>(context);
       _initReactions();
+      _store.onPeriodChanged(availablePeriods.first);
     }
   }
 
@@ -97,7 +95,6 @@ class GenerateReportState extends State<GenerateReportPage> with AutomaticKeepAl
     }));
   }
 
-
   List<DropdownMenuItem<Project>> _buildDropDownItems(User user) {
     return user != null
         ? user.projects.map((Project value) {
@@ -114,6 +111,7 @@ class GenerateReportState extends State<GenerateReportPage> with AutomaticKeepAl
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     Widget _buildProjectDropDown() {
       return Container(
           margin: EdgeInsets.symmetric(vertical: 4.0),
@@ -201,6 +199,7 @@ class GenerateReportState extends State<GenerateReportPage> with AutomaticKeepAl
               Container(
                 child: new Flexible(
                     child: new TextField(
+                  enabled: false,
                   decoration:
                       InputDecoration(hintText: Strings.start_date, contentPadding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0), border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0))),
                   maxLines: 1,
@@ -224,31 +223,34 @@ class GenerateReportState extends State<GenerateReportPage> with AutomaticKeepAl
               ),
               Container(
                 child: new Flexible(
-                  child: new TextField(
-                      decoration: InputDecoration(
-                          hintText: Strings.end_date, contentPadding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0), border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0))),
-                      maxLines: 1,
-                      controller: endDateInputController,
-                  )
-                ),
+                    child: new TextField(
+                  enabled: false,
+                  decoration: InputDecoration(
+                    hintText: Strings.end_date,
+                    contentPadding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
+                  ),
+                  maxLines: 1,
+                  controller: endDateInputController,
+                )),
               ),
             ],
           ),
         );
 
     Widget _generateButton() => Container(
-      padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-      child: AnimationButton(
-        onPressed: _store.buttonEnabled
-            ? () {
-                if (_store.buttonEnabled) {
-                  _handleGenerateButtonClicked();
-                }
-              }
-            : null,
-        buttonText: Strings.generate_button_text,
-      ),
-    );
+          padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+          child: AnimationButton(
+            onPressed: _store.buttonEnabled
+                ? () {
+                    if (_store.buttonEnabled) {
+                      _handleGenerateButtonClicked();
+                    }
+                  }
+                : null,
+            buttonText: Strings.generate_button_text,
+          ),
+        );
 
     return Scaffold(
       resizeToAvoidBottomPadding: false,
@@ -291,7 +293,7 @@ class GenerateReportState extends State<GenerateReportPage> with AutomaticKeepAl
   Future<Null> _showStartDatePicker() async {
     final DateTime picked = await showDatePicker(context: context, initialDate: DateTime.now(), firstDate: DateTime(DateTime.now().year - 1, 1), lastDate: DateTime(DateTime.now().year, 12));
     if (picked != null) {
-      _store.onStartDate(DateTime(picked.year, picked.month, picked.day));
+      _store.onStartDate(DateTime(picked.year, picked.month, picked.day), byUser: true);
     }
   }
 
@@ -299,7 +301,7 @@ class GenerateReportState extends State<GenerateReportPage> with AutomaticKeepAl
     final DateTime picked = await showDatePicker(context: context, initialDate: DateTime.now(), firstDate: DateTime(DateTime.now().year - 1, 1), lastDate: DateTime(DateTime.now().year, 12));
 
     if (picked != null) {
-      _store.onEndDate(DateTime(picked.year, picked.month, picked.day));
+      _store.onEndDate(DateTime(picked.year, picked.month, picked.day), byUser: true);
     }
   }
 
@@ -333,7 +335,6 @@ class GenerateReportState extends State<GenerateReportPage> with AutomaticKeepAl
       );
     }).toList();
   }
-
 }
 
 class Period {

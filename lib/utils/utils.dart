@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:tikal_time_tracker/network/client_cookie.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Utils {
   static String buildTimeStringFromTime(TimeOfDay time) {
@@ -9,18 +10,18 @@ class Utils {
   }
 
   static String buildTimeStringFromDuration(Duration duration) {
-    if(duration == null){
+    if (duration == null) {
       duration = new Duration(hours: 0, minutes: 0);
     }
     return "${duration.inHours}:${duration.inMinutes % 60 < 10 ? "0${duration.inMinutes % 60}" : duration.inMinutes % 60}";
   }
 
-  static List<ClientCookie> cookies(String cookiesString){
+  static List<ClientCookie> cookies(String cookiesString) {
     String tt_login = ",tt_login";
 
     List<ClientCookie> cookies = List<ClientCookie>();
-    if(cookiesString.contains(tt_login)){
-      String sessionCookieStr = cookiesString.substring(0,cookiesString.indexOf(tt_login));
+    if (cookiesString.contains(tt_login)) {
+      String sessionCookieStr = cookiesString.substring(0, cookiesString.indexOf(tt_login));
       String ttLoginCookie = cookiesString.substring(cookiesString.indexOf(tt_login) + 1);
 
       ClientCookie sessionCookie = _getCookieMap(sessionCookieStr);
@@ -38,14 +39,12 @@ class Utils {
     return cookies;
   }
 
-
-  static ClientCookie _getCookieMap(String cookieStr){
+  static ClientCookie _getCookieMap(String cookieStr) {
     Map<String, String> cookieMap = Map<String, String>();
     List<String> l = cookieStr.split(";");
     DateFormat dateFormat = DateFormat('EEE, d-MMM-y H:m:s');
 
-
-    l.forEach((it){
+    l.forEach((it) {
       cookieMap[it.split("=")[0]] = it.split("=")[1];
     });
 
@@ -53,16 +52,16 @@ class Utils {
     print("Date: ${dateFormat.parse(dateString)}");
 
     ClientCookie cookie = ClientCookie.fromMap(cookieMap.keys.elementAt(0), cookieMap.values.elementAt(0), DateTime.now(), {
-      "Domain" : "planet.tikal.com",
-      "Expires" : dateFormat.parse(dateString),
-      "Max-Age" : int.parse(cookieMap.values.elementAt(2)),
-      "Path" : cookieMap.values.elementAt(3),
+      "Domain": "planet.tikal.com",
+      "Expires": dateFormat.parse(dateString),
+      "Max-Age": int.parse(cookieMap.values.elementAt(2)),
+      "Path": cookieMap.values.elementAt(3),
     });
 
     return cookie;
   }
 
-  static hideSoftKeyboard(BuildContext context){
+  static hideSoftKeyboard(BuildContext context) {
     SystemChannels.textInput.invokeMethod('TextInput.hide');
   }
 
@@ -77,4 +76,19 @@ class Utils {
     }
     return 31;
   }
+
+  static Future mailTo({String emailAddress, String subject, String body}) async {
+    final String url = 'mailto:$emailAddress?subject=$subject&body=$body';
+    Uri uri = Uri.parse(url);
+    print("mailTo: ${uri.toString()}");
+    try{
+      if (await canLaunch(uri.toString())) {
+        await launch(url);
+      }
+    } catch(e){
+      print("Something went wrong: ${e.toString()}");
+    }
+  }
 }
+
+

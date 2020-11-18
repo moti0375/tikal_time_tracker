@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:tikal_time_tracker/data/member.dart';
 import 'package:tikal_time_tracker/resources/colors.dart';
+import 'package:tikal_time_tracker/resources/strings.dart';
+import 'package:tikal_time_tracker/ui/text_link_item.dart';
+import 'package:tikal_time_tracker/utils/utils.dart';
 
-
-
-class UsersListAdapter extends StatelessWidget{
-
+class UsersListAdapter extends StatelessWidget {
   final List<Member> items;
+
   UsersListAdapter({this.items});
 
   @override
@@ -14,8 +15,7 @@ class UsersListAdapter extends StatelessWidget{
     return _buildListView(items);
   }
 
-
-  Widget _buildListTile(Member item){
+  Widget _buildListTile(Member item) {
     return Container(
       child: ListTile(
         isThreeLine: false,
@@ -25,7 +25,7 @@ class UsersListAdapter extends StatelessWidget{
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           mainAxisSize: MainAxisSize.max,
           children: <Widget>[
-            Text("${item.name}", style: TextStyle(fontSize: 15.0, color: item.hasIncompleteEntry ? Colors.red: Colors.black)),
+            Text("${item.name}", style: TextStyle(fontSize: 15.0, color: item.hasIncompleteEntry ? Colors.red : Colors.black)),
           ],
         ),
         subtitle: Row(
@@ -33,7 +33,10 @@ class UsersListAdapter extends StatelessWidget{
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(item.email, style: TextStyle(fontSize: 12.0)),
+            TextLinkItem(
+              text: item.email,
+              onPressed: () => Utils.mailTo(emailAddress: item.email, subject: "Hi ${item.name}", body: Strings.empty_string),
+            ),
             Text(item.role.toString().split(".").last, style: TextStyle(fontSize: 12.0))
           ],
         ),
@@ -42,8 +45,6 @@ class UsersListAdapter extends StatelessWidget{
   }
 
   Widget _buildListView(List<Member> items) {
-
-
     return ListView.separated(
         separatorBuilder: (context, index) => Divider(color: AppColors.GeneralDividerGray, height: 1),
         itemBuilder: (context, i) {
@@ -52,7 +53,4 @@ class UsersListAdapter extends StatelessWidget{
         shrinkWrap: true,
         itemCount: items == null ? 0 : items.length);
   }
-
-
 }
-

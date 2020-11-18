@@ -17,12 +17,11 @@ import 'package:tikal_time_tracker/utils/utils.dart';
 
 part 'reports_store.g.dart';
 
-class ReportsStore extends _ReportsStore with _$ReportsStore{
+class ReportsStore extends _ReportsStore with _$ReportsStore {
   ReportsStore(TimeRecordsRepository repository, BaseAuth auth, Analytics analytics) : super(repository, auth, analytics);
 }
 
-abstract class _ReportsStore with Store{
-
+abstract class _ReportsStore with Store {
   static const String TAG = "ReportsStore";
   final TimeRecordsRepository _repository;
   final BaseAuth _auth;
@@ -37,67 +36,71 @@ abstract class _ReportsStore with Store{
 
   @observable
   Project _selectedProject;
+
   Project get project => _selectedProject;
 
   @observable
   Task _selectedTask;
+
   Task get task => _selectedTask;
 
   @observable
   DateTime _startDate;
+
   DateTime get startDate => _startDate;
 
   @observable
   DateTime _endDate;
+
   DateTime get endDate => _endDate;
 
   @observable
   Period _period;
+
   Period get period => _period;
 
   @computed
-  bool get buttonEnabled =>  _startDate != null && _endDate != null;
+  bool get buttonEnabled => _startDate != null && _endDate != null;
 
-  _ReportsStore(this._repository, this._auth, this._analytics){
+  _ReportsStore(this._repository, this._auth, this._analytics) {
     _analytics.logEvent(ReportsEvent.impression(EVENT_NAME.REPORTS_SCREEN).open());
     _loadReportsPage();
   }
 
   void onClickGenerateButton() {
     _analytics.logEvent(ReportsEvent.click(EVENT_NAME.GENERATE_REPORT_CLICKED));
-    ReportForm request = ReportForm(project: _selectedProject, task: _selectedTask, startDate:  _startDate, endDate: _endDate, period: _period, members: this._members);
+    ReportForm request = ReportForm(project: _selectedProject, task: _selectedTask, startDate: _startDate, endDate: _endDate, period: _period, members: this._members);
     print("$TAG, onClickGenerateButton: ${request.toString()}");
     _generateReport(request);
   }
 
-
-  void _loadReportsPage(){
+  void _loadReportsPage() {
     print("_loadReportsPage: ${_auth.getCurrentUser().toString()}");
-    _repository.reportsPage(_auth.getCurrentUser().role).then((response){
+    _repository.reportsPage(_auth.getCurrentUser().role).then((response) {
       print("_loadReportsPage: Success");
 
-      if(response is List<Member>){
+      if (response is List<Member>) {
         this._members = response;
-        response.map((member){
-         print("_loadReportsPage: member: ${member.toString()}");
+        response.map((member) {
+          print("_loadReportsPage: member: ${member.toString()}");
           return MemberListItem(member: member);
         }).toList();
       }
 //      print("$TAG: reportsPage: ${response}");
-    },onError: (e){
+    }, onError: (e) {
       debugPrint("_loadReportsPage There was an error ${e.toString()}");
     });
   }
 
-  void _generateReport(ReportForm request){
+  void _generateReport(ReportForm request) {
     print("_generateReport: ");
-    _repository.generateReport(request).then((report){
+    _repository.generateReport(request).then((report) {
       debugPrint("$TAG: _generateReport: ${report.toString()}");
       _getReport(request);
-    }, onError: (e){
+    }, onError: (e) {
       debugPrint("$TAG: _generateReport: There was an error ${e.toString()}");
-      if(e is RangeError){
-      }else{
+      if (e is RangeError) {
+      } else {
         print(e);
         _analytics.logEvent(ReportsEvent.impression(EVENT_NAME.FAILED_TO_GENERATE_REPORT).view().setDetails("Logout"));
         error = true;
@@ -105,39 +108,45 @@ abstract class _ReportsStore with Store{
     });
   }
 
-  void _getReport(ReportForm request){
-    _repository.getReport(request, _auth.getCurrentUser().role).then((response){
+  void _getReport(ReportForm request) {
+    _repository.getReport(request, _auth.getCurrentUser().role).then((response) {
       debugPrint("_getReport: ${response.toString()}");
       report = response;
       _analytics.logEvent(ReportsEvent.impression(EVENT_NAME.REPORT_GENERATED_SUCCESS).view());
-    }, onError: (e){
+    }, onError: (e) {
       debugPrint("_getReport: there was an error: ${e.toString()}");
     });
   }
 
   @action
-  void onProjectSelected(Project project){
+  void onProjectSelected(Project project) {
     this._selectedProject = project;
     this._selectedTask = null;
   }
 
   @action
-  void onTaskSelected(Task task){
+  void onTaskSelected(Task task) {
     this._selectedTask = task;
   }
 
   @action
-  void onStartDate(DateTime date) {
+  void onStartDate(DateTime date, {bool byUser = false}) {
     this._startDate = date;
+    if (byUser) {
+      _period = null;
+    }
   }
 
   @action
-  void onEndDate(DateTime date){
+  void onEndDate(DateTime date, {bool byUser = false}) {
     this._endDate = date;
+    if (byUser) {
+      _period = null;
+    }
   }
 
   @action
-  void onPeriodChanged(Period p){
+  void onPeriodChanged(Period p) {
     print("onPeriodChanged: $p");
     this._period = p;
     _handlePeriodChange();
@@ -167,8 +176,9 @@ abstract class _ReportsStore with Store{
   }
 
   void _onSelectThisMonth() {
-    onStartDate(DateTime(DateTime.now().year, DateTime.now().month, 1));
-    onEndDate(DateTime(DateTime.now().year, DateTime.now().month, Utils.getDaysInMonth(DateTime.now().year, DateTime.now().month)));
+    var now = DateTime.now();
+    onStartDate(DateTime(now.year, now.month, 1));
+    onEndDate(now);
   }
 
   void _onSelectPreviousMonth() {
@@ -195,5 +205,4 @@ abstract class _ReportsStore with Store{
     onStartDate(DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day - 1));
     onEndDate(DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day - 1));
   }
-
 }
