@@ -11,6 +11,7 @@ import 'package:tikal_time_tracker/data/repository/time_records_repository.dart'
 import 'package:tikal_time_tracker/data/task.dart';
 import 'package:tikal_time_tracker/pages/login/login_page.dart';
 import 'package:tikal_time_tracker/pages/report/report_page.dart';
+import 'package:tikal_time_tracker/pages/reports/reports_helper.dart';
 import 'package:tikal_time_tracker/pages/reports/reports_store.dart';
 import 'package:tikal_time_tracker/resources/strings.dart';
 import 'package:tikal_time_tracker/services/auth/auth.dart';
@@ -38,13 +39,7 @@ class GenerateReportPage extends StatefulWidget {
 }
 
 class GenerateReportState extends State<GenerateReportPage> with AutomaticKeepAliveClientMixin<GenerateReportPage>  {
-  List<Period> _predefinedPeriod = [
-    Period(name: Strings.item_this_month, value: 3),
-    Period(name: Strings.item_previous_month, value: 7),
-    Period(name: Strings.item_this_week, value: 2),
-    Period(name: Strings.item_today, value: 1),
-    Period(name: Strings.item_yesterday, value: 8),
-  ];
+
 
   TextEditingController startDateInputController;
   TextEditingController endDateInputController;
@@ -178,7 +173,7 @@ class GenerateReportState extends State<GenerateReportPage> with AutomaticKeepAl
                 ),
               ),
               value: _store.period,
-              items: _predefinedPeriod.map((Period value) {
+              items: availablePeriods.map((Period value) {
                 return new DropdownMenuItem<Period>(
                   value: value,
                   child: new Text(
@@ -296,7 +291,7 @@ class GenerateReportState extends State<GenerateReportPage> with AutomaticKeepAl
   Future<Null> _showStartDatePicker() async {
     final DateTime picked = await showDatePicker(context: context, initialDate: DateTime.now(), firstDate: DateTime(DateTime.now().year - 1, 1), lastDate: DateTime(DateTime.now().year, 12));
     if (picked != null) {
-      _store.onStartDate(DateTime(picked.year, picked.month, picked.day, 0, 0, 0, 0));
+      _store.onStartDate(DateTime(picked.year, picked.month, picked.day));
     }
   }
 
@@ -304,7 +299,7 @@ class GenerateReportState extends State<GenerateReportPage> with AutomaticKeepAl
     final DateTime picked = await showDatePicker(context: context, initialDate: DateTime.now(), firstDate: DateTime(DateTime.now().year - 1, 1), lastDate: DateTime(DateTime.now().year, 12));
 
     if (picked != null) {
-      _store.onEndDate(DateTime(picked.year, picked.month, picked.day, 0, 0, 0, 0));
+      _store.onEndDate(DateTime(picked.year, picked.month, picked.day));
     }
   }
 

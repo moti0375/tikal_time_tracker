@@ -66,6 +66,7 @@ abstract class _ReportsStore with Store{
   void onClickGenerateButton() {
     _analytics.logEvent(ReportsEvent.click(EVENT_NAME.GENERATE_REPORT_CLICKED));
     ReportForm request = ReportForm(project: _selectedProject, task: _selectedTask, startDate:  _startDate, endDate: _endDate, period: _period, members: this._members);
+    print("$TAG, onClickGenerateButton: ${request.toString()}");
     _generateReport(request);
   }
 

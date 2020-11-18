@@ -33,7 +33,7 @@ class ReportForm{
     map["end_date"] = dateFormat.format(this.endDate);
     map["project"] = this.project == null ? "" : "${this.project.value}";
     map["task"] = this.task == null ? "" : "${this.task.value}";
-    map["period"] = "${this.period.value}";
+    map["period"] = this.period == null ? "" : "${this.period.value}";
     map["chduration"] = "1";
     map["chnote"] = "1";
     map["chclient"] = "1";
