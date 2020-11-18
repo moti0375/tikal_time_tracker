@@ -10,6 +10,7 @@ import 'package:tikal_time_tracker/ui/page_title.dart';
 import 'package:tikal_time_tracker/data/repository/time_records_repository.dart';
 import 'package:tikal_time_tracker/analytics/analytics.dart';
 import 'package:tikal_time_tracker/ui/platform_appbar.dart';
+import 'package:tikal_time_tracker/ui/search_view.dart';
 
 class UsersPage extends StatefulWidget{
 
@@ -79,8 +80,9 @@ class _UsersPageState extends State<UsersPage> with AutomaticKeepAliveClientMixi
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
            TimeTrackerPageTitle(),
+            SearchView(onChanged: _store.onSearchTextChanged, hint: "Enter name or email",),
             Expanded(
-              child:  UsersListAdapter(items: _store.users),
+              child:  UsersListAdapter(items: _store.filteredMembersList),
             )
           ],
         ),
