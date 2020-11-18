@@ -206,9 +206,8 @@ class DomParser {
       rows = rows.map((r) {
         return r.substring(r.indexOf(">") + 1, r.indexOf("</tr>"));
       }).toList();
-    } on RangeError catch (e) {
-      print("There was a RangeError, return empty report: ${e.message}");
-      return TimeReport(date: date, timeReport: List<TimeRecord>());
+    } on RangeError catch (_) {
+      return TimeReport(date: date, timeReport: []);
     }
 
     List<TimeRecord> result = rows.map((row) {

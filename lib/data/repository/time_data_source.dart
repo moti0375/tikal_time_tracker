@@ -12,7 +12,7 @@ abstract class TimeDateSource{
  Future<dynamic> updateTime(TimeRecord time){return null;}
  Future<dynamic> deleteTime(TimeRecord time){return null;}
  Future<dynamic> timePage(){return null;}
- Stream<List<Member>> getAllMembers(Role role){return null;}
+ Future<List<Member>> getAllMembers(Role role){return null;}
  Future<dynamic> reportsPage(Role role){return null;}
  Future<List<TimeRecord>> generateReport(ReportForm request){return null;}
  Future<List<TimeRecord>> getReport(ReportForm request, Role role){return null;}

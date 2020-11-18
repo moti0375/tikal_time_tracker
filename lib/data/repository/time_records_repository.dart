@@ -37,7 +37,7 @@ class TimeRecordsRepository implements TimeDateSource{
   }
 
   @override
-  Stream<List<Member>> getAllMembers(Role role) {
+  Future<List<Member>> getAllMembers(Role role) {
     return remoteDateSource.getAllMembers(role);
   }
 

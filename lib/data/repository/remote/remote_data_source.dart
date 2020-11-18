@@ -49,9 +49,9 @@ class RemoteDateSource implements TimeDateSource {
   }
 
   @override
-  Stream<List<Member>> getAllMembers(Role role) async* {
+  Future<List<Member>> getAllMembers(Role role) async {
     String response = await _adapter.users();
-    yield parser.parseUsersPage(response, role);
+    return parser.parseUsersPage(response, role);
   }
 
   @override

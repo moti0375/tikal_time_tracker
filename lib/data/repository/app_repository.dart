@@ -79,11 +79,6 @@ class AppRepository implements TimeDateSource, LoginDataSource{
     return _timeRepository.updateTime(time);
   }
 
-  @override
-  Stream<TimeReport> getTimeRecords(DateTime date) {
-    return null;
-  }
-
   //Login Repository
   @override
   Future<User> login(String email, String password) {
@@ -91,7 +86,7 @@ class AppRepository implements TimeDateSource, LoginDataSource{
   }
 
   @override
-  Stream<List<Member>> getAllMembers(Role role) {
+  Future<List<Member>> getAllMembers(Role role) {
     return _timeRepository.getAllMembers(role);
   }
 
