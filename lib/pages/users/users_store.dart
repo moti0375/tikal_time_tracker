@@ -55,7 +55,7 @@ abstract class _UsersStore with Store {
   }
 
   @action
-  void onSearchTextChanged(String searchText) {
+   void onSearchTextChanged(String searchText) {
     this._searchText = searchText;
   }
 }

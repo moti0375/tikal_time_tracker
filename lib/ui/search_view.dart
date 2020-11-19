@@ -21,6 +21,8 @@ class _SearchViewState extends State<SearchView> {
 
   @override
   void initState() {
+    print("SearchView initState");
+
     super.initState();
     _value = widget.initialValue;
     _controller = TextEditingController();
@@ -35,8 +37,15 @@ class _SearchViewState extends State<SearchView> {
     });
   }
 
+ @override
+  void didUpdateWidget(covariant SearchView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    print("SearchView: didUpdateWidget");
+  }
+
   @override
   Widget build(BuildContext context) {
+    print("SearchView: build");
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16),
       margin: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
